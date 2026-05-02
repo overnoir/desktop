@@ -13,10 +13,17 @@ fn open_main(app: tauri::AppHandle) {
     }
 }
 
+#[tauri::command]
+fn resize_bar(app: tauri::AppHandle, width: f64, height: f64) {
+    if let Some(bar) = app.get_webview_window("bar") {
+        bar.set_size(tauri::Size::Logical(tauri::LogicalSize { width, height }))
+            .unwrap();
+    }
+}
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![open_main])
+        .invoke_handler(tauri::generate_handler![open_main, resize_bar])
         .setup(|app| {
             if cfg!(debug_assertions) {
                 app.handle().plugin(
