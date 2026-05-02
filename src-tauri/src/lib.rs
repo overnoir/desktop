@@ -1,19 +1,22 @@
-use tauri::Manager;
+use tauri::{Manager, WebviewUrl};
 
 #[tauri::command]
-fn app_ready(app: tauri::AppHandle) {
-    if let Some(splash) = app.get_webview_window("splashscreen") {
-        let _ = splash.close();
-    }
+fn open_main(app: tauri::AppHandle) {
     if let Some(main) = app.get_webview_window("main") {
-        let _ = main.show();
+        main.show().unwrap();
+        main.unminimize().unwrap();
+        main.set_focus().unwrap();
+    } else {
+        tauri::WebviewWindowBuilder::new(&app, "main", WebviewUrl::App("/".into()))
+            .build()
+            .unwrap();
     }
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![app_ready])
+        .invoke_handler(tauri::generate_handler![open_main])
         .setup(|app| {
             if cfg!(debug_assertions) {
                 app.handle().plugin(

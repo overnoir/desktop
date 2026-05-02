@@ -1,10 +1,4 @@
-<script setup lang="ts">
-import { invoke } from "@tauri-apps/api/core";
-
-onMounted(async () => {
-  await invoke("app_ready");
-});
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <NuxtLayout>
