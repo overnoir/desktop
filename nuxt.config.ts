@@ -55,6 +55,9 @@ export default defineNuxtConfig({
       Field: "VeeField",
     },
   },
+  imports: {
+    dirs: ["types"],
+  },
   typescript: {
     typeCheck: true,
   },
