@@ -1,14 +1,24 @@
+import { toast } from "vue-sonner";
+
 export default function () {
-  const defaultValues: Settings = {
-    orientation: "horizontal",
-    theme: "system",
-    opacity: 100,
-    drag: false,
-    x: 0,
-    y: 0,
-  };
+  function getDefaultValue(): Settings {
+    return {
+      orientation: "horizontal",
+      theme: "system",
+      opacity: 100,
+      drag: true,
+      x: 0,
+      y: 0,
+    };
+  }
 
-  const settings = useLocalStorage<Settings>("settings", defaultValues);
+  const settings = useLocalStorage<Settings>("settings", getDefaultValue());
+  const { t } = useNuxtApp().$i18n;
 
-  return { settings, defaultValues };
+  function reset() {
+    settings.value = getDefaultValue();
+    toast(t("settings.reset.success"));
+  }
+
+  return { settings, getDefaultValue, reset };
 }

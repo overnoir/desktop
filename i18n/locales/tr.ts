@@ -40,5 +40,21 @@ export default {
       description: "Uygulama düzeninin yönünü belirleyin.",
       list: ["Yatay", "Dikey"],
     },
+    position: {
+      title: "Pozisyon",
+      description: "Uygulama pozisyonunu ayarlayın.",
+    },
+    reset: {
+      title: "Sıfırla",
+      description: "Uygulamanın tüm ayarlarını varsayılan ayarlarına döndürün.",
+      success: "Tüm ayarlar başarıyla sıfırlandı.",
+      dialog: {
+        title: "Tüm ayarları sıfırla",
+        description:
+          "Tüm ayarlarınızı sıfırlamak istediğinize emin misiniz? Bu işlem geri alınamaz.",
+        confirm: "Evet, sıfırla",
+        cancel: "Vazgeç",
+      },
+    },
   },
 };

@@ -1,9 +1,16 @@
+import { LogicalPosition } from "@tauri-apps/api/dpi";
+import { getAllWebviewWindows } from "@tauri-apps/api/webviewWindow";
 import { load } from "@tauri-apps/plugin-store";
 
 export default defineNuxtPlugin(async () => {
-  const { defaultValues, settings } = useSettings();
+  const { getDefaultValue, settings } = useSettings();
+  const allWebviewWindows = await getAllWebviewWindows();
+  const barWebviewWindow = allWebviewWindows.find(
+    ({ label }) => label === "bar",
+  );
+
   const store = await load("settings.json", {
-    defaults: defaultValues,
+    defaults: getDefaultValue(),
   });
   const colorMode = useColorMode();
 
@@ -17,6 +24,11 @@ export default defineNuxtPlugin(async () => {
         await store.set(typedKey, newVal[typedKey]);
         if (typedKey === "theme") {
           colorMode.preference = newVal[typedKey];
+        }
+        if ((typedKey === "x" || typedKey === "y") && barWebviewWindow) {
+          await barWebviewWindow.setPosition(
+            new LogicalPosition(settings.value.x, settings.value.y),
+          );
         }
       }
     }

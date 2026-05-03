@@ -4,7 +4,7 @@ definePageMeta({
   title: "meta.settings.title",
 });
 
-const { settings } = useSettings();
+const { settings, reset } = useSettings();
 </script>
 
 <template>
@@ -62,7 +62,14 @@ const { settings } = useSettings();
           :min="0"
           @update:model-value="settings.opacity = $event![0]!"
         />
-        <NumberField v-model="settings.opacity" :max="100" :min="0" :step="1">
+        <NumberField
+          :model-value="settings.opacity / 100"
+          :format-options="{
+            style: 'percent',
+          }"
+          :step="0.01"
+          @update:model-value="settings.opacity = $event * 100"
+        >
           <NumberFieldContent>
             <NumberFieldDecrement />
             <NumberFieldInput />
@@ -96,6 +103,72 @@ const { settings } = useSettings();
           {{ $t("settings.orientation.list.1") }}
         </Button>
       </div>
+    </div>
+    <div>
+      <div>
+        <h1>{{ $t("settings.position.title") }}</h1>
+        <p class="text-muted-foreground text-xs">
+          {{ $t("settings.position.description") }}
+        </p>
+      </div>
+      <div class="grid grid-cols-2 mt-4 gap-6">
+        <NumberField
+          v-model="settings.x"
+          :format-options="{ useGrouping: false }"
+          :step="1"
+        >
+          <Label>X (px)</Label>
+          <NumberFieldContent>
+            <NumberFieldDecrement />
+            <NumberFieldInput />
+            <NumberFieldIncrement />
+          </NumberFieldContent>
+        </NumberField>
+        <NumberField
+          v-model="settings.y"
+          :format-options="{ useGrouping: false }"
+          :step="1"
+        >
+          <Label>Y (px)</Label>
+          <NumberFieldContent>
+            <NumberFieldDecrement />
+            <NumberFieldInput />
+            <NumberFieldIncrement />
+          </NumberFieldContent>
+        </NumberField>
+      </div>
+    </div>
+    <div>
+      <h1>{{ $t("settings.reset.title") }}</h1>
+      <p class="text-muted-foreground text-xs">
+        {{ $t("settings.reset.description") }}
+      </p>
+      <AlertDialog>
+        <AlertDialogTrigger as-child>
+          <Button variant="destructive" class="mt-4">
+            <Icon name="lucide:rotate-ccw" />
+            {{ $t("settings.reset.title") }}
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {{ $t("settings.reset.dialog.title") }}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {{ $t("settings.reset.dialog.description") }}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>
+              {{ $t("settings.reset.dialog.cancel") }}
+            </AlertDialogCancel>
+            <AlertDialogAction variant="destructive" @click="reset">
+              {{ $t("settings.reset.dialog.confirm") }}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   </section>
 </template>
