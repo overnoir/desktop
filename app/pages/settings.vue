@@ -111,7 +111,7 @@ const { settings, reset } = useSettings();
           {{ $t("settings.position.description") }}
         </p>
       </div>
-      <div class="grid grid-cols-2 mt-4 gap-6">
+      <div class="grid grid-cols-2 mt-4 gap-2">
         <NumberField
           v-model="settings.x"
           :format-options="{ useGrouping: false }"
