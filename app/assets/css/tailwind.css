@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
 @import "tw-animate-css";
 @import "tailwindcss";
 
@@ -43,7 +45,7 @@
 }
 
 :root {
-  --radius: 0.65rem;
+  --radius: 0.5rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);
@@ -117,5 +119,14 @@
   }
   body {
     @apply bg-background text-foreground font-[Inter];
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }

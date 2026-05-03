@@ -39,10 +39,10 @@ const linkGroups: LinkGroup[] = [
 </script>
 
 <template>
-  <nav class="border-r p-2 w-50 shrink-0">
+  <nav class="border-r p-4 w-50 shrink-0 sticky top-0 h-screen flex flex-col">
     <NuxtImg src="/logo.png" alt="Logo" class="size-10" />
     <ul v-for="linkGroup in linkGroups" :key="linkGroup.name" class="mt-4">
-      <h1 class="text-muted-foreground text-xs font-semibold ml-2 mb-1">
+      <h1 class="text-muted-foreground text-xs font-semibold mb-1">
         {{ $t(linkGroup.name) }}
       </h1>
       <li v-for="link in linkGroup.links" :key="link.name">
@@ -61,5 +61,6 @@ const linkGroups: LinkGroup[] = [
         </Button>
       </li>
     </ul>
+    <span class="text-muted-foreground text-xs mt-auto">v1.0.0</span>
   </nav>
 </template>

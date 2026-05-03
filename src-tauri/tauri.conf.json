@@ -32,8 +32,8 @@
         "skipTaskbar": true,
         "resizable": false,
         "shadow": false,
-        "x": 1200,
-        "y": 60,
+        "x": 1,
+        "y": 1,
         "acceptFirstMouse": true
       }
     ],

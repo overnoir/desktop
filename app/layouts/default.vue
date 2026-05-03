@@ -1,8 +1,11 @@
 <template>
   <div class="flex min-h-screen">
     <LayoutNavbar />
-    <main class="p-2">
-      <slot />
-    </main>
+    <div class="w-full">
+      <LayoutHeader />
+      <main class="p-4">
+        <slot />
+      </main>
+    </div>
   </div>
 </template>
