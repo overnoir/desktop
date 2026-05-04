@@ -1,5 +1,3 @@
-import { toast } from "vue-sonner";
-
 export default function () {
   function getDefaultValue(): Settings {
     return {
@@ -13,11 +11,9 @@ export default function () {
   }
 
   const settings = useLocalStorage<Settings>("settings", getDefaultValue());
-  const { t } = useNuxtApp().$i18n;
 
   function reset() {
     settings.value = getDefaultValue();
-    toast(t("settings.reset.success"));
   }
 
   return { settings, getDefaultValue, reset };

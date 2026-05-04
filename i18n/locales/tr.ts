@@ -21,6 +21,10 @@ export default {
       },
     ],
   },
+  tray: {
+    settings: "Ayarlar",
+    quit: "Çıkış",
+  },
   settings: {
     theme: {
       title: "Tema",

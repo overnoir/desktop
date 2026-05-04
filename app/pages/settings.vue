@@ -1,10 +1,18 @@
 <script setup lang="ts">
+import { toast } from "vue-sonner";
+
 definePageMeta({
   description: "meta.settings.description",
   title: "meta.settings.title",
 });
 
 const { settings, reset } = useSettings();
+const { t } = useI18n();
+
+function resetSettings() {
+  reset();
+  toast(t("settings.reset.success"));
+}
 </script>
 
 <template>
@@ -163,7 +171,7 @@ const { settings, reset } = useSettings();
             <AlertDialogCancel>
               {{ $t("settings.reset.dialog.cancel") }}
             </AlertDialogCancel>
-            <AlertDialogAction variant="destructive" @click="reset">
+            <AlertDialogAction variant="destructive" @click="resetSettings">
               {{ $t("settings.reset.dialog.confirm") }}
             </AlertDialogAction>
           </AlertDialogFooter>

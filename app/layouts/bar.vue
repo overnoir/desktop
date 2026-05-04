@@ -1,0 +1,87 @@
+<script setup lang="ts">
+import { LogicalPosition, LogicalSize } from "@tauri-apps/api/dpi";
+import { defaultWindowIcon } from "@tauri-apps/api/app";
+import { exit } from "@tauri-apps/plugin-process";
+import { TrayIcon } from "@tauri-apps/api/tray";
+import { Menu } from "@tauri-apps/api/menu";
+import {
+  getCurrentWebviewWindow,
+  getAllWebviewWindows,
+  WebviewWindow,
+} from "@tauri-apps/api/webviewWindow";
+
+const currentWebviewWindow = getCurrentWebviewWindow();
+const tray = await TrayIcon.getById("radar");
+const { settings } = useSettings();
+const { t } = useI18n();
+
+if (!tray) {
+  await TrayIcon.new({
+    id: "radar",
+    icon: (await defaultWindowIcon()) || undefined,
+    menu: await Menu.new({
+      items: [
+        {
+          id: "settings",
+          text: t("tray.settings"),
+          action: async () => {
+            const allWebviewWindows = await getAllWebviewWindows();
+            const mainWebviewWindow = allWebviewWindows.find(
+              ({ label }) => label === "main",
+            );
+            if (mainWebviewWindow) {
+              await mainWebviewWindow.show();
+            } else {
+              new WebviewWindow("main");
+            }
+          },
+        },
+        {
+          id: "quit",
+          text: t("tray.quit"),
+          action: async () => {
+            await exit(0);
+          },
+        },
+      ],
+    }),
+  });
+}
+
+onMounted(async () => {
+  const { width, height } = document.body.getBoundingClientRect();
+
+  await currentWebviewWindow.setSize(new LogicalSize(width, height));
+  await currentWebviewWindow.setPosition(
+    new LogicalPosition(settings.value.x, settings.value.y),
+  );
+  await currentWebviewWindow.onMoved(async ({ payload }) => {
+    settings.value.x = payload.x;
+    settings.value.y = payload.y;
+  });
+
+  useResizeObserver(document.body, async (entries) => {
+    const rect = entries[0]?.contentRect;
+    if (rect) {
+      await currentWebviewWindow.setSize(
+        new LogicalSize(rect.width, rect.height),
+      );
+    }
+  });
+});
+</script>
+
+<template>
+  <Html
+    class="hover:opacity-100! rounded-lg"
+    :style="{
+      opacity: `${settings.opacity}%`,
+    }"
+  >
+    <Body class="size-max overflow-hidden">
+      <main class="p-0.5 border rounded-lg">
+        <slot />
+      </main>
+    </Body>
+  </Html>
+</template>

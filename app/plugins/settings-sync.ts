@@ -1,36 +1,41 @@
-import { LogicalPosition } from "@tauri-apps/api/dpi";
 import { getAllWebviewWindows } from "@tauri-apps/api/webviewWindow";
+import { LogicalPosition } from "@tauri-apps/api/dpi";
 import { load } from "@tauri-apps/plugin-store";
 
 export default defineNuxtPlugin(async () => {
   const { getDefaultValue, settings } = useSettings();
-  const allWebviewWindows = await getAllWebviewWindows();
-  const barWebviewWindow = allWebviewWindows.find(
-    ({ label }) => label === "bar",
-  );
-
+  const windows = await getAllWebviewWindows();
+  const barWindow = windows.find((w) => w.label === "bar");
+  const colorMode = useColorMode();
   const store = await load("settings.json", {
     defaults: getDefaultValue(),
   });
-  const colorMode = useColorMode();
 
   settings.value = Object.fromEntries(await store.entries()) as Settings;
 
-  watch(settings, async (newVal, oldVal) => {
-    for (const key in newVal) {
-      const typedKey = key as keyof Settings;
+  watch(
+    settings,
+    async (newVal, oldVal) => {
+      const changedKeys = Object.keys(newVal).filter(
+        (key) =>
+          newVal[key as keyof Settings] !== oldVal[key as keyof Settings],
+      ) as (keyof Settings)[];
 
-      if (newVal[typedKey] !== oldVal[typedKey]) {
-        await store.set(typedKey, newVal[typedKey]);
-        if (typedKey === "theme") {
-          colorMode.preference = newVal[typedKey];
+      for (const key of changedKeys) {
+        const value = newVal[key];
+
+        await store.set(key, value);
+
+        if (key === "theme") {
+          colorMode.preference = value as string;
         }
-        if ((typedKey === "x" || typedKey === "y") && barWebviewWindow) {
-          await barWebviewWindow.setPosition(
-            new LogicalPosition(settings.value.x, settings.value.y),
-          );
+
+        if ((key === "x" || key === "y") && barWindow) {
+          const { x, y } = newVal;
+          await barWindow.setPosition(new LogicalPosition(x, y));
         }
       }
-    }
-  });
+    },
+    { deep: true },
+  );
 });
