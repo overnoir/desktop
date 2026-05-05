@@ -30,9 +30,14 @@ if (!tray) {
               ({ label }) => label === "main",
             );
             if (mainWebviewWindow) {
+              await mainWebviewWindow.unminimize();
               await mainWebviewWindow.show();
+              await mainWebviewWindow.setFocus();
             } else {
-              new WebviewWindow("main");
+              const window = new WebviewWindow("main");
+              await window.unminimize();
+              await window.show();
+              await window.setFocus();
             }
           },
         },
@@ -40,7 +45,7 @@ if (!tray) {
           id: "quit",
           text: t("tray.quit"),
           action: async () => {
-            await exit(0);
+            await exit();
           },
         },
       ],
@@ -55,19 +60,15 @@ onMounted(async () => {
   await currentWebviewWindow.setPosition(
     new LogicalPosition(settings.value.x, settings.value.y),
   );
-  await currentWebviewWindow.onMoved(async ({ payload }) => {
-    settings.value.x = payload.x;
-    settings.value.y = payload.y;
-  });
+});
 
-  useResizeObserver(document.body, async (entries) => {
-    const rect = entries[0]?.contentRect;
-    if (rect) {
-      await currentWebviewWindow.setSize(
-        new LogicalSize(rect.width, rect.height),
-      );
-    }
-  });
+useResizeObserver(document.body, async (entries) => {
+  const rect = entries[0]?.contentRect;
+  if (rect) {
+    await currentWebviewWindow.setSize(
+      new LogicalSize(rect.width, rect.height),
+    );
+  }
 });
 </script>
 

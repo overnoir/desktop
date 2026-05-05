@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  getCurrentWebviewWindow,
   getAllWebviewWindows,
   WebviewWindow,
 } from "@tauri-apps/api/webviewWindow";
@@ -8,6 +9,8 @@ definePageMeta({
   layout: "bar",
 });
 
+const dragArea = ref<HTMLElement | null>(null);
+const window = getCurrentWebviewWindow();
 const { settings } = useSettings();
 
 async function openMain() {
@@ -16,11 +19,28 @@ async function openMain() {
     ({ label }) => label === "main",
   );
   if (mainWebviewWindow) {
+    await mainWebviewWindow.unminimize();
     await mainWebviewWindow.show();
+    await mainWebviewWindow.setFocus();
   } else {
-    new WebviewWindow("main");
+    const window = new WebviewWindow("main");
+    await window.unminimize();
+    await window.show();
+    await window.setFocus();
   }
 }
+
+useMousePressed({
+  async onReleased() {
+    const { x, y } = await window.outerPosition();
+    settings.value.x = x;
+    settings.value.y = y;
+  },
+  async onPressed() {
+    await window.startDragging();
+  },
+  target: dragArea,
+});
 </script>
 
 <template>
@@ -42,11 +62,22 @@ async function openMain() {
       <Icon name="lucide:settings" />
     </Button>
     <div
-      v-if="settings.drag"
-      class="bg-muted rounded-md size-9 grid place-items-center select-none cursor-grab active:cursor-grabbing"
-      data-tauri-drag-region
+      v-show="settings.drag"
+      ref="dragArea"
+      class="bg-muted rounded-md grid place-items-center select-none cursor-grab active:cursor-grabbing"
+      :class="{
+        'h-9 w-6': settings.orientation === 'horizontal',
+        'h-6 w-9': settings.orientation === 'vertical',
+      }"
     >
-      <Icon name="lucide:move" class="pointer-events-none" />
+      <Icon
+        :name="
+          settings.orientation === 'horizontal'
+            ? 'lucide:grip-vertical'
+            : 'lucide:grip-horizontal'
+        "
+        class="pointer-events-none"
+      />
     </div>
   </div>
 </template>

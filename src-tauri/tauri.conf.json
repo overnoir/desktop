@@ -16,16 +16,20 @@
         "title": "Radar Main",
         "width": 800,
         "height": 600,
-        "resizable": true,
+        "acceptFirstMouse": true,
+        "resizable": false,
+        "skipTaskbar": true,
         "fullscreen": false,
+        "alwaysOnTop": true,
         "create": false
       },
       {
         "label": "bar",
         "title": "Radar Bar",
         "url": "/bar",
-        "width": 0,
-        "height": 0,
+        "width": 800,
+        "height": 800,
+        "acceptFirstMouse": true,
         "decorations": false,
         "transparent": true,
         "alwaysOnTop": true,
@@ -33,8 +37,7 @@
         "resizable": false,
         "shadow": false,
         "x": 1,
-        "y": 1,
-        "acceptFirstMouse": true
+        "y": 1
       }
     ],
     "security": {
