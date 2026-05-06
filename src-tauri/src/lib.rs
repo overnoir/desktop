@@ -53,7 +53,7 @@ pub fn run() {
 }
 
 fn init_panel(app_handle: &AppHandle) {
-    let window = app_handle.get_webview_window("bar").unwrap();
+    let window = app_handle.get_webview_window("overlay").unwrap();
     let panel = window.to_panel::<HoverActivatePanel>().unwrap();
 
     let handler = MyPanelEventHandler::new();
@@ -61,7 +61,7 @@ fn init_panel(app_handle: &AppHandle) {
     let handle = app_handle.clone();
 
     handler.on_mouse_entered(move |_event| {
-        let panel = handle.get_webview_panel("bar").unwrap();
+        let panel = handle.get_webview_panel("overlay").unwrap();
 
         panel.make_key_window();
     });
@@ -69,7 +69,7 @@ fn init_panel(app_handle: &AppHandle) {
     let handle = app_handle.to_owned();
 
     handler.on_mouse_exited(move |_event| {
-        let panel = handle.get_webview_panel("bar").unwrap();
+        let panel = handle.get_webview_panel("overlay").unwrap();
 
         panel.resign_key_window();
     });

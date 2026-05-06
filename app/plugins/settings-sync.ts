@@ -5,7 +5,7 @@ import { load } from "@tauri-apps/plugin-store";
 export default defineNuxtPlugin(async () => {
   const { getDefaultValue, settings } = useSettings();
   const windows = await getAllWebviewWindows();
-  const barWindow = windows.find((w) => w.label === "bar");
+  const overlayWindow = windows.find(({ label }) => label === "overlay");
   const colorMode = useColorMode();
   const store = await load("settings.json", {
     defaults: getDefaultValue(),
@@ -30,9 +30,9 @@ export default defineNuxtPlugin(async () => {
           colorMode.preference = value as string;
         }
 
-        if ((key === "x" || key === "y") && barWindow) {
+        if ((key === "x" || key === "y") && overlayWindow) {
           const { x, y } = newVal;
-          await barWindow.setPosition(new LogicalPosition(x, y));
+          await overlayWindow.setPosition(new LogicalPosition(x, y));
         }
       }
     },

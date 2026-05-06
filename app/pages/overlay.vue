@@ -6,7 +6,7 @@ import {
 } from "@tauri-apps/api/webviewWindow";
 
 definePageMeta({
-  layout: "bar",
+  layout: "overlay",
 });
 
 const dragArea = ref<HTMLElement | null>(null);
