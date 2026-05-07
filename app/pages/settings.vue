@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { getAllWebviewWindows } from "@tauri-apps/api/webviewWindow";
+import { LogicalPosition } from "@tauri-apps/api/dpi";
 import { toast } from "vue-sonner";
 
 definePageMeta({
@@ -6,11 +8,23 @@ definePageMeta({
   title: "meta.settings.title",
 });
 
-const { settings, reset } = useSettings();
+const allWebviewWindows = await getAllWebviewWindows();
+const overlayWebviewWindow = allWebviewWindows.find(
+  ({ label }) => label === "overlay",
+);
+const settingsStore = useSettingsStore();
+const { settings } = storeToRefs(settingsStore);
 const { t } = useI18n();
 
-function resetSettings() {
-  reset();
+async function updateWebviewWindowPosition() {
+  await overlayWebviewWindow?.setPosition(
+    new LogicalPosition(settings.value.x, settings.value.y),
+  );
+}
+
+async function resetSettings() {
+  settingsStore.reset();
+  await updateWebviewWindowPosition();
   toast(t("settings.reset.success"));
 }
 </script>
@@ -124,6 +138,7 @@ function resetSettings() {
           v-model="settings.x"
           :format-options="{ useGrouping: false }"
           :step="1"
+          @update:model-value="updateWebviewWindowPosition"
         >
           <Label>X (px)</Label>
           <NumberFieldContent>
@@ -136,6 +151,7 @@ function resetSettings() {
           v-model="settings.y"
           :format-options="{ useGrouping: false }"
           :step="1"
+          @update:model-value="updateWebviewWindowPosition"
         >
           <Label>Y (px)</Label>
           <NumberFieldContent>

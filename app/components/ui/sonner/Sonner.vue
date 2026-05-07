@@ -1,15 +1,6 @@
 <script lang="ts" setup>
 import type { ToasterProps } from "vue-sonner";
-import {
-  CircleCheckIcon,
-  InfoIcon,
-  Loader2Icon,
-  OctagonXIcon,
-  TriangleAlertIcon,
-  XIcon,
-} from "lucide-vue-next";
 import { Toaster as Sonner } from "vue-sonner";
-import type { Theme } from "vue-sonner/src/packages/types.js";
 
 const props = withDefaults(defineProps<ToasterProps>(), {
   closeButton: true,
@@ -19,28 +10,31 @@ const props = withDefaults(defineProps<ToasterProps>(), {
 <template>
   <Sonner
     :class="cn('toaster group', props.class)"
+    :style="{
+      '--normal-bg': 'var(--popover)',
+      '--normal-text': 'var(--popover-foreground)',
+      '--normal-border': 'var(--border)',
+      '--border-radius': 'var(--radius)',
+    }"
     v-bind="props"
-    :theme="$colorMode.preference as Theme"
   >
     <template #success-icon>
-      <CircleCheckIcon class="size-3" />
+      <Icon name="lucide:circle-check" class="size-3" />
     </template>
     <template #info-icon>
-      <InfoIcon class="size-3" />
+      <Icon name="lucide:info" class="size-3" />
     </template>
     <template #warning-icon>
-      <TriangleAlertIcon class="size-3" />
+      <Icon name="lucide:triangle-alert" class="size-3" />
     </template>
     <template #error-icon>
-      <OctagonXIcon class="size-3" />
+      <Icon name="lucide:octagon-x" class="size-3" />
     </template>
     <template #loading-icon>
-      <div>
-        <Loader2Icon class="size-3 animate-spin" />
-      </div>
+      <Icon name="lucide:loader-circle" class="size-3 animate-spin" />
     </template>
     <template #close-icon>
-      <XIcon class="size-3" />
+      <Icon name="lucide:x" class="size-3" />
     </template>
   </Sonner>
 </template>

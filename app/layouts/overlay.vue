@@ -11,8 +11,8 @@ import {
 } from "@tauri-apps/api/webviewWindow";
 
 const currentWebviewWindow = getCurrentWebviewWindow();
+const { settings } = storeToRefs(useSettingsStore());
 const tray = await TrayIcon.getById("radar");
-const { settings } = useSettings();
 const { t } = useI18n();
 
 if (!tray) {
@@ -34,10 +34,14 @@ if (!tray) {
               await mainWebviewWindow.show();
               await mainWebviewWindow.setFocus();
             } else {
-              const window = new WebviewWindow("main");
-              await window.unminimize();
-              await window.show();
-              await window.setFocus();
+              const window = new WebviewWindow("main", {
+                backgroundColor: "#ff0000",
+              });
+              window.once("initialized", async () => {
+                await window.unminimize();
+                await window.show();
+                await window.setFocus();
+              });
             }
           },
         },
@@ -53,15 +57,6 @@ if (!tray) {
   });
 }
 
-onMounted(async () => {
-  const { width, height } = document.body.getBoundingClientRect();
-
-  await currentWebviewWindow.setSize(new LogicalSize(width, height));
-  await currentWebviewWindow.setPosition(
-    new LogicalPosition(settings.value.x, settings.value.y),
-  );
-});
-
 useResizeObserver(document.body, async (entries) => {
   const rect = entries[0]?.contentRect;
   if (rect) {
@@ -69,6 +64,12 @@ useResizeObserver(document.body, async (entries) => {
       new LogicalSize(rect.width, rect.height),
     );
   }
+});
+
+onNuxtReady(async () => {
+  await currentWebviewWindow.setPosition(
+    new LogicalPosition(settings.value.x, settings.value.y),
+  );
 });
 </script>
 

@@ -9,9 +9,9 @@ definePageMeta({
   layout: "overlay",
 });
 
+const currentWebviewWindow = getCurrentWebviewWindow();
+const { settings } = storeToRefs(useSettingsStore());
 const dragArea = ref<HTMLElement | null>(null);
-const window = getCurrentWebviewWindow();
-const { settings } = useSettings();
 
 async function openMain() {
   const allWebviewWindows = await getAllWebviewWindows();
@@ -23,21 +23,23 @@ async function openMain() {
     await mainWebviewWindow.show();
     await mainWebviewWindow.setFocus();
   } else {
-    const window = new WebviewWindow("main");
-    await window.unminimize();
-    await window.show();
-    await window.setFocus();
+    const mainWebviewWindow = new WebviewWindow("main");
+    mainWebviewWindow.once("initialized", async () => {
+      await mainWebviewWindow.unminimize();
+      await mainWebviewWindow.show();
+      await mainWebviewWindow.setFocus();
+    });
   }
 }
 
 useMousePressed({
   async onReleased() {
-    const { x, y } = await window.outerPosition();
+    const { x, y } = await currentWebviewWindow.outerPosition();
     settings.value.x = x;
     settings.value.y = y;
   },
   async onPressed() {
-    await window.startDragging();
+    await currentWebviewWindow.startDragging();
   },
   target: dragArea,
 });
