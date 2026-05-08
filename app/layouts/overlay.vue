@@ -33,6 +33,10 @@ if (!tray) {
   });
 }
 
+await overlayWebviewWindow.setPosition(
+  new LogicalPosition(settings.value.x, settings.value.y),
+);
+
 useResizeObserver(document.body, async (entries) => {
   const rect = entries[0]?.contentRect;
   if (rect) {
@@ -40,12 +44,6 @@ useResizeObserver(document.body, async (entries) => {
       new LogicalSize(rect.width, rect.height),
     );
   }
-});
-
-onNuxtReady(async () => {
-  await overlayWebviewWindow.setPosition(
-    new LogicalPosition(settings.value.x, settings.value.y),
-  );
 });
 </script>
 
