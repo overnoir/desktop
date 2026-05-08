@@ -23,7 +23,14 @@ async function openMain() {
     await mainWebviewWindow.show();
     await mainWebviewWindow.setFocus();
   } else {
-    const mainWebviewWindow = new WebviewWindow("main");
+    const mainWebviewWindow = new WebviewWindow("main", {
+      acceptFirstMouse: true,
+      skipTaskbar: true,
+      resizable: false,
+      title: "Radar",
+      height: 600,
+      width: 800,
+    });
     mainWebviewWindow.once("initialized", async () => {
       await mainWebviewWindow.unminimize();
       await mainWebviewWindow.show();

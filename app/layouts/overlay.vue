@@ -35,7 +35,12 @@ if (!tray) {
               await mainWebviewWindow.setFocus();
             } else {
               const window = new WebviewWindow("main", {
-                backgroundColor: "#ff0000",
+                acceptFirstMouse: true,
+                skipTaskbar: true,
+                resizable: false,
+                title: "Radar",
+                height: 600,
+                width: 800,
               });
               window.once("initialized", async () => {
                 await window.unminimize();
