@@ -1,11 +1,9 @@
 export default {
   meta: {
     home: {
-      description: "Uygulamanın genel durumunu görüntüleyin.",
       title: "Ana Sayfa",
     },
     settings: {
-      description: "Uygulama ayarlarını yapılandırın ve yönetin.",
       title: "Ayarlar",
     },
   },
@@ -29,7 +27,7 @@ export default {
     theme: {
       title: "Tema",
       description: "Uygulamanın görünüm temasını özelleştirin.",
-      list: ["Açık", "Koyu", "Sistem"],
+      list: ["Sistem", "Koyu", "Açık"],
     },
     drag: {
       title: "Sürükleme",

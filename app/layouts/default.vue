@@ -6,12 +6,9 @@ import "vue-sonner/style.css";
   <div class="flex min-h-screen">
     <LayoutTitlebar />
     <LayoutNavbar />
-    <div class="w-full">
-      <LayoutHeader />
-      <main class="p-4">
-        <slot />
-      </main>
-    </div>
+    <main class="p-4 pt-11 w-full">
+      <slot />
+    </main>
     <Toaster />
   </div>
 </template>

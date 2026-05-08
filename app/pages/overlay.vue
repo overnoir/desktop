@@ -21,16 +21,6 @@ useMousePressed({
   },
   target: dragArea,
 });
-
-const iconStyle = computed(() => ({
-  height: `${settings.value.size / 2.2}px`,
-  width: `${settings.value.size / 2.2}px`,
-}));
-
-const squareStyle = computed(() => ({
-  height: `${settings.value.size}px`,
-  width: `${settings.value.size}px`,
-}));
 </script>
 
 <template>
@@ -46,26 +36,36 @@ const squareStyle = computed(() => ({
       :key="i"
       src="https://avatars.githubusercontent.com/u/121391005?v=4"
       class="rounded-lg select-none pointer-events-none"
-      :style="squareStyle"
+      :style="{
+        height: `${settings.size}px`,
+        width: `${settings.size}px`,
+      }"
       alt="Avatar"
     />
     <Button
-      :style="squareStyle"
+      :style="{
+        height: `${settings.size}px`,
+        width: `${settings.size}px`,
+      }"
       class="select-none"
       variant="ghost"
       size="icon"
       @click="open"
     >
-      <Icon name="lucide:settings" :style="iconStyle" />
+      <Icon name="lucide:settings" class="size-1/2" />
     </Button>
     <Button
       v-show="settings.drag"
       ref="dragArea"
       class="select-none cursor-grab active:cursor-grabbing"
-      :style="squareStyle"
+      :style="{
+        height: `${settings.size}px`,
+        width: `${settings.size}px`,
+      }"
       variant="ghost"
+      size="icon"
     >
-      <Icon name="lucide-grip" class="pointer-events-none" :style="iconStyle" />
+      <Icon name="lucide:grip" class="pointer-events-none size-1/2" />
     </Button>
   </section>
 </template>

@@ -4,7 +4,6 @@ import { LogicalPosition } from "@tauri-apps/api/dpi";
 import { toast } from "vue-sonner";
 
 definePageMeta({
-  description: "meta.settings.description",
   title: "meta.settings.title",
 });
 
@@ -30,89 +29,48 @@ async function resetSettings() {
 </script>
 
 <template>
-  <section class="space-y-6">
-    <div>
-      <h1>{{ $t("settings.theme.title") }}</h1>
-      <p class="text-muted-foreground text-xs">
-        {{ $t("settings.theme.description") }}
-      </p>
-      <div class="flex gap-2 mt-4">
-        <Button
-          :variant="settings.theme === 'light' ? 'outline' : 'secondary'"
-          @click="settings.theme = 'light'"
-        >
-          <Icon name="lucide:sun" />
-          {{ $t("settings.theme.list.0") }}
-        </Button>
-        <Button
-          :variant="settings.theme === 'dark' ? 'outline' : 'secondary'"
-          @click="settings.theme = 'dark'"
-        >
-          <Icon name="lucide:moon" />
-          {{ $t("settings.theme.list.1") }}
-        </Button>
-        <Button
-          :variant="settings.theme === 'system' ? 'outline' : 'secondary'"
-          @click="settings.theme = 'system'"
-        >
-          <Icon name="lucide:monitor" />
-          {{ $t("settings.theme.list.2") }}
-        </Button>
-      </div>
-    </div>
-    <div>
+  <section>
+    <Card
+      class="p-4 gap-4 [&>div]:flex [&>div]:gap-5 [&>div]:items-center [&>div]:justify-between"
+    >
       <div>
-        <h1>{{ $t("settings.drag.title") }}</h1>
-        <p class="text-muted-foreground text-xs">
-          {{ $t("settings.drag.description") }}
-        </p>
+        <div>
+          <h1 class="text-sm">{{ $t("settings.theme.title") }}</h1>
+          <p class="text-muted-foreground text-xs">
+            {{ $t("settings.theme.description") }}
+          </p>
+        </div>
+        <Select v-model="settings.theme">
+          <SelectTrigger class="justify-self-end">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="system">
+              {{ $t("settings.theme.list.0") }}
+            </SelectItem>
+            <SelectItem value="dark">
+              {{ $t("settings.theme.list.1") }}
+            </SelectItem>
+            <SelectItem value="light">
+              {{ $t("settings.theme.list.2") }}
+            </SelectItem>
+          </SelectContent>
+        </Select>
       </div>
-      <Switch v-model="settings.drag" class="mt-4" />
-    </div>
-    <div>
+      <Separator />
       <div>
-        <h1>{{ $t("settings.opacity.title") }}</h1>
-        <p class="text-muted-foreground text-xs">
-          {{ $t("settings.opacity.description") }}
-        </p>
-      </div>
-      <div class="flex flex-col mt-4 gap-6 w-max">
-        <NumberField
-          :model-value="settings.opacity / 100"
-          :format-options="{
-            style: 'percent',
-          }"
-          :step="0.01"
-          @update:model-value="settings.opacity = $event * 100"
-        >
-          <NumberFieldContent>
-            <NumberFieldDecrement />
-            <NumberFieldInput />
-            <NumberFieldIncrement />
-          </NumberFieldContent>
-        </NumberField>
-        <Slider
-          :model-value="[settings.opacity]"
-          :max="100"
-          :step="1"
-          :min="0"
-          @update:model-value="settings.opacity = $event![0]!"
-        />
-      </div>
-    </div>
-    <div>
-      <div>
-        <h1>{{ $t("settings.size.title") }}</h1>
-        <p class="text-muted-foreground text-xs">
-          {{ $t("settings.size.description") }}
-        </p>
-      </div>
-      <div class="flex items-center mt-4 gap-6">
+        <div>
+          <h1 class="text-sm">{{ $t("settings.size.title") }}</h1>
+          <p class="text-muted-foreground text-xs">
+            {{ $t("settings.size.description") }}
+          </p>
+        </div>
         <NumberField
           v-model="settings.size"
           :format-options="{ useGrouping: false }"
+          class="justify-self-end"
+          :step="1"
           :min="1"
-          :step="1"
         >
           <NumberFieldContent>
             <NumberFieldDecrement />
@@ -121,100 +79,138 @@ async function resetSettings() {
           </NumberFieldContent>
         </NumberField>
       </div>
-    </div>
-    <div>
-      <h1>{{ $t("settings.orientation.title") }}</h1>
-      <p class="text-muted-foreground text-xs">
-        {{ $t("settings.orientation.description") }}
-      </p>
-      <div class="flex gap-2 mt-4">
-        <Button
-          :variant="
-            settings.orientation === 'horizontal' ? 'outline' : 'secondary'
-          "
-          @click="settings.orientation = 'horizontal'"
-        >
-          <Icon name="lucide:rectangle-horizontal" />
-          {{ $t("settings.orientation.list.0") }}
-        </Button>
-        <Button
-          :variant="
-            settings.orientation === 'vertical' ? 'outline' : 'secondary'
-          "
-          @click="settings.orientation = 'vertical'"
-        >
-          <Icon name="lucide:rectangle-vertical" />
-          {{ $t("settings.orientation.list.1") }}
-        </Button>
-      </div>
-    </div>
-    <div>
+      <Separator />
       <div>
-        <h1>{{ $t("settings.position.title") }}</h1>
-        <p class="text-muted-foreground text-xs">
-          {{ $t("settings.position.description") }}
-        </p>
+        <div>
+          <h1 class="text-sm">{{ $t("settings.orientation.title") }}</h1>
+          <p class="text-muted-foreground text-xs">
+            {{ $t("settings.orientation.description") }}
+          </p>
+        </div>
+        <Select v-model="settings.orientation">
+          <SelectTrigger class="justify-self-end">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="horizontal">
+              {{ $t("settings.orientation.list.0") }}
+            </SelectItem>
+            <SelectItem value="vertical">
+              {{ $t("settings.orientation.list.1") }}
+            </SelectItem>
+          </SelectContent>
+        </Select>
       </div>
-      <div class="flex mt-4 gap-2">
-        <NumberField
-          v-model="settings.x"
-          :format-options="{ useGrouping: false }"
-          :step="1"
-          @update:model-value="updateWebviewWindowPosition"
-        >
-          <Label>X (px)</Label>
-          <NumberFieldContent>
-            <NumberFieldDecrement />
-            <NumberFieldInput />
-            <NumberFieldIncrement />
-          </NumberFieldContent>
-        </NumberField>
-        <NumberField
-          v-model="settings.y"
-          :format-options="{ useGrouping: false }"
-          :step="1"
-          @update:model-value="updateWebviewWindowPosition"
-        >
-          <Label>Y (px)</Label>
-          <NumberFieldContent>
-            <NumberFieldDecrement />
-            <NumberFieldInput />
-            <NumberFieldIncrement />
-          </NumberFieldContent>
-        </NumberField>
+      <Separator />
+      <div>
+        <div>
+          <h1 class="text-sm">{{ $t("settings.position.title") }}</h1>
+          <p class="text-muted-foreground text-xs">
+            {{ $t("settings.position.description") }}
+          </p>
+        </div>
+        <div class="flex gap-2 max-w-53.5 justify-self-end">
+          <NumberField
+            v-model="settings.x"
+            :format-options="{ useGrouping: false }"
+            :step="1"
+            @update:model-value="updateWebviewWindowPosition"
+          >
+            <NumberFieldContent>
+              <NumberFieldDecrement />
+              <NumberFieldInput />
+              <NumberFieldIncrement />
+            </NumberFieldContent>
+          </NumberField>
+          <NumberField
+            v-model="settings.y"
+            :format-options="{ useGrouping: false }"
+            :step="1"
+            @update:model-value="updateWebviewWindowPosition"
+          >
+            <NumberFieldContent>
+              <NumberFieldDecrement />
+              <NumberFieldInput />
+              <NumberFieldIncrement />
+            </NumberFieldContent>
+          </NumberField>
+        </div>
       </div>
-    </div>
-    <div>
-      <h1>{{ $t("settings.reset.title") }}</h1>
-      <p class="text-muted-foreground text-xs">
-        {{ $t("settings.reset.description") }}
-      </p>
-      <AlertDialog>
-        <AlertDialogTrigger as-child>
-          <Button variant="destructive" class="mt-4">
-            <Icon name="lucide:rotate-ccw" />
-            {{ $t("settings.reset.title") }}
-          </Button>
-        </AlertDialogTrigger>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {{ $t("settings.reset.dialog.title") }}
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              {{ $t("settings.reset.dialog.description") }}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>
-              {{ $t("settings.reset.dialog.cancel") }}
-            </AlertDialogCancel>
-            <AlertDialogAction variant="destructive" @click="resetSettings">
-              {{ $t("settings.reset.dialog.confirm") }}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
+      <Separator />
+      <div>
+        <div>
+          <h1 class="text-sm">{{ $t("settings.opacity.title") }}</h1>
+          <p class="text-muted-foreground text-xs">
+            {{ $t("settings.opacity.description") }}
+          </p>
+        </div>
+        <div class="flex flex-col gap-0 justify-self-end">
+          <NumberField
+            :model-value="settings.opacity / 100"
+            :format-options="{ style: 'percent' }"
+            :step="0.01"
+            @update:model-value="settings.opacity = $event * 100"
+          >
+            <NumberFieldContent>
+              <NumberFieldDecrement />
+              <NumberFieldInput class="rounded-b-none" />
+              <NumberFieldIncrement />
+            </NumberFieldContent>
+          </NumberField>
+          <Slider
+            class="*:data-[slot='slider-track']:rounded-t-none"
+            :model-value="[settings.opacity]"
+            :max="100"
+            :step="1"
+            :min="0"
+            @update:model-value="settings.opacity = $event![0]!"
+          />
+        </div>
+      </div>
+      <Separator />
+      <div>
+        <div>
+          <h1 class="text-sm">{{ $t("settings.drag.title") }}</h1>
+          <p class="text-muted-foreground text-xs">
+            {{ $t("settings.drag.description") }}
+          </p>
+        </div>
+        <Switch v-model="settings.drag" class="justify-self-end" />
+      </div>
+      <Separator />
+      <div>
+        <div>
+          <h1 class="text-sm">{{ $t("settings.reset.title") }}</h1>
+          <p class="text-muted-foreground text-xs">
+            {{ $t("settings.reset.description") }}
+          </p>
+        </div>
+        <AlertDialog>
+          <AlertDialogTrigger as-child>
+            <Button variant="destructive" class="justify-self-end">
+              {{ $t("settings.reset.title") }}
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                {{ $t("settings.reset.dialog.title") }}
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                {{ $t("settings.reset.dialog.description") }}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>
+                {{ $t("settings.reset.dialog.cancel") }}
+              </AlertDialogCancel>
+              <AlertDialogAction variant="destructive" @click="resetSettings">
+                {{ $t("settings.reset.dialog.confirm") }}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+    </Card>
   </section>
 </template>
