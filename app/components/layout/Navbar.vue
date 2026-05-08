@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { getVersion } from "@tauri-apps/api/app";
+
 const linkGroups: LinkGroup[] = [
   {
     name: "navbar.linkGroups.0.name",
@@ -36,6 +38,8 @@ const linkGroups: LinkGroup[] = [
     ],
   },
 ];
+
+const version = await getVersion();
 </script>
 
 <template>
@@ -61,6 +65,6 @@ const linkGroups: LinkGroup[] = [
         </Button>
       </li>
     </ul>
-    <span class="text-muted-foreground text-xs mt-auto">v1.0.0</span>
+    <span class="text-muted-foreground text-xs mt-auto">v{{ version }}</span>
   </nav>
 </template>
