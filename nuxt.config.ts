@@ -17,6 +17,7 @@ export default defineNuxtConfig({
   devtools: { enabled: false },
   ssr: false,
   i18n: {
+    detectBrowserLanguage: false,
     defaultLocale: "tr",
     locales: [
       {

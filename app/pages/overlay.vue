@@ -34,7 +34,7 @@ const squareStyle = computed(() => ({
 </script>
 
 <template>
-  <div
+  <section
     class="flex items-center gap-0.5"
     :class="{
       'flex-row': settings.orientation === 'horizontal',
@@ -67,5 +67,5 @@ const squareStyle = computed(() => ({
     >
       <Icon name="lucide-grip" class="pointer-events-none" :style="iconStyle" />
     </Button>
-  </div>
+  </section>
 </template>

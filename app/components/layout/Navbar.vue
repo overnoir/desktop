@@ -23,17 +23,17 @@ const linkGroups: LinkGroup[] = [
       {
         icon: "bi:discord",
         name: "navbar.linkGroups.1.links.0",
-        to: "/discord",
+        to: "/#",
       },
       {
         icon: "simple-icons:kick",
         name: "navbar.linkGroups.1.links.1",
-        to: "/kick",
+        to: "/#",
       },
       {
         icon: "bi:steam",
         name: "navbar.linkGroups.1.links.2",
-        to: "/steam",
+        to: "/#",
       },
     ],
   },
