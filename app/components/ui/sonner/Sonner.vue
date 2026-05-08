@@ -11,12 +11,17 @@ const props = withDefaults(defineProps<ToasterProps>(), {
   <Sonner
     :class="cn('toaster group', props.class)"
     :style="{
-      '--normal-bg': 'var(--popover)',
       '--normal-text': 'var(--popover-foreground)',
       '--normal-border': 'var(--border)',
       '--border-radius': 'var(--radius)',
+      '--normal-bg': 'var(--popover)',
     }"
     v-bind="props"
+    :toast-options="{
+      classes: {
+        closeButton: 'border-border! text-foreground! hover:bg-popover!',
+      },
+    }"
   >
     <template #success-icon>
       <Icon name="lucide:circle-check" class="size-3" />
