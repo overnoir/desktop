@@ -1,52 +1,23 @@
 <script setup lang="ts">
-import {
-  getCurrentWebviewWindow,
-  getAllWebviewWindows,
-  WebviewWindow,
-} from "@tauri-apps/api/webviewWindow";
+import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 
 definePageMeta({
   layout: "overlay",
 });
 
-const currentWebviewWindow = getCurrentWebviewWindow();
+const overlayWebviewWindow = getCurrentWebviewWindow();
 const { settings } = storeToRefs(useSettingsStore());
 const dragArea = ref<HTMLElement | null>(null);
-
-async function openMain() {
-  const allWebviewWindows = await getAllWebviewWindows();
-  const mainWebviewWindow = allWebviewWindows.find(
-    ({ label }) => label === "main",
-  );
-  if (mainWebviewWindow) {
-    await mainWebviewWindow.unminimize();
-    await mainWebviewWindow.show();
-    await mainWebviewWindow.setFocus();
-  } else {
-    const mainWebviewWindow = new WebviewWindow("main", {
-      acceptFirstMouse: true,
-      skipTaskbar: true,
-      resizable: false,
-      title: "Radar",
-      height: 600,
-      width: 800,
-    });
-    mainWebviewWindow.once("initialized", async () => {
-      await mainWebviewWindow.unminimize();
-      await mainWebviewWindow.show();
-      await mainWebviewWindow.setFocus();
-    });
-  }
-}
+const { open } = useMainWebviewWindow();
 
 useMousePressed({
   async onReleased() {
-    const { x, y } = await currentWebviewWindow.outerPosition();
+    const { x, y } = await overlayWebviewWindow.outerPosition();
     settings.value.x = x;
     settings.value.y = y;
   },
   async onPressed() {
-    await currentWebviewWindow.startDragging();
+    await overlayWebviewWindow.startDragging();
   },
   target: dragArea,
 });
@@ -67,7 +38,7 @@ useMousePressed({
       class="size-9 rounded-lg select-none pointer-events-none"
       alt="Avatar"
     />
-    <Button class="select-none" variant="ghost" size="icon" @click="openMain">
+    <Button class="select-none" variant="ghost" size="icon" @click="open">
       <Icon name="lucide:settings" />
     </Button>
     <div
