@@ -43,7 +43,9 @@ const version = await getVersion();
 </script>
 
 <template>
-  <nav class="border-r p-4 w-50 shrink-0 sticky top-0 h-screen flex flex-col">
+  <nav
+    class="border-r p-4 pt-10 w-50 shrink-0 sticky top-0 h-screen flex flex-col"
+  >
     <NuxtImg src="/logo.png" alt="Logo" class="size-10" />
     <ul v-for="linkGroup in linkGroups" :key="linkGroup.name" class="mt-4">
       <h1 class="text-muted-foreground text-xs font-semibold mb-1">

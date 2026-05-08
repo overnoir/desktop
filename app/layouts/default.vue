@@ -4,6 +4,7 @@ import "vue-sonner/style.css";
 
 <template>
   <div class="flex min-h-screen">
+    <LayoutTitlebar />
     <LayoutNavbar />
     <div class="w-full">
       <LayoutHeader />

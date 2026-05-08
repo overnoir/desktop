@@ -17,7 +17,9 @@ export default function () {
       await mainWebviewWindow.setFocus();
     } else {
       const mainWebviewWindow = new WebviewWindow("main", {
+        titleBarStyle: "overlay",
         acceptFirstMouse: true,
+        hiddenTitle: true,
         skipTaskbar: true,
         resizable: false,
         title: "Radar",
