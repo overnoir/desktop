@@ -14,6 +14,7 @@ export type Settings = {
   theme: "light" | "dark" | "system";
   opacity: number;
   drag: boolean;
+  size: number;
   x: number;
   y: number;
 };

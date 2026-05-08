@@ -39,6 +39,10 @@ export default {
       title: "Saydamlık",
       description: "Uygulama arayüzünün saydamlık seviyesini ayarlayın.",
     },
+    size: {
+      title: "Boyut",
+      description: "Uygulama boyutunu ayarlayın.",
+    },
     orientation: {
       title: "Yerleşim Yönü",
       description: "Uygulama düzeninin yönünü belirleyin.",

@@ -21,6 +21,16 @@ useMousePressed({
   },
   target: dragArea,
 });
+
+const iconStyle = computed(() => ({
+  height: `${settings.value.size / 2.2}px`,
+  width: `${settings.value.size / 2.2}px`,
+}));
+
+const squareStyle = computed(() => ({
+  height: `${settings.value.size}px`,
+  width: `${settings.value.size}px`,
+}));
 </script>
 
 <template>
@@ -35,29 +45,27 @@ useMousePressed({
       v-for="i in 3"
       :key="i"
       src="https://avatars.githubusercontent.com/u/121391005?v=4"
-      class="size-9 rounded-lg select-none pointer-events-none"
+      class="rounded-lg select-none pointer-events-none"
+      :style="squareStyle"
       alt="Avatar"
     />
-    <Button class="select-none" variant="ghost" size="icon" @click="open">
-      <Icon name="lucide:settings" />
+    <Button
+      :style="squareStyle"
+      class="select-none"
+      variant="ghost"
+      size="icon"
+      @click="open"
+    >
+      <Icon name="lucide:settings" :style="iconStyle" />
     </Button>
-    <div
+    <Button
       v-show="settings.drag"
       ref="dragArea"
-      class="bg-muted rounded-md grid place-items-center select-none cursor-grab active:cursor-grabbing"
-      :class="{
-        'h-9 w-6': settings.orientation === 'horizontal',
-        'h-6 w-9': settings.orientation === 'vertical',
-      }"
+      class="select-none cursor-grab active:cursor-grabbing"
+      :style="squareStyle"
+      variant="ghost"
     >
-      <Icon
-        :name="
-          settings.orientation === 'horizontal'
-            ? 'lucide:grip-vertical'
-            : 'lucide:grip-horizontal'
-        "
-        class="pointer-events-none"
-      />
-    </div>
+      <Icon name="lucide-grip" class="pointer-events-none" :style="iconStyle" />
+    </Button>
   </div>
 </template>

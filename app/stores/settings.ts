@@ -4,6 +4,7 @@ export const useSettingsStore = defineStore("settings", () => {
     theme: "system",
     opacity: 100,
     drag: true,
+    size: 36,
     x: 0,
     y: 0,
   };

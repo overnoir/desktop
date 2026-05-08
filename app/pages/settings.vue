@@ -36,7 +36,7 @@ async function resetSettings() {
       <p class="text-muted-foreground text-xs">
         {{ $t("settings.theme.description") }}
       </p>
-      <div class="grid grid-cols-3 gap-2 mt-4">
+      <div class="flex gap-2 mt-4">
         <Button
           :variant="settings.theme === 'light' ? 'outline' : 'secondary'"
           @click="settings.theme = 'light'"
@@ -76,14 +76,7 @@ async function resetSettings() {
           {{ $t("settings.opacity.description") }}
         </p>
       </div>
-      <div class="flex items-center mt-4 gap-6">
-        <Slider
-          :model-value="[settings.opacity]"
-          :max="100"
-          :step="1"
-          :min="0"
-          @update:model-value="settings.opacity = $event![0]!"
-        />
+      <div class="flex flex-col mt-4 gap-6 w-max">
         <NumberField
           :model-value="settings.opacity / 100"
           :format-options="{
@@ -98,6 +91,35 @@ async function resetSettings() {
             <NumberFieldIncrement />
           </NumberFieldContent>
         </NumberField>
+        <Slider
+          :model-value="[settings.opacity]"
+          :max="100"
+          :step="1"
+          :min="0"
+          @update:model-value="settings.opacity = $event![0]!"
+        />
+      </div>
+    </div>
+    <div>
+      <div>
+        <h1>{{ $t("settings.size.title") }}</h1>
+        <p class="text-muted-foreground text-xs">
+          {{ $t("settings.size.description") }}
+        </p>
+      </div>
+      <div class="flex items-center mt-4 gap-6">
+        <NumberField
+          v-model="settings.size"
+          :format-options="{ useGrouping: false }"
+          :min="1"
+          :step="1"
+        >
+          <NumberFieldContent>
+            <NumberFieldDecrement />
+            <NumberFieldInput />
+            <NumberFieldIncrement />
+          </NumberFieldContent>
+        </NumberField>
       </div>
     </div>
     <div>
@@ -105,7 +127,7 @@ async function resetSettings() {
       <p class="text-muted-foreground text-xs">
         {{ $t("settings.orientation.description") }}
       </p>
-      <div class="grid grid-cols-2 gap-2 mt-4">
+      <div class="flex gap-2 mt-4">
         <Button
           :variant="
             settings.orientation === 'horizontal' ? 'outline' : 'secondary'
@@ -133,7 +155,7 @@ async function resetSettings() {
           {{ $t("settings.position.description") }}
         </p>
       </div>
-      <div class="grid grid-cols-2 mt-4 gap-2">
+      <div class="flex mt-4 gap-2">
         <NumberField
           v-model="settings.x"
           :format-options="{ useGrouping: false }"

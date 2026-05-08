@@ -14,7 +14,7 @@ const title = computed(() => {
 </script>
 
 <template>
-  <header class="border-b p-4 sticky top-0 bg-background">
+  <header class="border-b p-4 sticky top-0 bg-background z-40">
     <h1 class="text-xl font-semibold">
       {{ title }}
     </h1>
