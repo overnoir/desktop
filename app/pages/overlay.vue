@@ -47,7 +47,7 @@ useMousePressed({
         height: `${settings.size}px`,
         width: `${settings.size}px`,
       }"
-      class="select-none"
+      class="select-none hover:bg-transparent dark:hover:bg-transparent active:bg-accent dark:active:bg-accent/50"
       variant="ghost"
       size="icon"
       @click="open"
@@ -57,7 +57,7 @@ useMousePressed({
     <Button
       v-show="settings.drag"
       ref="dragArea"
-      class="select-none cursor-grab active:cursor-grabbing"
+      class="select-none hover:bg-transparent dark:hover:bg-transparent active:bg-accent dark:active:bg-accent/50"
       :style="{
         height: `${settings.size}px`,
         width: `${settings.size}px`,
