@@ -1,3 +1,5 @@
+import type { Locale } from "vue-i18n";
+
 //#region Enums
 export enum Orientation {
   Horizontal = "horizontal",
@@ -25,10 +27,10 @@ export type LinkGroup = {
 };
 
 export type Settings = {
-  locale: ReturnType<typeof useI18n>["localeCodes"]["value"][number];
   orientation: Orientation;
   autoStart: boolean;
   opacity: number;
+  locale: Locale;
   drag: boolean;
   theme: Theme;
   size: number;
