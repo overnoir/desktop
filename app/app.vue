@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const { settings } = storeToRefs(useSettingsStore());
 const isPreferredDark = usePreferredDark();
-
+const { setLocale } = useI18n();
 const systemTheme = computed(() => (isPreferredDark.value ? "dark" : "light"));
 
 function updateThemeClass() {
@@ -25,6 +25,8 @@ watch(
     updateThemeClass();
   },
 );
+
+watch(() => settings.value.locale, setLocale);
 
 watch(systemTheme, () => {
   if (settings.value.theme === "system") {

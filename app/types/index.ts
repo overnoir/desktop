@@ -1,3 +1,18 @@
+//#region Enums
+export enum Orientation {
+  Horizontal = "horizontal",
+  Vertical = "vertical",
+}
+
+export enum Theme {
+  System = "system",
+  Dark = "dark",
+  Light = "light",
+}
+
+//#endregion
+
+//#region Types
 export type Link = {
   icon: string;
   name: string;
@@ -10,11 +25,13 @@ export type LinkGroup = {
 };
 
 export type Settings = {
-  orientation: "horizontal" | "vertical";
-  theme: "light" | "dark" | "system";
+  locale: ReturnType<typeof useI18n>["localeCodes"]["value"][number];
+  orientation: Orientation;
   opacity: number;
   drag: boolean;
+  theme: Theme;
   size: number;
   x: number;
   y: number;
 };
+//#endregion

@@ -1,7 +1,11 @@
 export const useSettingsStore = defineStore("settings", () => {
+  const { getBrowserLocale, defaultLocale } = useI18n();
+
   const defaultSettings: Settings = {
-    orientation: "horizontal",
-    theme: "system",
+    locale:
+      (getBrowserLocale() as Settings["locale"] | undefined) || defaultLocale,
+    orientation: Orientation.Horizontal,
+    theme: Theme.System,
     opacity: 100,
     drag: true,
     size: 36,

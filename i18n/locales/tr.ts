@@ -27,7 +27,13 @@ export default {
     theme: {
       title: "Tema",
       description: "Uygulamanın görünüm temasını özelleştirin.",
-      list: ["Sistem", "Koyu", "Açık"],
+      system: "Sistem",
+      light: "Açık",
+      dark: "Koyu",
+    },
+    locale: {
+      title: "Dil",
+      description: "Uygulama arayüz dilini seçin.",
     },
     drag: {
       title: "Sürükleme",
@@ -44,7 +50,8 @@ export default {
     orientation: {
       title: "Yerleşim Yönü",
       description: "Uygulama düzeninin yönünü belirleyin.",
-      list: ["Yatay", "Dikey"],
+      horizontal: "Yatay",
+      vertical: "Dikey",
     },
     position: {
       title: "Pozisyon",

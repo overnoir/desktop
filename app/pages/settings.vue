@@ -13,7 +13,7 @@ const overlayWebviewWindow = allWebviewWindows.find(
 );
 const settingsStore = useSettingsStore();
 const { settings } = storeToRefs(settingsStore);
-const { t } = useI18n();
+const { t, locales } = useI18n();
 
 async function updateWebviewWindowPosition() {
   await overlayWebviewWindow?.setPosition(
@@ -31,7 +31,7 @@ async function resetSettings() {
 <template>
   <section>
     <Card
-      class="p-4 gap-4 [&>div]:flex [&>div]:gap-5 [&>div]:items-center [&>div]:justify-between"
+      class="p-4 gap-4 [&>div]:flex [&>div]:gap-4 [&>div]:items-center [&>div]:justify-between"
     >
       <div>
         <div>
@@ -41,18 +41,16 @@ async function resetSettings() {
           </p>
         </div>
         <Select v-model="settings.theme">
-          <SelectTrigger class="justify-self-end">
+          <SelectTrigger class="justify-self-end shrink-0">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="system">
-              {{ $t("settings.theme.list.0") }}
-            </SelectItem>
-            <SelectItem value="dark">
-              {{ $t("settings.theme.list.1") }}
-            </SelectItem>
-            <SelectItem value="light">
-              {{ $t("settings.theme.list.2") }}
+            <SelectItem
+              v-for="theme in Object.values(Theme)"
+              :key="theme"
+              :value="theme"
+            >
+              {{ $t(`settings.theme.${theme}`) }}
             </SelectItem>
           </SelectContent>
         </Select>
@@ -68,7 +66,7 @@ async function resetSettings() {
         <NumberField
           v-model="settings.size"
           :format-options="{ useGrouping: false }"
-          class="justify-self-end"
+          class="justify-self-end shrink-0"
           :step="1"
           :min="1"
         >
@@ -88,15 +86,16 @@ async function resetSettings() {
           </p>
         </div>
         <Select v-model="settings.orientation">
-          <SelectTrigger class="justify-self-end">
+          <SelectTrigger class="justify-self-end shrink-0">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="horizontal">
-              {{ $t("settings.orientation.list.0") }}
-            </SelectItem>
-            <SelectItem value="vertical">
-              {{ $t("settings.orientation.list.1") }}
+            <SelectItem
+              v-for="orientation in Object.values(Orientation)"
+              :key="orientation"
+              :value="orientation"
+            >
+              {{ $t(`settings.orientation.${orientation}`) }}
             </SelectItem>
           </SelectContent>
         </Select>
@@ -109,7 +108,7 @@ async function resetSettings() {
             {{ $t("settings.position.description") }}
           </p>
         </div>
-        <div class="flex gap-2 max-w-53.5 justify-self-end">
+        <div class="flex gap-2 max-w-53.5 justify-self-end shrink-0">
           <NumberField
             v-model="settings.x"
             :format-options="{ useGrouping: false }"
@@ -144,7 +143,7 @@ async function resetSettings() {
             {{ $t("settings.opacity.description") }}
           </p>
         </div>
-        <div class="flex flex-col gap-0 justify-self-end">
+        <div class="flex flex-col justify-self-end shrink-0">
           <NumberField
             :model-value="settings.opacity / 100"
             :format-options="{ style: 'percent' }"
@@ -153,7 +152,7 @@ async function resetSettings() {
           >
             <NumberFieldContent>
               <NumberFieldDecrement />
-              <NumberFieldInput class="rounded-b-none" />
+              <NumberFieldInput class="rounded-b-none border-b-0" />
               <NumberFieldIncrement />
             </NumberFieldContent>
           </NumberField>
@@ -175,7 +174,30 @@ async function resetSettings() {
             {{ $t("settings.drag.description") }}
           </p>
         </div>
-        <Switch v-model="settings.drag" class="justify-self-end" />
+        <Switch v-model="settings.drag" class="justify-self-end shrink-0" />
+      </div>
+      <Separator />
+      <div>
+        <div>
+          <h1 class="text-sm">{{ $t("settings.locale.title") }}</h1>
+          <p class="text-muted-foreground text-xs">
+            {{ $t("settings.locale.description") }}
+          </p>
+        </div>
+        <Select v-model="settings.locale">
+          <SelectTrigger class="justify-self-end shrink-0">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem
+              v-for="{ code, name } in locales"
+              :key="code"
+              :value="code"
+            >
+              {{ name }}
+            </SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       <Separator />
       <div>
@@ -187,7 +209,7 @@ async function resetSettings() {
         </div>
         <AlertDialog>
           <AlertDialogTrigger as-child>
-            <Button variant="destructive" class="justify-self-end">
+            <Button variant="destructive" class="justify-self-end shrink-0">
               {{ $t("settings.reset.title") }}
             </Button>
           </AlertDialogTrigger>

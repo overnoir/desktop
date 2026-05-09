@@ -4,6 +4,9 @@ import {
 } from "@tauri-apps/api/webviewWindow";
 
 export default function () {
+  const { settings } = storeToRefs(useSettingsStore());
+  const localePath = useLocalePath();
+
   async function open() {
     const allWebviewWindows = await getAllWebviewWindows();
 
@@ -17,6 +20,7 @@ export default function () {
       await mainWebviewWindow.setFocus();
     } else {
       const mainWebviewWindow = new WebviewWindow("main", {
+        url: localePath("/", settings.value.locale),
         titleBarStyle: "overlay",
         acceptFirstMouse: true,
         hiddenTitle: true,

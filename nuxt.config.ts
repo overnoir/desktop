@@ -18,13 +18,19 @@ export default defineNuxtConfig({
   ssr: false,
   i18n: {
     detectBrowserLanguage: false,
-    defaultLocale: "tr",
+    defaultLocale: "en",
     locales: [
       {
         language: "tr-TR",
         name: "Türkçe",
         file: "tr.ts",
         code: "tr",
+      },
+      {
+        language: "en-EN",
+        name: "English",
+        file: "en.ts",
+        code: "en",
       },
     ],
   },
