@@ -31,6 +31,11 @@ export default {
       light: "Açık",
       dark: "Koyu",
     },
+    autoStart: {
+      title: "Otomatik Başlat",
+      description:
+        "Uygulamanın sistem başlangıcında otomatik olarak başlatılmasını ayarlayın.",
+    },
     locale: {
       title: "Dil",
       description: "Uygulama arayüz dilini seçin.",

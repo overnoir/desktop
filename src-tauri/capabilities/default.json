@@ -3,6 +3,7 @@
   "identifier": "default",
   "description": "enables the default permissions",
   "windows": ["main", "overlay"],
+  "platforms": ["macOS", "windows", "linux"],
   "permissions": [
     "core:default",
     "core:window:allow-set-position",
@@ -15,6 +16,7 @@
     "process:allow-exit",
     "core:window:allow-unminimize",
     "core:window:allow-set-focus",
-    "pinia:default"
+    "pinia:default",
+    "autostart:default"
   ]
 }

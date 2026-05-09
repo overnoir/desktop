@@ -27,6 +27,7 @@ export type LinkGroup = {
 export type Settings = {
   locale: ReturnType<typeof useI18n>["localeCodes"]["value"][number];
   orientation: Orientation;
+  autoStart: boolean;
   opacity: number;
   drag: boolean;
   theme: Theme;

@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { enable, disable } from "@tauri-apps/plugin-autostart";
+
 const { settings } = storeToRefs(useSettingsStore());
 const isPreferredDark = usePreferredDark();
 const { setLocale } = useI18n();
 const systemTheme = computed(() => (isPreferredDark.value ? "dark" : "light"));
-
 function updateThemeClass() {
   const html = document.documentElement;
 
@@ -27,6 +28,17 @@ watch(
 );
 
 watch(() => settings.value.locale, setLocale);
+
+watch(
+  () => settings.value.autoStart,
+  async (value) => {
+    if (value) {
+      await enable();
+    } else {
+      await disable();
+    }
+  },
+);
 
 watch(systemTheme, () => {
   if (settings.value.theme === "system") {
