@@ -49,10 +49,10 @@ useResizeObserver(document.body, async (entries) => {
 
 <template>
   <Html
-    class="hover:opacity-100! rounded-lg"
     :style="{
       opacity: `${settings.opacity}%`,
     }"
+    class="rounded-lg"
   >
     <Body class="size-max overflow-hidden">
       <main class="p-0.5 border rounded-lg">
