@@ -1,5 +1,3 @@
-import type { Locale } from "vue-i18n";
-
 //#region Enums
 export enum Orientation {
   Horizontal = "horizontal",
@@ -12,6 +10,10 @@ export enum Theme {
   Light = "light",
 }
 
+export enum Locale {
+  Turkish = "tr",
+  English = "en",
+}
 //#endregion
 
 //#region Types

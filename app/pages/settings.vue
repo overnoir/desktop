@@ -63,19 +63,28 @@ async function resetSettings() {
             {{ $t("settings.size.description") }}
           </p>
         </div>
-        <NumberField
-          v-model="settings.size"
-          :format-options="{ useGrouping: false }"
-          class="justify-self-end shrink-0"
-          :step="1"
-          :min="1"
-        >
-          <NumberFieldContent>
-            <NumberFieldDecrement />
-            <NumberFieldInput />
-            <NumberFieldIncrement />
-          </NumberFieldContent>
-        </NumberField>
+        <div class="flex flex-col justify-self-end shrink-0">
+          <NumberField
+            :model-value="settings.size"
+            :format-options="{ useGrouping: false }"
+            :min="0"
+            :max="100"
+            @update:model-value="settings.size = $event"
+          >
+            <NumberFieldContent>
+              <NumberFieldDecrement />
+              <NumberFieldInput class="rounded-b-none border-b-0" />
+              <NumberFieldIncrement />
+            </NumberFieldContent>
+          </NumberField>
+          <Slider
+            class="*:data-[slot='slider-track']:rounded-t-none"
+            :model-value="[settings.size]"
+            :max="100"
+            :min="0"
+            @update:model-value="settings.size = $event![0]!"
+          />
+        </div>
       </div>
       <Separator />
       <div>
@@ -148,6 +157,8 @@ async function resetSettings() {
             :model-value="settings.opacity / 100"
             :format-options="{ style: 'percent' }"
             :step="0.01"
+            :min="0"
+            :max="1"
             @update:model-value="settings.opacity = $event * 100"
           >
             <NumberFieldContent>
@@ -160,7 +171,6 @@ async function resetSettings() {
             class="*:data-[slot='slider-track']:rounded-t-none"
             :model-value="[settings.opacity]"
             :max="100"
-            :step="1"
             :min="0"
             @update:model-value="settings.opacity = $event![0]!"
           />
