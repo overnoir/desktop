@@ -30,6 +30,7 @@ export type LinkGroup = {
 
 export type Settings = {
   orientation: Orientation;
+  preventCapture: boolean;
   autoStart: boolean;
   opacity: number;
   locale: Locale;

@@ -36,6 +36,11 @@ export default {
       description:
         "Uygulamanın sistem başlangıcında otomatik olarak başlatılmasını ayarlayın.",
     },
+    preventCapture: {
+      title: "Yakalama Engeli",
+      description:
+        "Uygulamanın diğer uygulamalar tarafından yakalanmasını engeller (örneğin ekran kaydı uygulamaları).",
+    },
     locale: {
       title: "Dil",
       description: "Uygulama arayüz dilini seçin.",

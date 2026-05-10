@@ -1,10 +1,13 @@
 <script setup lang="ts">
+import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { enable, disable } from "@tauri-apps/plugin-autostart";
 
+const currentWebViewWindow = getCurrentWebviewWindow();
 const { settings } = storeToRefs(useSettingsStore());
 const isPreferredDark = usePreferredDark();
-const { setLocale } = useI18n();
 const systemTheme = computed(() => (isPreferredDark.value ? "dark" : "light"));
+const { setLocale } = useI18n();
+
 function updateThemeClass() {
   const html = document.documentElement;
 
@@ -27,7 +30,19 @@ watch(
   },
 );
 
-watch(() => settings.value.locale, setLocale);
+watch(
+  () => settings.value.preventCapture,
+  async (value) => {
+    await currentWebViewWindow.setContentProtected(value);
+  },
+);
+
+watch(
+  () => settings.value.locale,
+  async (value) => {
+    await setLocale(value);
+  },
+);
 
 watch(
   () => settings.value.autoStart,

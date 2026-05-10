@@ -1,6 +1,7 @@
 const defaultSettings: Settings = {
   orientation: Orientation.Horizontal,
   locale: Locale.Turkish,
+  preventCapture: false,
   theme: Theme.System,
   autoStart: false,
   opacity: 100,
@@ -24,19 +25,25 @@ export const useSettingsStore = defineStore(
   {
     tauri: {
       hooks: {
-        beforeFrontendSync({ settings }) {
-          return safeParseWithDefault(
-            settingsSchema,
-            defaultSettings,
-            settings,
-          );
+        beforeFrontendSync(state) {
+          return {
+            ...state,
+            settings: safeParseWithDefault(
+              settingsSchema,
+              defaultSettings,
+              state.settings,
+            ),
+          };
         },
-        beforeBackendSync({ settings }) {
-          return safeParseWithDefault(
-            settingsSchema,
-            defaultSettings,
-            settings,
-          );
+        beforeBackendSync(state) {
+          return {
+            ...state,
+            settings: safeParseWithDefault(
+              settingsSchema,
+              defaultSettings,
+              state.settings,
+            ),
+          };
         },
       },
     },
