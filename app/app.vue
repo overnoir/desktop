@@ -6,6 +6,7 @@ const currentWebViewWindow = getCurrentWebviewWindow();
 const { settings } = storeToRefs(useSettingsStore());
 const isPreferredDark = usePreferredDark();
 const systemTheme = computed(() => (isPreferredDark.value ? "dark" : "light"));
+const { updateMenu } = useTray();
 const { setLocale } = useI18n();
 
 function updateThemeClass() {
@@ -41,6 +42,7 @@ watch(
   () => settings.value.locale,
   async (value) => {
     await setLocale(value);
+    await updateMenu();
   },
 );
 
