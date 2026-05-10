@@ -2,6 +2,8 @@ import { z } from "zod";
 
 export const settingsSchema = z.object({
   opacity: z.number().min(0).max(100),
+  x: z.number().min(-9999).max(9999),
+  y: z.number().min(-9999).max(9999),
   orientation: z.enum(Orientation),
   size: z.number().min(0).max(100),
   preventCapture: z.boolean(),
@@ -9,6 +11,4 @@ export const settingsSchema = z.object({
   locale: z.enum(Locale),
   theme: z.enum(Theme),
   drag: z.boolean(),
-  x: z.number(),
-  y: z.number(),
 });

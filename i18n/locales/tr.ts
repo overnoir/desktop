@@ -66,6 +66,7 @@ export default {
     position: {
       title: "Pozisyon",
       description: "Uygulama pozisyonunu ayarlayın.",
+      quickSelect: "Hızlı Seçim",
     },
     reset: {
       title: "Sıfırla",

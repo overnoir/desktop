@@ -28,7 +28,7 @@ export default function () {
         resizable: false,
         title: "Radar",
         height: 600,
-        width: 800,
+        width: 960,
       });
 
       mainWebviewWindow.once("initialized", async () => {

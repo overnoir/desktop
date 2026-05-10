@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { availableMonitors, type Monitor } from "@tauri-apps/api/window";
 import { getAllWebviewWindows } from "@tauri-apps/api/webviewWindow";
 import { LogicalPosition } from "@tauri-apps/api/dpi";
 import { toast } from "vue-sonner";
@@ -11,6 +12,7 @@ const allWebviewWindows = await getAllWebviewWindows();
 const overlayWebviewWindow = allWebviewWindows.find(
   ({ label }) => label === "overlay",
 );
+const monitors = await availableMonitors();
 const settingsStore = useSettingsStore();
 const { settings } = storeToRefs(settingsStore);
 const { t, locales } = useI18n();
@@ -25,6 +27,46 @@ async function resetSettings() {
   settingsStore.reset();
   await updateWebviewWindowPosition();
   toast(t("settings.reset.success"));
+}
+
+async function quickSelect(
+  { position, size }: { position: Monitor["position"]; size: Monitor["size"] },
+  index: number,
+) {
+  if (!overlayWebviewWindow) {
+    return;
+  }
+
+  const { width: overlayWidth, height: overlayHeight } =
+    await overlayWebviewWindow.outerSize();
+  const { width, height } = size;
+  const { x, y } = position;
+
+  const centerX = x + Math.round((width - overlayWidth) / 2);
+  const centerY = y + Math.round((height - overlayHeight) / 2);
+
+  const rightX = x + width - overlayWidth;
+  const bottomY = y + height - overlayHeight;
+
+  const positions: { x: number; y: number }[] = [
+    { x: x, y: y },
+    { x: centerX, y: y },
+    { x: rightX, y: y },
+    { x: x, y: centerY },
+    { x: rightX, y: centerY },
+    { x: x, y: bottomY },
+    { x: centerX, y: bottomY },
+    { x: rightX, y: bottomY },
+  ];
+
+  const pos = positions[index - (index > 5 ? 2 : 1)];
+
+  if (pos) {
+    settings.value.x = pos.x;
+    settings.value.y = pos.y;
+
+    await updateWebviewWindowPosition();
+  }
 }
 </script>
 
@@ -121,7 +163,8 @@ async function resetSettings() {
           <NumberField
             v-model="settings.x"
             :format-options="{ useGrouping: false }"
-            :step="1"
+            :min="-9999"
+            :max="9999"
             @update:model-value="updateWebviewWindowPosition"
           >
             <NumberFieldContent>
@@ -133,7 +176,8 @@ async function resetSettings() {
           <NumberField
             v-model="settings.y"
             :format-options="{ useGrouping: false }"
-            :step="1"
+            :min="-9999"
+            :max="9999"
             @update:model-value="updateWebviewWindowPosition"
           >
             <NumberFieldContent>
@@ -144,6 +188,45 @@ async function resetSettings() {
           </NumberField>
         </div>
       </div>
+      <Accordion type="single" collapsible class="border rounded-lg">
+        <AccordionItem value="quick-select" class="w-full">
+          <AccordionTrigger class="p-3 font-normal text-xs">{{
+            $t("settings.position.quickSelect")
+          }}</AccordionTrigger>
+          <AccordionContent class="grid grid-cols-3 gap-3 p-3 pt-0">
+            <div v-for="({ name, position, size }, i) in monitors" :key="i">
+              <h1 class="text-xs mb-1 text-muted-foreground">
+                {{ name }}
+              </h1>
+              <Card class="aspect-video grid grid-cols-3 gap-2.5 p-0">
+                <template v-for="j in 9" :key="j">
+                  <Button
+                    v-if="j !== 5"
+                    class="rounded-none"
+                    variant="outline"
+                    :class="{
+                      'rounded-tl-xl rounded-br-xl border-b-0 border-r-0':
+                        j === 9,
+                      'rounded-tr-xl rounded-bl-xl border-l-0 border-b-0':
+                        j === 7,
+                      'rounded-tl-xl rounded-br-xl border-l-0 border-t-0':
+                        j === 1,
+                      'rounded-tr-xl rounded-bl-xl border-t-0 border-r-0':
+                        j === 3,
+                      'rounded-b-xl border-t-0': j === 2,
+                      'rounded-r-xl border-l-0': j === 4,
+                      'rounded-l-xl border-r-0': j === 6,
+                      'rounded-t-xl border-b-0': j === 8,
+                    }"
+                    @click="quickSelect({ position, size }, j)"
+                  />
+                  <div v-else />
+                </template>
+              </Card>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
       <Separator />
       <div>
         <div>
