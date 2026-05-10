@@ -12,7 +12,7 @@ const { setLocale } = useI18n();
 function updateThemeClass() {
   const html = document.documentElement;
 
-  html.classList.remove("light", "dark");
+  html.classList.remove(...Object.values(Theme));
 
   const theme =
     settings.value.theme === "system"
