@@ -22,6 +22,8 @@ function updateThemeClass() {
   html.classList.add(theme);
 }
 
+await setLocale(settings.value.locale);
+
 updateThemeClass();
 
 watch(
