@@ -64,12 +64,14 @@ watch(systemTheme, () => {
     updateThemeClass();
   }
 });
+
+onMounted(async () => {
+  await currentWebViewWindow.show();
+});
 </script>
 
 <template>
-  <Html>
-    <NuxtLayout>
-      <NuxtPage />
-    </NuxtLayout>
-  </Html>
+  <NuxtLayout>
+    <NuxtPage />
+  </NuxtLayout>
 </template>

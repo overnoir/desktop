@@ -26,6 +26,7 @@ export default function () {
         hiddenTitle: true,
         skipTaskbar: true,
         resizable: false,
+        visible: false,
         title: "Radar",
         height: 600,
         width: 960,
