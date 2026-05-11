@@ -55,7 +55,7 @@ useMousePressed({
       :class="{
         'ring ring-inset ring-border': settings.background === false,
       }"
-      class="select-none bg-background!"
+      class="select-none bg-background! active:bg-muted!"
       :style="{
         'border-radius': `${radius}px`,
         height: `${settings.size}px`,
@@ -73,7 +73,7 @@ useMousePressed({
       :class="{
         'ring ring-inset ring-border': settings.background === false,
       }"
-      class="select-none bg-background!"
+      class="select-none bg-background! active:bg-muted!"
       :style="{
         'border-radius': `${radius}px`,
         height: `${settings.size}px`,

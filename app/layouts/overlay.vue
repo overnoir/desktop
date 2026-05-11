@@ -7,7 +7,7 @@ const { settings } = storeToRefs(useSettingsStore());
 const { create } = useTray();
 
 const radius = computed(
-  () => (settings.value.size * settings.value.radius) / 100 / 2 + 1,
+  () => (settings.value.size * settings.value.radius) / 100 / 2 + 3,
 );
 
 await overlayWebviewWindow.setPosition(
