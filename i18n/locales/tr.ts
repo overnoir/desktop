@@ -24,6 +24,8 @@ export default {
     quit: "Çıkış",
   },
   settings: {
+    advanced: "Gelişmiş",
+    overlay: "Overlay",
     theme: {
       title: "Tema",
       description: "Uygulamanın görünüm temasını özelleştirin.",

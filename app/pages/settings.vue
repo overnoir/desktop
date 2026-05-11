@@ -71,10 +71,12 @@ async function quickSelect(
 </script>
 
 <template>
-  <section>
+  <section class="grid gap-4 [&>div]:p-4 [&>div]:gap-4">
     <Card
-      class="p-4 gap-4 [&>div]:flex [&>div]:gap-4 [&>div]:items-center [&>div]:justify-between"
+      class="[&>div]:flex [&>div]:gap-4 [&>div]:items-center [&>div]:justify-between"
     >
+      <h1>{{ $t("settings.overlay") }}</h1>
+      <Separator />
       <div>
         <div>
           <h1 class="text-sm">{{ $t("settings.theme.title") }}</h1>
@@ -285,6 +287,34 @@ async function quickSelect(
       <Separator />
       <div>
         <div>
+          <h1 class="text-sm">{{ $t("settings.locale.title") }}</h1>
+          <p class="text-muted-foreground text-xs">
+            {{ $t("settings.locale.description") }}
+          </p>
+        </div>
+        <Select v-model="settings.locale">
+          <SelectTrigger class="justify-self-end shrink-0">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem
+              v-for="{ code, name } in locales"
+              :key="code"
+              :value="code"
+            >
+              {{ name }}
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </Card>
+    <Card
+      class="[&>div]:flex [&>div]:gap-4 [&>div]:items-center [&>div]:justify-between"
+    >
+      <h1>{{ $t("settings.advanced") }}</h1>
+      <Separator />
+      <div>
+        <div>
           <h1 class="text-sm">{{ $t("settings.autoStart.title") }}</h1>
           <p class="text-muted-foreground text-xs">
             {{ $t("settings.autoStart.description") }}
@@ -307,29 +337,6 @@ async function quickSelect(
           v-model="settings.preventCapture"
           class="justify-self-end shrink-0"
         />
-      </div>
-      <Separator />
-      <div>
-        <div>
-          <h1 class="text-sm">{{ $t("settings.locale.title") }}</h1>
-          <p class="text-muted-foreground text-xs">
-            {{ $t("settings.locale.description") }}
-          </p>
-        </div>
-        <Select v-model="settings.locale">
-          <SelectTrigger class="justify-self-end shrink-0">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem
-              v-for="{ code, name } in locales"
-              :key="code"
-              :value="code"
-            >
-              {{ name }}
-            </SelectItem>
-          </SelectContent>
-        </Select>
       </div>
       <Separator />
       <div>
