@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { LogicalPosition } from "@tauri-apps/api/dpi";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 
 definePageMeta({
@@ -15,6 +16,8 @@ useMousePressed({
     const { x, y } = await overlayWebviewWindow.outerPosition();
     settings.value.x = x;
     settings.value.y = y;
+    overlayWebviewWindow.setPosition(new LogicalPosition(x + 1, y + 1));
+    overlayWebviewWindow.setPosition(new LogicalPosition(x, y));
   },
   async onPressed() {
     await overlayWebviewWindow.startDragging();

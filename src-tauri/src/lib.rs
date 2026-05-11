@@ -7,18 +7,16 @@ use tauri_nspanel::{
 tauri_panel! {
     panel!(HoverActivatePanel {
         config: {
+            becomes_key_only_if_needed: true,
             can_become_main_window: false,
             can_become_key_window: true,
-            becomes_key_only_if_needed: true,
             is_floating_panel: true
         }
         with: {
             tracking_area: {
                 options: TrackingAreaOptions::new()
                     .active_always()
-                    .mouse_entered_and_exited()
-                    .mouse_moved()
-                    .cursor_update(),
+                    .mouse_entered_and_exited(),
                 auto_resize: true
             }
         }
