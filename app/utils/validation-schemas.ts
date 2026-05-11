@@ -7,6 +7,7 @@ export const settingsSchema = z.object({
   orientation: z.enum(Orientation),
   size: z.number().min(0).max(100),
   preventCapture: z.boolean(),
+  background: z.boolean(),
   autoStart: z.boolean(),
   locale: z.enum(Locale),
   theme: z.enum(Theme),

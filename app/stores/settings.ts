@@ -3,6 +3,7 @@ const defaultSettings: Settings = {
   locale: Locale.Turkish,
   preventCapture: false,
   theme: Theme.System,
+  background: true,
   autoStart: false,
   opacity: 100,
   drag: true,

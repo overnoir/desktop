@@ -49,6 +49,10 @@ export default {
       title: "Sürükleme",
       description: "Uygulamanın sürüklenebilir olup olmadığını belirleyin.",
     },
+    background: {
+      title: "Arka Plan",
+      description: "Uygulamanın arka plan görüntüsünü etkinleştirin.",
+    },
     opacity: {
       title: "Saydamlık",
       description: "Uygulama arayüzünün saydamlık seviyesini ayarlayın.",

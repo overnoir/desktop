@@ -272,6 +272,19 @@ async function quickSelect(
       <Separator />
       <div>
         <div>
+          <h1 class="text-sm">{{ $t("settings.background.title") }}</h1>
+          <p class="text-muted-foreground text-xs">
+            {{ $t("settings.background.description") }}
+          </p>
+        </div>
+        <Switch
+          v-model="settings.background"
+          class="justify-self-end shrink-0"
+        />
+      </div>
+      <Separator />
+      <div>
+        <div>
           <h1 class="text-sm">{{ $t("settings.autoStart.title") }}</h1>
           <p class="text-muted-foreground text-xs">
             {{ $t("settings.autoStart.description") }}

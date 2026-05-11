@@ -29,8 +29,18 @@ useResizeObserver(document.body, async (entries) => {
     }"
     class="rounded-lg"
   >
-    <Body class="size-max overflow-hidden">
-      <main class="p-0.5 border rounded-lg">
+    <Body
+      :class="{
+        'bg-transparent!': settings.background === false,
+      }"
+      class="size-max overflow-hidden"
+    >
+      <main
+        :class="{
+          'ring ring-border ring-inset': settings.background === true,
+        }"
+        class="p-0.5 rounded-lg"
+      >
         <slot />
       </main>
     </Body>

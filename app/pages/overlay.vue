@@ -43,11 +43,14 @@ useMousePressed({
       alt="Avatar"
     />
     <Button
+      class="select-none hover:bg-transparent dark:hover:bg-transparent active:bg-accent dark:active:bg-accent/50"
+      :class="{
+        'ring ring-border ring-inset': settings.background === false,
+      }"
       :style="{
         height: `${settings.size}px`,
         width: `${settings.size}px`,
       }"
-      class="select-none hover:bg-transparent dark:hover:bg-transparent active:bg-accent dark:active:bg-accent/50"
       variant="ghost"
       size="icon"
       @click="open"
@@ -58,6 +61,9 @@ useMousePressed({
       v-show="settings.drag"
       ref="dragArea"
       class="select-none hover:bg-transparent dark:hover:bg-transparent active:bg-accent dark:active:bg-accent/50"
+      :class="{
+        'ring ring-border ring-inset': settings.background === false,
+      }"
       :style="{
         height: `${settings.size}px`,
         width: `${settings.size}px`,
