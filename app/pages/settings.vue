@@ -75,7 +75,7 @@ async function quickSelect(
     <Card
       class="[&>div]:flex [&>div]:gap-4 [&>div]:items-center [&>div]:justify-between"
     >
-      <h1>{{ $t("settings.overlay") }}</h1>
+      <h1>{{ $t("settings.general") }}</h1>
       <Separator />
       <div>
         <div>
