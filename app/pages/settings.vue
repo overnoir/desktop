@@ -328,6 +328,19 @@ async function quickSelect(
       <Separator />
       <div>
         <div>
+          <h1 class="text-sm">{{ $t("settings.ignoreCursor.title") }}</h1>
+          <p class="text-muted-foreground text-xs">
+            {{ $t("settings.ignoreCursor.description") }}
+          </p>
+        </div>
+        <Switch
+          v-model="settings.ignoreCursor"
+          class="justify-self-end shrink-0"
+        />
+      </div>
+      <Separator />
+      <div>
+        <div>
           <h1 class="text-sm">{{ $t("settings.preventCapture.title") }}</h1>
           <p class="text-muted-foreground text-xs">
             {{ $t("settings.preventCapture.description") }}

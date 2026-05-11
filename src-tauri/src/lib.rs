@@ -28,6 +28,7 @@ tauri_panel! {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .invoke_handler(tauri::generate_handler![update_ignore_cursor])
         .plugin(tauri_plugin_single_instance::init(|_, _, _| {}))
         .plugin(tauri_plugin_autostart::Builder::new().build())
         .plugin(tauri_plugin_process::init())
@@ -90,4 +91,11 @@ fn init_panel(app_handle: &AppHandle) {
     panel.set_works_when_modal(true);
 
     panel.set_event_handler(Some(handler.as_ref()));
+}
+
+#[tauri::command]
+fn update_ignore_cursor(app_handle: AppHandle, value: bool) {
+    if let Ok(panel) = app_handle.get_webview_panel("overlay") {
+        panel.set_ignores_mouse_events(value);
+    }
 }

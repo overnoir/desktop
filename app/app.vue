@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { enable, disable } from "@tauri-apps/plugin-autostart";
+import { invoke } from "@tauri-apps/api/core";
 
 const currentWebViewWindow = getCurrentWebviewWindow();
 const { settings } = storeToRefs(useSettingsStore());
@@ -25,6 +26,13 @@ function updateThemeClass() {
 await setLocale(settings.value.locale);
 
 updateThemeClass();
+
+watch(
+  () => settings.value.ignoreCursor,
+  async (value) => {
+    await invoke("update_ignore_cursor", { value });
+  },
+);
 
 watch(
   () => settings.value.theme,
@@ -69,6 +77,7 @@ onMounted(async () => {
   await currentWebViewWindow.show();
   await currentWebViewWindow.unminimize();
   await currentWebViewWindow.setFocus();
+  await invoke("update_ignore_cursor", { value: settings.value.ignoreCursor });
 });
 </script>
 

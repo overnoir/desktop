@@ -5,6 +5,7 @@ const defaultSettings: Settings = {
   autoStart: await isEnabled(),
   locale: Locale.Turkish,
   preventCapture: false,
+  ignoreCursor: false,
   theme: Theme.System,
   background: true,
   opacity: 100,

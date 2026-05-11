@@ -55,6 +55,11 @@ export default {
       title: "Arka Plan",
       description: "Uygulamanın arka plan görüntüsünü etkinleştirin.",
     },
+    ignoreCursor: {
+      title: "Fare Yok Sayma",
+      description:
+        "Overlayın fareyi yoksaymasını sağlayın (fare eylemlerinin overlayın arkasına geçmesini sağlar).",
+    },
     opacity: {
       title: "Saydamlık",
       description: "Uygulama arayüzünün saydamlık seviyesini ayarlayın.",
