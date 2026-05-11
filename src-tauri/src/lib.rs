@@ -31,6 +31,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![update_ignore_cursor])
         .plugin(tauri_plugin_single_instance::init(|_, _, _| {}))
         .plugin(tauri_plugin_autostart::Builder::new().build())
+        .plugin(tauri_plugin_prevent_default::debug())
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_pinia::init())
         .plugin(tauri_nspanel::init())
