@@ -71,13 +71,13 @@ async function quickSelect(
 </script>
 
 <template>
-  <section class="grid gap-4 [&>div]:p-4 [&>div]:gap-4">
+  <section class="grid gap-4 [&>div]:p-0 [&>div]:gap-0">
     <Card
       class="[&>div]:flex [&>div]:gap-4 [&>div]:items-center [&>div]:justify-between"
     >
-      <h1>{{ $t("settings.general") }}</h1>
+      <h1 class="p-4">{{ $t("settings.general") }}</h1>
       <Separator />
-      <div>
+      <div class="p-4">
         <div>
           <h1 class="text-sm">{{ $t("settings.theme.title") }}</h1>
           <p class="text-muted-foreground text-xs">
@@ -100,7 +100,30 @@ async function quickSelect(
         </Select>
       </div>
       <Separator />
-      <div>
+      <div class="p-4">
+        <div>
+          <h1 class="text-sm">{{ $t("settings.locale.title") }}</h1>
+          <p class="text-muted-foreground text-xs">
+            {{ $t("settings.locale.description") }}
+          </p>
+        </div>
+        <Select v-model="settings.locale">
+          <SelectTrigger class="justify-self-end shrink-0">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem
+              v-for="{ code, name } in locales"
+              :key="code"
+              :value="code"
+            >
+              {{ name }}
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <Separator />
+      <div class="p-4">
         <div>
           <h1 class="text-sm">{{ $t("settings.size.title") }}</h1>
           <p class="text-muted-foreground text-xs">
@@ -109,11 +132,12 @@ async function quickSelect(
         </div>
         <div class="flex flex-col justify-self-end shrink-0">
           <NumberField
-            :model-value="settings.size"
-            :format-options="{ useGrouping: false }"
+            :model-value="settings.size / 100"
+            :format-options="{ style: 'percent' }"
+            :step="0.01"
             :min="0"
-            :max="100"
-            @update:model-value="settings.size = $event"
+            :max="1"
+            @update:model-value="settings.size = $event * 100"
           >
             <NumberFieldContent>
               <NumberFieldDecrement />
@@ -131,39 +155,7 @@ async function quickSelect(
         </div>
       </div>
       <Separator />
-      <div>
-        <div>
-          <h1 class="text-sm">{{ $t("settings.radius.title") }}</h1>
-          <p class="text-muted-foreground text-xs">
-            {{ $t("settings.radius.description") }}
-          </p>
-        </div>
-        <div class="flex flex-col justify-self-end shrink-0">
-          <NumberField
-            :model-value="settings.radius / 100"
-            :format-options="{ style: 'percent' }"
-            :step="0.01"
-            :min="0"
-            :max="1"
-            @update:model-value="settings.radius = $event * 100"
-          >
-            <NumberFieldContent>
-              <NumberFieldDecrement />
-              <NumberFieldInput class="rounded-b-none border-b-0" />
-              <NumberFieldIncrement />
-            </NumberFieldContent>
-          </NumberField>
-          <Slider
-            class="*:data-[slot='slider-track']:rounded-t-none"
-            :model-value="[settings.radius]"
-            :max="100"
-            :min="0"
-            @update:model-value="settings.radius = $event![0]!"
-          />
-        </div>
-      </div>
-      <Separator />
-      <div>
+      <div class="p-4">
         <div>
           <h1 class="text-sm">{{ $t("settings.orientation.title") }}</h1>
           <p class="text-muted-foreground text-xs">
@@ -186,7 +178,7 @@ async function quickSelect(
         </Select>
       </div>
       <Separator />
-      <div>
+      <div class="p-4">
         <div>
           <h1 class="text-sm">{{ $t("settings.position.title") }}</h1>
           <p class="text-muted-foreground text-xs">
@@ -222,7 +214,7 @@ async function quickSelect(
           </NumberField>
         </div>
       </div>
-      <Accordion type="single" collapsible class="border rounded-lg">
+      <Accordion type="single" collapsible class="border rounded-lg m-4 mt-0">
         <AccordionItem value="quick-select" class="w-full">
           <AccordionTrigger class="p-3 font-normal text-xs">{{
             $t("settings.position.quickSelect")
@@ -262,7 +254,20 @@ async function quickSelect(
         </AccordionItem>
       </Accordion>
       <Separator />
-      <div>
+      <div class="p-4">
+        <div>
+          <h1 class="text-sm">{{ $t("settings.background.title") }}</h1>
+          <p class="text-muted-foreground text-xs">
+            {{ $t("settings.background.description") }}
+          </p>
+        </div>
+        <Switch
+          v-model="settings.background"
+          class="justify-self-end shrink-0"
+        />
+      </div>
+      <Separator />
+      <div class="p-4">
         <div>
           <h1 class="text-sm">{{ $t("settings.opacity.title") }}</h1>
           <p class="text-muted-foreground text-xs">
@@ -294,7 +299,39 @@ async function quickSelect(
         </div>
       </div>
       <Separator />
-      <div>
+      <div class="p-4">
+        <div>
+          <h1 class="text-sm">{{ $t("settings.radius.title") }}</h1>
+          <p class="text-muted-foreground text-xs">
+            {{ $t("settings.radius.description") }}
+          </p>
+        </div>
+        <div class="flex flex-col justify-self-end shrink-0">
+          <NumberField
+            :model-value="settings.radius / 100"
+            :format-options="{ style: 'percent' }"
+            :step="0.01"
+            :min="0"
+            :max="1"
+            @update:model-value="settings.radius = $event * 100"
+          >
+            <NumberFieldContent>
+              <NumberFieldDecrement />
+              <NumberFieldInput class="rounded-b-none border-b-0" />
+              <NumberFieldIncrement />
+            </NumberFieldContent>
+          </NumberField>
+          <Slider
+            class="*:data-[slot='slider-track']:rounded-t-none"
+            :model-value="[settings.radius]"
+            :max="100"
+            :min="0"
+            @update:model-value="settings.radius = $event![0]!"
+          />
+        </div>
+      </div>
+      <Separator />
+      <div class="p-4">
         <div>
           <h1 class="text-sm">{{ $t("settings.drag.title") }}</h1>
           <p class="text-muted-foreground text-xs">
@@ -304,20 +341,7 @@ async function quickSelect(
         <Switch v-model="settings.drag" class="justify-self-end shrink-0" />
       </div>
       <Separator />
-      <div>
-        <div>
-          <h1 class="text-sm">{{ $t("settings.background.title") }}</h1>
-          <p class="text-muted-foreground text-xs">
-            {{ $t("settings.background.description") }}
-          </p>
-        </div>
-        <Switch
-          v-model="settings.background"
-          class="justify-self-end shrink-0"
-        />
-      </div>
-      <Separator />
-      <div>
+      <div class="p-4">
         <div>
           <h1 class="text-sm">{{ $t("settings.settings.title") }}</h1>
           <p class="text-muted-foreground text-xs">
@@ -326,36 +350,13 @@ async function quickSelect(
         </div>
         <Switch v-model="settings.settings" class="justify-self-end shrink-0" />
       </div>
-      <Separator />
-      <div>
-        <div>
-          <h1 class="text-sm">{{ $t("settings.locale.title") }}</h1>
-          <p class="text-muted-foreground text-xs">
-            {{ $t("settings.locale.description") }}
-          </p>
-        </div>
-        <Select v-model="settings.locale">
-          <SelectTrigger class="justify-self-end shrink-0">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem
-              v-for="{ code, name } in locales"
-              :key="code"
-              :value="code"
-            >
-              {{ name }}
-            </SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
     </Card>
     <Card
       class="[&>div]:flex [&>div]:gap-4 [&>div]:items-center [&>div]:justify-between"
     >
-      <h1>{{ $t("settings.advanced") }}</h1>
+      <h1 class="p-4">{{ $t("settings.advanced") }}</h1>
       <Separator />
-      <div>
+      <div class="p-4">
         <div>
           <h1 class="text-sm">{{ $t("settings.autoStart.title") }}</h1>
           <p class="text-muted-foreground text-xs">
@@ -368,7 +369,7 @@ async function quickSelect(
         />
       </div>
       <Separator />
-      <div>
+      <div class="p-4">
         <div>
           <h1 class="text-sm">{{ $t("settings.ignoreCursor.title") }}</h1>
           <p class="text-muted-foreground text-xs">
@@ -381,7 +382,7 @@ async function quickSelect(
         />
       </div>
       <Separator />
-      <div>
+      <div class="p-4">
         <div>
           <h1 class="text-sm">{{ $t("settings.preventCapture.title") }}</h1>
           <p class="text-muted-foreground text-xs">
@@ -394,7 +395,7 @@ async function quickSelect(
         />
       </div>
       <Separator />
-      <div>
+      <div class="p-4">
         <div>
           <h1 class="text-sm">{{ $t("settings.reset.title") }}</h1>
           <p class="text-muted-foreground text-xs">
