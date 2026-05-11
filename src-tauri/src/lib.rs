@@ -22,7 +22,7 @@ tauri_panel! {
         }
     })
 
-  panel_event!(MyPanelEventHandler {})
+    panel_event!(MyPanelEventHandler {})
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
