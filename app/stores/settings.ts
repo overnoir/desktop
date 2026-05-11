@@ -1,10 +1,12 @@
+import { isEnabled } from "@tauri-apps/plugin-autostart";
+
 const defaultSettings: Settings = {
   orientation: Orientation.Horizontal,
+  autoStart: await isEnabled(),
   locale: Locale.Turkish,
   preventCapture: false,
   theme: Theme.System,
   background: true,
-  autoStart: false,
   opacity: 100,
   drag: true,
   size: 40,
