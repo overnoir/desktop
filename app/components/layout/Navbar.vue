@@ -46,7 +46,9 @@ const version = await getVersion();
   <nav
     class="border-r p-4 pt-10 w-50 shrink-0 sticky top-0 h-screen flex flex-col bg-sidebar"
   >
-    <NuxtImg src="/logo.png" alt="Logo" class="size-10" />
+    <NuxtLinkLocale to="/" class="size-max">
+      <NuxtImg src="/logo.png" alt="Logo" class="size-10" />
+    </NuxtLinkLocale>
     <ul v-for="linkGroup in linkGroups" :key="linkGroup.name" class="mt-4">
       <h1 class="text-muted-foreground text-xs font-semibold mb-1">
         {{ $t(linkGroup.name) }}
