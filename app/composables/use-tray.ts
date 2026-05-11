@@ -29,7 +29,7 @@ export default function () {
     const tray = await TrayIcon.getById(id);
 
     if (tray) {
-      return;
+      await tray.close();
     }
 
     await TrayIcon.new({

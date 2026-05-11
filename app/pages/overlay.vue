@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { LogicalPosition } from "@tauri-apps/api/dpi";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { LogicalPosition } from "@tauri-apps/api/dpi";
 
 definePageMeta({
   layout: "overlay",

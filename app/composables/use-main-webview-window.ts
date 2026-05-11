@@ -15,11 +15,11 @@ export default function () {
     );
 
     if (mainWebviewWindow) {
-      await mainWebviewWindow.unminimize();
       await mainWebviewWindow.show();
+      await mainWebviewWindow.unminimize();
       await mainWebviewWindow.setFocus();
     } else {
-      const mainWebviewWindow = new WebviewWindow("main", {
+      new WebviewWindow("main", {
         url: localePath("/", settings.value.locale),
         titleBarStyle: "overlay",
         acceptFirstMouse: true,
@@ -30,12 +30,6 @@ export default function () {
         title: "Radar",
         height: 600,
         width: 960,
-      });
-
-      mainWebviewWindow.once("initialized", async () => {
-        await mainWebviewWindow.unminimize();
-        await mainWebviewWindow.show();
-        await mainWebviewWindow.setFocus();
       });
     }
   }

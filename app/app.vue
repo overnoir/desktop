@@ -67,6 +67,8 @@ watch(systemTheme, () => {
 
 onMounted(async () => {
   await currentWebViewWindow.show();
+  await currentWebViewWindow.unminimize();
+  await currentWebViewWindow.setFocus();
 });
 </script>
 
