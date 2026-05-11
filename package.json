@@ -9,6 +9,7 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
+    "tauri:build": "tauri build",
     "tauri:dev": "tauri dev"
   },
   "dependencies": {
