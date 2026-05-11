@@ -9,8 +9,9 @@ const defaultSettings: Settings = {
   theme: Theme.System,
   background: true,
   opacity: 100,
+  radius: 50,
   drag: true,
-  size: 40,
+  size: 50,
   x: 0,
   y: 0,
 };

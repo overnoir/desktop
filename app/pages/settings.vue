@@ -133,6 +133,38 @@ async function quickSelect(
       <Separator />
       <div>
         <div>
+          <h1 class="text-sm">{{ $t("settings.radius.title") }}</h1>
+          <p class="text-muted-foreground text-xs">
+            {{ $t("settings.radius.description") }}
+          </p>
+        </div>
+        <div class="flex flex-col justify-self-end shrink-0">
+          <NumberField
+            :model-value="settings.radius / 100"
+            :format-options="{ style: 'percent' }"
+            :step="0.01"
+            :min="0"
+            :max="1"
+            @update:model-value="settings.radius = $event * 100"
+          >
+            <NumberFieldContent>
+              <NumberFieldDecrement />
+              <NumberFieldInput class="rounded-b-none border-b-0" />
+              <NumberFieldIncrement />
+            </NumberFieldContent>
+          </NumberField>
+          <Slider
+            class="*:data-[slot='slider-track']:rounded-t-none"
+            :model-value="[settings.radius]"
+            :max="100"
+            :min="0"
+            @update:model-value="settings.radius = $event![0]!"
+          />
+        </div>
+      </div>
+      <Separator />
+      <div>
+        <div>
           <h1 class="text-sm">{{ $t("settings.orientation.title") }}</h1>
           <p class="text-muted-foreground text-xs">
             {{ $t("settings.orientation.description") }}

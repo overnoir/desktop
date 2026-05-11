@@ -68,6 +68,10 @@ export default {
       title: "Boyut",
       description: "Uygulama boyutunu ayarlayın.",
     },
+    radius: {
+      title: "Köşe Yuvarlaklığı",
+      description: "Uygulama köşelerinin yuvarlaklık seviyesini ayarlayın.",
+    },
     orientation: {
       title: "Yerleşim Yönü",
       description: "Uygulama düzeninin yönünü belirleyin.",

@@ -11,6 +11,10 @@ const { settings } = storeToRefs(useSettingsStore());
 const dragArea = ref<HTMLElement | null>(null);
 const { open } = useMainWebviewWindow();
 
+const radius = computed(
+  () => (settings.value.size * settings.value.radius) / 100 / 2,
+);
+
 useMousePressed({
   async onReleased() {
     const { x, y } = await overlayWebviewWindow.outerPosition();
@@ -38,19 +42,21 @@ useMousePressed({
       v-for="i in 3"
       :key="i"
       src="https://avatars.githubusercontent.com/u/121391005?v=4"
-      class="rounded-lg select-none pointer-events-none"
+      class="select-none pointer-events-none"
       :style="{
+        'border-radius': `${radius}px`,
         height: `${settings.size}px`,
         width: `${settings.size}px`,
       }"
       alt="Avatar"
     />
     <Button
-      class="select-none hover:bg-transparent dark:hover:bg-transparent active:bg-accent dark:active:bg-accent/50"
       :class="{
-        'ring ring-border ring-inset': settings.background === false,
+        'ring ring-inset ring-border': settings.background === false,
       }"
+      class="select-none bg-background!"
       :style="{
+        'border-radius': `${radius}px`,
         height: `${settings.size}px`,
         width: `${settings.size}px`,
       }"
@@ -63,11 +69,12 @@ useMousePressed({
     <Button
       v-show="settings.drag"
       ref="dragArea"
-      class="select-none hover:bg-transparent dark:hover:bg-transparent active:bg-accent dark:active:bg-accent/50"
       :class="{
-        'ring ring-border ring-inset': settings.background === false,
+        'ring ring-inset ring-border': settings.background === false,
       }"
+      class="select-none bg-background!"
       :style="{
+        'border-radius': `${radius}px`,
         height: `${settings.size}px`,
         width: `${settings.size}px`,
       }"

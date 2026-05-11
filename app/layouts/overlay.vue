@@ -6,6 +6,10 @@ const overlayWebviewWindow = getCurrentWebviewWindow();
 const { settings } = storeToRefs(useSettingsStore());
 const { create } = useTray();
 
+const radius = computed(
+  () => (settings.value.size * settings.value.radius) / 100 / 2 + 1,
+);
+
 await overlayWebviewWindow.setPosition(
   new LogicalPosition(settings.value.x, settings.value.y),
 );
@@ -25,21 +29,22 @@ useResizeObserver(document.body, async (entries) => {
 <template>
   <Html
     :style="{
+      'border-radius': `${radius}px`,
       opacity: `${settings.opacity}%`,
     }"
-    class="rounded-lg"
   >
     <Body
       :class="{
         'bg-transparent!': settings.background === false,
       }"
-      class="size-max overflow-hidden"
+      class="size-max overflow-hidden **:select-none **:transition-none"
     >
       <main
         :class="{
           'ring ring-border ring-inset': settings.background === true,
+          'p-0.5': settings.background,
         }"
-        class="p-0.5 rounded-lg"
+        :style="{ 'border-radius': `${radius}px` }"
       >
         <slot />
       </main>

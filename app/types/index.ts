@@ -36,6 +36,7 @@ export type Settings = {
   autoStart: boolean;
   opacity: number;
   locale: Locale;
+  radius: number;
   drag: boolean;
   theme: Theme;
   size: number;
