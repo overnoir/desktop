@@ -60,6 +60,11 @@ export default {
       description:
         "Overlayın fareyi yoksaymasını sağlayın (fare eylemlerinin overlayın arkasına geçmesini sağlar).",
     },
+    settings: {
+      title: "Ayarlar",
+      description:
+        "Ayarların görüntülenmesini etkinleştirin veya devre dışı bırakın.",
+    },
     opacity: {
       title: "Saydamlık",
       description: "Uygulama arayüzünün saydamlık seviyesini ayarlayın.",

@@ -34,6 +34,7 @@ export type Settings = {
   ignoreCursor: boolean;
   background: boolean;
   autoStart: boolean;
+  settings: boolean;
   opacity: number;
   locale: Locale;
   radius: number;

@@ -51,6 +51,7 @@ useMousePressed({
       alt="Avatar"
     />
     <Button
+      v-if="settings.settings"
       :class="{
         'ring ring-inset ring-border': settings.background === false,
       }"

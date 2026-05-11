@@ -8,6 +8,7 @@ const defaultSettings: Settings = {
   ignoreCursor: false,
   theme: Theme.System,
   background: true,
+  settings: true,
   opacity: 100,
   radius: 50,
   drag: true,

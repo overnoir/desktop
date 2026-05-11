@@ -319,6 +319,16 @@ async function quickSelect(
       <Separator />
       <div>
         <div>
+          <h1 class="text-sm">{{ $t("settings.settings.title") }}</h1>
+          <p class="text-muted-foreground text-xs">
+            {{ $t("settings.settings.description") }}
+          </p>
+        </div>
+        <Switch v-model="settings.settings" class="justify-self-end shrink-0" />
+      </div>
+      <Separator />
+      <div>
+        <div>
           <h1 class="text-sm">{{ $t("settings.locale.title") }}</h1>
           <p class="text-muted-foreground text-xs">
             {{ $t("settings.locale.description") }}

@@ -12,6 +12,7 @@ export const settingsSchema = z.object({
   background: z.boolean(),
   autoStart: z.boolean(),
   locale: z.enum(Locale),
+  settings: z.boolean(),
   theme: z.enum(Theme),
   drag: z.boolean(),
 });
