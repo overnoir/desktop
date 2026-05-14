@@ -25,9 +25,9 @@ export default function () {
         acceptFirstMouse: true,
         hiddenTitle: true,
         skipTaskbar: true,
+        title: "Overnoir",
         resizable: false,
         visible: false,
-        title: "Radar",
         height: 600,
         width: 960,
       });

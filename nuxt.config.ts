@@ -10,7 +10,6 @@ export default defineNuxtConfig({
     "@nuxtjs/i18n",
     "@vee-validate/nuxt",
     "@pinia/nuxt",
-    "pinia-plugin-persistedstate/nuxt",
     "@vueuse/nuxt",
   ],
   compatibilityDate: "2026-05-02",

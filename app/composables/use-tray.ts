@@ -6,7 +6,7 @@ import { Menu } from "@tauri-apps/api/menu";
 export default function () {
   const { open } = useMainWebviewWindow();
   const { t } = useI18n();
-  const id = "radar";
+  const id = "overnoir";
 
   async function generateMenu() {
     return await Menu.new({

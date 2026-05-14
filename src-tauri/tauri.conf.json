@@ -1,8 +1,8 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "radar",
+  "productName": "Overnoir",
   "version": "0.1.0",
-  "identifier": "radar",
+  "identifier": "com.overnoir",
   "build": {
     "beforeDevCommand": "bun run dev",
     "beforeBuildCommand": "bun run generate",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "Radar Overlay",
+        "title": "Overnoir Overlay",
         "label": "overlay",
         "url": "/overlay",
         "height": 800,
