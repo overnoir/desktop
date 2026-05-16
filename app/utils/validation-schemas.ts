@@ -8,11 +8,11 @@ export const settingsSchema = z.object({
   orientation: z.enum(Orientation),
   size: z.number().min(0).max(100),
   preventCapture: z.boolean(),
+  showBackground: z.boolean(),
   ignoreCursor: z.boolean(),
-  background: z.boolean(),
+  showSettings: z.boolean(),
+  isDraggable: z.boolean(),
   autoStart: z.boolean(),
   locale: z.enum(Locale),
-  settings: z.boolean(),
   theme: z.enum(Theme),
-  drag: z.boolean(),
-});
+}) satisfies z.ZodType<Settings>;

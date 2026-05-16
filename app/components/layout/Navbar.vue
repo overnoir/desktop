@@ -22,17 +22,7 @@ const linkGroups: LinkGroup[] = [
     links: [
       {
         icon: "bi:discord",
-        name: "navbar.linkGroups.1.links.0",
-        to: "/#",
-      },
-      {
-        icon: "simple-icons:kick",
-        name: "navbar.linkGroups.1.links.1",
-        to: "/#",
-      },
-      {
-        icon: "bi:steam",
-        name: "navbar.linkGroups.1.links.2",
+        name: "Discord",
         to: "/#",
       },
     ],
@@ -46,26 +36,27 @@ const version = await getVersion();
   <nav
     class="border-r p-4 pt-12 w-50 shrink-0 sticky top-0 h-screen flex flex-col bg-sidebar"
   >
-    <NuxtLinkLocale to="/" class="inline-flex items-center gap-2">
-      <NuxtImg src="/logo.png" alt="Logo" class="size-8" />
+    <NuxtLinkLocale
+      class="inline-flex items-center gap-2 select-none size-max"
+      to="/"
+    >
+      <NuxtImg src="/logo.png" alt="Logo" class="size-8 pointer-events-none" />
       <span class="font-semibold"> Overnoir </span>
     </NuxtLinkLocale>
-    <ul v-for="linkGroup in linkGroups" :key="linkGroup.name" class="mt-4">
+    <ul v-for="{ links, name } in linkGroups" :key="name" class="mt-4">
       <h1 class="text-muted-foreground text-xs font-semibold mb-1">
-        {{ $t(linkGroup.name) }}
+        {{ $t(name) }}
       </h1>
-      <li v-for="link in linkGroup.links" :key="link.name">
+      <li v-for="{ name: linkName, to, icon } in links" :key="linkName">
         <Button
-          :variant="
-            $route.path === $localePath(link.to) ? 'secondary' : 'ghost'
-          "
+          :variant="$route.path === $localePath(to) ? 'secondary' : 'ghost'"
           class="w-full justify-start text-xs"
           size="sm"
           as-child
         >
-          <NuxtLinkLocale :to="link.to">
-            <Icon :name="link.icon" class="mr-1" />
-            {{ $t(link.name) }}
+          <NuxtLinkLocale :to>
+            <Icon :name="icon" class="mr-1" />
+            {{ $t(linkName) }}
           </NuxtLinkLocale>
         </Button>
       </li>

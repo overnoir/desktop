@@ -1,8 +1,4 @@
-<script setup lang="ts">
-definePageMeta({
-  title: "meta.home.title",
-});
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <section></section>

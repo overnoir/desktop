@@ -14,6 +14,11 @@ export enum Locale {
   Turkish = "tr",
   English = "en",
 }
+
+export enum WebviewWindow {
+  Overlay = "overlay",
+  Main = "main",
+}
 //#endregion
 
 //#region Types
@@ -30,15 +35,15 @@ export type LinkGroup = {
 
 export type Settings = {
   orientation: Orientation;
+  showBackground: boolean;
   preventCapture: boolean;
+  showSettings: boolean;
   ignoreCursor: boolean;
-  background: boolean;
+  isDraggable: boolean;
   autoStart: boolean;
-  settings: boolean;
   opacity: number;
   locale: Locale;
   radius: number;
-  drag: boolean;
   theme: Theme;
   size: number;
   x: number;

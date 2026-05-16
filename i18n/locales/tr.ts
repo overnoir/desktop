@@ -1,12 +1,4 @@
 export default {
-  meta: {
-    home: {
-      title: "Ana Sayfa",
-    },
-    settings: {
-      title: "Ayarlar",
-    },
-  },
   navbar: {
     linkGroups: [
       {
@@ -15,7 +7,6 @@ export default {
       },
       {
         name: "Bağlantılar",
-        links: ["Discord", "Kick", "Steam"],
       },
     ],
   },
@@ -47,11 +38,11 @@ export default {
       title: "Dil",
       description: "Uygulama arayüz dilini seçin.",
     },
-    drag: {
+    isDraggable: {
       title: "Sürükleme",
       description: "Uygulamanın sürüklenebilir olup olmadığını belirleyin.",
     },
-    background: {
+    showBackground: {
       title: "Arka Plan",
       description: "Uygulamanın arka plan görüntüsünü etkinleştirin.",
     },
@@ -60,7 +51,7 @@ export default {
       description:
         "Overlayın fareyi yoksaymasını sağlayın (fare eylemlerinin overlayın arkasına geçmesini sağlar).",
     },
-    settings: {
+    showSettings: {
       title: "Ayarlar",
       description:
         "Ayarların görüntülenmesini etkinleştirin veya devre dışı bırakın.",

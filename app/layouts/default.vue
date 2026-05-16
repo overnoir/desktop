@@ -1,5 +1,11 @@
 <script setup lang="ts">
+import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import "vue-sonner/style.css";
+
+const { settings } = storeToRefs(useSettingsStore());
+const mainWebviewWindow = getCurrentWebviewWindow();
+
+await mainWebviewWindow.setContentProtected(settings.value.preventCapture);
 </script>
 
 <template>

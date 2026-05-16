@@ -1,31 +1,44 @@
 <script setup lang="ts">
-import { availableMonitors, type Monitor } from "@tauri-apps/api/window";
-import { getAllWebviewWindows } from "@tauri-apps/api/webviewWindow";
-import { LogicalPosition } from "@tauri-apps/api/dpi";
+import { disable, enable } from "@tauri-apps/plugin-autostart";
+import { invoke } from "@tauri-apps/api/core";
 import { toast } from "vue-sonner";
+import {
+  getCurrentWebviewWindow,
+  getAllWebviewWindows,
+} from "@tauri-apps/api/webviewWindow";
+import {
+  availableMonitors,
+  LogicalPosition,
+  type Monitor,
+} from "@tauri-apps/api/window";
 
-definePageMeta({
-  title: "meta.settings.title",
-});
-
-const allWebviewWindows = await getAllWebviewWindows();
-const overlayWebviewWindow = allWebviewWindows.find(
-  ({ label }) => label === "overlay",
+const overlayWebviewWindow = (await getAllWebviewWindows()).find(
+  ({ label }) => label === WebviewWindow.Overlay,
 );
+const mainWebviewWindow = getCurrentWebviewWindow();
 const monitors = await availableMonitors();
 const settingsStore = useSettingsStore();
 const { settings } = storeToRefs(settingsStore);
+const { updateMenu } = await useTray();
 const { t, locales } = useI18n();
 
-async function updateWebviewWindowPosition() {
-  await overlayWebviewWindow?.setPosition(
+async function resetSettings() {
+  if (!overlayWebviewWindow) {
+    return;
+  }
+
+  const { preventCapture, ignoreCursor } = settingsStore.defaultSettings;
+
+  settingsStore.reset();
+
+  await overlayWebviewWindow.setContentProtected(preventCapture);
+  await invoke("update_ignore_cursor", { value: ignoreCursor });
+  await mainWebviewWindow.setContentProtected(preventCapture);
+  await overlayWebviewWindow.setPosition(
     new LogicalPosition(settings.value.x, settings.value.y),
   );
-}
+  await disable();
 
-async function resetSettings() {
-  settingsStore.reset();
-  await updateWebviewWindowPosition();
   toast(t("settings.reset.success"));
 }
 
@@ -42,11 +55,11 @@ async function quickSelect(
   const { width, height } = size;
   const { x, y } = position;
 
-  const centerX = x + Math.round((width - overlayWidth) / 2);
   const centerY = y + Math.round((height - overlayHeight) / 2);
+  const centerX = x + Math.round((width - overlayWidth) / 2);
 
-  const rightX = x + width - overlayWidth;
   const bottomY = y + height - overlayHeight;
+  const rightX = x + width - overlayWidth;
 
   const positions: { x: number; y: number }[] = [
     { x: x, y: y },
@@ -59,13 +72,15 @@ async function quickSelect(
     { x: rightX, y: bottomY },
   ];
 
-  const pos = positions[index - (index > 5 ? 2 : 1)];
+  const pos = positions[index - (index > 4 ? 1 : 0)];
 
   if (pos) {
     settings.value.x = pos.x;
     settings.value.y = pos.y;
 
-    await updateWebviewWindowPosition();
+    await overlayWebviewWindow.setPosition(
+      new LogicalPosition(settings.value.x, settings.value.y),
+    );
   }
 }
 </script>
@@ -107,7 +122,7 @@ async function quickSelect(
             {{ $t("settings.locale.description") }}
           </p>
         </div>
-        <Select v-model="settings.locale">
+        <Select v-model="settings.locale" @update:model-value="updateMenu">
           <SelectTrigger class="justify-self-end shrink-0">
             <SelectValue />
           </SelectTrigger>
@@ -191,7 +206,12 @@ async function quickSelect(
             :format-options="{ useGrouping: false }"
             :min="-9999"
             :max="9999"
-            @update:model-value="updateWebviewWindowPosition"
+            @update:model-value="
+              overlayWebviewWindow &&
+              overlayWebviewWindow.setPosition(
+                new LogicalPosition(settings.x, settings.y),
+              )
+            "
           >
             <NumberFieldContent>
               <NumberFieldDecrement />
@@ -204,7 +224,12 @@ async function quickSelect(
             :format-options="{ useGrouping: false }"
             :min="-9999"
             :max="9999"
-            @update:model-value="updateWebviewWindowPosition"
+            @update:model-value="
+              overlayWebviewWindow &&
+              overlayWebviewWindow.setPosition(
+                new LogicalPosition(settings.x, settings.y),
+              )
+            "
           >
             <NumberFieldContent>
               <NumberFieldDecrement />
@@ -216,33 +241,33 @@ async function quickSelect(
       </div>
       <Accordion type="single" collapsible class="border rounded-lg m-4 mt-0">
         <AccordionItem value="quick-select" class="w-full">
-          <AccordionTrigger class="p-3 font-normal text-xs">{{
-            $t("settings.position.quickSelect")
-          }}</AccordionTrigger>
+          <AccordionTrigger class="p-3 font-normal text-xs">
+            {{ $t("settings.position.quickSelect") }}
+          </AccordionTrigger>
           <AccordionContent class="grid grid-cols-3 gap-3 p-3 pt-0">
             <div v-for="({ name, position, size }, i) in monitors" :key="i">
               <h1 class="text-xs mb-1 text-muted-foreground">
                 {{ name }}
               </h1>
               <Card class="aspect-video grid grid-cols-3 gap-2.5 p-0">
-                <template v-for="j in 9" :key="j">
+                <template v-for="(_, j) in 9" :key="j">
                   <Button
-                    v-if="j !== 5"
+                    v-if="j !== 4"
                     class="rounded-none"
                     variant="outline"
                     :class="{
-                      'rounded-tl-xl rounded-br-xl border-b-0 border-r-0':
-                        j === 9,
-                      'rounded-tr-xl rounded-bl-xl border-l-0 border-b-0':
-                        j === 7,
                       'rounded-tl-xl rounded-br-xl border-l-0 border-t-0':
-                        j === 1,
+                        j === 0,
+                      'rounded-b-xl border-t-0': j === 1,
                       'rounded-tr-xl rounded-bl-xl border-t-0 border-r-0':
-                        j === 3,
-                      'rounded-b-xl border-t-0': j === 2,
-                      'rounded-r-xl border-l-0': j === 4,
-                      'rounded-l-xl border-r-0': j === 6,
-                      'rounded-t-xl border-b-0': j === 8,
+                        j === 2,
+                      'rounded-r-xl border-l-0': j === 3,
+                      'rounded-l-xl border-r-0': j === 5,
+                      'rounded-tr-xl rounded-bl-xl border-l-0 border-b-0':
+                        j === 6,
+                      'rounded-t-xl border-b-0': j === 7,
+                      'rounded-tl-xl rounded-br-xl border-b-0 border-r-0':
+                        j === 8,
                     }"
                     @click="quickSelect({ position, size }, j)"
                   />
@@ -256,13 +281,13 @@ async function quickSelect(
       <Separator />
       <div class="p-4">
         <div>
-          <h1 class="text-sm">{{ $t("settings.background.title") }}</h1>
+          <h1 class="text-sm">{{ $t("settings.showBackground.title") }}</h1>
           <p class="text-muted-foreground text-xs">
-            {{ $t("settings.background.description") }}
+            {{ $t("settings.showBackground.description") }}
           </p>
         </div>
         <Switch
-          v-model="settings.background"
+          v-model="settings.showBackground"
           class="justify-self-end shrink-0"
         />
       </div>
@@ -333,22 +358,28 @@ async function quickSelect(
       <Separator />
       <div class="p-4">
         <div>
-          <h1 class="text-sm">{{ $t("settings.drag.title") }}</h1>
+          <h1 class="text-sm">{{ $t("settings.isDraggable.title") }}</h1>
           <p class="text-muted-foreground text-xs">
-            {{ $t("settings.drag.description") }}
+            {{ $t("settings.isDraggable.description") }}
           </p>
         </div>
-        <Switch v-model="settings.drag" class="justify-self-end shrink-0" />
+        <Switch
+          v-model="settings.isDraggable"
+          class="justify-self-end shrink-0"
+        />
       </div>
       <Separator />
       <div class="p-4">
         <div>
-          <h1 class="text-sm">{{ $t("settings.settings.title") }}</h1>
+          <h1 class="text-sm">{{ $t("settings.showSettings.title") }}</h1>
           <p class="text-muted-foreground text-xs">
-            {{ $t("settings.settings.description") }}
+            {{ $t("settings.showSettings.description") }}
           </p>
         </div>
-        <Switch v-model="settings.settings" class="justify-self-end shrink-0" />
+        <Switch
+          v-model="settings.showSettings"
+          class="justify-self-end shrink-0"
+        />
       </div>
     </Card>
     <Card
@@ -366,6 +397,7 @@ async function quickSelect(
         <Switch
           v-model="settings.autoStart"
           class="justify-self-end shrink-0"
+          @update:model-value="$event ? enable() : disable()"
         />
       </div>
       <Separator />
@@ -379,6 +411,9 @@ async function quickSelect(
         <Switch
           v-model="settings.ignoreCursor"
           class="justify-self-end shrink-0"
+          @update:model-value="
+            invoke('update_ignore_cursor', { value: $event })
+          "
         />
       </div>
       <Separator />
@@ -392,6 +427,11 @@ async function quickSelect(
         <Switch
           v-model="settings.preventCapture"
           class="justify-self-end shrink-0"
+          @update:model-value="
+            overlayWebviewWindow &&
+              overlayWebviewWindow.setContentProtected($event);
+            mainWebviewWindow.setContentProtected($event);
+          "
         />
       </div>
       <Separator />
