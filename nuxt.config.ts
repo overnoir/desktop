@@ -51,7 +51,10 @@ export default defineNuxtConfig({
   },
   security: {
     headers: {
-      contentSecurityPolicy: false,
+      contentSecurityPolicy: {
+        "upgrade-insecure-requests": false,
+        "img-src": "'self' https:",
+      },
     },
   },
   experimental: {
