@@ -1,16 +1,9 @@
 <script setup lang="ts">
-import { LogicalPosition } from "@tauri-apps/api/dpi";
-import {
-  WebviewWindow as WebviewWindowClass,
-  getCurrentWebviewWindow,
-  getAllWebviewWindows,
-} from "@tauri-apps/api/webviewWindow";
-
 definePageMeta({
   layout: "overlay",
 });
 
-const overlayWebviewWindow = getCurrentWebviewWindow();
+const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const { settings } = storeToRefs(useSettingsStore());
 const dragArea = ref<HTMLElement | null>(null);
 
@@ -19,16 +12,19 @@ const radius = computed(
 );
 
 async function openMainWebviewWindow() {
-  const mainWebviewWindow = (await getAllWebviewWindows()).find(
-    ({ label }) => label === WebviewWindow.Main,
-  );
+  const mainWebviewWindow = (
+    await tauriWebviewWindowGetAllWebviewWindows()
+  ).find(({ label }) => label === WebviewWindow.Main);
 
   if (mainWebviewWindow) {
     await mainWebviewWindow.show();
     await mainWebviewWindow.unminimize();
     await mainWebviewWindow.setFocus();
   } else {
-    new WebviewWindowClass(WebviewWindow.Main, mainWebviewWindowOptions);
+    new TauriWebviewWindowWebviewWindow(
+      WebviewWindow.Main,
+      mainWebviewWindowOptions,
+    );
   }
 }
 
@@ -38,10 +34,10 @@ useMousePressed({
     settings.value.x = x;
     settings.value.y = y;
     overlayWebviewWindow.setPosition(
-      new LogicalPosition(settings.value.x + 1, settings.value.y + 1),
+      new TauriDpiLogicalPosition(settings.value.x + 1, settings.value.y + 1),
     );
     overlayWebviewWindow.setPosition(
-      new LogicalPosition(settings.value.x, settings.value.y),
+      new TauriDpiLogicalPosition(settings.value.x, settings.value.y),
     );
   },
   async onPressed() {

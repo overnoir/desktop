@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { WebviewWindow as WebviewWindowClass } from "@tauri-apps/api/webviewWindow";
-
 definePageMeta({
   layout: false,
 });
@@ -11,7 +9,10 @@ setTimeout(() => {
   status.value = "downloading";
 
   setTimeout(() => {
-    new WebviewWindowClass(WebviewWindow.Overlay, overlayWebviewWindowOptions);
+    new TauriWebviewWindowWebviewWindow(
+      WebviewWindow.Overlay,
+      overlayWebviewWindowOptions,
+    );
   }, 2000);
 }, 1000);
 </script>

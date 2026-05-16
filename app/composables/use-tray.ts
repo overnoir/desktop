@@ -1,30 +1,21 @@
-import { defaultWindowIcon, getName } from "@tauri-apps/api/app";
-import { exit } from "@tauri-apps/plugin-process";
-import { TrayIcon } from "@tauri-apps/api/tray";
-import { Menu } from "@tauri-apps/api/menu";
-import {
-  WebviewWindow as WebviewWindowClass,
-  getAllWebviewWindows,
-} from "@tauri-apps/api/webviewWindow";
-
 export default function () {
   const { t } = useI18n();
 
   async function generateMenu() {
-    return await Menu.new({
+    return await TauriMenuMenu.new({
       items: [
         {
           action: async () => {
-            const mainWebviewWindow = (await getAllWebviewWindows()).find(
-              ({ label }) => label === WebviewWindow.Main,
-            );
+            const mainWebviewWindow = (
+              await tauriWebviewWindowGetAllWebviewWindows()
+            ).find(({ label }) => label === WebviewWindow.Main);
 
             if (mainWebviewWindow) {
               await mainWebviewWindow.show();
               await mainWebviewWindow.unminimize();
               await mainWebviewWindow.setFocus();
             } else {
-              new WebviewWindowClass(
+              new TauriWebviewWindowWebviewWindow(
                 WebviewWindow.Main,
                 mainWebviewWindowOptions,
               );
@@ -34,7 +25,7 @@ export default function () {
           id: "settings",
         },
         {
-          action: () => exit(),
+          action: () => tauriProcessExit(),
           text: t("tray.quit"),
           id: "quit",
         },
@@ -43,23 +34,25 @@ export default function () {
   }
 
   async function create() {
-    const id = (await getName()).toLowerCase();
-    const tray = await TrayIcon.getById(id);
+    const id = (await tauriAppGetName()).toLowerCase();
+    const tray = await TauriTrayTrayIcon.getById(id);
 
     if (tray) {
       await tray.close();
     }
 
-    await TrayIcon.new({
-      icon: (await defaultWindowIcon()) || undefined,
-      tooltip: id[0]!.toUpperCase() + id.slice(1),
+    await TauriTrayTrayIcon.new({
+      icon: (await tauriAppDefaultWindowIcon()) || undefined,
+      tooltip: id.charAt(0).toUpperCase() + id.slice(1),
       menu: await generateMenu(),
       id,
     });
   }
 
   async function updateMenu() {
-    const tray = await TrayIcon.getById((await getName()).toLowerCase());
+    const tray = await TauriTrayTrayIcon.getById(
+      (await tauriAppGetName()).toLowerCase(),
+    );
 
     if (tray) {
       await tray.setMenu(await generateMenu());

@@ -1,26 +1,16 @@
 <script setup lang="ts">
-import { disable, enable } from "@tauri-apps/plugin-autostart";
-import { invoke } from "@tauri-apps/api/core";
-import { toast } from "vue-sonner";
-import {
-  getCurrentWebviewWindow,
-  getAllWebviewWindows,
-} from "@tauri-apps/api/webviewWindow";
-import {
-  availableMonitors,
-  LogicalPosition,
-  type Monitor,
-} from "@tauri-apps/api/window";
+import type { Monitor } from "@tauri-apps/api/window";
 
-const overlayWebviewWindow = (await getAllWebviewWindows()).find(
-  ({ label }) => label === WebviewWindow.Overlay,
-);
-const mainWebviewWindow = getCurrentWebviewWindow();
-const monitors = await availableMonitors();
+const mainWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
+const overlayWebviewWindow = (
+  await tauriWebviewWindowGetAllWebviewWindows()
+).find(({ label }) => label === WebviewWindow.Overlay);
+const monitors = await tauriWindowAvailableMonitors();
 const settingsStore = useSettingsStore();
 const { settings } = storeToRefs(settingsStore);
 const { updateMenu } = useTray();
 const { t, locales } = useI18n();
+const { $toast } = useNuxtApp();
 
 async function resetSettings() {
   if (!overlayWebviewWindow) {
@@ -31,15 +21,15 @@ async function resetSettings() {
 
   settingsStore.reset();
 
+  await tauriCoreInvoke("set_nspanel_ignore_cursor", { value: ignoreCursor });
   await overlayWebviewWindow.setContentProtected(preventCapture);
-  await invoke("update_ignore_cursor", { value: ignoreCursor });
   await mainWebviewWindow.setContentProtected(preventCapture);
   await overlayWebviewWindow.setPosition(
-    new LogicalPosition(settings.value.x, settings.value.y),
+    new TauriWindowLogicalPosition(settings.value.x, settings.value.y),
   );
-  await disable();
+  await tauriAutoStartDisable();
 
-  toast(t("settings.reset.success"));
+  $toast(t("settings.reset.success"));
 }
 
 async function quickSelect(
@@ -79,7 +69,7 @@ async function quickSelect(
     settings.value.y = pos.y;
 
     await overlayWebviewWindow.setPosition(
-      new LogicalPosition(settings.value.x, settings.value.y),
+      new TauriWindowLogicalPosition(settings.value.x, settings.value.y),
     );
   }
 }
@@ -209,7 +199,7 @@ async function quickSelect(
             @update:model-value="
               overlayWebviewWindow &&
               overlayWebviewWindow.setPosition(
-                new LogicalPosition(settings.x, settings.y),
+                new TauriDpiLogicalPosition(settings.x, settings.y),
               )
             "
           >
@@ -227,7 +217,7 @@ async function quickSelect(
             @update:model-value="
               overlayWebviewWindow &&
               overlayWebviewWindow.setPosition(
-                new LogicalPosition(settings.x, settings.y),
+                new TauriDpiLogicalPosition(settings.x, settings.y),
               )
             "
           >
@@ -397,7 +387,9 @@ async function quickSelect(
         <Switch
           v-model="settings.autoStart"
           class="justify-self-end shrink-0"
-          @update:model-value="$event ? enable() : disable()"
+          @update:model-value="
+            $event ? tauriAutoStartEnable() : tauriAutoStartDisable()
+          "
         />
       </div>
       <Separator />
@@ -412,7 +404,7 @@ async function quickSelect(
           v-model="settings.ignoreCursor"
           class="justify-self-end shrink-0"
           @update:model-value="
-            invoke('update_ignore_cursor', { value: $event })
+            tauriCoreInvoke('update_ignore_cursor', { value: $event })
           "
         />
       </div>

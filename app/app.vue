@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-
-const currentWebviewWindow = getCurrentWebviewWindow();
+const currentWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const { settings } = storeToRefs(useSettingsStore());
 const classList = document.documentElement.classList;
 const isPreferredDark = usePreferredDark();

@@ -11,6 +11,7 @@ export default defineNuxtConfig({
     "@vee-validate/nuxt",
     "@pinia/nuxt",
     "@vueuse/nuxt",
+    "vue-sonner/nuxt",
   ],
   compatibilityDate: "2026-05-02",
   devtools: { enabled: false },
@@ -66,11 +67,11 @@ export default defineNuxtConfig({
       Field: "VeeField",
     },
   },
-  imports: {
-    dirs: ["types"],
-  },
   typescript: {
     typeCheck: true,
+  },
+  imports: {
+    dirs: ["types"],
   },
   shadcn: {
     prefix: "",

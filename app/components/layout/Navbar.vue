@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { getName, getVersion } from "@tauri-apps/api/app";
-
 const linkGroups: LinkGroup[] = [
   {
     name: "navbar.linkGroups.0.name",
@@ -29,8 +27,8 @@ const linkGroups: LinkGroup[] = [
   },
 ];
 
-const version = await getVersion();
-const appName = await getName();
+const version = await tauriAppGetVersion();
+const appName = await tauriAppGetName();
 </script>
 
 <template>

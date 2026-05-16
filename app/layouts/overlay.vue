@@ -1,14 +1,5 @@
 <script setup lang="ts">
-import { disable, enable, isEnabled } from "@tauri-apps/plugin-autostart";
-import { LogicalPosition, LogicalSize } from "@tauri-apps/api/dpi";
-import { invoke } from "@tauri-apps/api/core";
-import { type } from "@tauri-apps/plugin-os";
-import {
-  getCurrentWebviewWindow,
-  getAllWebviewWindows,
-} from "@tauri-apps/api/webviewWindow";
-
-const overlayWebviewWindow = getCurrentWebviewWindow();
+const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const { settings } = storeToRefs(useSettingsStore());
 const { create } = useTray();
 
@@ -17,22 +8,22 @@ const radius = computed(
 );
 
 await overlayWebviewWindow.setPosition(
-  new LogicalPosition(settings.value.x, settings.value.y),
+  new TauriDpiLogicalPosition(settings.value.x, settings.value.y),
 );
 await create();
 
-if (type() === "macos") {
-  await invoke("init_macos");
-  await invoke("set_nspanel_ignore_cursor", {
+if (tauriOSType() === "macos") {
+  await tauriCoreInvoke("init_macos");
+  await tauriCoreInvoke("set_nspanel_ignore_cursor", {
     value: settings.value.ignoreCursor,
   });
 }
 
-if (settings.value.autoStart !== (await isEnabled())) {
+if (settings.value.autoStart !== (await tauriAutoStartIsEnabled())) {
   if (settings.value.autoStart) {
-    await enable();
+    await tauriAutoStartEnable();
   } else {
-    await disable();
+    await tauriAutoStartDisable();
   }
 }
 
@@ -40,15 +31,15 @@ useResizeObserver(document.body, async (entries) => {
   const rect = entries[0]?.contentRect;
   if (rect) {
     await overlayWebviewWindow.setSize(
-      new LogicalSize(rect.width, rect.height),
+      new TauriDpiLogicalSize(rect.width, rect.height),
     );
   }
 });
 
 onMounted(async () => {
-  const updaterWebviewWindow = (await getAllWebviewWindows()).find(
-    ({ label }) => label === WebviewWindow.Updater,
-  );
+  const updaterWebviewWindow = (
+    await tauriWebviewWindowGetAllWebviewWindows()
+  ).find(({ label }) => label === WebviewWindow.Updater);
 
   if (updaterWebviewWindow) {
     await updaterWebviewWindow.destroy();

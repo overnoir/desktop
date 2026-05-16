@@ -1,8 +1,7 @@
 import type { WebviewOptions } from "@tauri-apps/api/webview";
 import type { WindowOptions } from "@tauri-apps/api/window";
-import { getName } from "@tauri-apps/api/app";
 
-const name = await getName();
+const name = await tauriAppGetName();
 
 export const defaultSettings: Settings = {
   orientation: Orientation.Horizontal,

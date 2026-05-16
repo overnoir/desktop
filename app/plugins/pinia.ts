@@ -1,9 +1,8 @@
-import { TauriPluginPinia } from "@tauri-store/pinia";
 import type { Pinia } from "pinia";
 
 export default defineNuxtPlugin(async ({ $pinia }) => {
   ($pinia as Pinia).use(
-    TauriPluginPinia({
+    TauriPiniaTauriPluginPinia({
       saveStrategy: "debounce",
       saveOnChange: true,
       saveInterval: 500,
