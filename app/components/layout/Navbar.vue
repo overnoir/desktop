@@ -56,7 +56,7 @@ const version = await getVersion();
         >
           <NuxtLinkLocale :to>
             <Icon :name="icon" class="mr-1" />
-            {{ $t(linkName) }}
+            {{ $te(linkName) ? $t(linkName) : linkName }}
           </NuxtLinkLocale>
         </Button>
       </li>
