@@ -14,6 +14,10 @@ export default {
     settings: "Ayarlar",
     quit: "Çıkış",
   },
+  updater: {
+    checking: "Güncelleme kontrol ediliyor...",
+    downloading: "Güncelleme yükleniyor...",
+  },
   settings: {
     advanced: "Gelişmiş",
     general: "Genel",

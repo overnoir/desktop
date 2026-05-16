@@ -1,4 +1,4 @@
-import { defaultWindowIcon } from "@tauri-apps/api/app";
+import { defaultWindowIcon, getName } from "@tauri-apps/api/app";
 import { exit } from "@tauri-apps/plugin-process";
 import { TrayIcon } from "@tauri-apps/api/tray";
 import { Menu } from "@tauri-apps/api/menu";
@@ -7,9 +7,8 @@ import {
   getAllWebviewWindows,
 } from "@tauri-apps/api/webviewWindow";
 
-export default async function () {
+export default function () {
   const { t } = useI18n();
-  const id = "overnoir";
 
   async function generateMenu() {
     return await Menu.new({
@@ -44,6 +43,7 @@ export default async function () {
   }
 
   async function create() {
+    const id = (await getName()).toLowerCase();
     const tray = await TrayIcon.getById(id);
 
     if (tray) {
@@ -52,14 +52,14 @@ export default async function () {
 
     await TrayIcon.new({
       icon: (await defaultWindowIcon()) || undefined,
+      tooltip: id[0]!.toUpperCase() + id.slice(1),
       menu: await generateMenu(),
-      tooltip: "Overnoir",
       id,
     });
   }
 
   async function updateMenu() {
-    const tray = await TrayIcon.getById(id);
+    const tray = await TrayIcon.getById((await getName()).toLowerCase());
 
     if (tray) {
       await tray.setMenu(await generateMenu());

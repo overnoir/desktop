@@ -6,7 +6,10 @@ use tauri_nspanel::{
 
 pub fn run() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![update_ignore_cursor])
+        .invoke_handler(tauri::generate_handler![
+            set_nspanel_ignore_cursor,
+            init_macos
+        ])
         .plugin(tauri_plugin_single_instance::init(|app, _, _| {
             if let Some(window) = app.get_webview_window("main") {
                 window.show().unwrap();
@@ -18,6 +21,7 @@ pub fn run() {
         .plugin(tauri_plugin_prevent_default::debug())
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_pinia::init())
+        .plugin(tauri_plugin_os::init())
         .setup(|app| {
             #[cfg(debug_assertions)]
             {
@@ -31,11 +35,7 @@ pub fn run() {
             }
 
             #[cfg(target_os = "macos")]
-            {
-                app.set_activation_policy(tauri::ActivationPolicy::Accessory);
-                app.handle().plugin(tauri_nspanel::init()).unwrap();
-                init_nspanel(&app.app_handle());
-            }
+            app.handle().plugin(tauri_nspanel::init()).unwrap();
 
             Ok(())
         })
@@ -43,7 +43,12 @@ pub fn run() {
         .expect("error while running tauri application");
 }
 
-fn init_nspanel(app_handle: &AppHandle) {
+#[tauri::command]
+fn init_macos(app_handle: AppHandle) {
+    app_handle
+        .set_activation_policy(tauri::ActivationPolicy::Accessory)
+        .unwrap();
+
     tauri_panel! {
         panel!(HoverActivatePanel {
             config: {
@@ -102,7 +107,7 @@ fn init_nspanel(app_handle: &AppHandle) {
 }
 
 #[tauri::command]
-fn update_ignore_cursor(app_handle: AppHandle, value: bool) {
+fn set_nspanel_ignore_cursor(app_handle: AppHandle, value: bool) {
     if let Ok(panel) = app_handle.get_webview_panel("overlay") {
         panel.set_ignores_mouse_events(value);
     }

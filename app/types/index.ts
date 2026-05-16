@@ -16,6 +16,7 @@ export enum Locale {
 }
 
 export enum WebviewWindow {
+  Updater = "updater",
   Overlay = "overlay",
   Main = "main",
 }

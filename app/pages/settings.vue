@@ -19,7 +19,7 @@ const mainWebviewWindow = getCurrentWebviewWindow();
 const monitors = await availableMonitors();
 const settingsStore = useSettingsStore();
 const { settings } = storeToRefs(settingsStore);
-const { updateMenu } = await useTray();
+const { updateMenu } = useTray();
 const { t, locales } = useI18n();
 
 async function resetSettings() {

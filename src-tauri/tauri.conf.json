@@ -12,20 +12,17 @@
   "app": {
     "windows": [
       {
-        "title": "Overnoir Overlay",
-        "label": "overlay",
-        "url": "/overlay",
-        "height": 800,
-        "width": 800,
-        "acceptFirstMouse": true,
+        "title": "Overnoir Updater",
         "decorations": false,
         "transparent": true,
-        "alwaysOnTop": true,
-        "skipTaskbar": true,
         "resizable": false,
+        "label": "updater",
+        "url": "/updater",
+        "visible": false,
         "shadow": false,
-        "x": 0,
-        "y": 0
+        "center": true,
+        "height": 300,
+        "width": 400
       }
     ],
     "security": {

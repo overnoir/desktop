@@ -1,23 +1,32 @@
 <script setup lang="ts">
 import { disable, enable, isEnabled } from "@tauri-apps/plugin-autostart";
-import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { LogicalPosition, LogicalSize } from "@tauri-apps/api/dpi";
 import { invoke } from "@tauri-apps/api/core";
+import { type } from "@tauri-apps/plugin-os";
+import {
+  getCurrentWebviewWindow,
+  getAllWebviewWindows,
+} from "@tauri-apps/api/webviewWindow";
 
 const overlayWebviewWindow = getCurrentWebviewWindow();
 const { settings } = storeToRefs(useSettingsStore());
-const { create } = await useTray();
+const { create } = useTray();
 
 const radius = computed(
   () => (settings.value.size * settings.value.radius) / 100 / 2 + 3,
 );
 
-await invoke("update_ignore_cursor", { value: settings.value.ignoreCursor });
 await overlayWebviewWindow.setPosition(
   new LogicalPosition(settings.value.x, settings.value.y),
 );
-await overlayWebviewWindow.setContentProtected(settings.value.preventCapture);
 await create();
+
+if (type() === "macos") {
+  await invoke("init_macos");
+  await invoke("set_nspanel_ignore_cursor", {
+    value: settings.value.ignoreCursor,
+  });
+}
 
 if (settings.value.autoStart !== (await isEnabled())) {
   if (settings.value.autoStart) {
@@ -33,6 +42,16 @@ useResizeObserver(document.body, async (entries) => {
     await overlayWebviewWindow.setSize(
       new LogicalSize(rect.width, rect.height),
     );
+  }
+});
+
+onMounted(async () => {
+  const updaterWebviewWindow = (await getAllWebviewWindows()).find(
+    ({ label }) => label === WebviewWindow.Updater,
+  );
+
+  if (updaterWebviewWindow) {
+    await updaterWebviewWindow.destroy();
   }
 });
 </script>

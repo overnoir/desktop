@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getVersion } from "@tauri-apps/api/app";
+import { getName, getVersion } from "@tauri-apps/api/app";
 
 const linkGroups: LinkGroup[] = [
   {
@@ -30,6 +30,7 @@ const linkGroups: LinkGroup[] = [
 ];
 
 const version = await getVersion();
+const appName = await getName();
 </script>
 
 <template>
@@ -41,7 +42,7 @@ const version = await getVersion();
       to="/"
     >
       <NuxtImg src="/logo.png" alt="Logo" class="size-8 pointer-events-none" />
-      <span class="font-semibold"> Overnoir </span>
+      <span class="font-semibold"> {{ appName }} </span>
     </NuxtLinkLocale>
     <ul v-for="{ links, name } in linkGroups" :key="name" class="mt-4">
       <h1 class="text-muted-foreground text-xs font-semibold mb-1">
