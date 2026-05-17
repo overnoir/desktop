@@ -21,7 +21,10 @@ async function resetSettings() {
 
   settingsStore.reset();
 
-  await tauriCoreInvoke("set_nspanel_ignore_cursor", { value: ignoreCursor });
+  if (tauriOSType() === "macos") {
+    await tauriCoreInvoke("set_nspanel_ignore_cursor", { value: ignoreCursor });
+  }
+
   await overlayWebviewWindow.setContentProtected(preventCapture);
   await mainWebviewWindow.setContentProtected(preventCapture);
   await overlayWebviewWindow.setPosition(
