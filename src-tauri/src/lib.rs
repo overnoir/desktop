@@ -11,7 +11,11 @@ pub fn run() {
             init_macos
         ])
         .plugin(tauri_plugin_single_instance::init(|app, _, _| {
-            if let Some(window) = app.get_webview_window("main") {
+            if let Some(window) = app.get_webview_window("updater") {
+                window.show().unwrap();
+                window.unminimize().unwrap();
+                window.set_focus().unwrap();
+            } else if let Some(window) = app.get_webview_window("main") {
                 window.show().unwrap();
                 window.unminimize().unwrap();
                 window.set_focus().unwrap();
