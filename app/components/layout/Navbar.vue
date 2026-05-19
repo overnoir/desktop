@@ -21,7 +21,7 @@ const linkGroups: LinkGroup[] = [
       {
         icon: "bi:discord",
         name: "Discord",
-        to: "/#",
+        to: "/discord",
       },
     ],
   },

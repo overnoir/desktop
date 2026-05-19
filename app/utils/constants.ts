@@ -3,7 +3,7 @@ import type { WindowOptions } from "@tauri-apps/api/window";
 
 const name = await tauriAppGetName();
 
-export const defaultSettings: Settings = {
+export const defaultSettings: SettingsStore = {
   orientation: Orientation.Horizontal,
   locale: Locale.Turkish,
   preventCapture: false,
@@ -18,6 +18,10 @@ export const defaultSettings: Settings = {
   size: 50,
   x: 0,
   y: 0,
+};
+
+export const defaultDiscord: DiscordStore = {
+  isEnabled: false,
 };
 
 export const mainWebviewWindowOptions: Omit<

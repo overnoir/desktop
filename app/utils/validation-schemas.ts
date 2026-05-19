@@ -15,4 +15,8 @@ export const settingsSchema = z.object({
   autoStart: z.boolean(),
   locale: z.enum(Locale),
   theme: z.enum(Theme),
-}) satisfies z.ZodType<Settings>;
+}) satisfies z.ZodType<SettingsStore>;
+
+export const discordSchema = z.object({
+  isEnabled: z.boolean(),
+}) satisfies z.ZodType<DiscordStore>;

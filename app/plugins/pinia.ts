@@ -16,6 +16,11 @@ export default defineNuxtPlugin(async ({ $pinia }) => {
               defaultSettings,
               state.settings,
             ),
+            discord: safeParseWithDefault(
+              discordSchema,
+              defaultDiscord,
+              state.discord,
+            ),
           };
         },
         beforeBackendSync(state) {
@@ -25,6 +30,11 @@ export default defineNuxtPlugin(async ({ $pinia }) => {
               settingsSchema,
               defaultSettings,
               state.settings,
+            ),
+            discord: safeParseWithDefault(
+              discordSchema,
+              defaultDiscord,
+              state.discord,
             ),
           };
         },

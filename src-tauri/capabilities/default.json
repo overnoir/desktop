@@ -19,6 +19,7 @@
     "autostart:default",
     "core:window:allow-set-content-protected",
     "os:default",
-    "core:window:allow-destroy"
+    "core:window:allow-destroy",
+    "http:default"
   ]
 }

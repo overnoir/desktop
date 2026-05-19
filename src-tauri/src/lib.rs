@@ -1,13 +1,27 @@
+use discord_rich_presence::{DiscordIpc, DiscordIpcClient};
+use serde_json::json;
+use std::{env, sync::Mutex};
 use tauri::{AppHandle, Manager};
 use tauri_nspanel::{
     tauri_panel, CollectionBehavior, ManagerExt, PanelLevel, StyleMask, TrackingAreaOptions,
     WebviewWindowExt,
 };
+use uuid::Uuid;
+
+struct DiscordState {
+    client: Mutex<Option<DiscordIpcClient>>,
+    client_secret: String,
+    client_id: String,
+}
 
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_http::init())
         .invoke_handler(tauri::generate_handler![
             set_nspanel_ignore_cursor,
+            authenticate_discord,
+            authorize_discord,
+            connect_discord,
             init_macos
         ])
         .plugin(tauri_plugin_single_instance::init(|app, _, _| {
@@ -36,10 +50,21 @@ pub fn run() {
                             .build(),
                     )
                     .unwrap();
+                dotenvy::dotenv().unwrap();
             }
 
             #[cfg(target_os = "macos")]
             app.handle().plugin(tauri_nspanel::init()).unwrap();
+
+            let discord_client_secret = env::var("DISCORD_CLIENT_SECRET").unwrap().to_string();
+            let discord_client_id = env::var("DISCORD_CLIENT_ID").unwrap().to_string();
+            let discord_client = DiscordIpcClient::new(&discord_client_id);
+
+            app.manage(DiscordState {
+                client: Mutex::new(Some(discord_client)),
+                client_secret: discord_client_secret,
+                client_id: discord_client_id,
+            });
 
             Ok(())
         })
@@ -115,4 +140,60 @@ fn set_nspanel_ignore_cursor(app_handle: AppHandle, value: bool) {
     if let Ok(panel) = app_handle.get_webview_panel("overlay") {
         panel.set_ignores_mouse_events(value);
     }
+}
+
+#[tauri::command]
+fn connect_discord(app_handle: AppHandle) {
+    let state = app_handle.state::<DiscordState>();
+
+    let mut client_guard = state.client.lock().unwrap();
+
+    let client = client_guard.as_mut().unwrap();
+
+    client.connect().unwrap();
+}
+
+#[tauri::command]
+fn authorize_discord(app_handle: AppHandle) {
+    let state = app_handle.state::<DiscordState>();
+
+    let mut client_guard = state.client.lock().unwrap();
+
+    let client = client_guard.as_mut().unwrap();
+
+    client
+        .send(
+            json!({
+                "cmd": "AUTHORIZE",
+                "args": {
+                    "client_id": state.client_id,
+                    "scopes": ["rpc"]
+                },
+                "nonce": Uuid::new_v4().to_string()
+            }),
+            1,
+        )
+        .unwrap();
+}
+
+#[tauri::command]
+fn authenticate_discord(app_handle: AppHandle) {
+    let state = app_handle.state::<DiscordState>();
+
+    let mut client_guard = state.client.lock().unwrap();
+
+    let client = client_guard.as_mut().unwrap();
+
+    client
+        .send(
+            json!({
+                "cmd": "AUTHENTICATE",
+                "args": {
+                    "access_token": ""
+                },
+                "nonce": Uuid::new_v4().to_string()
+            }),
+            1,
+        )
+        .unwrap();
 }

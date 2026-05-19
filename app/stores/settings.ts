@@ -1,5 +1,5 @@
 export const useSettingsStore = defineStore("settings", () => {
-  const settings = ref<Settings>({ ...defaultSettings });
+  const settings = ref<SettingsStore>({ ...defaultSettings });
 
   function reset() {
     settings.value = { ...defaultSettings };

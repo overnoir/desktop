@@ -34,7 +34,7 @@ export type LinkGroup = {
   name: string;
 };
 
-export type Settings = {
+export type SettingsStore = {
   orientation: Orientation;
   showBackground: boolean;
   preventCapture: boolean;
@@ -49,5 +49,9 @@ export type Settings = {
   size: number;
   x: number;
   y: number;
+};
+
+export type DiscordStore = {
+  isEnabled: boolean;
 };
 //#endregion
