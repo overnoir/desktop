@@ -58,8 +58,8 @@ useMousePressed({
     <NuxtImg
       v-for="i in 3"
       :key="i"
-      src="https://avatars.githubusercontent.com/u/121391005?v=4"
-      class="select-none pointer-events-none"
+      src="/logo.png"
+      class="select-none pointer-events-none bg-black"
       :style="{
         'border-radius': `${radius}px`,
         height: `${settings.size}px`,

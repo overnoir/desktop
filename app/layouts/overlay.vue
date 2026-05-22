@@ -54,16 +54,11 @@ onMounted(async () => {
       opacity: `${settings.opacity}%`,
     }"
   >
-    <Body
-      class="size-max overflow-hidden **:transition-none"
-      :class="{
-        'bg-transparent!': !settings.showBackground,
-      }"
-    >
+    <Body class="size-max overflow-hidden bg-transparent **:transition-none">
       <main
         :class="{
-          'ring ring-border ring-inset': settings.showBackground,
-          'p-0.5': settings.showBackground,
+          'ring ring-border ring-inset bg-background p-0.5':
+            settings.showBackground,
         }"
         :style="{ 'border-radius': `${radius}px` }"
       >

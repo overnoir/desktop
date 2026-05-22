@@ -2,6 +2,7 @@ use discord_rich_presence::{DiscordIpc, DiscordIpcClient};
 use serde_json::json;
 use std::{env, sync::Mutex};
 use tauri::{AppHandle, Manager};
+#[cfg(target_os = "macos")]
 use tauri_nspanel::{
     tauri_panel, CollectionBehavior, ManagerExt, PanelLevel, StyleMask, TrackingAreaOptions,
     WebviewWindowExt,
@@ -18,10 +19,12 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_http::init())
         .invoke_handler(tauri::generate_handler![
-            set_nspanel_ignore_cursor,
             authenticate_discord,
             authorize_discord,
             connect_discord,
+            #[cfg(target_os = "macos")]
+            set_nspanel_ignore_cursor,
+            #[cfg(target_os = "macos")]
             init_macos
         ])
         .plugin(tauri_plugin_single_instance::init(|app, _, _| {
@@ -72,6 +75,7 @@ pub fn run() {
         .expect("error while running tauri application");
 }
 
+#[cfg(target_os = "macos")]
 #[tauri::command]
 fn init_macos(app_handle: AppHandle) {
     app_handle
@@ -135,6 +139,7 @@ fn init_macos(app_handle: AppHandle) {
     panel.set_event_handler(Some(handler.as_ref()));
 }
 
+#[cfg(target_os = "macos")]
 #[tauri::command]
 fn set_nspanel_ignore_cursor(app_handle: AppHandle, value: bool) {
     if let Ok(panel) = app_handle.get_webview_panel("overlay") {

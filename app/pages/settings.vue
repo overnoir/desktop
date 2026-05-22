@@ -12,6 +12,18 @@ const { updateMenu } = useTray();
 const { t, locales } = useI18n();
 const { $toast } = useNuxtApp();
 
+async function updateIgnoreCursor(value: boolean) {
+  if (!overlayWebviewWindow) {
+    return;
+  }
+
+  if (tauriOSType() === "macos") {
+    await tauriCoreInvoke("set_nspanel_ignore_cursor", { value });
+  } else {
+    await overlayWebviewWindow.setIgnoreCursorEvents(value);
+  }
+}
+
 async function resetSettings() {
   if (!overlayWebviewWindow) {
     return;
@@ -21,15 +33,12 @@ async function resetSettings() {
 
   settingsStore.reset();
 
-  if (tauriOSType() === "macos") {
-    await tauriCoreInvoke("set_nspanel_ignore_cursor", { value: ignoreCursor });
-  }
-
   await overlayWebviewWindow.setContentProtected(preventCapture);
   await mainWebviewWindow.setContentProtected(preventCapture);
   await overlayWebviewWindow.setPosition(
     new TauriWindowLogicalPosition(settings.value.x, settings.value.y),
   );
+  await updateIgnoreCursor(ignoreCursor);
   await tauriAutoStartDisable();
 
   $toast(t("settings.reset.success"));
@@ -406,9 +415,7 @@ async function quickSelect(
         <Switch
           v-model="settings.ignoreCursor"
           class="justify-self-end shrink-0"
-          @update:model-value="
-            tauriCoreInvoke('update_ignore_cursor', { value: $event })
-          "
+          @update:model-value="updateIgnoreCursor($event)"
         />
       </div>
       <Separator />
