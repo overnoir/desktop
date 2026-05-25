@@ -20,6 +20,7 @@
     "@tauri-apps/api": "^2.11.0",
     "@tauri-apps/plugin-autostart": "~2.5.1",
     "@tauri-apps/plugin-http": "~2",
+    "@tauri-apps/plugin-opener": "^2.5.4",
     "@tauri-apps/plugin-os": "~2",
     "@tauri-apps/plugin-process": "^2.3.1",
     "@tauri-store/pinia": "^4.2.0",
@@ -41,6 +42,7 @@
   },
   "devDependencies": {
     "@iconify-json/lucide": "^1.2.107",
+    "@iconify-json/simple-icons": "^1.2.83",
     "@nuxt/eslint": "1.15.2",
     "@nuxt/icon": "2.2.1",
     "@nuxtjs/tailwindcss": "7.0.0-beta.1",
