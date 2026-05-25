@@ -4,7 +4,7 @@ const { settings } = storeToRefs(useSettingsStore());
 const { create } = useTray();
 
 const radius = computed(
-  () => (settings.value.size * settings.value.radius) / 100 / 2 + 3,
+  () => (settings.value.size * settings.value.radius) / 100 / 2,
 );
 
 await overlayWebviewWindow.setPosition(
@@ -54,7 +54,7 @@ onMounted(async () => {
       opacity: `${settings.opacity}%`,
     }"
   >
-    <Body class="size-max overflow-hidden bg-transparent **:transition-none">
+    <Body class="size-max **:transition-none">
       <main
         :class="{
           'ring ring-border ring-inset bg-background p-0.5':

@@ -1,10 +1,14 @@
 <template>
-  <div class="flex min-h-screen">
+  <Body class="bg-sidebar">
     <LayoutTitlebar />
-    <LayoutNavbar />
-    <main class="p-4 pt-11 w-full">
-      <slot />
-    </main>
     <SonnerToaster />
-  </div>
+    <div class="flex mx-1 space-x-1">
+      <LayoutNavbar />
+      <main
+        class="border-t rounded-lg bg-background border p-4 w-full h-[94vh] overflow-auto scrollbar-thumb-muted scrollbar-thin"
+      >
+        <slot />
+      </main>
+    </div>
+  </Body>
 </template>

@@ -116,6 +116,6 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground font-[Inter];
+    @apply bg-transparent text-foreground overflow-hidden selection:bg-primary/50 selection:text-foreground font-[Inter];
   }
 }

@@ -4,10 +4,14 @@ const currentWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 
 <template>
   <header
-    class="fixed left-0 top-0 h-7.5 w-full z-50 bg-sidebar border-b flex justify-end [&>button]:h-7.5 [&>button]:rounded-none"
+    class="bg-sidebar **:select-none p-1 flex items-center justify-end gap-0.5 [&_svg]:size-3.5! [&>button]:p-0 [&>button]:border [&>button]:bg-background [&>button]:size-6 [&>button]:rounded-full"
     data-tauri-drag-region
   >
-    <Button variant="ghost" @click="currentWebviewWindow.minimize()">_</Button>
-    <Button variant="ghost" @click="currentWebviewWindow.destroy()">x</Button>
+    <Button variant="ghost" @click="currentWebviewWindow.minimize()">
+      <Icon name="lucide:minus" />
+    </Button>
+    <Button variant="ghost" @click="currentWebviewWindow.destroy()">
+      <Icon name="lucide:x" />
+    </Button>
   </header>
 </template>
