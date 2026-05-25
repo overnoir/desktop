@@ -103,4 +103,15 @@ export default {
       },
     },
   },
+  help: {
+    docs: {
+      title: "Dokümantasyon",
+      description:
+        "Uygulama hakkında çoğu bilgiyi dokümantasyonda bulabilirsiniz.",
+    },
+    discord: {
+      description:
+        "Discord sunucumuza katılarak yardım alabilir, önerilerde bulunabilir, hata bildirebilir ve yeniliklerden haberdar olabilirsiniz.",
+    },
+  },
 };
