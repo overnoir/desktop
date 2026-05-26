@@ -1,5 +1,6 @@
 <template>
   <Body class="bg-sidebar">
+    <NuxtLoadingIndicator color="var(--primary)" />
     <LayoutTitlebar />
     <SonnerToaster />
     <div class="flex mx-1 space-x-1">
