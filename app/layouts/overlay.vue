@@ -54,7 +54,7 @@ onMounted(async () => {
       opacity: `${settings.opacity}%`,
     }"
   >
-    <Body class="size-max **:transition-none">
+    <Body class="size-max **:select-none **:transition-none">
       <main
         :class="{
           'ring ring-border ring-inset bg-background p-0.5':
