@@ -35,8 +35,8 @@ export default defineNuxtConfig({
     ],
   },
   vite: {
-    clearScreen: false,
     envPrefix: ["VITE_", "TAURI_"],
+    clearScreen: false,
     server: {
       strictPort: true,
     },
@@ -44,11 +44,12 @@ export default defineNuxtConfig({
   fonts: {
     families: [
       {
+        src: "~/assets/fonts/inter.ttf",
         weights: [400, 500, 600],
         name: "Inter",
-        global: true,
       },
     ],
+    provider: "local",
   },
   security: {
     headers: {
