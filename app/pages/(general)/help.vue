@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { openUrl } from "@tauri-apps/plugin-opener";
+const version = await tauriAppGetVersion();
+const name = await tauriAppGetName();
 </script>
 
 <template>
@@ -32,5 +34,8 @@ import { openUrl } from "@tauri-apps/plugin-opener";
         </CardDescription>
       </CardHeader>
     </Card>
+    <span class="col-span-2 text-xs text-muted-foreground">
+      {{ name }} v{{ version }}
+    </span>
   </section>
 </template>
