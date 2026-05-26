@@ -112,12 +112,10 @@ async function quickSelect(
       </div>
       <div class="flex flex-col justify-self-end shrink-0">
         <NumberField
-          :model-value="settings.size / 100"
-          :format-options="{ style: 'percent' }"
-          :step="0.01"
+          v-model="settings.size"
+          :format-options="{ useGrouping: false }"
+          :max="250"
           :min="0"
-          :max="1"
-          @update:model-value="settings.size = $event * 100"
         >
           <NumberFieldContent>
             <NumberFieldDecrement />
@@ -128,7 +126,7 @@ async function quickSelect(
         <Slider
           class="*:data-[slot='slider-track']:rounded-t-none"
           :model-value="[settings.size]"
-          :max="100"
+          :max="250"
           :min="0"
           @update:model-value="settings.size = $event![0]!"
         />

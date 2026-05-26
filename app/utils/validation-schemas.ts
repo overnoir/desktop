@@ -6,7 +6,7 @@ export const settingsSchema = z.object({
   y: z.number().min(-9999).max(9999),
   radius: z.number().min(0).max(100),
   orientation: z.enum(Orientation),
-  size: z.number().min(0).max(100),
+  size: z.number().min(0).max(250),
   preventCapture: z.boolean(),
   showBackground: z.boolean(),
   ignoreCursor: z.boolean(),
