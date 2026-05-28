@@ -82,7 +82,7 @@ useMousePressed({
       size="icon"
       @click="openMainWebviewWindow"
     >
-      <Icon name="lucide:settings" class="size-1/2" />
+      <Icon name="lucide:sliders-horizontal" class="size-1/2" />
     </Button>
     <Button
       v-show="settings.isDraggable"
