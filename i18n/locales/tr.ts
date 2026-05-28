@@ -114,4 +114,8 @@ export default {
         "Discord sunucumuza katılarak yardım alabilir, önerilerde bulunabilir, hata bildirebilir ve yeniliklerden haberdar olabilirsiniz.",
     },
   },
+  vault: {
+    heads: ["Anahtar", "Oluşturulma Tarihi", "Güncellenme Tarihi"],
+    empty: "Kasanız boş.",
+  },
 };
