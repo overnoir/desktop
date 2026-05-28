@@ -18,5 +18,7 @@ export const settingsSchema = z.object({
 }) satisfies z.ZodType<SettingsStore>;
 
 export const discordSchema = z.object({
+  showOnlySpeakers: z.boolean(),
   isEnabled: z.boolean(),
+  showMe: z.boolean(),
 }) satisfies z.ZodType<DiscordStore>;

@@ -90,13 +90,12 @@ export default {
       },
       reset: {
         title: "Sıfırla",
-        description:
-          "Uygulamanın tüm ayarlarını varsayılan ayarlarına döndürün.",
-        success: "Tüm ayarlar başarıyla sıfırlandı.",
+        description: "Tüm uygulama ayarlarını varsayılan ayarlarına döndürün.",
+        success: "Tüm uygulama ayarları başarıyla sıfırlandı.",
         dialog: {
-          title: "Tüm ayarları sıfırla",
+          title: "Tüm uygulama ayarlarını sıfırla",
           description:
-            "Tüm ayarlarınızı sıfırlamak istediğinize emin misiniz? Bu işlem geri alınamaz.",
+            "Tüm uygulama ayarlarınızı sıfırlamak istediğinize emin misiniz? Bu işlem geri alınamaz.",
           confirm: "Evet, sıfırla",
           cancel: "Vazgeç",
         },
@@ -117,5 +116,27 @@ export default {
   vault: {
     heads: ["Anahtar", "Oluşturulma Tarihi", "Güncellenme Tarihi"],
     empty: "Kasanız boş.",
+  },
+  discord: {
+    showMe: {
+      title: "Beni Göster",
+      description: "Kendinizin görünüp görünmeyeceğini ayarlayın.",
+    },
+    showOnlySpeakers: {
+      title: "Sadece Konuşanları Göster",
+      description: "Sadece konuşanların gözükmesini sağlayın.",
+    },
+    reset: {
+      title: "Sıfırla",
+      description: "Tüm Discord ayarlarını varsayılan ayarlarına döndürün.",
+      success: "Tüm Discord ayarları başarıyla sıfırlandı.",
+      dialog: {
+        title: "Tüm Discord ayarlarını sıfırla",
+        description:
+          "Tüm Discord ayarlarınızı sıfırlamak istediğinize emin misiniz? Bu işlem geri alınamaz.",
+        confirm: "Evet, sıfırla",
+        cancel: "Vazgeç",
+      },
+    },
   },
 };

@@ -52,6 +52,8 @@ export type SettingsStore = {
 };
 
 export type DiscordStore = {
+  showOnlySpeakers: boolean;
   isEnabled: boolean;
+  showMe: boolean;
 };
 //#endregion

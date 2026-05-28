@@ -21,7 +21,9 @@ export const defaultSettings: SettingsStore = {
 };
 
 export const defaultDiscord: DiscordStore = {
+  showOnlySpeakers: false,
   isEnabled: false,
+  showMe: true,
 };
 
 export const mainWebviewWindowOptions: Omit<
