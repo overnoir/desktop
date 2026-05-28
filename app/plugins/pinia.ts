@@ -1,6 +1,23 @@
+import type { State } from "@tauri-store/pinia";
 import type { Pinia } from "pinia";
 
 export default defineNuxtPlugin(async ({ $pinia }) => {
+  function sync(state: State) {
+    return {
+      ...state,
+      settings: safeParseWithDefault(
+        settingsSchema,
+        defaultSettings,
+        state.settings,
+      ),
+      discord: safeParseWithDefault(
+        discordSchema,
+        defaultDiscord,
+        state.discord,
+      ),
+    };
+  }
+
   ($pinia as Pinia).use(
     TauriPiniaTauriPluginPinia({
       saveStrategy: "debounce",
@@ -8,36 +25,8 @@ export default defineNuxtPlugin(async ({ $pinia }) => {
       saveInterval: 500,
       autoStart: true,
       hooks: {
-        beforeFrontendSync(state) {
-          return {
-            ...state,
-            settings: safeParseWithDefault(
-              settingsSchema,
-              defaultSettings,
-              state.settings,
-            ),
-            discord: safeParseWithDefault(
-              discordSchema,
-              defaultDiscord,
-              state.discord,
-            ),
-          };
-        },
-        beforeBackendSync(state) {
-          return {
-            ...state,
-            settings: safeParseWithDefault(
-              settingsSchema,
-              defaultSettings,
-              state.settings,
-            ),
-            discord: safeParseWithDefault(
-              discordSchema,
-              defaultDiscord,
-              state.discord,
-            ),
-          };
-        },
+        beforeFrontendSync: sync,
+        beforeBackendSync: sync,
         error: console.error,
       },
     }),
