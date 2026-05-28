@@ -3,7 +3,7 @@ export default {
     linkGroups: [
       {
         name: "Genel",
-        links: ["Ana Sayfa", "Yardım"],
+        links: ["Ana Sayfa", "Kasa", "Yardım"],
       },
       {
         name: "Ayarlar",

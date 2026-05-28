@@ -9,8 +9,13 @@ const linkGroups: LinkGroup[] = [
         to: "/",
       },
       {
-        icon: "lucide:info",
+        icon: "lucide:vault",
         name: "navbar.linkGroups.0.links.1",
+        to: "/vault",
+      },
+      {
+        icon: "lucide:info",
+        name: "navbar.linkGroups.0.links.2",
         to: "/help",
       },
     ],

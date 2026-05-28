@@ -1,4 +1,5 @@
 use discord_rich_presence::{DiscordIpc, DiscordIpcClient};
+use iota_stronghold::{Client, Store};
 use serde_json::json;
 use std::{env, sync::Mutex};
 use tauri::{AppHandle, Manager};
@@ -7,6 +8,8 @@ use tauri_nspanel::{
     tauri_panel, CollectionBehavior, ManagerExt, PanelLevel, StyleMask, TrackingAreaOptions,
     WebviewWindowExt,
 };
+use tauri_plugin_keyring::KeyringExt;
+use tauri_plugin_stronghold::stronghold::Stronghold;
 use uuid::Uuid;
 
 struct DiscordState {
@@ -15,9 +18,13 @@ struct DiscordState {
     client_id: String,
 }
 
+struct VaultState {
+    stronghold: Mutex<Option<Stronghold>>,
+    store: Mutex<Option<Store>>,
+}
+
 pub fn run() {
     tauri::Builder::default()
-        .plugin(tauri_plugin_http::init())
         .invoke_handler(tauri::generate_handler![
             authenticate_discord,
             authorize_discord,
@@ -41,8 +48,9 @@ pub fn run() {
         .plugin(tauri_plugin_autostart::Builder::new().build())
         .plugin(tauri_plugin_prevent_default::debug())
         .plugin(tauri_plugin_process::init())
+        .plugin(tauri_plugin_keyring::init())
         .plugin(tauri_plugin_opener::init())
-        .plugin(tauri_plugin_pinia::init())
+        .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_os::init())
         .setup(|app| {
             #[cfg(debug_assertions)]
@@ -60,6 +68,11 @@ pub fn run() {
             #[cfg(target_os = "macos")]
             app.handle().plugin(tauri_nspanel::init()).unwrap();
 
+            let salt_path = app.path().app_local_data_dir().unwrap().join("salt.txt");
+
+            app.handle()
+                .plugin(tauri_plugin_stronghold::Builder::with_argon2(&salt_path).build())?;
+
             let discord_client_secret = env::var("DISCORD_CLIENT_SECRET").unwrap().to_string();
             let discord_client_id = env::var("DISCORD_CLIENT_ID").unwrap().to_string();
             let discord_client = DiscordIpcClient::new(&discord_client_id);
@@ -68,6 +81,43 @@ pub fn run() {
                 client: Mutex::new(Some(discord_client)),
                 client_secret: discord_client_secret,
                 client_id: discord_client_id,
+            });
+
+            let vault_path = app.path().app_data_dir().unwrap().join("vault.hold");
+            let name = &app.package_info().name;
+            let password: String;
+
+            let current_password = app
+                .app_handle()
+                .keyring()
+                .get_password(&name, &name)
+                .unwrap();
+
+            if let Some(current_password) = current_password {
+                password = current_password;
+            } else {
+                let new_password = Uuid::new_v4().simple().to_string();
+
+                app.app_handle()
+                    .keyring()
+                    .set_password(&name, &name, &new_password)
+                    .unwrap();
+
+                password = new_password;
+            }
+
+            let stronghold = Stronghold::new(vault_path, password.into_bytes()).unwrap();
+            let client: Client;
+
+            if let Ok(loaded_client) = stronghold.load_client(name) {
+                client = loaded_client;
+            } else {
+                client = stronghold.create_client(name).unwrap();
+            }
+
+            app.manage(VaultState {
+                stronghold: Mutex::new(Some(stronghold)),
+                store: Mutex::new(Some(client.store())),
             });
 
             Ok(())
