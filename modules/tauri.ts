@@ -2,12 +2,14 @@ import * as webviewWindow from "@tauri-apps/api/webviewWindow";
 import * as autoStart from "@tauri-apps/plugin-autostart";
 import { addImports, defineNuxtModule } from "nuxt/kit";
 import * as process from "@tauri-apps/plugin-process";
+import * as opener from "@tauri-apps/plugin-opener";
 import * as webview from "@tauri-apps/api/webview";
 import * as window from "@tauri-apps/api/window";
 import * as log from "@tauri-apps/plugin-log";
 import * as menu from "@tauri-apps/api/menu";
 import * as tray from "@tauri-apps/api/tray";
 import * as core from "@tauri-apps/api/core";
+import * as path from "@tauri-apps/api/path";
 import * as os from "@tauri-apps/plugin-os";
 import * as pinia from "@tauri-store/pinia";
 import * as app from "@tauri-apps/api/app";
@@ -78,6 +80,16 @@ const plugins = [
     from: "@tauri-apps/api/webview",
     prefix: "WebWiew",
     plugin: webview,
+  },
+  {
+    from: "@tauri-apps/api/path",
+    prefix: "Path",
+    plugin: path,
+  },
+  {
+    from: "@tauri-apps/plugin-opener",
+    prefix: "Opener",
+    plugin: opener,
   },
 ];
 

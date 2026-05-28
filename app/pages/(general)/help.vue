@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { openUrl } from "@tauri-apps/plugin-opener";
 const version = await tauriAppGetVersion();
 const name = await tauriAppGetName();
 </script>
@@ -8,7 +7,7 @@ const name = await tauriAppGetName();
   <section class="grid grid-cols-2 gap-4">
     <Card
       class="cursor-pointer p-0 hover:bg-card/50"
-      @click="openUrl('https://docs.overnoir.com')"
+      @click="tauriOpenerOpenUrl('https://docs.overnoir.com')"
     >
       <CardHeader class="p-4">
         <CardTitle class="flex gap-2 mb-1">
@@ -22,7 +21,7 @@ const name = await tauriAppGetName();
     </Card>
     <Card
       class="cursor-pointer p-0 bg-[#5865F2] hover:bg-[#5865F2]/50"
-      @click="openUrl('https://discord.com')"
+      @click="tauriOpenerOpenUrl('https://discord.com')"
     >
       <CardHeader class="p-4">
         <CardTitle class="text-white flex gap-2 mb-1">
