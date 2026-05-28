@@ -50,6 +50,7 @@ pub fn run() {
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_keyring::init())
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_pinia::init())
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_os::init())
         .setup(|app| {
