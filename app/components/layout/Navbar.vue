@@ -50,7 +50,7 @@ const linkGroups: LinkGroup[] = [
 
 <template>
   <nav
-    class="bg-background p-4 border rounded-xl w-50 shrink-0 sticky top-0 flex gap-2 flex-col"
+    class="bg-background p-4 border rounded-lg w-50 shrink-0 sticky top-0 flex gap-2 flex-col"
   >
     <ul v-for="{ links, name } in linkGroups" :key="name">
       <h1 class="text-muted-foreground text-xs font-semibold mb-1">
