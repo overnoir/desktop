@@ -31,13 +31,13 @@ export const mainWebviewWindowOptions: Omit<
   "x" | "y" | "width" | "height"
 > &
   WindowOptions = {
-  titleBarStyle: "overlay",
   acceptFirstMouse: true,
   title: `${name} Main`,
   decorations: false,
   hiddenTitle: true,
   transparent: true,
   resizable: false,
+  shadow: false,
   visible: false,
   center: true,
   height: 600,

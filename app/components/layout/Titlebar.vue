@@ -5,9 +5,10 @@ const isMacos = tauriOSType() === "macos";
 
 <template>
   <header
-    class="bg-sidebar **:select-none p-1 flex items-center justify-end gap-0.5 [&>button]:p-0 [&>button]:border [&>button]:bg-background [&>button]:size-5"
+    class="bg-sidebar h-7 **:select-none flex items-center justify-end [&>button]:h-full [&>button]:rounded-none"
     :class="{
-      'justify-start': isMacos,
+      'px-1 gap-0.5 justify-start [&_svg]:size-3! [&>button]:rounded-full! [&>button]:p-0 [&>button]:border [&>button]:bg-background [&>button]:size-5!':
+        isMacos,
     }"
     data-tauri-drag-region
   >
@@ -18,10 +19,10 @@ const isMacos = tauriOSType() === "macos";
       variant="ghost"
       @click="currentWebviewWindow.minimize()"
     >
-      <Icon name="lucide:minus" class="size-4" />
+      <Icon name="lucide:minus" />
     </Button>
     <Button variant="ghost" @click="currentWebviewWindow.destroy()">
-      <Icon name="lucide:x" class="size-3.5" />
+      <Icon name="lucide:x" />
     </Button>
   </header>
 </template>
