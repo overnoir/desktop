@@ -81,7 +81,7 @@ async function openMainWebviewWindow() {
       <Icon name="lucide:sliders-horizontal" class="size-1/2" />
     </Button>
     <Button
-      v-show="settings.isDraggable"
+      v-if="settings.isDraggable"
       data-tauri-drag-region
       :class="{
         'ring ring-inset ring-border': !settings.showBackground,
