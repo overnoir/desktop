@@ -1,9 +1,32 @@
-export const useDiscordSettingsStore = defineStore("discord-settings", () => {
-  const discordSettings = ref<DiscordSettings>({ ...defaultDiscordSettings });
+import type { State } from "@tauri-store/pinia";
 
-  function reset() {
-    discordSettings.value = { ...defaultDiscordSettings };
-  }
+function sync(state: State) {
+  return {
+    discordSettings: safeParseWithDefault(
+      discordSettingsSchema,
+      defaultDiscordSettings,
+      state.discordSettings,
+    ),
+  };
+}
 
-  return { discordSettings, reset };
-});
+export const useDiscordSettingsStore = defineStore(
+  "discord-settings",
+  () => {
+    const discordSettings = ref<DiscordSettings>({ ...defaultDiscordSettings });
+
+    function reset() {
+      discordSettings.value = { ...defaultDiscordSettings };
+    }
+
+    return { discordSettings, reset };
+  },
+  {
+    tauri: {
+      hooks: {
+        beforeFrontendSync: sync,
+        beforeBackendSync: sync,
+      },
+    },
+  },
+);

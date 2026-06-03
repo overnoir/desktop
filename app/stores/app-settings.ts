@@ -1,9 +1,32 @@
-export const useAppSettingsStore = defineStore("app-settings", () => {
-  const appSettings = ref<AppSettings>({ ...defaultAppSettings });
+import type { State } from "@tauri-store/pinia";
 
-  function reset() {
-    appSettings.value = { ...defaultAppSettings };
-  }
+function sync(state: State) {
+  return {
+    appSettings: safeParseWithDefault(
+      appSettingsSchema,
+      defaultAppSettings,
+      state.appSettings,
+    ),
+  };
+}
 
-  return { appSettings, reset };
-});
+export const useAppSettingsStore = defineStore(
+  "app-settings",
+  () => {
+    const appSettings = ref<AppSettings>({ ...defaultAppSettings });
+
+    function reset() {
+      appSettings.value = { ...defaultAppSettings };
+    }
+
+    return { appSettings, reset };
+  },
+  {
+    tauri: {
+      hooks: {
+        beforeFrontendSync: sync,
+        beforeBackendSync: sync,
+      },
+    },
+  },
+);
