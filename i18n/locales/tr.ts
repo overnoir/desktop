@@ -118,6 +118,11 @@ export default {
     empty: "Kasanız boş.",
   },
   discord: {
+    isEnabled: {
+      title: "Aktif",
+      description:
+        "Discord bağlantısını etkinleştirin veya devre dışı bırakın.",
+    },
     showMe: {
       title: "Beni Göster",
       description: "Kendinizin görünüp görünmeyeceğini ayarlayın.",

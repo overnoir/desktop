@@ -1,11 +1,11 @@
 <script setup lang="ts">
-const discordStore = useDiscordStore();
-const { discord } = storeToRefs(discordStore);
+const discordSettingsStore = useDiscordSettingsStore();
+const { discordSettings } = storeToRefs(discordSettingsStore);
 const { $toast } = useNuxtApp();
 const { t } = useI18n();
 
-async function resetDiscord() {
-  discordStore.reset();
+async function resetDiscordSettings() {
+  discordSettingsStore.reset();
   $toast(t("discord.reset.success"));
 }
 </script>
@@ -14,7 +14,18 @@ async function resetDiscord() {
   <section
     class="grid gap-4 [&>div]:flex [&>div]:items-center [&>div]:justify-between"
   >
-    <div><Switch v-model="discord.isEnabled" /></div>
+    <div>
+      <div>
+        <h1 class="text-sm">{{ $t("discord.isEnabled.title") }}</h1>
+        <p class="text-muted-foreground text-xs">
+          {{ $t("discord.isEnabled.description") }}
+        </p>
+      </div>
+      <Switch
+        v-model="discordSettings.isEnabled"
+        class="justify-self-end shrink-0"
+      />
+    </div>
     <Separator />
     <div>
       <div>
@@ -23,7 +34,10 @@ async function resetDiscord() {
           {{ $t("discord.showMe.description") }}
         </p>
       </div>
-      <Switch v-model="discord.showMe" class="justify-self-end shrink-0" />
+      <Switch
+        v-model="discordSettings.showMe"
+        class="justify-self-end shrink-0"
+      />
     </div>
     <Separator />
     <div>
@@ -34,7 +48,7 @@ async function resetDiscord() {
         </p>
       </div>
       <Switch
-        v-model="discord.showOnlySpeakers"
+        v-model="discordSettings.showOnlySpeakers"
         class="justify-self-end shrink-0"
       />
     </div>
@@ -65,7 +79,10 @@ async function resetDiscord() {
             <AlertDialogCancel>
               {{ $t("discord.reset.dialog.cancel") }}
             </AlertDialogCancel>
-            <AlertDialogAction variant="destructive" @click="resetDiscord">
+            <AlertDialogAction
+              variant="destructive"
+              @click="resetDiscordSettings"
+            >
               {{ $t("discord.reset.dialog.confirm") }}
             </AlertDialogAction>
           </AlertDialogFooter>

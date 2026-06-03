@@ -4,25 +4,25 @@ definePageMeta({
 });
 
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
-const { settings } = storeToRefs(useSettingsStore());
+const { appSettings } = storeToRefs(useAppSettingsStore());
 const isMacos = tauriOSType() === "macos";
 
 const radius = computed(
-  () => (settings.value.size * settings.value.radius) / 100 / 2,
+  () => (appSettings.value.size * appSettings.value.radius) / 100 / 2,
 );
 
 if (!isMacos) {
   overlayWebviewWindow.onMoved(({ payload }) => {
     const { x, y } = payload;
-    settings.value.x = x;
-    settings.value.y = y;
+    appSettings.value.x = x;
+    appSettings.value.y = y;
   });
 }
 
 async function updatePosition() {
   const { x, y } = await overlayWebviewWindow.outerPosition();
-  settings.value.x = x;
-  settings.value.y = y;
+  appSettings.value.x = x;
+  appSettings.value.y = y;
 }
 
 async function openMainWebviewWindow() {
@@ -47,8 +47,8 @@ async function openMainWebviewWindow() {
   <section
     class="flex items-center gap-0.5"
     :class="{
-      'flex-row': settings.orientation === 'horizontal',
-      'flex-col': settings.orientation === 'vertical',
+      'flex-row': appSettings.orientation === 'horizontal',
+      'flex-col': appSettings.orientation === 'vertical',
     }"
   >
     <NuxtImg
@@ -58,21 +58,21 @@ async function openMainWebviewWindow() {
       class="bg-black"
       :style="{
         'border-radius': `${radius}px`,
-        height: `${settings.size}px`,
-        width: `${settings.size}px`,
+        height: `${appSettings.size}px`,
+        width: `${appSettings.size}px`,
       }"
       alt="Avatar"
     />
     <Button
-      v-if="settings.showSettings"
+      v-if="appSettings.showSettings"
       :class="{
-        'ring ring-inset ring-border': !settings.showBackground,
+        'ring ring-inset ring-border': !appSettings.showBackground,
       }"
       class="bg-background! ring-0!"
       :style="{
         'border-radius': `${radius}px`,
-        height: `${settings.size}px`,
-        width: `${settings.size}px`,
+        height: `${appSettings.size}px`,
+        width: `${appSettings.size}px`,
       }"
       variant="ghost"
       size="icon"
@@ -81,16 +81,16 @@ async function openMainWebviewWindow() {
       <Icon name="lucide:sliders-horizontal" class="size-1/2" />
     </Button>
     <Button
-      v-if="settings.isDraggable"
+      v-if="appSettings.isDraggable"
       data-tauri-drag-region
       :class="{
-        'ring ring-inset ring-border': !settings.showBackground,
+        'ring ring-inset ring-border': !appSettings.showBackground,
       }"
       class="bg-background! ring-0!"
       :style="{
         'border-radius': `${radius}px`,
-        height: `${settings.size}px`,
-        width: `${settings.size}px`,
+        height: `${appSettings.size}px`,
+        width: `${appSettings.size}px`,
       }"
       variant="ghost"
       size="icon"

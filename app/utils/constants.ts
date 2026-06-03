@@ -3,7 +3,7 @@ import type { WindowOptions } from "@tauri-apps/api/window";
 
 const name = await tauriAppGetName();
 
-export const defaultSettings: SettingsStore = {
+export const defaultAppSettings: AppSettings = {
   orientation: Orientation.Horizontal,
   locale: Locale.Turkish,
   preventCapture: false,
@@ -20,7 +20,7 @@ export const defaultSettings: SettingsStore = {
   y: 0,
 };
 
-export const defaultDiscord: DiscordStore = {
+export const defaultDiscordSettings: DiscordSettings = {
   showOnlySpeakers: false,
   isEnabled: false,
   showMe: true,

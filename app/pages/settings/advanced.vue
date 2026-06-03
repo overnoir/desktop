@@ -3,8 +3,8 @@ const mainWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const overlayWebviewWindow = (
   await tauriWebviewWindowGetAllWebviewWindows()
 ).find(({ label }) => label === WebviewWindow.Overlay);
-const settingsStore = useSettingsStore();
-const { settings } = storeToRefs(settingsStore);
+const appSettingsStore = useAppSettingsStore();
+const { appSettings } = storeToRefs(appSettingsStore);
 const { $toast } = useNuxtApp();
 const { t } = useI18n();
 
@@ -25,14 +25,14 @@ async function resetSettings() {
     return;
   }
 
-  const { preventCapture, ignoreCursor } = settingsStore.defaultSettings;
+  const { preventCapture, ignoreCursor } = defaultAppSettings;
 
-  settingsStore.reset();
+  appSettingsStore.reset();
 
   await overlayWebviewWindow.setContentProtected(preventCapture);
   await mainWebviewWindow.setContentProtected(preventCapture);
   await overlayWebviewWindow.setPosition(
-    new TauriWindowLogicalPosition(settings.value.x, settings.value.y),
+    new TauriWindowLogicalPosition(appSettings.value.x, appSettings.value.y),
   );
   await updateIgnoreCursor(ignoreCursor);
   await tauriAutoStartDisable();
@@ -53,7 +53,7 @@ async function resetSettings() {
         </p>
       </div>
       <Switch
-        v-model="settings.isDraggable"
+        v-model="appSettings.isDraggable"
         class="justify-self-end shrink-0"
       />
     </div>
@@ -68,7 +68,7 @@ async function resetSettings() {
         </p>
       </div>
       <Switch
-        v-model="settings.showSettings"
+        v-model="appSettings.showSettings"
         class="justify-self-end shrink-0"
       />
     </div>
@@ -81,7 +81,7 @@ async function resetSettings() {
         </p>
       </div>
       <Switch
-        v-model="settings.autoStart"
+        v-model="appSettings.autoStart"
         class="justify-self-end shrink-0"
         @update:model-value="
           $event ? tauriAutoStartEnable() : tauriAutoStartDisable()
@@ -99,7 +99,7 @@ async function resetSettings() {
         </p>
       </div>
       <Switch
-        v-model="settings.ignoreCursor"
+        v-model="appSettings.ignoreCursor"
         class="justify-self-end shrink-0"
         @update:model-value="updateIgnoreCursor($event)"
       />
@@ -115,7 +115,7 @@ async function resetSettings() {
         </p>
       </div>
       <Switch
-        v-model="settings.preventCapture"
+        v-model="appSettings.preventCapture"
         class="justify-self-end shrink-0"
         @update:model-value="
           overlayWebviewWindow &&

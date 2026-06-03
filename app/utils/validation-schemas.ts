@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const settingsSchema = z.object({
+export const appSettingsSchema = z.object({
   opacity: z.number().min(0).max(100),
   x: z.number().min(-9999).max(9999),
   y: z.number().min(-9999).max(9999),
@@ -15,10 +15,10 @@ export const settingsSchema = z.object({
   autoStart: z.boolean(),
   locale: z.enum(Locale),
   theme: z.enum(Theme),
-}) satisfies z.ZodType<SettingsStore>;
+}) satisfies z.ZodType<AppSettings>;
 
-export const discordSchema = z.object({
+export const discordSettingsSchema = z.object({
   showOnlySpeakers: z.boolean(),
   isEnabled: z.boolean(),
   showMe: z.boolean(),
-}) satisfies z.ZodType<DiscordStore>;
+}) satisfies z.ZodType<DiscordSettings>;

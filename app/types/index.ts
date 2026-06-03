@@ -34,7 +34,7 @@ export type LinkGroup = {
   name: string;
 };
 
-export type SettingsStore = {
+export type AppSettings = {
   orientation: Orientation;
   showBackground: boolean;
   preventCapture: boolean;
@@ -51,7 +51,7 @@ export type SettingsStore = {
   y: number;
 };
 
-export type DiscordStore = {
+export type DiscordSettings = {
   showOnlySpeakers: boolean;
   isEnabled: boolean;
   showMe: boolean;

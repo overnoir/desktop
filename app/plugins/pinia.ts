@@ -5,15 +5,15 @@ export default defineNuxtPlugin(async ({ $pinia }) => {
   function sync(state: State) {
     return {
       ...state,
-      settings: safeParseWithDefault(
-        settingsSchema,
-        defaultSettings,
-        state.settings,
+      appSettings: safeParseWithDefault(
+        appSettingsSchema,
+        defaultAppSettings,
+        state.appSettings,
       ),
-      discord: safeParseWithDefault(
-        discordSchema,
-        defaultDiscord,
-        state.discord,
+      discordSettings: safeParseWithDefault(
+        discordSettingsSchema,
+        defaultDiscordSettings,
+        state.discordSettings,
       ),
     };
   }

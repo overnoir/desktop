@@ -1,26 +1,26 @@
 <script setup lang="ts">
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
-const { settings } = storeToRefs(useSettingsStore());
+const { appSettings } = storeToRefs(useAppSettingsStore());
 const { create } = useTray();
 
 const radius = computed(
-  () => (settings.value.size * settings.value.radius) / 100 / 2,
+  () => (appSettings.value.size * appSettings.value.radius) / 100 / 2,
 );
 
 await overlayWebviewWindow.setPosition(
-  new TauriDpiLogicalPosition(settings.value.x, settings.value.y),
+  new TauriDpiLogicalPosition(appSettings.value.x, appSettings.value.y),
 );
 await create();
 
 if (tauriOSType() === "macos") {
   await tauriCoreInvoke("init_macos");
   await tauriCoreInvoke("set_nspanel_ignore_cursor", {
-    value: settings.value.ignoreCursor,
+    value: appSettings.value.ignoreCursor,
   });
 }
 
-if (settings.value.autoStart !== (await tauriAutoStartIsEnabled())) {
-  if (settings.value.autoStart) {
+if (appSettings.value.autoStart !== (await tauriAutoStartIsEnabled())) {
+  if (appSettings.value.autoStart) {
     await tauriAutoStartEnable();
   } else {
     await tauriAutoStartDisable();
@@ -51,14 +51,14 @@ onMounted(async () => {
   <Html
     :style="{
       'border-radius': `${radius}px`,
-      opacity: `${settings.opacity}%`,
+      opacity: `${appSettings.opacity}%`,
     }"
   >
     <Body class="size-max **:select-none **:transition-none">
       <main
         :class="{
           'ring ring-border ring-inset bg-background p-0.5':
-            settings.showBackground,
+            appSettings.showBackground,
         }"
         :style="{ 'border-radius': `${radius}px` }"
       >
