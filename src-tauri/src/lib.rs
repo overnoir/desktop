@@ -29,6 +29,7 @@ pub fn run() {
             authenticate_discord,
             authorize_discord,
             connect_discord,
+            close_discord,
             #[cfg(target_os = "macos")]
             set_nspanel_ignore_cursor,
             #[cfg(target_os = "macos")]
@@ -200,14 +201,33 @@ fn set_nspanel_ignore_cursor(app_handle: AppHandle, value: bool) {
 }
 
 #[tauri::command]
-fn connect_discord(app_handle: AppHandle) {
+fn connect_discord(app_handle: AppHandle) -> Result<(), String> {
     let state = app_handle.state::<DiscordState>();
 
-    let mut client_guard = state.client.lock().unwrap();
+    let mut client_guard = state.client.lock().map_err(|e| e.to_string())?;
 
-    let client = client_guard.as_mut().unwrap();
+    let client = client_guard
+        .as_mut()
+        .ok_or("Discord client is not initialized")?;
 
-    client.connect().unwrap();
+    client.connect().map_err(|e| e.to_string())?;
+
+    Ok(())
+}
+
+#[tauri::command]
+fn close_discord(app_handle: AppHandle) -> Result<(), String> {
+    let state = app_handle.state::<DiscordState>();
+
+    let mut client_guard = state.client.lock().map_err(|e| e.to_string())?;
+
+    let client = client_guard
+        .as_mut()
+        .ok_or("Discord client is not initialized")?;
+
+    client.close().map_err(|e| e.to_string())?;
+
+    Ok(())
 }
 
 #[tauri::command]

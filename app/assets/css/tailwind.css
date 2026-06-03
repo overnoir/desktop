@@ -113,7 +113,7 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring/50 scrollbar-thumb-muted scrollbar-thin;
   }
   body {
     @apply bg-transparent text-foreground overflow-hidden selection:bg-primary/50 selection:text-foreground font-[Inter];

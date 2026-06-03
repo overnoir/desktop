@@ -119,9 +119,16 @@ export default {
   },
   discord: {
     isEnabled: {
-      title: "Aktif",
+      title: "Etkinleştirilmiş",
       description:
         "Discord bağlantısını etkinleştirin veya devre dışı bırakın.",
+    },
+    connection: {
+      title: "Bağlantı",
+      description: "Discord bağlantısı yapın veya kapatın.",
+      connected: "Bağlantı Etkin",
+      closed: "Bağlantı Kapalı",
+      retry: "Tekrar Dene",
     },
     showMe: {
       title: "Beni Göster",

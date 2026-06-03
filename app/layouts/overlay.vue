@@ -1,6 +1,10 @@
 <script setup lang="ts">
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const { appSettings } = storeToRefs(useAppSettingsStore());
+const { discordSettings } = storeToRefs(useDiscordSettingsStore());
+const discordStateStore = useDiscordStateStore();
+const { connected } = storeToRefs(discordStateStore);
+
 const { create } = useTray();
 
 const radius = computed(
@@ -24,6 +28,15 @@ if (appSettings.value.autoStart !== (await tauriAutoStartIsEnabled())) {
     await tauriAutoStartEnable();
   } else {
     await tauriAutoStartDisable();
+  }
+}
+
+if (discordSettings.value.isEnabled) {
+  try {
+    await tauriCoreInvoke("connect_discord");
+    connected.value = true;
+  } catch (error) {
+    discordStateStore.addError(JSON.stringify(error));
   }
 }
 

@@ -56,4 +56,10 @@ export type DiscordSettings = {
   isEnabled: boolean;
   showMe: boolean;
 };
+
+export type DiscordError = {
+  createdAt: number;
+  message: string;
+  id: string;
+};
 //#endregion
