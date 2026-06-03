@@ -59,7 +59,7 @@ useMousePressed({
       v-for="i in 3"
       :key="i"
       src="/logo.png"
-      class="select-none pointer-events-none bg-black"
+      class="bg-black"
       :style="{
         'border-radius': `${radius}px`,
         height: `${settings.size}px`,
@@ -72,7 +72,7 @@ useMousePressed({
       :class="{
         'ring ring-inset ring-border': !settings.showBackground,
       }"
-      class="bg-background! active:bg-muted! select-none"
+      class="bg-background! active:bg-muted!"
       :style="{
         'border-radius': `${radius}px`,
         height: `${settings.size}px`,
@@ -90,7 +90,7 @@ useMousePressed({
       :class="{
         'ring ring-inset ring-border': !settings.showBackground,
       }"
-      class="bg-background! active:bg-muted! select-none"
+      class="bg-background! active:bg-muted!"
       :style="{
         'border-radius': `${radius}px`,
         height: `${settings.size}px`,

@@ -5,7 +5,7 @@ const isMacos = tauriOSType() === "macos";
 
 <template>
   <header
-    class="bg-sidebar h-7 **:select-none flex items-center justify-end [&>button]:h-full [&>button]:rounded-none"
+    class="bg-sidebar h-7 flex items-center justify-end [&>button]:h-full [&>button]:rounded-none"
     :class="{
       'px-1 gap-0.5 justify-start [&_svg]:size-3! [&>button]:rounded-full! [&>button]:p-0 [&>button]:border [&>button]:bg-background [&>button]:size-5!':
         isMacos,
