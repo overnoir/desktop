@@ -5,11 +5,25 @@ definePageMeta({
 
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const { settings } = storeToRefs(useSettingsStore());
-const dragArea = ref<HTMLElement | null>(null);
+const isMacos = tauriOSType() === "macos";
 
 const radius = computed(
   () => (settings.value.size * settings.value.radius) / 100 / 2,
 );
+
+if (!isMacos) {
+  overlayWebviewWindow.onMoved(({ payload }) => {
+    const { x, y } = payload;
+    settings.value.x = x;
+    settings.value.y = y;
+  });
+}
+
+async function updatePosition() {
+  const { x, y } = await overlayWebviewWindow.outerPosition();
+  settings.value.x = x;
+  settings.value.y = y;
+}
 
 async function openMainWebviewWindow() {
   const mainWebviewWindow = (
@@ -27,24 +41,6 @@ async function openMainWebviewWindow() {
     );
   }
 }
-
-useMousePressed({
-  async onReleased() {
-    const { x, y } = await overlayWebviewWindow.outerPosition();
-    settings.value.x = x;
-    settings.value.y = y;
-    overlayWebviewWindow.setPosition(
-      new TauriDpiLogicalPosition(settings.value.x + 1, settings.value.y + 1),
-    );
-    overlayWebviewWindow.setPosition(
-      new TauriDpiLogicalPosition(settings.value.x, settings.value.y),
-    );
-  },
-  async onPressed() {
-    await overlayWebviewWindow.startDragging();
-  },
-  target: dragArea,
-});
 </script>
 
 <template>
@@ -72,7 +68,7 @@ useMousePressed({
       :class="{
         'ring ring-inset ring-border': !settings.showBackground,
       }"
-      class="bg-background! active:bg-muted!"
+      class="bg-background! ring-0!"
       :style="{
         'border-radius': `${radius}px`,
         height: `${settings.size}px`,
@@ -86,11 +82,11 @@ useMousePressed({
     </Button>
     <Button
       v-show="settings.isDraggable"
-      ref="dragArea"
+      data-tauri-drag-region
       :class="{
         'ring ring-inset ring-border': !settings.showBackground,
       }"
-      class="bg-background! active:bg-muted!"
+      class="bg-background! ring-0!"
       :style="{
         'border-radius': `${radius}px`,
         height: `${settings.size}px`,
@@ -98,6 +94,7 @@ useMousePressed({
       }"
       variant="ghost"
       size="icon"
+      @mouseup="isMacos && updatePosition()"
     >
       <Icon name="lucide:grip" class="pointer-events-none size-1/2" />
     </Button>
