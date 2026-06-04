@@ -22,8 +22,12 @@ export const defaultAppSettings: AppSettings = {
 
 export const defaultDiscordSettings: DiscordSettings = {
   showOnlySpeakers: false,
-  isEnabled: false,
   showMe: true,
+};
+
+export const defaultDiscordState: DiscordState = {
+  connected: false,
+  errors: [],
 };
 
 export const mainWebviewWindowOptions: Omit<

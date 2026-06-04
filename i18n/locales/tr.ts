@@ -116,19 +116,40 @@ export default {
   vault: {
     heads: ["Anahtar", "Oluşturulma Tarihi", "Güncellenme Tarihi"],
     empty: "Kasanız boş.",
+    error: "Kasa verileri yüklenirken bir hata oluştu.",
+    clear: {
+      title: "Verileri Sil",
+      description: "Kasadaki tüm verileri silin.",
+      success: "Kasadaki tüm veriler başarıyla silindi.",
+      error: "Kasa verileri silinirken bir hata oluştu.",
+      dialog: {
+        title: "Kasadaki tüm verileri sil",
+        description:
+          "Kasadaki tüm verileri istediğinize emin misiniz? Bu işlem geri alınamaz.",
+        confirm: "Evet, sil",
+        cancel: "Vazgeç",
+      },
+    },
   },
   discord: {
-    isEnabled: {
-      title: "Etkinleştirilmiş",
-      description:
-        "Discord bağlantısını etkinleştirin veya devre dışı bırakın.",
+    errors: {
+      title: "Hatalar",
+      description: "Discord hatalar.",
+      clear: "Hepsini Sil",
     },
     connection: {
-      title: "Bağlantı",
-      description: "Discord bağlantısı yapın veya kapatın.",
-      connected: "Bağlantı Etkin",
-      closed: "Bağlantı Kapalı",
-      retry: "Tekrar Dene",
+      connect: {
+        success: "Bağlantı başarıyla yapıldı.",
+        error: "Bağlantı yapılırken bir sorun oluştu.",
+        button: "Bağlan",
+        badge: "Bağlanıldı",
+      },
+      disconnect: {
+        success: "Bağlantı başarıyla kesildi.",
+        error: "Bağlantı kesilirken bir sorun oluştu.",
+        button: "Bağlantıyı Kes",
+        badge: "Bağlantı Kesildi",
+      },
     },
     showMe: {
       title: "Beni Göster",

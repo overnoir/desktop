@@ -20,7 +20,7 @@ async function updateIgnoreCursor(value: boolean) {
   }
 }
 
-async function resetSettings() {
+async function reset() {
   if (!overlayWebviewWindow) {
     return;
   }
@@ -151,7 +151,7 @@ async function resetSettings() {
             <AlertDialogCancel>
               {{ $t("settings.advanced.reset.dialog.cancel") }}
             </AlertDialogCancel>
-            <AlertDialogAction variant="destructive" @click="resetSettings">
+            <AlertDialogAction variant="destructive" @click="reset">
               {{ $t("settings.advanced.reset.dialog.confirm") }}
             </AlertDialogAction>
           </AlertDialogFooter>

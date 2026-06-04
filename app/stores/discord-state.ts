@@ -1,26 +1,46 @@
+import type { State } from "@tauri-store/pinia";
+
+function sync(state: State) {
+  return {
+    discordState: safeParseWithDefault(
+      discordStateSchema,
+      defaultDiscordState,
+      state.discordState,
+    ),
+  };
+}
+
 export const useDiscordStateStore = defineStore(
   "discord-state",
   () => {
-    const errors = ref<DiscordError[]>([]);
-    const connected = ref(false);
+    const discordState = ref<DiscordState>({ ...defaultDiscordState });
 
-    function addError(message: DiscordError["message"]) {
-      errors.value.push({
+    function addError(message: DiscordState["errors"][0]["message"]) {
+      discordState.value.errors.push({
         id: crypto.randomUUID(),
         createdAt: Date.now(),
         message,
       });
     }
 
-    function removeError(errorId: DiscordError["id"]) {
-      errors.value = errors.value.filter(({ id }) => id !== errorId);
+    function removeError(errorId: DiscordState["errors"][0]["id"]) {
+      discordState.value.errors = discordState.value.errors.filter(
+        ({ id }) => id !== errorId,
+      );
     }
 
-    return { connected, errors, addError, removeError };
+    function clearErrors() {
+      discordState.value.errors = [];
+    }
+
+    return { discordState, addError, removeError, clearErrors };
   },
   {
     tauri: {
-      save: false,
+      hooks: {
+        beforeFrontendSync: sync,
+        beforeBackendSync: sync,
+      },
     },
   },
 );

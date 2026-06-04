@@ -1,32 +1,29 @@
 <script setup lang="ts">
 const discordStateStore = useDiscordStateStore();
-const { errors, connected } = storeToRefs(discordStateStore);
+const { discordState } = storeToRefs(discordStateStore);
 const discordSettingsStore = useDiscordSettingsStore();
 const { discordSettings } = storeToRefs(discordSettingsStore);
 const { $toast } = useNuxtApp();
-const { t } = useI18n();
 const loading = ref(false);
+const { t } = useI18n();
+
+async function toggleConnection() {
+  loading.value = true;
+  const action = discordState.value.connected ? "disconnect" : "connect";
+  try {
+    await tauriCoreInvoke(`${action}_discord`);
+    discordState.value.connected = action === "connect";
+    $toast(t(`discord.connection.${action}.success`));
+  } catch (error) {
+    discordStateStore.addError(JSON.stringify(error));
+    $toast(t(`discord.connection.${action}.error`));
+  }
+  loading.value = false;
+}
 
 async function resetDiscordSettings() {
   discordSettingsStore.reset();
   $toast(t("discord.reset.success"));
-}
-
-async function toggleConnection(value: boolean) {
-  loading.value = true;
-  await new Promise((r) => setTimeout(r, 100));
-  try {
-    if (value) {
-      await tauriCoreInvoke("connect_discord");
-      connected.value = true;
-    } else {
-      await tauriCoreInvoke("close_discord");
-      connected.value = false;
-    }
-  } catch (error) {
-    discordStateStore.addError(JSON.stringify(error));
-  }
-  loading.value = false;
 }
 </script>
 
@@ -34,15 +31,29 @@ async function toggleConnection(value: boolean) {
   <section
     class="grid gap-4 [&>div]:flex [&>div]:items-center [&>div]:gap-4 [&>div]:justify-between"
   >
-    <template v-if="errors.length">
+    <template v-if="discordState.errors.length">
+      <div>
+        <div>
+          <h1 class="text-sm">{{ $t("discord.errors.title") }}</h1>
+          <p class="text-muted-foreground text-xs">
+            {{ $t("discord.errors.description") }}
+          </p>
+        </div>
+        <Button
+          class="justify-self-end shrink-0"
+          variant="destructive"
+          @click="discordStateStore.clearErrors"
+        >
+          {{ $t("discord.errors.clear") }}
+        </Button>
+      </div>
       <div class="flex-col gap-2! max-h-51.5 overflow-auto">
         <Alert
-          v-for="{ createdAt, id, message } in errors"
+          v-for="{ createdAt, id, message } in discordState.errors"
           :key="id"
           variant="destructive"
         >
-          <Icon name="lucide:alert-triangle" />
-          <AlertTitle>
+          <AlertTitle class="line-clamp-none">
             <div class="flex justify-between">
               {{ message }}
               <Button
@@ -63,51 +74,47 @@ async function toggleConnection(value: boolean) {
       <Separator />
     </template>
     <div>
-      <div>
-        <h1 class="text-sm">{{ $t("discord.isEnabled.title") }}</h1>
-        <p class="text-muted-foreground text-xs">
-          {{ $t("discord.isEnabled.description") }}
-        </p>
-      </div>
-      <div class="flex items-center gap-2">
-        <Switch
-          v-model="discordSettings.isEnabled"
-          class="justify-self-end shrink-0"
-          @update:model-value="toggleConnection"
-        />
-      </div>
-    </div>
-    <Separator />
-    <div>
-      <div>
-        <h1 class="text-sm">{{ $t("discord.connection.title") }}</h1>
-        <p class="text-muted-foreground text-xs">
-          {{ $t("discord.connection.description") }}
-        </p>
-      </div>
-      <div class="flex items-center gap-3">
-        <Badge class="h-5.25 gap-1.5" variant="outline">
-          <Spinner v-if="loading" />
-          <template v-else>
+      <Card class="w-full p-4 gap-4">
+        <CardHeader class="flex items-start p-0 gap-4">
+          <div>
             <div
-              class="size-2 rounded-full"
+              class="bg-[#5865F2] size-10 rounded-lg grid place-items-center"
+            >
+              <Icon name="simple-icons:discord" size="25" />
+            </div>
+          </div>
+          <div class="space-y-1">
+            <CardTitle>Discord RPC</CardTitle>
+            <CardDescription>Rich Presence Connection</CardDescription>
+          </div>
+          <Badge variant="outline" class="ml-auto">
+            <div
+              class="size-2 rounded-full mr-0.5"
               :class="{
-                'bg-green-500': connected,
-                'bg-red-500': !connected,
+                'bg-green-500': discordState.connected,
+                'bg-red-500': !discordState.connected,
               }"
             />
-            {{ $t(`discord.connection.${connected ? "connected" : "closed"}`) }}
-          </template>
-        </Badge>
+            {{
+              $t(
+                `discord.connection.${discordState.connected ? "connect" : "disconnect"}.badge`,
+              )
+            }}
+          </Badge>
+        </CardHeader>
         <Button
-          v-if="!connected && discordSettings.isEnabled && !loading"
-          variant="outline"
-          size="icon-sm"
-          @click="toggleConnection(true)"
+          class="bg-[#5865F2] hover:bg-[#5865F2]/90"
+          :loading
+          :variant="discordState.connected ? 'outline' : 'default'"
+          @click="toggleConnection"
         >
-          <Icon name="lucide:refresh-ccw" />
+          {{
+            $t(
+              `discord.connection.${discordState.connected ? "disconnect" : "connect"}.button`,
+            )
+          }}
         </Button>
-      </div>
+      </Card>
     </div>
     <Separator />
     <div>

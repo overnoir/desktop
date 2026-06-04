@@ -1,10 +1,8 @@
 <script setup lang="ts">
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const { appSettings } = storeToRefs(useAppSettingsStore());
-const { discordSettings } = storeToRefs(useDiscordSettingsStore());
 const discordStateStore = useDiscordStateStore();
-const { connected } = storeToRefs(discordStateStore);
-
+const { discordState } = storeToRefs(discordStateStore);
 const { create } = useTray();
 
 const radius = computed(
@@ -17,7 +15,7 @@ await overlayWebviewWindow.setPosition(
 await create();
 
 if (tauriOSType() === "macos") {
-  await tauriCoreInvoke("init_macos");
+  await tauriCoreInvoke("init_nspanel");
   await tauriCoreInvoke("set_nspanel_ignore_cursor", {
     value: appSettings.value.ignoreCursor,
   });
@@ -28,15 +26,6 @@ if (appSettings.value.autoStart !== (await tauriAutoStartIsEnabled())) {
     await tauriAutoStartEnable();
   } else {
     await tauriAutoStartDisable();
-  }
-}
-
-if (discordSettings.value.isEnabled) {
-  try {
-    await tauriCoreInvoke("connect_discord");
-    connected.value = true;
-  } catch (error) {
-    discordStateStore.addError(JSON.stringify(error));
   }
 }
 
@@ -56,6 +45,15 @@ onMounted(async () => {
 
   if (updaterWebviewWindow) {
     await updaterWebviewWindow.destroy();
+  }
+
+  if (discordState.value.connected) {
+    try {
+      await tauriCoreInvoke(`connect_discord`);
+    } catch (error) {
+      discordStateStore.addError(JSON.stringify(error));
+      discordState.value.connected = false;
+    }
   }
 });
 </script>

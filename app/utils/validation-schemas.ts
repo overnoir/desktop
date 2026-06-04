@@ -19,6 +19,16 @@ export const appSettingsSchema = z.object({
 
 export const discordSettingsSchema = z.object({
   showOnlySpeakers: z.boolean(),
-  isEnabled: z.boolean(),
   showMe: z.boolean(),
 }) satisfies z.ZodType<DiscordSettings>;
+
+export const discordStateSchema = z.object({
+  connected: z.boolean(),
+  errors: z.array(
+    z.object({
+      createdAt: z.number(),
+      message: z.string(),
+      id: z.string(),
+    }),
+  ),
+}) satisfies z.ZodType<DiscordState>;

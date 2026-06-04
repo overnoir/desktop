@@ -53,13 +53,21 @@ export type AppSettings = {
 
 export type DiscordSettings = {
   showOnlySpeakers: boolean;
-  isEnabled: boolean;
   showMe: boolean;
 };
 
-export type DiscordError = {
+export type VaultItemMetadata = {
   createdAt: number;
-  message: string;
-  id: string;
+  updatedAt: number;
+  key: string;
+};
+
+export type DiscordState = {
+  connected: boolean;
+  errors: {
+    createdAt: number;
+    message: string;
+    id: string;
+  }[];
 };
 //#endregion
