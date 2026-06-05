@@ -16,11 +16,13 @@ export const defaultAppSettings: AppSettings = {
   opacity: 100,
   radius: 50,
   size: 50,
+  gap: 10,
   x: 0,
   y: 0,
 };
 
 export const defaultDiscordSettings: DiscordSettings = {
+  displayName: VoiceUserDisplayName.Username,
   showOnlySpeakers: false,
   showMe: true,
 };

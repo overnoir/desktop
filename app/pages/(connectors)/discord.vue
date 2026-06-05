@@ -78,7 +78,7 @@ async function resetDiscordSettings() {
         <CardHeader class="flex items-start p-0 gap-4">
           <div>
             <div
-              class="bg-[#5865F2] size-10 rounded-lg grid place-items-center"
+              class="bg-[#5865F2] text-white size-10 rounded-lg grid place-items-center"
             >
               <Icon name="simple-icons:discord" size="25" />
             </div>
@@ -103,9 +103,11 @@ async function resetDiscordSettings() {
           </Badge>
         </CardHeader>
         <Button
-          class="bg-[#5865F2] hover:bg-[#5865F2]/90"
+          :class="{
+            'bg-[#5865F2] hover:bg-[#5865F2]/90!': discordState.connected,
+          }"
           :loading
-          :variant="discordState.connected ? 'outline' : 'default'"
+          :variant="discordState.connected ? 'ghost' : 'outline'"
           @click="toggleConnection"
         >
           {{
@@ -141,6 +143,29 @@ async function resetDiscordSettings() {
         v-model="discordSettings.showOnlySpeakers"
         class="justify-self-end shrink-0"
       />
+    </div>
+    <Separator />
+    <div>
+      <div>
+        <h1 class="text-sm">{{ $t("discord.displayName.title") }}</h1>
+        <p class="text-muted-foreground text-xs">
+          {{ $t("discord.displayName.description") }}
+        </p>
+      </div>
+      <Select v-model="discordSettings.displayName">
+        <SelectTrigger class="justify-self-end shrink-0">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem
+            v-for="displayName in Object.values(VoiceUserDisplayName)"
+            :key="displayName"
+            :value="displayName"
+          >
+            {{ $t(`discord.displayName.${displayName}`) }}
+          </SelectItem>
+        </SelectContent>
+      </Select>
     </div>
     <Separator />
     <div>

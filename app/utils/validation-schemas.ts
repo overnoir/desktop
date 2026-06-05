@@ -7,6 +7,7 @@ export const appSettingsSchema = z.object({
   radius: z.number().min(0).max(100),
   orientation: z.enum(Orientation),
   size: z.number().min(0).max(250),
+  gap: z.number().min(0).max(100),
   preventCapture: z.boolean(),
   showBackground: z.boolean(),
   ignoreCursor: z.boolean(),
@@ -18,6 +19,7 @@ export const appSettingsSchema = z.object({
 }) satisfies z.ZodType<AppSettings>;
 
 export const discordSettingsSchema = z.object({
+  displayName: z.enum(VoiceUserDisplayName),
   showOnlySpeakers: z.boolean(),
   showMe: z.boolean(),
 }) satisfies z.ZodType<DiscordSettings>;

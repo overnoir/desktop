@@ -20,6 +20,13 @@ export enum WebviewWindow {
   Overlay = "overlay",
   Main = "main",
 }
+
+export enum VoiceUserDisplayName {
+  Nick = "nick",
+  Username = "username",
+  None = "none",
+}
+
 //#endregion
 
 //#region Types
@@ -36,8 +43,8 @@ export type LinkGroup = {
 
 export type AppSettings = {
   orientation: Orientation;
-  showBackground: boolean;
   preventCapture: boolean;
+  showBackground: boolean;
   showSettings: boolean;
   ignoreCursor: boolean;
   isDraggable: boolean;
@@ -47,11 +54,13 @@ export type AppSettings = {
   radius: number;
   theme: Theme;
   size: number;
+  gap: number;
   x: number;
   y: number;
 };
 
 export type DiscordSettings = {
+  displayName: VoiceUserDisplayName;
   showOnlySpeakers: boolean;
   showMe: boolean;
 };
@@ -69,5 +78,26 @@ export type DiscordState = {
     message: string;
     id: string;
   }[];
+};
+
+export type VoiceUser = {
+  userId: string;
+  username: string;
+  discriminator: string;
+  avatar: string | null;
+  nick: string | null;
+  isSpeaking: boolean;
+  isMuted: boolean;
+  isDeafened: boolean;
+  isSelfMuted: boolean;
+  isSelfDeafened: boolean;
+};
+
+export type VoiceChannelState = {
+  channelId: string | null;
+  channelName: string | null;
+  guildId: string | null;
+  users: VoiceUser[];
+  currentUserId: string | null;
 };
 //#endregion

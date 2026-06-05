@@ -4,12 +4,24 @@ definePageMeta({
 });
 
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
+const { discordSettings } = storeToRefs(useDiscordSettingsStore());
 const { appSettings } = storeToRefs(useAppSettingsStore());
+const discordStateStore = useDiscordStateStore();
+const voiceState = ref<VoiceChannelState>();
 const isMacos = tauriOSType() === "macos";
 
-const radius = computed(
-  () => (appSettings.value.size * appSettings.value.radius) / 100 / 2,
-);
+const filtredUsers = computed(() => {
+  const state = voiceState.value;
+  if (!state) return [];
+  let users = state.users;
+  if (!discordSettings.value.showMe && state.currentUserId) {
+    users = users.filter((u) => u.userId !== state.currentUserId);
+  }
+  if (discordSettings.value.showOnlySpeakers) {
+    users = users.filter((u) => u.isSpeaking);
+  }
+  return users;
+});
 
 if (!isMacos) {
   overlayWebviewWindow.onMoved(({ payload }) => {
@@ -41,40 +53,36 @@ async function openMainWebviewWindow() {
     );
   }
 }
+
+tauriEventListen<VoiceChannelState>("voice-state", (event) => {
+  voiceState.value = event.payload;
+});
+
+tauriEventListen<string>("voice-error", (event) => {
+  discordStateStore.addError(event.payload);
+});
 </script>
 
 <template>
   <section
-    class="flex items-center gap-0.5"
+    class="flex"
     :class="{
-      'flex-row': appSettings.orientation === 'horizontal',
-      'flex-col': appSettings.orientation === 'vertical',
+      'flex-col': appSettings.orientation === Orientation.Vertical,
+    }"
+    :style="{
+      gap: `${(appSettings.size * appSettings.gap) / 100}px`,
     }"
   >
-    <NuxtImg
-      v-for="i in 3"
-      :key="i"
-      src="/logo.png"
-      class="bg-black"
-      :style="{
-        'border-radius': `${radius}px`,
-        height: `${appSettings.size}px`,
-        width: `${appSettings.size}px`,
-      }"
-      alt="Avatar"
-    />
+    <DiscordUser v-for="user in filtredUsers" :key="user.userId" :user />
     <Button
       v-if="appSettings.showSettings"
-      :class="{
-        'ring ring-inset ring-border': !appSettings.showBackground,
-      }"
-      class="bg-background! ring-0!"
       :style="{
-        'border-radius': `${radius}px`,
+        borderRadius: `${(appSettings.size * appSettings.radius) / 200}px`,
         height: `${appSettings.size}px`,
         width: `${appSettings.size}px`,
       }"
-      variant="ghost"
+      class="bg-background!"
+      variant="outline"
       size="icon"
       @click="openMainWebviewWindow"
     >
@@ -83,16 +91,13 @@ async function openMainWebviewWindow() {
     <Button
       v-if="appSettings.isDraggable"
       data-tauri-drag-region
-      :class="{
-        'ring ring-inset ring-border': !appSettings.showBackground,
-      }"
-      class="bg-background! ring-0!"
       :style="{
-        'border-radius': `${radius}px`,
+        borderRadius: `${(appSettings.size * appSettings.radius) / 200}px`,
         height: `${appSettings.size}px`,
         width: `${appSettings.size}px`,
       }"
-      variant="ghost"
+      class="bg-background!"
+      variant="outline"
       size="icon"
       @mouseup="isMacos && updatePosition()"
     >

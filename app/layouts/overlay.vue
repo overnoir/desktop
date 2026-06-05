@@ -5,8 +5,13 @@ const discordStateStore = useDiscordStateStore();
 const { discordState } = storeToRefs(discordStateStore);
 const { create } = useTray();
 
-const radius = computed(
-  () => (appSettings.value.size * appSettings.value.radius) / 100 / 2,
+const backgroundStyle = computed(() =>
+  appSettings.value.showBackground
+    ? {
+        borderRadius: `${(appSettings.value.size * appSettings.value.radius) / 200 + appSettings.value.size / 25}px`,
+        padding: `${appSettings.value.size / 25}px`,
+      }
+    : undefined,
 );
 
 await overlayWebviewWindow.setPosition(
@@ -61,17 +66,15 @@ onMounted(async () => {
 <template>
   <Html
     :style="{
-      'border-radius': `${radius}px`,
       opacity: `${appSettings.opacity}%`,
     }"
   >
     <Body class="size-max **:select-none **:transition-none">
       <main
         :class="{
-          'ring ring-border ring-inset bg-background p-0.5':
-            appSettings.showBackground,
+          'bg-background border': appSettings.showBackground,
         }"
-        :style="{ 'border-radius': `${radius}px` }"
+        :style="backgroundStyle"
       >
         <slot />
       </main>

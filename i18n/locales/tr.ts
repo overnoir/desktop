@@ -50,6 +50,10 @@ export default {
         description: "Uygulama pozisyonunu ayarlayın.",
         quickSelect: "Hızlı Seçim",
       },
+      gap: {
+        title: "Aralık",
+        description: "Elementlerin aralarındaki boşluğu ayarlayın.",
+      },
       showBackground: {
         title: "Arka Plan",
         description: "Uygulamanın arka plan görüntüsünü etkinleştirin.",
@@ -158,6 +162,13 @@ export default {
     showOnlySpeakers: {
       title: "Sadece Konuşanları Göster",
       description: "Sadece konuşanların gözükmesini sağlayın.",
+    },
+    displayName: {
+      title: "Gösterilecek Ad",
+      description: "Kullanıcının hangi adının gözükeceğini seçin.",
+      username: "Kullanıcı Adı",
+      nick: "Görünen Ad",
+      none: "Hiçbiri",
     },
     reset: {
       title: "Sıfırla",

@@ -261,6 +261,37 @@ async function quickSelect(
     <Separator />
     <div>
       <div>
+        <h1 class="text-sm">{{ $t("settings.interface.gap.title") }}</h1>
+        <p class="text-muted-foreground text-xs">
+          {{ $t("settings.interface.gap.description") }}
+        </p>
+      </div>
+      <div class="flex flex-col justify-self-end shrink-0">
+        <NumberField
+          :model-value="appSettings.gap"
+          :format-options="{ useGrouping: false }"
+          :min="0"
+          :max="100"
+          @update:model-value="appSettings.gap = $event"
+        >
+          <NumberFieldContent>
+            <NumberFieldDecrement />
+            <NumberFieldInput class="rounded-b-none border-b-0" />
+            <NumberFieldIncrement />
+          </NumberFieldContent>
+        </NumberField>
+        <Slider
+          class="*:data-[slot='slider-track']:rounded-t-none"
+          :model-value="[appSettings.gap]"
+          :max="100"
+          :min="0"
+          @update:model-value="appSettings.gap = $event![0]!"
+        />
+      </div>
+    </div>
+    <Separator />
+    <div>
+      <div>
         <h1 class="text-sm">{{ $t("settings.interface.opacity.title") }}</h1>
         <p class="text-muted-foreground text-xs">
           {{ $t("settings.interface.opacity.description") }}

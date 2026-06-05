@@ -5,6 +5,7 @@ import * as process from "@tauri-apps/plugin-process";
 import * as opener from "@tauri-apps/plugin-opener";
 import * as webview from "@tauri-apps/api/webview";
 import * as window from "@tauri-apps/api/window";
+import * as event from "@tauri-apps/api/event";
 import * as log from "@tauri-apps/plugin-log";
 import * as menu from "@tauri-apps/api/menu";
 import * as tray from "@tauri-apps/api/tray";
@@ -90,6 +91,11 @@ const plugins = [
     from: "@tauri-apps/plugin-opener",
     prefix: "Opener",
     plugin: opener,
+  },
+  {
+    from: "@tauri-apps/api/event",
+    prefix: "Event",
+    plugin: event,
   },
 ];
 
