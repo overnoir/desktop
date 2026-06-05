@@ -1,11 +1,10 @@
+#![cfg(target_os = "macos")]
 use tauri::{AppHandle, Manager};
-#[cfg(target_os = "macos")]
 use tauri_nspanel::{
     tauri_panel, CollectionBehavior, ManagerExt, PanelLevel, StyleMask, TrackingAreaOptions,
     WebviewWindowExt,
 };
 
-#[cfg(target_os = "macos")]
 #[tauri::command]
 pub fn init_nspanel(app_handle: AppHandle) {
     app_handle.plugin(tauri_nspanel::init()).unwrap();
@@ -67,7 +66,6 @@ pub fn init_nspanel(app_handle: AppHandle) {
     panel.set_event_handler(Some(handler.as_ref()));
 }
 
-#[cfg(target_os = "macos")]
 #[tauri::command]
 pub fn set_nspanel_ignore_cursor(app_handle: AppHandle, value: bool) {
     if let Ok(panel) = app_handle.get_webview_panel("overlay") {

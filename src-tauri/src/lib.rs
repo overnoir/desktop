@@ -3,6 +3,7 @@ mod discord;
 mod nspanel;
 mod vault;
 use discord::{connect_discord, disconnect_discord, init_discord};
+#[cfg(target_os = "macos")]
 use nspanel::{init_nspanel, set_nspanel_ignore_cursor};
 use vault::{clear_vault, get_vault_metadata, init_vault};
 
