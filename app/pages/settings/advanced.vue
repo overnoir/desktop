@@ -42,99 +42,64 @@ async function reset() {
 </script>
 
 <template>
-  <section
-    class="grid gap-4 [&>div]:flex [&>div]:items-center [&>div]:justify-between"
-  >
-    <div>
-      <div>
-        <h1 class="text-sm">{{ $t("settings.advanced.isDraggable.title") }}</h1>
-        <p class="text-muted-foreground text-xs">
-          {{ $t("settings.advanced.isDraggable.description") }}
-        </p>
-      </div>
-      <Switch
-        v-model="appSettings.isDraggable"
-        class="justify-self-end shrink-0"
-      />
-    </div>
+  <section class="grid gap-4">
+    <SettingField
+      :description="$t('settings.advanced.isDraggable.description')"
+      :title="$t('settings.advanced.isDraggable.title')"
+    >
+      <Switch v-model="appSettings.isDraggable" />
+    </SettingField>
     <Separator />
-    <div>
-      <div>
-        <h1 class="text-sm">
-          {{ $t("settings.advanced.showSettings.title") }}
-        </h1>
-        <p class="text-muted-foreground text-xs">
-          {{ $t("settings.advanced.showSettings.description") }}
-        </p>
-      </div>
-      <Switch
-        v-model="appSettings.showSettings"
-        class="justify-self-end shrink-0"
-      />
-    </div>
+    <SettingField
+      :description="$t('settings.advanced.showSettings.description')"
+      :title="$t('settings.advanced.showSettings.title')"
+    >
+      <Switch v-model="appSettings.showSettings" />
+    </SettingField>
     <Separator />
-    <div>
-      <div>
-        <h1 class="text-sm">{{ $t("settings.advanced.autoStart.title") }}</h1>
-        <p class="text-muted-foreground text-xs">
-          {{ $t("settings.advanced.autoStart.description") }}
-        </p>
-      </div>
+    <SettingField
+      :description="$t('settings.advanced.autoStart.description')"
+      :title="$t('settings.advanced.autoStart.title')"
+    >
       <Switch
         v-model="appSettings.autoStart"
-        class="justify-self-end shrink-0"
         @update:model-value="
           $event ? tauriAutoStartEnable() : tauriAutoStartDisable()
         "
       />
-    </div>
+    </SettingField>
     <Separator />
-    <div>
-      <div>
-        <h1 class="text-sm">
-          {{ $t("settings.advanced.ignoreCursor.title") }}
-        </h1>
-        <p class="text-muted-foreground text-xs">
-          {{ $t("settings.advanced.ignoreCursor.description") }}
-        </p>
-      </div>
+    <SettingField
+      :description="$t('settings.advanced.ignoreCursor.description')"
+      :title="$t('settings.advanced.ignoreCursor.title')"
+    >
       <Switch
         v-model="appSettings.ignoreCursor"
-        class="justify-self-end shrink-0"
         @update:model-value="updateIgnoreCursor($event)"
       />
-    </div>
+    </SettingField>
     <Separator />
-    <div>
-      <div>
-        <h1 class="text-sm">
-          {{ $t("settings.advanced.preventCapture.title") }}
-        </h1>
-        <p class="text-muted-foreground text-xs">
-          {{ $t("settings.advanced.preventCapture.description") }}
-        </p>
-      </div>
+    <SettingField
+      :description="$t('settings.advanced.preventCapture.description')"
+      :title="$t('settings.advanced.preventCapture.title')"
+    >
       <Switch
         v-model="appSettings.preventCapture"
-        class="justify-self-end shrink-0"
         @update:model-value="
           overlayWebviewWindow &&
             overlayWebviewWindow.setContentProtected($event);
           mainWebviewWindow.setContentProtected($event);
         "
       />
-    </div>
+    </SettingField>
     <Separator />
-    <div>
-      <div>
-        <h1 class="text-sm">{{ $t("settings.advanced.reset.title") }}</h1>
-        <p class="text-muted-foreground text-xs">
-          {{ $t("settings.advanced.reset.description") }}
-        </p>
-      </div>
+    <SettingField
+      :description="$t('settings.advanced.reset.description')"
+      :title="$t('settings.advanced.reset.title')"
+    >
       <AlertDialog>
         <AlertDialogTrigger as-child>
-          <Button variant="destructive" class="justify-self-end shrink-0">
+          <Button variant="destructive">
             {{ $t("settings.advanced.reset.title") }}
           </Button>
         </AlertDialogTrigger>
@@ -157,6 +122,6 @@ async function reset() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </SettingField>
   </section>
 </template>

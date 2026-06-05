@@ -28,25 +28,16 @@ async function resetDiscordSettings() {
 </script>
 
 <template>
-  <section
-    class="grid gap-4 [&>div]:flex [&>div]:items-center [&>div]:gap-4 [&>div]:justify-between"
-  >
+  <section class="grid gap-4">
     <template v-if="discordState.errors.length">
-      <div>
-        <div>
-          <h1 class="text-sm">{{ $t("discord.errors.title") }}</h1>
-          <p class="text-muted-foreground text-xs">
-            {{ $t("discord.errors.description") }}
-          </p>
-        </div>
-        <Button
-          class="justify-self-end shrink-0"
-          variant="destructive"
-          @click="discordStateStore.clearErrors"
-        >
+      <SettingField
+        :description="$t('discord.errors.description')"
+        :title="$t('discord.errors.title')"
+      >
+        <Button variant="destructive" @click="discordStateStore.clearErrors">
           {{ $t("discord.errors.clear") }}
         </Button>
-      </div>
+      </SettingField>
       <div class="flex-col gap-2! max-h-51.5 overflow-auto">
         <Alert
           v-for="{ createdAt, id, message } in discordState.errors"
@@ -73,87 +64,70 @@ async function resetDiscordSettings() {
       </div>
       <Separator />
     </template>
-    <div>
-      <Card class="w-full p-4 gap-4">
-        <CardHeader class="flex items-start p-0 gap-4">
-          <div>
-            <div
-              class="bg-[#5865F2] text-white size-10 rounded-lg grid place-items-center"
-            >
-              <Icon name="simple-icons:discord" size="25" />
-            </div>
+    <Card class="w-full p-4 gap-4">
+      <CardHeader class="flex items-start p-0 gap-4">
+        <div>
+          <div
+            class="bg-[#5865F2] text-white size-10 rounded-lg grid place-items-center"
+          >
+            <Icon name="simple-icons:discord" size="25" />
           </div>
-          <div class="space-y-1">
-            <CardTitle>Discord RPC</CardTitle>
-            <CardDescription>Rich Presence Connection</CardDescription>
-          </div>
-          <Badge variant="outline" class="ml-auto">
-            <div
-              class="size-2 rounded-full mr-0.5"
-              :class="{
-                'bg-green-500': discordState.connected,
-                'bg-red-500': !discordState.connected,
-              }"
-            />
-            {{
-              $t(
-                `discord.connection.${discordState.connected ? "connect" : "disconnect"}.badge`,
-              )
-            }}
-          </Badge>
-        </CardHeader>
-        <Button
-          :class="{
-            'bg-[#5865F2] hover:bg-[#5865F2]/90!': discordState.connected,
-          }"
-          :loading
-          :variant="discordState.connected ? 'ghost' : 'outline'"
-          @click="toggleConnection"
-        >
+        </div>
+        <div class="space-y-1">
+          <CardTitle>Discord RPC</CardTitle>
+          <CardDescription>Rich Presence Connection</CardDescription>
+        </div>
+        <Badge variant="outline" class="ml-auto">
+          <div
+            class="size-2 rounded-full mr-0.5"
+            :class="{
+              'bg-green-500': discordState.connected,
+              'bg-red-500': !discordState.connected,
+            }"
+          />
           {{
             $t(
-              `discord.connection.${discordState.connected ? "disconnect" : "connect"}.button`,
+              `discord.connection.${discordState.connected ? "connect" : "disconnect"}.badge`,
             )
           }}
-        </Button>
-      </Card>
-    </div>
+        </Badge>
+      </CardHeader>
+      <Button
+        :class="{
+          'bg-[#5865F2] hover:bg-[#5865F2]/90!': discordState.connected,
+        }"
+        :loading
+        :variant="discordState.connected ? 'ghost' : 'outline'"
+        @click="toggleConnection"
+      >
+        {{
+          $t(
+            `discord.connection.${discordState.connected ? "disconnect" : "connect"}.button`,
+          )
+        }}
+      </Button>
+    </Card>
     <Separator />
-    <div>
-      <div>
-        <h1 class="text-sm">{{ $t("discord.showMe.title") }}</h1>
-        <p class="text-muted-foreground text-xs">
-          {{ $t("discord.showMe.description") }}
-        </p>
-      </div>
-      <Switch
-        v-model="discordSettings.showMe"
-        class="justify-self-end shrink-0"
-      />
-    </div>
+    <SettingField
+      :description="$t('discord.showMe.description')"
+      :title="$t('discord.showMe.title')"
+    >
+      <Switch v-model="discordSettings.showMe" />
+    </SettingField>
     <Separator />
-    <div>
-      <div>
-        <h1 class="text-sm">{{ $t("discord.showOnlySpeakers.title") }}</h1>
-        <p class="text-muted-foreground text-xs">
-          {{ $t("discord.showOnlySpeakers.description") }}
-        </p>
-      </div>
-      <Switch
-        v-model="discordSettings.showOnlySpeakers"
-        class="justify-self-end shrink-0"
-      />
-    </div>
+    <SettingField
+      :description="$t('discord.showOnlySpeakers.description')"
+      :title="$t('discord.showOnlySpeakers.title')"
+    >
+      <Switch v-model="discordSettings.showOnlySpeakers" />
+    </SettingField>
     <Separator />
-    <div>
-      <div>
-        <h1 class="text-sm">{{ $t("discord.displayName.title") }}</h1>
-        <p class="text-muted-foreground text-xs">
-          {{ $t("discord.displayName.description") }}
-        </p>
-      </div>
+    <SettingField
+      :description="$t('discord.displayName.description')"
+      :title="$t('discord.displayName.title')"
+    >
       <Select v-model="discordSettings.displayName">
-        <SelectTrigger class="justify-self-end shrink-0">
+        <SelectTrigger>
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -166,18 +140,15 @@ async function resetDiscordSettings() {
           </SelectItem>
         </SelectContent>
       </Select>
-    </div>
+    </SettingField>
     <Separator />
-    <div>
-      <div>
-        <h1 class="text-sm">{{ $t("discord.reset.title") }}</h1>
-        <p class="text-muted-foreground text-xs">
-          {{ $t("discord.reset.description") }}
-        </p>
-      </div>
+    <SettingField
+      :description="$t('discord.reset.description')"
+      :title="$t('discord.reset.title')"
+    >
       <AlertDialog>
         <AlertDialogTrigger as-child>
-          <Button variant="destructive" class="justify-self-end shrink-0">
+          <Button variant="destructive">
             {{ $t("discord.reset.title") }}
           </Button>
         </AlertDialogTrigger>
@@ -203,6 +174,6 @@ async function resetDiscordSettings() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </SettingField>
   </section>
 </template>

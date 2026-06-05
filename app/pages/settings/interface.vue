@@ -54,18 +54,13 @@ async function quickSelect(
 </script>
 
 <template>
-  <section
-    class="grid gap-4 [&>div]:flex [&>div]:items-center [&>div]:justify-between"
-  >
-    <div>
-      <div>
-        <h1 class="text-sm">{{ $t("settings.interface.theme.title") }}</h1>
-        <p class="text-muted-foreground text-xs">
-          {{ $t("settings.interface.theme.description") }}
-        </p>
-      </div>
+  <section class="grid gap-4">
+    <SettingField
+      :description="$t('settings.interface.theme.description')"
+      :title="$t('settings.interface.theme.title')"
+    >
       <Select v-model="appSettings.theme">
-        <SelectTrigger class="justify-self-end shrink-0">
+        <SelectTrigger>
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -78,17 +73,14 @@ async function quickSelect(
           </SelectItem>
         </SelectContent>
       </Select>
-    </div>
+    </SettingField>
     <Separator />
-    <div>
-      <div>
-        <h1 class="text-sm">{{ $t("settings.interface.locale.title") }}</h1>
-        <p class="text-muted-foreground text-xs">
-          {{ $t("settings.interface.locale.description") }}
-        </p>
-      </div>
+    <SettingField
+      :description="$t('settings.interface.locale.description')"
+      :title="$t('settings.interface.locale.title')"
+    >
       <Select v-model="appSettings.locale" @update:model-value="updateMenu">
-        <SelectTrigger class="justify-self-end shrink-0">
+        <SelectTrigger>
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -101,16 +93,13 @@ async function quickSelect(
           </SelectItem>
         </SelectContent>
       </Select>
-    </div>
+    </SettingField>
     <Separator />
-    <div>
-      <div>
-        <h1 class="text-sm">{{ $t("settings.interface.size.title") }}</h1>
-        <p class="text-muted-foreground text-xs">
-          {{ $t("settings.interface.size.description") }}
-        </p>
-      </div>
-      <div class="flex flex-col justify-self-end shrink-0">
+    <SettingField
+      :description="$t('settings.interface.size.description')"
+      :title="$t('settings.interface.size.title')"
+    >
+      <div class="flex flex-col">
         <NumberField
           v-model="appSettings.size"
           :format-options="{ useGrouping: false }"
@@ -131,19 +120,14 @@ async function quickSelect(
           @update:model-value="appSettings.size = $event![0]!"
         />
       </div>
-    </div>
+    </SettingField>
     <Separator />
-    <div>
-      <div>
-        <h1 class="text-sm">
-          {{ $t("settings.interface.orientation.title") }}
-        </h1>
-        <p class="text-muted-foreground text-xs">
-          {{ $t("settings.interface.orientation.description") }}
-        </p>
-      </div>
+    <SettingField
+      :description="$t('settings.interface.orientation.description')"
+      :title="$t('settings.interface.orientation.title')"
+    >
       <Select v-model="appSettings.orientation">
-        <SelectTrigger class="justify-self-end shrink-0">
+        <SelectTrigger>
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -156,16 +140,13 @@ async function quickSelect(
           </SelectItem>
         </SelectContent>
       </Select>
-    </div>
+    </SettingField>
     <Separator />
-    <div>
-      <div>
-        <h1 class="text-sm">{{ $t("settings.interface.position.title") }}</h1>
-        <p class="text-muted-foreground text-xs">
-          {{ $t("settings.interface.position.description") }}
-        </p>
-      </div>
-      <div class="flex gap-2 max-w-53.5 justify-self-end shrink-0">
+    <SettingField
+      :description="$t('settings.interface.position.description')"
+      :title="$t('settings.interface.position.title')"
+    >
+      <div class="flex gap-2 max-w-53.5">
         <NumberField
           v-model="appSettings.x"
           :format-options="{ useGrouping: false }"
@@ -203,7 +184,7 @@ async function quickSelect(
           </NumberFieldContent>
         </NumberField>
       </div>
-    </div>
+    </SettingField>
     <Accordion type="single" collapsible class="border rounded-lg">
       <AccordionItem value="quick-select" class="w-full">
         <AccordionTrigger class="p-3 font-normal text-xs">
@@ -244,29 +225,18 @@ async function quickSelect(
       </AccordionItem>
     </Accordion>
     <Separator />
-    <div>
-      <div>
-        <h1 class="text-sm">
-          {{ $t("settings.interface.showBackground.title") }}
-        </h1>
-        <p class="text-muted-foreground text-xs">
-          {{ $t("settings.interface.showBackground.description") }}
-        </p>
-      </div>
-      <Switch
-        v-model="appSettings.showBackground"
-        class="justify-self-end shrink-0"
-      />
-    </div>
+    <SettingField
+      :description="$t('settings.interface.showBackground.description')"
+      :title="$t('settings.interface.showBackground.title')"
+    >
+      <Switch v-model="appSettings.showBackground" />
+    </SettingField>
     <Separator />
-    <div>
-      <div>
-        <h1 class="text-sm">{{ $t("settings.interface.gap.title") }}</h1>
-        <p class="text-muted-foreground text-xs">
-          {{ $t("settings.interface.gap.description") }}
-        </p>
-      </div>
-      <div class="flex flex-col justify-self-end shrink-0">
+    <SettingField
+      :description="$t('settings.interface.gap.description')"
+      :title="$t('settings.interface.gap.title')"
+    >
+      <div class="flex flex-col">
         <NumberField
           :model-value="appSettings.gap"
           :format-options="{ useGrouping: false }"
@@ -288,16 +258,13 @@ async function quickSelect(
           @update:model-value="appSettings.gap = $event![0]!"
         />
       </div>
-    </div>
+    </SettingField>
     <Separator />
-    <div>
-      <div>
-        <h1 class="text-sm">{{ $t("settings.interface.opacity.title") }}</h1>
-        <p class="text-muted-foreground text-xs">
-          {{ $t("settings.interface.opacity.description") }}
-        </p>
-      </div>
-      <div class="flex flex-col justify-self-end shrink-0">
+    <SettingField
+      :description="$t('settings.interface.opacity.description')"
+      :title="$t('settings.interface.opacity.title')"
+    >
+      <div class="flex flex-col">
         <NumberField
           :model-value="appSettings.opacity / 100"
           :format-options="{ style: 'percent' }"
@@ -320,16 +287,13 @@ async function quickSelect(
           @update:model-value="appSettings.opacity = $event![0]!"
         />
       </div>
-    </div>
+    </SettingField>
     <Separator />
-    <div>
-      <div>
-        <h1 class="text-sm">{{ $t("settings.interface.radius.title") }}</h1>
-        <p class="text-muted-foreground text-xs">
-          {{ $t("settings.interface.radius.description") }}
-        </p>
-      </div>
-      <div class="flex flex-col justify-self-end shrink-0">
+    <SettingField
+      :description="$t('settings.interface.radius.description')"
+      :title="$t('settings.interface.radius.title')"
+    >
+      <div class="flex flex-col">
         <NumberField
           :model-value="appSettings.radius / 100"
           :format-options="{ style: 'percent' }"
@@ -352,6 +316,6 @@ async function quickSelect(
           @update:model-value="appSettings.radius = $event![0]!"
         />
       </div>
-    </div>
+    </SettingField>
   </section>
 </template>

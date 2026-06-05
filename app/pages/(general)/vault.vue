@@ -20,9 +20,7 @@ async function clear() {
 </script>
 
 <template>
-  <section
-    class="grid gap-4 [&>div]:flex [&>div]:items-center [&>div]:justify-between"
-  >
+  <section class="grid gap-4">
     <Card class="p-0 overflow-hidden">
       <Table>
         <TableHeader>
@@ -55,16 +53,13 @@ async function clear() {
     </Card>
     <template v-if="metadata.length">
       <Separator />
-      <div>
-        <div>
-          <h1 class="text-sm">{{ $t("vault.clear.title") }}</h1>
-          <p class="text-muted-foreground text-xs">
-            {{ $t("vault.clear.description") }}
-          </p>
-        </div>
+      <SettingField
+        :description="$t('vault.clear.description')"
+        :title="$t('vault.clear.title')"
+      >
         <AlertDialog>
           <AlertDialogTrigger as-child>
-            <Button variant="destructive" class="justify-self-end shrink-0">
+            <Button variant="destructive">
               {{ $t("vault.clear.title") }}
             </Button>
           </AlertDialogTrigger>
@@ -87,7 +82,7 @@ async function clear() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-      </div>
+      </SettingField>
     </template>
   </section>
 </template>
