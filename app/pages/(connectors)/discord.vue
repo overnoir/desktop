@@ -38,7 +38,7 @@ async function resetDiscordSettings() {
           {{ $t("discord.errors.clear") }}
         </Button>
       </SettingField>
-      <div class="flex-col gap-2! max-h-51.5 overflow-auto">
+      <div class="flex flex-col gap-2! max-h-51.5 overflow-auto">
         <Alert
           v-for="{ createdAt, id, message } in discordState.errors"
           :key="id"
