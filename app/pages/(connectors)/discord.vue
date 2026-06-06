@@ -32,7 +32,7 @@ async function resetDiscordSettings() {
     <template v-if="discordState.errors.length">
       <SettingField
         :description="$t('discord.errors.description')"
-        :title="$t('discord.errors.title')"
+        :title="`${$t('discord.errors.title')} (${discordState.errors.length})`"
       >
         <Button variant="destructive" @click="discordStateStore.clearErrors">
           {{ $t("discord.errors.clear") }}

@@ -16,7 +16,7 @@ export const useDiscordStateStore = defineStore(
     const discordState = ref<DiscordState>({ ...defaultDiscordState });
 
     function addError(message: DiscordState["errors"][0]["message"]) {
-      discordState.value.errors.push({
+      discordState.value.errors.unshift({
         id: crypto.randomUUID(),
         createdAt: Date.now(),
         message,
