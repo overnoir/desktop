@@ -13,14 +13,25 @@ export const useDiscordStore = defineStore(
 
     const filtredUsers = computed(() => {
       const channel = discord.value.channel;
-      if (!channel) return [];
+
+      if (!channel) {
+        return [];
+      }
+
       let users = channel.users;
+
       if (!discord.value.settings.showMe && discord.value.userId) {
         users = users.filter((user) => user.id !== discord.value.userId);
       }
+
       if (discord.value.settings.showOnlySpeakers) {
         users = users.filter((user) => user.isSpeaking);
       }
+
+      if (discord.value.settings.userLimit > 0) {
+        users = users.slice(0, discord.value.settings.userLimit);
+      }
+
       return users;
     });
 

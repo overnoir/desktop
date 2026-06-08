@@ -26,6 +26,7 @@ export const defaultDiscord: Discord = {
     showDisplayName: ShowDisplayName.Always,
     displayName: DisplayName.Nick,
     showOnlySpeakers: false,
+    userLimit: 25,
     showMe: true,
   },
   connected: false,

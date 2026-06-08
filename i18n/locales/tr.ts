@@ -163,6 +163,11 @@ export default {
       title: "Sadece Konuşanları Göster",
       description: "Sadece konuşanların gözükmesini sağlayın.",
     },
+    userLimit: {
+      title: "Kullanıcı Sınırı",
+      description:
+        "Gösterilecek maksimum kullanıcı sayısını ayarlayın. (0 = limitsiz)",
+    },
     showDisplayName: {
       title: "Ad Gösterimi",
       description: "Kullanıcı adının ne zaman gözükeceğini seçin.",

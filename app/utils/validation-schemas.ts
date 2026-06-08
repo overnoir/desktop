@@ -21,6 +21,7 @@ export const settingsSchema = z.object({
 export const discordSchema = z.object({
   settings: z.object({
     showDisplayName: z.enum(ShowDisplayName),
+    userLimit: z.number().min(0).max(50),
     displayName: z.enum(DisplayName),
     showOnlySpeakers: z.boolean(),
     showMe: z.boolean(),

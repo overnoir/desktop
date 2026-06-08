@@ -82,6 +82,7 @@ export type DiscordSettings = {
   showDisplayName: ShowDisplayName;
   showOnlySpeakers: boolean;
   displayName: DisplayName;
+  userLimit: number;
   showMe: boolean;
 };
 

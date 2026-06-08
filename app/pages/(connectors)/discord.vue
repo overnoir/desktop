@@ -126,6 +126,28 @@ async function resetDiscordSettings() {
     </SettingField>
     <Separator />
     <SettingField
+      :description="$t('discord.userLimit.description')"
+      :title="$t('discord.userLimit.title')"
+    >
+      <div class="flex flex-col">
+        <NumberField v-model="discord.settings.userLimit" :max="50" :min="0">
+          <NumberFieldContent>
+            <NumberFieldDecrement />
+            <NumberFieldInput class="rounded-b-none border-b-0" />
+            <NumberFieldIncrement />
+          </NumberFieldContent>
+        </NumberField>
+        <Slider
+          class="*:data-[slot='slider-track']:rounded-t-none"
+          :model-value="[discord.settings.userLimit]"
+          :max="50"
+          :min="0"
+          @update:model-value="discord.settings.userLimit = $event![0]!"
+        />
+      </div>
+    </SettingField>
+    <Separator />
+    <SettingField
       :description="$t('discord.showDisplayName.description')"
       :title="$t('discord.showDisplayName.title')"
     >
