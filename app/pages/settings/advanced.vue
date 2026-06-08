@@ -25,16 +25,14 @@ async function reset() {
     return;
   }
 
-  const { preventCapture, ignoreCursor } = defaultSettings;
-
   settingsStore.reset();
 
-  await overlayWebviewWindow.setContentProtected(preventCapture);
-  await mainWebviewWindow.setContentProtected(preventCapture);
+  await overlayWebviewWindow.setContentProtected(settings.value.preventCapture);
+  await mainWebviewWindow.setContentProtected(settings.value.preventCapture);
   await overlayWebviewWindow.setPosition(
     new TauriWindowLogicalPosition(settings.value.x, settings.value.y),
   );
-  await updateIgnoreCursor(ignoreCursor);
+  await updateIgnoreCursor(settings.value.ignoreCursor);
   await tauriAutoStartDisable();
 
   $toast(t("settings.advanced.reset.success"));
