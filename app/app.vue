@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const currentWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
-const { appSettings } = storeToRefs(useAppSettingsStore());
+const { settings } = storeToRefs(useSettingsStore());
 const classList = document.documentElement.classList;
 const isPreferredDark = usePreferredDark();
 const { setLocale } = useI18n();
@@ -13,21 +13,19 @@ function updateThemeClass() {
   classList.remove(...Object.values(Theme));
 
   classList.add(
-    appSettings.value.theme === Theme.System
+    settings.value.theme === Theme.System
       ? systemTheme.value
-      : appSettings.value.theme,
+      : settings.value.theme,
   );
 }
 
-await currentWebviewWindow.setContentProtected(
-  appSettings.value.preventCapture,
-);
-await setLocale(appSettings.value.locale);
+await currentWebviewWindow.setContentProtected(settings.value.preventCapture);
+await setLocale(settings.value.locale);
 updateThemeClass();
 
-watch(() => appSettings.value.locale, setLocale);
+watch(() => settings.value.locale, setLocale);
 
-watch(() => [systemTheme, appSettings.value.theme], updateThemeClass);
+watch(() => [systemTheme, settings.value.theme], updateThemeClass);
 
 onMounted(async () => {
   await currentWebviewWindow.show();

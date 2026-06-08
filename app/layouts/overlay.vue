@@ -1,36 +1,54 @@
 <script setup lang="ts">
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
-const { appSettings } = storeToRefs(useAppSettingsStore());
-const discordStateStore = useDiscordStateStore();
-const { discordState } = storeToRefs(discordStateStore);
+const { settings } = storeToRefs(useSettingsStore());
+const discordStore = useDiscordStore();
+const { discord } = storeToRefs(discordStore);
 const { create } = useTray();
 
 const backgroundStyle = computed(() =>
-  appSettings.value.showBackground
+  settings.value.showBackground
     ? {
-        borderRadius: `${(appSettings.value.size * appSettings.value.radius) / 200 + appSettings.value.size / 25}px`,
-        padding: `${appSettings.value.size / 25}px`,
+        borderRadius: `${(settings.value.size * settings.value.radius) / 200 + settings.value.size / 25}px`,
+        padding: `${settings.value.size / 25}px`,
       }
     : undefined,
 );
 
+await tauriEventListen<DiscordChannel>("channel-update", ({ payload }) => {
+  discord.value.channel = payload;
+});
+
+await tauriEventListen<string>("channel-error", ({ payload }) => {
+  discordStore.addError(payload);
+});
+
 await overlayWebviewWindow.setPosition(
-  new TauriDpiLogicalPosition(appSettings.value.x, appSettings.value.y),
+  new TauriDpiLogicalPosition(settings.value.x, settings.value.y),
 );
 await create();
 
 if (tauriOSType() === "macos") {
   await tauriCoreInvoke("init_nspanel");
   await tauriCoreInvoke("set_nspanel_ignore_cursor", {
-    value: appSettings.value.ignoreCursor,
+    value: settings.value.ignoreCursor,
   });
 }
 
-if (appSettings.value.autoStart !== (await tauriAutoStartIsEnabled())) {
-  if (appSettings.value.autoStart) {
+if (settings.value.autoStart !== (await tauriAutoStartIsEnabled())) {
+  if (settings.value.autoStart) {
     await tauriAutoStartEnable();
   } else {
     await tauriAutoStartDisable();
+  }
+}
+
+if (discord.value.connected) {
+  try {
+    discord.value.userId = await tauriCoreInvoke<string>("connect_discord");
+  } catch (error) {
+    discordStore.addError(JSON.stringify(error));
+    discord.value.userId = undefined;
+    discord.value.connected = false;
   }
 }
 
@@ -51,28 +69,19 @@ onMounted(async () => {
   if (updaterWebviewWindow) {
     await updaterWebviewWindow.destroy();
   }
-
-  if (discordState.value.connected) {
-    try {
-      await tauriCoreInvoke(`connect_discord`);
-    } catch (error) {
-      discordStateStore.addError(JSON.stringify(error));
-      discordState.value.connected = false;
-    }
-  }
 });
 </script>
 
 <template>
   <Html
     :style="{
-      opacity: `${appSettings.opacity}%`,
+      opacity: `${settings.opacity}%`,
     }"
   >
     <Body class="size-max **:select-none **:transition-none">
       <main
         :class="{
-          'bg-background border': appSettings.showBackground,
+          'bg-background border': settings.showBackground,
         }"
         :style="backgroundStyle"
       >

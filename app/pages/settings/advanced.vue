@@ -3,8 +3,8 @@ const mainWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const overlayWebviewWindow = (
   await tauriWebviewWindowGetAllWebviewWindows()
 ).find(({ label }) => label === WebviewWindow.Overlay);
-const appSettingsStore = useAppSettingsStore();
-const { appSettings } = storeToRefs(appSettingsStore);
+const settingsStore = useSettingsStore();
+const { settings } = storeToRefs(settingsStore);
 const { $toast } = useNuxtApp();
 const { t } = useI18n();
 
@@ -25,14 +25,14 @@ async function reset() {
     return;
   }
 
-  const { preventCapture, ignoreCursor } = defaultAppSettings;
+  const { preventCapture, ignoreCursor } = defaultSettings;
 
-  appSettingsStore.reset();
+  settingsStore.reset();
 
   await overlayWebviewWindow.setContentProtected(preventCapture);
   await mainWebviewWindow.setContentProtected(preventCapture);
   await overlayWebviewWindow.setPosition(
-    new TauriWindowLogicalPosition(appSettings.value.x, appSettings.value.y),
+    new TauriWindowLogicalPosition(settings.value.x, settings.value.y),
   );
   await updateIgnoreCursor(ignoreCursor);
   await tauriAutoStartDisable();
@@ -47,14 +47,14 @@ async function reset() {
       :description="$t('settings.advanced.isDraggable.description')"
       :title="$t('settings.advanced.isDraggable.title')"
     >
-      <Switch v-model="appSettings.isDraggable" />
+      <Switch v-model="settings.isDraggable" />
     </SettingField>
     <Separator />
     <SettingField
       :description="$t('settings.advanced.showSettings.description')"
       :title="$t('settings.advanced.showSettings.title')"
     >
-      <Switch v-model="appSettings.showSettings" />
+      <Switch v-model="settings.showSettings" />
     </SettingField>
     <Separator />
     <SettingField
@@ -62,7 +62,7 @@ async function reset() {
       :title="$t('settings.advanced.autoStart.title')"
     >
       <Switch
-        v-model="appSettings.autoStart"
+        v-model="settings.autoStart"
         @update:model-value="
           $event ? tauriAutoStartEnable() : tauriAutoStartDisable()
         "
@@ -74,7 +74,7 @@ async function reset() {
       :title="$t('settings.advanced.ignoreCursor.title')"
     >
       <Switch
-        v-model="appSettings.ignoreCursor"
+        v-model="settings.ignoreCursor"
         @update:model-value="updateIgnoreCursor($event)"
       />
     </SettingField>
@@ -84,7 +84,7 @@ async function reset() {
       :title="$t('settings.advanced.preventCapture.title')"
     >
       <Switch
-        v-model="appSettings.preventCapture"
+        v-model="settings.preventCapture"
         @update:model-value="
           overlayWebviewWindow &&
             overlayWebviewWindow.setContentProtected($event);

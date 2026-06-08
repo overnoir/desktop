@@ -22,7 +22,7 @@ pub struct VaultState {
     store: Mutex<Option<Store>>,
 }
 
-pub fn init_vault(app_handle: AppHandle) {
+pub fn init_vault(app_handle: &AppHandle) {
     let salt_path = app_handle
         .path()
         .app_local_data_dir()
@@ -182,6 +182,12 @@ pub fn update_vault(app_handle: &AppHandle, key: &str, value: String) -> Result<
             .insert(key.as_bytes().to_vec(), item.to_string().into_bytes(), None)
             .map_err(|e| format!("Failed to update vault: {}", e))?;
     }
+
+    Ok(())
+}
+
+pub fn save_vault(app_handle: &AppHandle) -> Result<(), String> {
+    let vault_state = app_handle.state::<VaultState>();
 
     {
         let stronghold_guard = vault_state.stronghold.lock().map_err(|e| e.to_string())?;

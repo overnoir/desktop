@@ -163,12 +163,18 @@ export default {
       title: "Sadece Konuşanları Göster",
       description: "Sadece konuşanların gözükmesini sağlayın.",
     },
+    showDisplayName: {
+      title: "Ad Gösterimi",
+      description: "Kullanıcı adının ne zaman gözükeceğini seçin.",
+      always: "Her Zaman",
+      whileSpeaking: "Konuşurken",
+      never: "Gösterme",
+    },
     displayName: {
       title: "Gösterilecek Ad",
       description: "Kullanıcının hangi adının gözükeceğini seçin.",
       username: "Kullanıcı Adı",
       nick: "Görünen Ad",
-      none: "Hiçbiri",
     },
     reset: {
       title: "Sıfırla",

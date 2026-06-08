@@ -5,8 +5,8 @@ const overlayWebviewWindow = (
   await tauriWebviewWindowGetAllWebviewWindows()
 ).find(({ label }) => label === WebviewWindow.Overlay);
 const monitors = await tauriWindowAvailableMonitors();
-const appSettingsStore = useAppSettingsStore();
-const { appSettings } = storeToRefs(appSettingsStore);
+const settingsStore = useSettingsStore();
+const { settings } = storeToRefs(settingsStore);
 const { updateMenu } = useTray();
 const { locales } = useI18n();
 
@@ -43,11 +43,11 @@ async function quickSelect(
   const pos = positions[index - (index > 4 ? 1 : 0)];
 
   if (pos) {
-    appSettings.value.x = pos.x;
-    appSettings.value.y = pos.y;
+    settings.value.x = pos.x;
+    settings.value.y = pos.y;
 
     await overlayWebviewWindow.setPosition(
-      new TauriWindowLogicalPosition(appSettings.value.x, appSettings.value.y),
+      new TauriWindowLogicalPosition(settings.value.x, settings.value.y),
     );
   }
 }
@@ -59,7 +59,7 @@ async function quickSelect(
       :description="$t('settings.interface.theme.description')"
       :title="$t('settings.interface.theme.title')"
     >
-      <Select v-model="appSettings.theme">
+      <Select v-model="settings.theme">
         <SelectTrigger>
           <SelectValue />
         </SelectTrigger>
@@ -79,7 +79,7 @@ async function quickSelect(
       :description="$t('settings.interface.locale.description')"
       :title="$t('settings.interface.locale.title')"
     >
-      <Select v-model="appSettings.locale" @update:model-value="updateMenu">
+      <Select v-model="settings.locale" @update:model-value="updateMenu">
         <SelectTrigger>
           <SelectValue />
         </SelectTrigger>
@@ -101,7 +101,7 @@ async function quickSelect(
     >
       <div class="flex flex-col">
         <NumberField
-          v-model="appSettings.size"
+          v-model="settings.size"
           :format-options="{ useGrouping: false }"
           :max="250"
           :min="0"
@@ -114,10 +114,10 @@ async function quickSelect(
         </NumberField>
         <Slider
           class="*:data-[slot='slider-track']:rounded-t-none"
-          :model-value="[appSettings.size]"
+          :model-value="[settings.size]"
           :max="250"
           :min="0"
-          @update:model-value="appSettings.size = $event![0]!"
+          @update:model-value="settings.size = $event![0]!"
         />
       </div>
     </SettingField>
@@ -126,7 +126,7 @@ async function quickSelect(
       :description="$t('settings.interface.orientation.description')"
       :title="$t('settings.interface.orientation.title')"
     >
-      <Select v-model="appSettings.orientation">
+      <Select v-model="settings.orientation">
         <SelectTrigger>
           <SelectValue />
         </SelectTrigger>
@@ -148,14 +148,14 @@ async function quickSelect(
     >
       <div class="flex gap-2 max-w-53.5">
         <NumberField
-          v-model="appSettings.x"
+          v-model="settings.x"
           :format-options="{ useGrouping: false }"
           :min="-9999"
           :max="9999"
           @update:model-value="
             overlayWebviewWindow &&
             overlayWebviewWindow.setPosition(
-              new TauriDpiLogicalPosition(appSettings.x, appSettings.y),
+              new TauriDpiLogicalPosition(settings.x, settings.y),
             )
           "
         >
@@ -166,14 +166,14 @@ async function quickSelect(
           </NumberFieldContent>
         </NumberField>
         <NumberField
-          v-model="appSettings.y"
+          v-model="settings.y"
           :format-options="{ useGrouping: false }"
           :min="-9999"
           :max="9999"
           @update:model-value="
             overlayWebviewWindow &&
             overlayWebviewWindow.setPosition(
-              new TauriDpiLogicalPosition(appSettings.x, appSettings.y),
+              new TauriDpiLogicalPosition(settings.x, settings.y),
             )
           "
         >
@@ -229,7 +229,7 @@ async function quickSelect(
       :description="$t('settings.interface.showBackground.description')"
       :title="$t('settings.interface.showBackground.title')"
     >
-      <Switch v-model="appSettings.showBackground" />
+      <Switch v-model="settings.showBackground" />
     </SettingField>
     <Separator />
     <SettingField
@@ -238,11 +238,11 @@ async function quickSelect(
     >
       <div class="flex flex-col">
         <NumberField
-          :model-value="appSettings.gap"
+          :model-value="settings.gap"
           :format-options="{ useGrouping: false }"
           :min="0"
           :max="100"
-          @update:model-value="appSettings.gap = $event"
+          @update:model-value="settings.gap = $event"
         >
           <NumberFieldContent>
             <NumberFieldDecrement />
@@ -252,10 +252,10 @@ async function quickSelect(
         </NumberField>
         <Slider
           class="*:data-[slot='slider-track']:rounded-t-none"
-          :model-value="[appSettings.gap]"
+          :model-value="[settings.gap]"
           :max="100"
           :min="0"
-          @update:model-value="appSettings.gap = $event![0]!"
+          @update:model-value="settings.gap = $event![0]!"
         />
       </div>
     </SettingField>
@@ -266,12 +266,12 @@ async function quickSelect(
     >
       <div class="flex flex-col">
         <NumberField
-          :model-value="appSettings.opacity / 100"
+          :model-value="settings.opacity / 100"
           :format-options="{ style: 'percent' }"
           :step="0.01"
           :min="0"
           :max="1"
-          @update:model-value="appSettings.opacity = $event * 100"
+          @update:model-value="settings.opacity = $event * 100"
         >
           <NumberFieldContent>
             <NumberFieldDecrement />
@@ -281,10 +281,10 @@ async function quickSelect(
         </NumberField>
         <Slider
           class="*:data-[slot='slider-track']:rounded-t-none"
-          :model-value="[appSettings.opacity]"
+          :model-value="[settings.opacity]"
           :max="100"
           :min="0"
-          @update:model-value="appSettings.opacity = $event![0]!"
+          @update:model-value="settings.opacity = $event![0]!"
         />
       </div>
     </SettingField>
@@ -295,12 +295,12 @@ async function quickSelect(
     >
       <div class="flex flex-col">
         <NumberField
-          :model-value="appSettings.radius / 100"
+          :model-value="settings.radius / 100"
           :format-options="{ style: 'percent' }"
           :step="0.01"
           :min="0"
           :max="1"
-          @update:model-value="appSettings.radius = $event * 100"
+          @update:model-value="settings.radius = $event * 100"
         >
           <NumberFieldContent>
             <NumberFieldDecrement />
@@ -310,10 +310,10 @@ async function quickSelect(
         </NumberField>
         <Slider
           class="*:data-[slot='slider-track']:rounded-t-none"
-          :model-value="[appSettings.radius]"
+          :model-value="[settings.radius]"
           :max="100"
           :min="0"
-          @update:model-value="appSettings.radius = $event![0]!"
+          @update:model-value="settings.radius = $event![0]!"
         />
       </div>
     </SettingField>

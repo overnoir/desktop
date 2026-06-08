@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const appSettingsSchema = z.object({
+export const settingsSchema = z.object({
   opacity: z.number().min(0).max(100),
   x: z.number().min(-9999).max(9999),
   y: z.number().min(-9999).max(9999),
@@ -16,16 +16,15 @@ export const appSettingsSchema = z.object({
   autoStart: z.boolean(),
   locale: z.enum(Locale),
   theme: z.enum(Theme),
-}) satisfies z.ZodType<AppSettings>;
+}) satisfies z.ZodType<Settings>;
 
-export const discordSettingsSchema = z.object({
-  displayName: z.enum(VoiceUserDisplayName),
-  showOnlySpeakers: z.boolean(),
-  showMe: z.boolean(),
-}) satisfies z.ZodType<DiscordSettings>;
-
-export const discordStateSchema = z.object({
-  connected: z.boolean(),
+export const discordSchema = z.object({
+  settings: z.object({
+    showDisplayName: z.enum(ShowDisplayName),
+    displayName: z.enum(DisplayName),
+    showOnlySpeakers: z.boolean(),
+    showMe: z.boolean(),
+  }),
   errors: z.array(
     z.object({
       createdAt: z.number(),
@@ -33,4 +32,6 @@ export const discordStateSchema = z.object({
       id: z.string(),
     }),
   ),
-}) satisfies z.ZodType<DiscordState>;
+  userId: z.string().optional(),
+  connected: z.boolean(),
+}) satisfies z.ZodType<Discord>;

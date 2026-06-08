@@ -21,10 +21,15 @@ export enum WebviewWindow {
   Main = "main",
 }
 
-export enum VoiceUserDisplayName {
+export enum DisplayName {
   Nick = "nick",
   Username = "username",
-  None = "none",
+}
+
+export enum ShowDisplayName {
+  Always = "always",
+  WhileSpeaking = "whileSpeaking",
+  Never = "never",
 }
 
 //#endregion
@@ -41,7 +46,7 @@ export type LinkGroup = {
   name: string;
 };
 
-export type AppSettings = {
+export type Settings = {
   orientation: Orientation;
   preventCapture: boolean;
   showBackground: boolean;
@@ -59,45 +64,49 @@ export type AppSettings = {
   y: number;
 };
 
-export type DiscordSettings = {
-  displayName: VoiceUserDisplayName;
-  showOnlySpeakers: boolean;
-  showMe: boolean;
-};
-
 export type VaultItemMetadata = {
   createdAt: number;
   updatedAt: number;
   key: string;
 };
 
-export type DiscordState = {
+export type Discord = {
+  settings: DiscordSettings;
+  channel?: DiscordChannel;
+  errors: DiscordError[];
   connected: boolean;
-  errors: {
-    createdAt: number;
-    message: string;
-    id: string;
-  }[];
+  userId?: string;
 };
 
-export type VoiceUser = {
-  userId: string;
-  username: string;
+export type DiscordSettings = {
+  showDisplayName: ShowDisplayName;
+  showOnlySpeakers: boolean;
+  displayName: DisplayName;
+  showMe: boolean;
+};
+
+export type DiscordError = {
+  createdAt: number;
+  message: string;
+  id: string;
+};
+
+export type DiscordChannel = {
+  users: DiscordUser[];
+  name: string;
+  id: string;
+};
+
+export type DiscordUser = {
   discriminator: string;
-  avatar: string | null;
-  nick: string | null;
-  isSpeaking: boolean;
-  isMuted: boolean;
-  isDeafened: boolean;
-  isSelfMuted: boolean;
   isSelfDeafened: boolean;
-};
-
-export type VoiceChannelState = {
-  channelId: string | null;
-  channelName: string | null;
-  guildId: string | null;
-  users: VoiceUser[];
-  currentUserId: string | null;
+  isSelfMuted: boolean;
+  isSpeaking: boolean;
+  isDeafened: boolean;
+  username: string;
+  isMuted: boolean;
+  avatar?: string;
+  nick?: string;
+  id: string;
 };
 //#endregion

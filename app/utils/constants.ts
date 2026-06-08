@@ -3,7 +3,7 @@ import type { WindowOptions } from "@tauri-apps/api/window";
 
 const name = await tauriAppGetName();
 
-export const defaultAppSettings: AppSettings = {
+export const defaultSettings: Settings = {
   orientation: Orientation.Horizontal,
   locale: Locale.Turkish,
   preventCapture: false,
@@ -21,13 +21,13 @@ export const defaultAppSettings: AppSettings = {
   y: 0,
 };
 
-export const defaultDiscordSettings: DiscordSettings = {
-  displayName: VoiceUserDisplayName.Username,
-  showOnlySpeakers: false,
-  showMe: true,
-};
-
-export const defaultDiscordState: DiscordState = {
+export const defaultDiscord: Discord = {
+  settings: {
+    showDisplayName: ShowDisplayName.Always,
+    displayName: DisplayName.Nick,
+    showOnlySpeakers: false,
+    showMe: true,
+  },
   connected: false,
   errors: [],
 };
@@ -38,7 +38,6 @@ export const mainWebviewWindowOptions: Omit<
 > &
   WindowOptions = {
   acceptFirstMouse: true,
-  title: `${name} Main`,
   decorations: false,
   hiddenTitle: true,
   transparent: true,
@@ -46,6 +45,7 @@ export const mainWebviewWindowOptions: Omit<
   shadow: false,
   visible: false,
   center: true,
+  title: name,
   height: 600,
   width: 960,
 };

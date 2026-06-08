@@ -4,37 +4,16 @@ definePageMeta({
 });
 
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
-const { discordSettings } = storeToRefs(useDiscordSettingsStore());
-const { appSettings } = storeToRefs(useAppSettingsStore());
-const discordStateStore = useDiscordStateStore();
-const voiceState = ref<VoiceChannelState>();
+const { users } = storeToRefs(useDiscordStore());
+const { settings } = storeToRefs(useSettingsStore());
 const isMacos = tauriOSType() === "macos";
-
-const filtredUsers = computed(() => {
-  const state = voiceState.value;
-  if (!state) return [];
-  let users = state.users;
-  if (!discordSettings.value.showMe && state.currentUserId) {
-    users = users.filter((u) => u.userId !== state.currentUserId);
-  }
-  if (discordSettings.value.showOnlySpeakers) {
-    users = users.filter((u) => u.isSpeaking);
-  }
-  return users;
-});
 
 if (!isMacos) {
   overlayWebviewWindow.onMoved(({ payload }) => {
     const { x, y } = payload;
-    appSettings.value.x = x;
-    appSettings.value.y = y;
+    settings.value.x = x;
+    settings.value.y = y;
   });
-}
-
-async function updatePosition() {
-  const { x, y } = await overlayWebviewWindow.outerPosition();
-  appSettings.value.x = x;
-  appSettings.value.y = y;
 }
 
 async function openMainWebviewWindow() {
@@ -54,32 +33,30 @@ async function openMainWebviewWindow() {
   }
 }
 
-tauriEventListen<VoiceChannelState>("voice-state", (event) => {
-  voiceState.value = event.payload;
-});
-
-tauriEventListen<string>("voice-error", (event) => {
-  discordStateStore.addError(event.payload);
-});
+async function updatePosition() {
+  const { x, y } = await overlayWebviewWindow.outerPosition();
+  settings.value.x = x;
+  settings.value.y = y;
+}
 </script>
 
 <template>
   <section
     class="flex"
     :class="{
-      'flex-col': appSettings.orientation === Orientation.Vertical,
+      'flex-col': settings.orientation === Orientation.Vertical,
     }"
     :style="{
-      gap: `${(appSettings.size * appSettings.gap) / 100}px`,
+      gap: `${(settings.size * settings.gap) / 100}px`,
     }"
   >
-    <DiscordUser v-for="user in filtredUsers" :key="user.userId" :user />
+    <DiscordUser v-for="user in users" :key="user.id" :user />
     <Button
-      v-if="appSettings.showSettings"
+      v-if="settings.showSettings"
       :style="{
-        borderRadius: `${(appSettings.size * appSettings.radius) / 200}px`,
-        height: `${appSettings.size}px`,
-        width: `${appSettings.size}px`,
+        borderRadius: `${(settings.size * settings.radius) / 200}px`,
+        height: `${settings.size}px`,
+        width: `${settings.size}px`,
       }"
       class="bg-background!"
       variant="outline"
@@ -89,12 +66,12 @@ tauriEventListen<string>("voice-error", (event) => {
       <Icon name="lucide:sliders-horizontal" class="size-1/2" />
     </Button>
     <Button
-      v-if="appSettings.isDraggable"
+      v-if="settings.isDraggable"
       data-tauri-drag-region
       :style="{
-        borderRadius: `${(appSettings.size * appSettings.radius) / 200}px`,
-        height: `${appSettings.size}px`,
-        width: `${appSettings.size}px`,
+        borderRadius: `${(settings.size * settings.radius) / 200}px`,
+        height: `${settings.size}px`,
+        width: `${settings.size}px`,
       }"
       class="bg-background!"
       variant="outline"

@@ -1,38 +1,44 @@
 <script setup lang="ts">
 const { user } = defineProps<{
-  user: VoiceUser;
+  user: DiscordUser;
 }>();
 
-const { discordSettings } = storeToRefs(useDiscordSettingsStore());
-const { appSettings } = storeToRefs(useAppSettingsStore());
+const { settings } = storeToRefs(useSettingsStore());
+const { discord } = storeToRefs(useDiscordStore());
 
 const displayName = computed(() =>
-  discordSettings.value.displayName === VoiceUserDisplayName.Nick
+  discord.value.settings.displayName === DisplayName.Nick
     ? user.nick || user.username
-    : discordSettings.value.displayName === VoiceUserDisplayName.Username
-      ? user.username
-      : undefined,
+    : user.username,
 );
 
+const showDisplayName = computed(() => {
+  if (discord.value.settings.showDisplayName === ShowDisplayName.WhileSpeaking)
+    return user.isSpeaking;
+  if (discord.value.settings.showDisplayName === ShowDisplayName.Never)
+    return false;
+  return true;
+});
+
 const boxStyle = computed(() => ({
-  borderRadius: `${(appSettings.value.size * appSettings.value.radius) / 200}px`,
-  height: `${appSettings.value.size}px`,
-  width: `${appSettings.value.size}px`,
+  borderRadius: `${(settings.value.size * settings.value.radius) / 200}px`,
+  height: `${settings.value.size}px`,
+  width: `${settings.value.size}px`,
 }));
 
-const displayNameSize = computed(() => `${appSettings.value.size / 5.5}px`);
-const displayNameMaxWidth = computed(() => `${appSettings.value.size}px`);
-const ringWidth = computed(() => `${appSettings.value.size / 15}px`);
-const iconSize = computed(() => `${appSettings.value.size / 4.5}px`);
+const displayNameSize = computed(() => `${settings.value.size / 5.5}px`);
+const displayNameMaxWidth = computed(() => `${settings.value.size}px`);
+const ringWidth = computed(() => `${settings.value.size / 15}px`);
+const iconSize = computed(() => `${settings.value.size / 4.5}px`);
 const radius = computed(
-  () => `${(appSettings.value.size * appSettings.value.radius) / 200}px`,
+  () => `${(settings.value.size * settings.value.radius) / 200}px`,
 );
 </script>
 
 <template>
   <div class="relative">
     <NuxtImg
-      :src="`https://cdn.discordapp.com/avatars/${user.userId}/${user.avatar}.webp?size=4096`"
+      :src="`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp?size=4096`"
       class="size-full border border-input"
       :style="boxStyle"
       alt="Avatar"
@@ -70,12 +76,12 @@ const radius = computed(
       />
     </div>
     <div
-      v-if="displayName"
+      v-if="displayName && showDisplayName"
       class="absolute bg-background/70 left-0 bottom-0 inline-block w-fit px-[4%] truncate"
       :style="{
-        borderRadius: radius,
         maxWidth: displayNameMaxWidth,
         fontSize: displayNameSize,
+        borderRadius: radius,
       }"
     >
       {{ displayName }}

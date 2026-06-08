@@ -35,7 +35,6 @@ pub fn run() {
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_keyring::init())
         .plugin(tauri_plugin_opener::init())
-        .plugin(tauri_plugin_pinia::init())
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_os::init())
         .setup(|app| {
@@ -58,8 +57,16 @@ pub fn run() {
                     .unwrap();
             }
 
-            init_discord(app.app_handle().clone());
-            init_vault(app.app_handle().clone());
+            app.handle()
+                .plugin(
+                    tauri_plugin_pinia::Builder::new()
+                        .path(app.path().app_data_dir().unwrap())
+                        .build(),
+                )
+                .unwrap();
+
+            init_discord(&app.app_handle());
+            init_vault(&app.app_handle());
 
             Ok(())
         })

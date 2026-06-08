@@ -1,46 +1,49 @@
 <script setup lang="ts">
-const discordStateStore = useDiscordStateStore();
-const { discordState } = storeToRefs(discordStateStore);
-const discordSettingsStore = useDiscordSettingsStore();
-const { discordSettings } = storeToRefs(discordSettingsStore);
+const discordStore = useDiscordStore();
+const { discord } = storeToRefs(discordStore);
 const { $toast } = useNuxtApp();
 const loading = ref(false);
 const { t } = useI18n();
 
 async function toggleConnection() {
   loading.value = true;
-  const action = discordState.value.connected ? "disconnect" : "connect";
+  const action = discord.value.connected ? "disconnect" : "connect";
   try {
-    await tauriCoreInvoke(`${action}_discord`);
-    discordState.value.connected = action === "connect";
+    if (action === "connect") {
+      discord.value.userId = await tauriCoreInvoke("connect_discord");
+    } else {
+      await tauriCoreInvoke("disconnect_discord");
+      discord.value.userId = undefined;
+    }
+    discord.value.connected = action === "connect";
     $toast(t(`discord.connection.${action}.success`));
   } catch (error) {
-    discordStateStore.addError(JSON.stringify(error));
+    discordStore.addError(JSON.stringify(error));
     $toast(t(`discord.connection.${action}.error`));
   }
   loading.value = false;
 }
 
 async function resetDiscordSettings() {
-  discordSettingsStore.reset();
+  discordStore.resetSettings();
   $toast(t("discord.reset.success"));
 }
 </script>
 
 <template>
   <section class="grid gap-4">
-    <template v-if="discordState.errors.length">
+    <template v-if="discord.errors.length">
       <SettingField
         :description="$t('discord.errors.description')"
-        :title="`${$t('discord.errors.title')} (${discordState.errors.length})`"
+        :title="`${$t('discord.errors.title')} (${discord.errors.length})`"
       >
-        <Button variant="destructive" @click="discordStateStore.clearErrors">
+        <Button variant="destructive" @click="discordStore.clearErrors">
           {{ $t("discord.errors.clear") }}
         </Button>
       </SettingField>
       <div class="flex flex-col gap-2! max-h-51.5 overflow-auto">
         <Alert
-          v-for="{ createdAt, id, message } in discordState.errors"
+          v-for="{ createdAt, id, message } in discord.errors"
           :key="id"
           variant="destructive"
         >
@@ -51,7 +54,7 @@ async function resetDiscordSettings() {
                 variant="secondary"
                 class="size-5"
                 size="icon"
-                @click="discordStateStore.removeError(id)"
+                @click="discordStore.removeError(id)"
               >
                 <Icon name="lucide:x" />
               </Button>
@@ -81,28 +84,28 @@ async function resetDiscordSettings() {
           <div
             class="size-2 rounded-full mr-0.5"
             :class="{
-              'bg-green-500': discordState.connected,
-              'bg-red-500': !discordState.connected,
+              'bg-green-500': discord.connected,
+              'bg-red-500': !discord.connected,
             }"
           />
           {{
             $t(
-              `discord.connection.${discordState.connected ? "connect" : "disconnect"}.badge`,
+              `discord.connection.${discord.connected ? "connect" : "disconnect"}.badge`,
             )
           }}
         </Badge>
       </CardHeader>
       <Button
         :class="{
-          'bg-[#5865F2] hover:bg-[#5865F2]/90!': discordState.connected,
+          'bg-[#5865F2] hover:bg-[#5865F2]/90!': discord.connected,
         }"
         :loading
-        :variant="discordState.connected ? 'ghost' : 'outline'"
+        :variant="discord.connected ? 'ghost' : 'outline'"
         @click="toggleConnection"
       >
         {{
           $t(
-            `discord.connection.${discordState.connected ? "disconnect" : "connect"}.button`,
+            `discord.connection.${discord.connected ? "disconnect" : "connect"}.button`,
           )
         }}
       </Button>
@@ -112,27 +115,47 @@ async function resetDiscordSettings() {
       :description="$t('discord.showMe.description')"
       :title="$t('discord.showMe.title')"
     >
-      <Switch v-model="discordSettings.showMe" />
+      <Switch v-model="discord.settings.showMe" />
     </SettingField>
     <Separator />
     <SettingField
       :description="$t('discord.showOnlySpeakers.description')"
       :title="$t('discord.showOnlySpeakers.title')"
     >
-      <Switch v-model="discordSettings.showOnlySpeakers" />
+      <Switch v-model="discord.settings.showOnlySpeakers" />
+    </SettingField>
+    <Separator />
+    <SettingField
+      :description="$t('discord.showDisplayName.description')"
+      :title="$t('discord.showDisplayName.title')"
+    >
+      <Select v-model="discord.settings.showDisplayName">
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem
+            v-for="mode in Object.values(ShowDisplayName)"
+            :key="mode"
+            :value="mode"
+          >
+            {{ $t(`discord.showDisplayName.${mode}`) }}
+          </SelectItem>
+        </SelectContent>
+      </Select>
     </SettingField>
     <Separator />
     <SettingField
       :description="$t('discord.displayName.description')"
       :title="$t('discord.displayName.title')"
     >
-      <Select v-model="discordSettings.displayName">
+      <Select v-model="discord.settings.displayName">
         <SelectTrigger>
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
           <SelectItem
-            v-for="displayName in Object.values(VoiceUserDisplayName)"
+            v-for="displayName in Object.values(DisplayName)"
             :key="displayName"
             :value="displayName"
           >
