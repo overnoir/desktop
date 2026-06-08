@@ -9,7 +9,10 @@ function sync(state: State) {
 export const useDiscordStore = defineStore(
   "discord",
   () => {
-    const discord = ref<Discord>({ ...defaultDiscord });
+    const discord = ref<Discord>({
+      ...defaultDiscord,
+      settings: { ...defaultDiscord.settings },
+    });
 
     const filtredUsers = computed(() => {
       const channel = discord.value.channel;

@@ -155,6 +155,11 @@ export default {
         badge: "Bağlantı Kesildi",
       },
     },
+    show: {
+      always: "Her Zaman",
+      whileSpeaking: "Konuşurken",
+      never: "Gösterme",
+    },
     showMe: {
       title: "Beni Göster",
       description: "Kendinizin görünüp görünmeyeceğini ayarlayın.",
@@ -171,9 +176,19 @@ export default {
     showDisplayName: {
       title: "Ad Gösterimi",
       description: "Kullanıcı adının ne zaman gözükeceğini seçin.",
-      always: "Her Zaman",
-      whileSpeaking: "Konuşurken",
-      never: "Gösterme",
+    },
+    showAvatarDecoration: {
+      title: "Avatar Dekorasyonu",
+      description: "Avatar dekorasyonun ne zaman gözükeceğini seçin.",
+    },
+    showAvatarDecorationAnimated: {
+      title: "Avatar Dekorasyon Animasyonu",
+      description:
+        "Avatar dekorasyonun ne zaman animasyonlu gözükeceğini seçin.",
+    },
+    showAvatarAnimated: {
+      title: "Avatar Animasyonu",
+      description: "Avatarın ne zaman animasyonlu gözükeceğini seçin.",
     },
     displayName: {
       title: "Gösterilecek Ad",

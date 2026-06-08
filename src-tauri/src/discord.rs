@@ -23,17 +23,24 @@ pub struct TokenResponse {
 
 #[derive(Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
+pub struct AvatarDecorationData {
+    sku_id: String,
+    asset: String,
+}
+
+#[derive(Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
 pub struct User {
+    avatar_decoration_data: Option<AvatarDecorationData>,
     is_self_deafened: bool,
     avatar: Option<String>,
-    discriminator: String,
     nick: Option<String>,
     is_self_muted: bool,
     is_deafened: bool,
     is_speaking: bool,
     username: String,
-    id: String,
     is_muted: bool,
+    id: String,
 }
 
 #[derive(Serialize, Clone)]
@@ -95,16 +102,20 @@ fn parse_user(data: &Value) -> Option<User> {
         nick: data["nick"].as_str().map(|s| s.to_string()),
         username: user["username"].as_str()?.to_string(),
         id: user["id"].as_str()?.to_string(),
-        discriminator: user
-            .get("discriminator")
-            .and_then(|d| d.as_str())
-            .unwrap_or("0")
-            .to_string(),
+        is_speaking: false,
+        avatar_decoration_data: user.get("avatar_decoration_data").and_then(|d| {
+            if d.is_null() {
+                return None;
+            }
+            Some(AvatarDecorationData {
+                sku_id: d["skuId"].as_str()?.to_string(),
+                asset: d["asset"].as_str()?.to_string(),
+            })
+        }),
         avatar: user
             .get("avatar")
             .and_then(|a| a.as_str())
             .map(|s| s.to_string()),
-        is_speaking: false,
     })
 }
 

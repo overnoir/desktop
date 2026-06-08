@@ -26,7 +26,7 @@ export enum DisplayName {
   Username = "username",
 }
 
-export enum ShowDisplayName {
+export enum Show {
   Always = "always",
   WhileSpeaking = "whileSpeaking",
   Never = "never",
@@ -79,9 +79,12 @@ export type Discord = {
 };
 
 export type DiscordSettings = {
-  showDisplayName: ShowDisplayName;
+  showAvatarDecorationAnimated: Show;
+  showAvatarDecoration: Show;
   showOnlySpeakers: boolean;
+  showAvatarAnimated: Show;
   displayName: DisplayName;
+  showDisplayName: Show;
   userLimit: number;
   showMe: boolean;
 };
@@ -98,8 +101,13 @@ export type DiscordChannel = {
   id: string;
 };
 
+export type AvatarDecorationData = {
+  skuId: string;
+  asset: string;
+};
+
 export type DiscordUser = {
-  discriminator: string;
+  avatarDecorationData?: AvatarDecorationData;
   isSelfDeafened: boolean;
   isSelfMuted: boolean;
   isSpeaking: boolean;

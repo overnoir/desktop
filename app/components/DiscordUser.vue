@@ -13,9 +13,33 @@ const displayName = computed(() =>
 );
 
 const showDisplayName = computed(() => {
-  if (discord.value.settings.showDisplayName === ShowDisplayName.WhileSpeaking)
+  if (discord.value.settings.showDisplayName === Show.WhileSpeaking)
     return user.isSpeaking;
-  if (discord.value.settings.showDisplayName === ShowDisplayName.Never)
+  if (discord.value.settings.showDisplayName === Show.Never) return false;
+  return true;
+});
+
+const showAvatarAnimated = computed(() => {
+  if (discord.value.settings.showAvatarAnimated === Show.WhileSpeaking)
+    return user.isSpeaking;
+  if (discord.value.settings.showAvatarAnimated === Show.Never) return false;
+  return true;
+});
+
+const showAvatarDecoration = computed(() => {
+  if (!user.avatarDecorationData) return false;
+  if (discord.value.settings.showAvatarDecoration === Show.WhileSpeaking)
+    return user.isSpeaking;
+  if (discord.value.settings.showAvatarDecoration === Show.Never) return false;
+  return true;
+});
+
+const showAvatarDecorationAnimated = computed(() => {
+  if (
+    discord.value.settings.showAvatarDecorationAnimated === Show.WhileSpeaking
+  )
+    return user.isSpeaking;
+  if (discord.value.settings.showAvatarDecorationAnimated === Show.Never)
     return false;
   return true;
 });
@@ -38,10 +62,21 @@ const radius = computed(
 <template>
   <div class="relative">
     <NuxtImg
-      :src="`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp?size=4096`"
+      :src="`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp?size=4096&animated=${showAvatarAnimated}`"
       class="size-full border border-input"
       :style="boxStyle"
       alt="Avatar"
+    />
+    <NuxtImg
+      v-if="user.avatarDecorationData && showAvatarDecoration"
+      :src="`${
+        showAvatarDecorationAnimated
+          ? `https://cdn.discordapp.com/avatar-decoration-presets/${user.avatarDecorationData.asset}.png?size=4096`
+          : `https://cdn.discordapp.com/media/v1/collectibles-shop/${user.avatarDecorationData.skuId}/static`
+      }`"
+      class="absolute left-0 top-0 size-full scale-[1.2]"
+      alt="Avatar Decoration"
+      :style="boxStyle"
     />
     <div
       v-if="user.isSpeaking"
@@ -76,7 +111,7 @@ const radius = computed(
       />
     </div>
     <div
-      v-if="displayName && showDisplayName"
+      v-if="showDisplayName"
       class="absolute bg-background/70 left-0 bottom-0 inline-block w-fit px-[4%] truncate"
       :style="{
         maxWidth: displayNameMaxWidth,

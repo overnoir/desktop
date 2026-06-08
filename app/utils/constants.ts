@@ -23,8 +23,11 @@ export const defaultSettings: Settings = {
 
 export const defaultDiscord: Discord = {
   settings: {
-    showDisplayName: ShowDisplayName.Always,
+    showAvatarDecorationAnimated: Show.WhileSpeaking,
+    showAvatarAnimated: Show.WhileSpeaking,
+    showAvatarDecoration: Show.Never,
     displayName: DisplayName.Nick,
+    showDisplayName: Show.Always,
     showOnlySpeakers: false,
     userLimit: 25,
     showMe: true,

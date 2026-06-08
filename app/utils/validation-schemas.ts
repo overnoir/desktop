@@ -20,10 +20,13 @@ export const settingsSchema = z.object({
 
 export const discordSchema = z.object({
   settings: z.object({
-    showDisplayName: z.enum(ShowDisplayName),
+    showAvatarDecorationAnimated: z.enum(Show),
     userLimit: z.number().min(0).max(50),
+    showAvatarDecoration: z.enum(Show),
     displayName: z.enum(DisplayName),
+    showAvatarAnimated: z.enum(Show),
     showOnlySpeakers: z.boolean(),
+    showDisplayName: z.enum(Show),
     showMe: z.boolean(),
   }),
   errors: z.array(

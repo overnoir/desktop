@@ -148,26 +148,6 @@ async function resetDiscordSettings() {
     </SettingField>
     <Separator />
     <SettingField
-      :description="$t('discord.showDisplayName.description')"
-      :title="$t('discord.showDisplayName.title')"
-    >
-      <Select v-model="discord.settings.showDisplayName">
-        <SelectTrigger>
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem
-            v-for="mode in Object.values(ShowDisplayName)"
-            :key="mode"
-            :value="mode"
-          >
-            {{ $t(`discord.showDisplayName.${mode}`) }}
-          </SelectItem>
-        </SelectContent>
-      </Select>
-    </SettingField>
-    <Separator />
-    <SettingField
       :description="$t('discord.displayName.description')"
       :title="$t('discord.displayName.title')"
     >
@@ -182,6 +162,86 @@ async function resetDiscordSettings() {
             :value="displayName"
           >
             {{ $t(`discord.displayName.${displayName}`) }}
+          </SelectItem>
+        </SelectContent>
+      </Select>
+    </SettingField>
+    <Separator />
+    <SettingField
+      :description="$t('discord.showDisplayName.description')"
+      :title="$t('discord.showDisplayName.title')"
+    >
+      <Select v-model="discord.settings.showDisplayName">
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem
+            v-for="show in Object.values(Show)"
+            :key="show"
+            :value="show"
+          >
+            {{ $t(`discord.show.${show}`) }}
+          </SelectItem>
+        </SelectContent>
+      </Select>
+    </SettingField>
+    <Separator />
+    <SettingField
+      :description="$t('discord.showAvatarAnimated.description')"
+      :title="$t('discord.showAvatarAnimated.title')"
+    >
+      <Select v-model="discord.settings.showAvatarAnimated">
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem
+            v-for="show in Object.values(Show)"
+            :key="show"
+            :value="show"
+          >
+            {{ $t(`discord.show.${show}`) }}
+          </SelectItem>
+        </SelectContent>
+      </Select>
+    </SettingField>
+    <Separator />
+    <SettingField
+      :description="$t('discord.showAvatarDecoration.description')"
+      :title="$t('discord.showAvatarDecoration.title')"
+    >
+      <Select v-model="discord.settings.showAvatarDecoration">
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem
+            v-for="show in Object.values(Show)"
+            :key="show"
+            :value="show"
+          >
+            {{ $t(`discord.show.${show}`) }}
+          </SelectItem>
+        </SelectContent>
+      </Select>
+    </SettingField>
+    <Separator />
+    <SettingField
+      :description="$t('discord.showAvatarDecorationAnimated.description')"
+      :title="$t('discord.showAvatarDecorationAnimated.title')"
+    >
+      <Select v-model="discord.settings.showAvatarDecorationAnimated">
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem
+            v-for="show in Object.values(Show)"
+            :key="show"
+            :value="show"
+          >
+            {{ $t(`discord.show.${show}`) }}
           </SelectItem>
         </SelectContent>
       </Select>
