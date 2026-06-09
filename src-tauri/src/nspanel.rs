@@ -1,5 +1,5 @@
 #![cfg(target_os = "macos")]
-use tauri::{AppHandle, Manager};
+use tauri::{AppHandle, Emitter, Manager};
 use tauri_nspanel::{
     tauri_panel, CollectionBehavior, ManagerExt, PanelLevel, StyleMask, TrackingAreaOptions,
     WebviewWindowExt,
@@ -27,7 +27,9 @@ pub fn init_nspanel(app_handle: AppHandle) {
             }
         })
 
-        panel_event!(MyPanelEventHandler {})
+        panel_event!(MyPanelEventHandler {
+            window_did_move(notification: &NSNotification) -> ()
+        })
     }
 
     let window = app_handle.get_webview_window("overlay").unwrap();
@@ -47,6 +49,11 @@ pub fn init_nspanel(app_handle: AppHandle) {
         if let Ok(panel) = handle_exit.get_webview_panel("overlay") {
             panel.resign_key_window();
         }
+    });
+
+    let handle_move = app_handle.clone();
+    handler.window_did_move(move |_| {
+        let _ = handle_move.emit_to("overlay", "nspanel-moved", ());
     });
 
     panel.set_level(PanelLevel::Custom(1001).value());

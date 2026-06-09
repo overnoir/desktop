@@ -189,7 +189,8 @@ fn emit_channel_state(
     users: &HashMap<String, User>,
     speaking: &HashSet<String>,
 ) {
-    let _ = app.emit(
+    let _ = app.emit_to(
+        "overlay",
         "channel-update",
         &Channel {
             id: id.to_string(),
@@ -231,18 +232,26 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
         let mut speaking: HashSet<String> = HashSet::new();
 
         if channel_client.connect().is_err() {
-            let _ = app.emit("channel-error", "Voice RPC connection failed");
+            let _ = app.emit_to("overlay", "channel-error", "Voice RPC connection failed");
             return;
         }
 
         let access_token = match get_vault_item(&app, "discord_access_token") {
             Ok(Some(token)) => token,
             Ok(None) => {
-                let _ = app.emit("channel-error", "No access token for channel listener");
+                let _ = app.emit_to(
+                    "overlay",
+                    "channel-error",
+                    "No access token for channel listener",
+                );
                 return;
             }
             Err(e) => {
-                let _ = app.emit("channel-error", format!("Failed to read token: {}", e));
+                let _ = app.emit_to(
+                    "overlay",
+                    "channel-error",
+                    format!("Failed to read token: {}", e),
+                );
                 return;
             }
         };
@@ -260,12 +269,16 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
             Ok(auth_data) => match auth_data["user"]["id"].as_str() {
                 Some(id) => id.to_string(),
                 None => {
-                    let _ = app.emit("channel-error", "Channel auth response missing user id");
+                    let _ = app.emit_to(
+                        "overlay",
+                        "channel-error",
+                        "Channel auth response missing user id",
+                    );
                     return;
                 }
             },
             Err(_) => {
-                let _ = app.emit("channel-error", "Channel auth failed");
+                let _ = app.emit_to("overlay", "channel-error", "Channel auth failed");
                 return;
             }
         };
@@ -286,7 +299,8 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
         )
         .is_err()
         {
-            let _ = app.emit(
+            let _ = app.emit_to(
+                "overlay",
                 "channel-error",
                 "Failed to subscribe to VOICE_CHANNEL_SELECT",
             );
@@ -433,7 +447,8 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
                         } else {
                             current_channel_name = String::new();
 
-                            let _ = app.emit("channel-update", serde_json::Value::Null);
+                            let _ =
+                                app.emit_to("overlay", "channel-update", serde_json::Value::Null);
                         }
                     } else if let Some(channel_id) = &current_channel {
                         match data["evt"].as_str() {
@@ -498,7 +513,8 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
                     }
                 }
                 Err(_) => {
-                    let _ = app.emit("channel-error", "Channel listener disconnected");
+                    let _ =
+                        app.emit_to("overlay", "channel-error", "Channel listener disconnected");
                     break;
                 }
             }
@@ -703,7 +719,7 @@ pub fn disconnect_discord(app_handle: AppHandle) -> Result<(), String> {
     }
 
     app_handle
-        .emit("channel-update", serde_json::Value::Null)
+        .emit_to("overlay", "channel-update", serde_json::Value::Null)
         .map_err(|e| e.to_string())?;
 
     Ok(())

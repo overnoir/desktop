@@ -1,8 +1,7 @@
 <script setup lang="ts">
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const discordStore = useDiscordStore();
-const { channel, connectedUser } = storeToRefs(discordStore);
-const isDragging = useState("is-dragging", () => false);
+const { connectedUser, channel } = storeToRefs(discordStore);
 const { settings } = storeToRefs(useSettingsStore());
 const { create } = useTray();
 
@@ -15,6 +14,22 @@ const backgroundStyle = computed(() =>
     : undefined,
 );
 
+if (settings.value.autoStart !== (await tauriAutoStartIsEnabled())) {
+  if (settings.value.autoStart) {
+    await tauriAutoStartEnable();
+  } else {
+    await tauriAutoStartDisable();
+  }
+}
+
+await overlayWebviewWindow.setPosition(
+  new TauriDpiLogicalPosition(settings.value.x, settings.value.y),
+);
+
+await tauriEventListen<string>("channel-error", ({ payload }) => {
+  discordStore.addError(payload);
+});
+
 await tauriEventListen<DiscordChannel | null>(
   "channel-update",
   ({ payload }) => {
@@ -22,27 +37,22 @@ await tauriEventListen<DiscordChannel | null>(
   },
 );
 
-await tauriEventListen<string>("channel-error", ({ payload }) => {
-  discordStore.addError(payload);
-});
-
-await overlayWebviewWindow.setPosition(
-  new TauriDpiLogicalPosition(settings.value.x, settings.value.y),
-);
-
 if (tauriOSType() === "macos") {
   await tauriCoreInvoke("init_nspanel");
   await tauriCoreInvoke("set_nspanel_ignore_cursor", {
     value: settings.value.ignoreCursor,
   });
-}
-
-if (settings.value.autoStart !== (await tauriAutoStartIsEnabled())) {
-  if (settings.value.autoStart) {
-    await tauriAutoStartEnable();
-  } else {
-    await tauriAutoStartDisable();
-  }
+  await tauriEventListen("nspanel-moved", async () => {
+    const { x, y } = await overlayWebviewWindow.outerPosition();
+    settings.value.x = x;
+    settings.value.y = y;
+  });
+} else {
+  await overlayWebviewWindow.onMoved(({ payload }) => {
+    const { x, y } = payload;
+    settings.value.x = x;
+    settings.value.y = y;
+  });
 }
 
 if (connectedUser.value) {
@@ -63,11 +73,6 @@ useResizeObserver(document.body, async (entries) => {
   }
 
   const { width, height } = entry.contentRect;
-
-  if (isDragging.value) {
-    await overlayWebviewWindow.setSize(new TauriDpiLogicalSize(width, height));
-    return;
-  }
 
   const [currentPosition, currentSize] = await Promise.all([
     overlayWebviewWindow.outerPosition(),
