@@ -29,7 +29,6 @@ await tauriEventListen<string>("channel-error", ({ payload }) => {
 await overlayWebviewWindow.setPosition(
   new TauriDpiLogicalPosition(settings.value.x, settings.value.y),
 );
-await create();
 
 if (tauriOSType() === "macos") {
   await tauriCoreInvoke("init_nspanel");
@@ -109,6 +108,8 @@ onMounted(async () => {
   if (updaterWebviewWindow) {
     await updaterWebviewWindow.destroy();
   }
+
+  await create();
 });
 </script>
 
