@@ -68,6 +68,8 @@ pub struct Discord {
     client_id: String,
 }
 
+const DISCORD_API_OAUTH2_TOKEN_URL: &str = "https://discord.com/api/v10/oauth2/token";
+
 const CHANNEL_EVENTS: [&str; 5] = [
     "VOICE_STATE_CREATE",
     "VOICE_STATE_UPDATE",
@@ -103,8 +105,6 @@ pub fn init_discord(app_handle: &AppHandle) {
 fn parse_user(data: &Value) -> Option<User> {
     let voice_state = &data["voice_state"];
     let user = data["user"].as_object()?;
-
-    println!("{:?}", user);
 
     Some(User {
         is_self_deafened: voice_state["self_deaf"].as_bool().unwrap_or(false),
@@ -618,7 +618,7 @@ async fn authorize(app_handle: &AppHandle) -> Result<TokenResponse, String> {
     ];
 
     let response_text = tauri_plugin_http::reqwest::Client::new()
-        .post("https://discord.com/api/oauth2/token")
+        .post(&DISCORD_API_OAUTH2_TOKEN_URL.to_string())
         .form(&params)
         .send()
         .await
@@ -666,7 +666,7 @@ pub async fn connect_discord(app_handle: AppHandle) -> Result<ConnectedUser, Str
                         ];
 
                         let response_text = tauri_plugin_http::reqwest::Client::new()
-                            .post("https://discord.com/api/oauth2/token")
+                            .post(&DISCORD_API_OAUTH2_TOKEN_URL.to_string())
                             .form(&params)
                             .send()
                             .await
