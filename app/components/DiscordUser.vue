@@ -89,23 +89,31 @@ const radius = computed(
         user.isSelfDeafened ||
         user.isSelfMuted ||
         user.isDeafened ||
-        user.isMuted
+        user.isMuted ||
+        user.isBot
       "
       class="absolute bg-background/70 left-0 top-0 flex items-center gap-[4%] p-[4%]"
       :style="{
         borderRadius: radius,
       }"
-      :class="{ '[&>svg]:text-red-600': user.isMuted }"
     >
       <Icon
         v-if="user.isMuted || user.isSelfMuted"
         :style="{ width: iconSize, height: iconSize }"
+        :class="{ 'text-red-600': user.isMuted }"
         name="lucide:mic-off"
       />
       <Icon
         v-if="user.isDeafened || user.isSelfDeafened"
         :style="{ width: iconSize, height: iconSize }"
+        :class="{ 'text-red-600': user.isDeafened }"
         name="lucide:headphone-off"
+      />
+      <Icon
+        v-if="user.isBot"
+        :style="{ width: iconSize, height: iconSize }"
+        class="scale-110"
+        name="lucide:bot"
       />
     </div>
     <div

@@ -43,6 +43,7 @@ pub struct User {
     is_speaking: bool,
     username: String,
     is_muted: bool,
+    is_bot: bool,
     id: String,
 }
 
@@ -103,11 +104,14 @@ fn parse_user(data: &Value) -> Option<User> {
     let voice_state = &data["voice_state"];
     let user = data["user"].as_object()?;
 
+    println!("{:?}", user);
+
     Some(User {
         is_self_deafened: voice_state["self_deaf"].as_bool().unwrap_or(false),
         is_self_muted: voice_state["self_mute"].as_bool().unwrap_or(false),
         is_deafened: voice_state["deaf"].as_bool().unwrap_or(false),
         is_muted: voice_state["mute"].as_bool().unwrap_or(false),
+        is_bot: user["bot"].as_bool().unwrap_or(false),
         nick: data["nick"].as_str().map(|s| s.to_string()),
         username: user["username"].as_str()?.to_string(),
         id: user["id"].as_str()?.to_string(),

@@ -114,6 +114,7 @@ export type DiscordUser = {
   username: string;
   isMuted: boolean;
   avatar?: string;
+  isBot: boolean;
   nick?: string;
   id: string;
 };
