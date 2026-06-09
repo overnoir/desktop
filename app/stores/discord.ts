@@ -2,48 +2,50 @@ import type { State } from "@tauri-store/pinia";
 
 function sync(state: State) {
   return {
-    discord: safeParseWithDefault(discordSchema, defaultDiscord, state.discord),
+    connectedUser: discordConnectedUserSchema.parse(state.connectedUser),
+    settings: discordSettingsSchema.parse(state.settings),
+    errors: discordErrorsSchema.parse(state.errors),
   };
 }
 
 export const useDiscordStore = defineStore(
   "discord",
   () => {
-    const discord = ref<Discord>({
-      ...defaultDiscord,
-      settings: { ...defaultDiscord.settings },
-    });
+    const settings = ref<DiscordSettings>({ ...defaultDiscordSettings });
+    const connectedUser = ref<DiscordConnectedUser | null>(null);
+    const channel = ref<DiscordChannel | undefined>(undefined);
+    const errors = ref<DiscordError[]>([]);
 
     const filtredUsers = computed(() => {
-      const channel = discord.value.channel;
+      const currentChannel = channel.value;
 
-      if (!channel) {
+      if (!currentChannel) {
         return [];
       }
 
-      let users = channel.users;
+      let users = currentChannel.users;
 
-      if (!discord.value.settings.showMe && discord.value.userId) {
-        users = users.filter((user) => user.id !== discord.value.userId);
+      if (!settings.value.showMe && connectedUser.value) {
+        users = users.filter((user) => user.id !== connectedUser.value!.id);
       }
 
-      if (discord.value.settings.showOnlySpeakers) {
+      if (settings.value.showOnlySpeakers) {
         users = users.filter((user) => user.isSpeaking);
       }
 
-      if (discord.value.settings.userLimit > 0) {
-        users = users.slice(0, discord.value.settings.userLimit);
+      if (settings.value.userLimit > 0) {
+        users = users.slice(0, settings.value.userLimit);
       }
 
       return users;
     });
 
     function resetSettings() {
-      discord.value.settings = { ...defaultDiscord.settings };
+      settings.value = { ...defaultDiscordSettings };
     }
 
     function addError(message: DiscordError["message"]) {
-      discord.value.errors.unshift({
+      errors.value.unshift({
         id: crypto.randomUUID(),
         createdAt: Date.now(),
         message,
@@ -51,22 +53,23 @@ export const useDiscordStore = defineStore(
     }
 
     function removeError(errorId: DiscordError["id"]) {
-      discord.value.errors = discord.value.errors.filter(
-        ({ id }) => id !== errorId,
-      );
+      errors.value = errors.value.filter(({ id }) => id !== errorId);
     }
 
     function clearErrors() {
-      discord.value.errors = [];
+      errors.value = [];
     }
 
     return {
       users: filtredUsers,
+      connectedUser,
       resetSettings,
       removeError,
       clearErrors,
       addError,
-      discord,
+      settings,
+      channel,
+      errors,
     };
   },
   {
@@ -75,6 +78,7 @@ export const useDiscordStore = defineStore(
         beforeFrontendSync: sync,
         beforeBackendSync: sync,
       },
+      filterKeys: ["channel"],
     },
   },
 );

@@ -21,19 +21,15 @@ export const defaultSettings: Settings = {
   y: 0,
 };
 
-export const defaultDiscord: Discord = {
-  settings: {
-    showAvatarDecorationAnimated: Show.WhileSpeaking,
-    showAvatarAnimated: Show.WhileSpeaking,
-    showAvatarDecoration: Show.Never,
-    displayName: DisplayName.Nick,
-    showDisplayName: Show.Always,
-    showOnlySpeakers: false,
-    userLimit: 25,
-    showMe: true,
-  },
-  connected: false,
-  errors: [],
+export const defaultDiscordSettings: DiscordSettings = {
+  showAvatarDecorationAnimated: Show.WhileSpeaking,
+  showAvatarAnimated: Show.WhileSpeaking,
+  showAvatarDecoration: Show.Never,
+  displayName: DisplayName.Nick,
+  showDisplayName: Show.Always,
+  showOnlySpeakers: false,
+  userLimit: 25,
+  showMe: true,
 };
 
 export const mainWebviewWindowOptions: Omit<

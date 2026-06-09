@@ -1,21 +1,22 @@
 <script setup lang="ts">
 const discordStore = useDiscordStore();
-const { discord } = storeToRefs(discordStore);
+const { connectedUser, errors, settings } = storeToRefs(discordStore);
 const { $toast } = useNuxtApp();
 const loading = ref(false);
 const { t } = useI18n();
 
 async function toggleConnection() {
   loading.value = true;
-  const action = discord.value.connected ? "disconnect" : "connect";
+  const action = connectedUser.value ? "disconnect" : "connect";
   try {
     if (action === "connect") {
-      discord.value.userId = await tauriCoreInvoke("connect_discord");
+      connectedUser.value =
+        await tauriCoreInvoke<DiscordConnectedUser>("connect_discord");
     } else {
       await tauriCoreInvoke("disconnect_discord");
-      discord.value.userId = undefined;
+      connectedUser.value = null;
+      console.log("silindi ", connectedUser.value);
     }
-    discord.value.connected = action === "connect";
     $toast(t(`discord.connection.${action}.success`));
   } catch (error) {
     discordStore.addError(JSON.stringify(error));
@@ -32,10 +33,10 @@ async function resetDiscordSettings() {
 
 <template>
   <section class="grid gap-4">
-    <template v-if="discord.errors.length">
+    <template v-if="errors.length">
       <SettingField
         :description="$t('discord.errors.description')"
-        :title="`${$t('discord.errors.title')} (${discord.errors.length})`"
+        :title="`${$t('discord.errors.title')} (${errors.length})`"
       >
         <Button variant="destructive" @click="discordStore.clearErrors">
           {{ $t("discord.errors.clear") }}
@@ -43,7 +44,7 @@ async function resetDiscordSettings() {
       </SettingField>
       <div class="flex flex-col gap-2! max-h-51.5 overflow-auto">
         <Alert
-          v-for="{ createdAt, id, message } in discord.errors"
+          v-for="{ createdAt, id, message } in errors"
           :key="id"
           variant="destructive"
         >
@@ -84,28 +85,28 @@ async function resetDiscordSettings() {
           <div
             class="size-2 rounded-full mr-0.5"
             :class="{
-              'bg-green-500': discord.connected,
-              'bg-red-500': !discord.connected,
+              'bg-green-500': connectedUser,
+              'bg-red-500': !connectedUser,
             }"
           />
           {{
             $t(
-              `discord.connection.${discord.connected ? "connect" : "disconnect"}.badge`,
+              `discord.connection.${connectedUser ? "connect" : "disconnect"}.badge`,
             )
           }}
         </Badge>
       </CardHeader>
       <Button
         :class="{
-          'bg-[#5865F2] hover:bg-[#5865F2]/90!': discord.connected,
+          'bg-[#5865F2] hover:bg-[#5865F2]/90!': connectedUser,
         }"
         :loading
-        :variant="discord.connected ? 'ghost' : 'outline'"
+        :variant="connectedUser ? 'ghost' : 'outline'"
         @click="toggleConnection"
       >
         {{
           $t(
-            `discord.connection.${discord.connected ? "disconnect" : "connect"}.button`,
+            `discord.connection.${connectedUser ? "disconnect" : "connect"}.button`,
           )
         }}
       </Button>
@@ -115,14 +116,14 @@ async function resetDiscordSettings() {
       :description="$t('discord.showMe.description')"
       :title="$t('discord.showMe.title')"
     >
-      <Switch v-model="discord.settings.showMe" />
+      <Switch v-model="settings.showMe" />
     </SettingField>
     <Separator />
     <SettingField
       :description="$t('discord.showOnlySpeakers.description')"
       :title="$t('discord.showOnlySpeakers.title')"
     >
-      <Switch v-model="discord.settings.showOnlySpeakers" />
+      <Switch v-model="settings.showOnlySpeakers" />
     </SettingField>
     <Separator />
     <SettingField
@@ -130,7 +131,7 @@ async function resetDiscordSettings() {
       :title="$t('discord.userLimit.title')"
     >
       <div class="flex flex-col">
-        <NumberField v-model="discord.settings.userLimit" :max="50" :min="0">
+        <NumberField v-model="settings.userLimit" :max="50" :min="0">
           <NumberFieldContent>
             <NumberFieldDecrement />
             <NumberFieldInput class="rounded-b-none border-b-0" />
@@ -139,10 +140,10 @@ async function resetDiscordSettings() {
         </NumberField>
         <Slider
           class="*:data-[slot='slider-track']:rounded-t-none"
-          :model-value="[discord.settings.userLimit]"
+          :model-value="[settings.userLimit]"
           :max="50"
           :min="0"
-          @update:model-value="discord.settings.userLimit = $event![0]!"
+          @update:model-value="settings.userLimit = $event![0]!"
         />
       </div>
     </SettingField>
@@ -151,7 +152,7 @@ async function resetDiscordSettings() {
       :description="$t('discord.displayName.description')"
       :title="$t('discord.displayName.title')"
     >
-      <Select v-model="discord.settings.displayName">
+      <Select v-model="settings.displayName">
         <SelectTrigger>
           <SelectValue />
         </SelectTrigger>
@@ -171,7 +172,7 @@ async function resetDiscordSettings() {
       :description="$t('discord.showDisplayName.description')"
       :title="$t('discord.showDisplayName.title')"
     >
-      <Select v-model="discord.settings.showDisplayName">
+      <Select v-model="settings.showDisplayName">
         <SelectTrigger>
           <SelectValue />
         </SelectTrigger>
@@ -191,7 +192,7 @@ async function resetDiscordSettings() {
       :description="$t('discord.showAvatarAnimated.description')"
       :title="$t('discord.showAvatarAnimated.title')"
     >
-      <Select v-model="discord.settings.showAvatarAnimated">
+      <Select v-model="settings.showAvatarAnimated">
         <SelectTrigger>
           <SelectValue />
         </SelectTrigger>
@@ -211,7 +212,7 @@ async function resetDiscordSettings() {
       :description="$t('discord.showAvatarDecoration.description')"
       :title="$t('discord.showAvatarDecoration.title')"
     >
-      <Select v-model="discord.settings.showAvatarDecoration">
+      <Select v-model="settings.showAvatarDecoration">
         <SelectTrigger>
           <SelectValue />
         </SelectTrigger>
@@ -231,7 +232,7 @@ async function resetDiscordSettings() {
       :description="$t('discord.showAvatarDecorationAnimated.description')"
       :title="$t('discord.showAvatarDecorationAnimated.title')"
     >
-      <Select v-model="discord.settings.showAvatarDecorationAnimated">
+      <Select v-model="settings.showAvatarDecorationAnimated">
         <SelectTrigger>
           <SelectValue />
         </SelectTrigger>

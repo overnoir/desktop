@@ -70,14 +70,6 @@ export type VaultItemMetadata = {
   key: string;
 };
 
-export type Discord = {
-  settings: DiscordSettings;
-  channel?: DiscordChannel;
-  errors: DiscordError[];
-  connected: boolean;
-  userId?: string;
-};
-
 export type DiscordSettings = {
   showAvatarDecorationAnimated: Show;
   showAvatarDecoration: Show;
@@ -101,13 +93,13 @@ export type DiscordChannel = {
   id: string;
 };
 
-export type AvatarDecorationData = {
+export type AvatarDecoration = {
   skuId: string;
   asset: string;
 };
 
 export type DiscordUser = {
-  avatarDecorationData?: AvatarDecorationData;
+  avatarDecoration?: AvatarDecoration;
   isSelfDeafened: boolean;
   isSelfMuted: boolean;
   isSpeaking: boolean;
@@ -118,4 +110,9 @@ export type DiscordUser = {
   nick?: string;
   id: string;
 };
+
+export type DiscordConnectedUser = {
+  id: string;
+};
+
 //#endregion

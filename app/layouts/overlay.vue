@@ -2,7 +2,7 @@
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const { settings } = storeToRefs(useSettingsStore());
 const discordStore = useDiscordStore();
-const { discord } = storeToRefs(discordStore);
+const { channel, connectedUser } = storeToRefs(discordStore);
 const { create } = useTray();
 
 const backgroundStyle = computed(() =>
@@ -14,9 +14,12 @@ const backgroundStyle = computed(() =>
     : undefined,
 );
 
-await tauriEventListen<DiscordChannel>("channel-update", ({ payload }) => {
-  discord.value.channel = payload;
-});
+await tauriEventListen<DiscordChannel | null>(
+  "channel-update",
+  ({ payload }) => {
+    channel.value = payload || undefined;
+  },
+);
 
 await tauriEventListen<string>("channel-error", ({ payload }) => {
   discordStore.addError(payload);
@@ -42,13 +45,13 @@ if (settings.value.autoStart !== (await tauriAutoStartIsEnabled())) {
   }
 }
 
-if (discord.value.connected) {
+if (connectedUser.value) {
   try {
-    discord.value.userId = await tauriCoreInvoke<string>("connect_discord");
+    connectedUser.value =
+      await tauriCoreInvoke<DiscordConnectedUser>("connect_discord");
   } catch (error) {
     discordStore.addError(JSON.stringify(error));
-    discord.value.userId = undefined;
-    discord.value.connected = false;
+    connectedUser.value = null;
   }
 }
 

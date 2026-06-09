@@ -3,43 +3,41 @@ const { user } = defineProps<{
   user: DiscordUser;
 }>();
 
+const { settings: discordSettings } = storeToRefs(useDiscordStore());
 const { settings } = storeToRefs(useSettingsStore());
-const { discord } = storeToRefs(useDiscordStore());
 
 const displayName = computed(() =>
-  discord.value.settings.displayName === DisplayName.Nick
+  discordSettings.value.displayName === DisplayName.Nick
     ? user.nick || user.username
     : user.username,
 );
 
 const showDisplayName = computed(() => {
-  if (discord.value.settings.showDisplayName === Show.WhileSpeaking)
+  if (discordSettings.value.showDisplayName === Show.WhileSpeaking)
     return user.isSpeaking;
-  if (discord.value.settings.showDisplayName === Show.Never) return false;
+  if (discordSettings.value.showDisplayName === Show.Never) return false;
   return true;
 });
 
 const showAvatarAnimated = computed(() => {
-  if (discord.value.settings.showAvatarAnimated === Show.WhileSpeaking)
+  if (discordSettings.value.showAvatarAnimated === Show.WhileSpeaking)
     return user.isSpeaking;
-  if (discord.value.settings.showAvatarAnimated === Show.Never) return false;
+  if (discordSettings.value.showAvatarAnimated === Show.Never) return false;
   return true;
 });
 
 const showAvatarDecoration = computed(() => {
-  if (!user.avatarDecorationData) return false;
-  if (discord.value.settings.showAvatarDecoration === Show.WhileSpeaking)
+  if (!user.avatarDecoration) return false;
+  if (discordSettings.value.showAvatarDecoration === Show.WhileSpeaking)
     return user.isSpeaking;
-  if (discord.value.settings.showAvatarDecoration === Show.Never) return false;
+  if (discordSettings.value.showAvatarDecoration === Show.Never) return false;
   return true;
 });
 
 const showAvatarDecorationAnimated = computed(() => {
-  if (
-    discord.value.settings.showAvatarDecorationAnimated === Show.WhileSpeaking
-  )
+  if (discordSettings.value.showAvatarDecorationAnimated === Show.WhileSpeaking)
     return user.isSpeaking;
-  if (discord.value.settings.showAvatarDecorationAnimated === Show.Never)
+  if (discordSettings.value.showAvatarDecorationAnimated === Show.Never)
     return false;
   return true;
 });
@@ -68,11 +66,11 @@ const radius = computed(
       alt="Avatar"
     />
     <NuxtImg
-      v-if="user.avatarDecorationData && showAvatarDecoration"
+      v-if="user.avatarDecoration && showAvatarDecoration"
       :src="`${
         showAvatarDecorationAnimated
-          ? `https://cdn.discordapp.com/avatar-decoration-presets/${user.avatarDecorationData.asset}.png?size=4096`
-          : `https://cdn.discordapp.com/media/v1/collectibles-shop/${user.avatarDecorationData.skuId}/static`
+          ? `https://cdn.discordapp.com/avatar-decoration-presets/${user.avatarDecoration.asset}.png?size=4096`
+          : `https://cdn.discordapp.com/media/v1/collectibles-shop/${user.avatarDecoration.skuId}/static`
       }`"
       class="absolute left-0 top-0 size-full scale-[1.2]"
       alt="Avatar Decoration"

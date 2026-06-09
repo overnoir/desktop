@@ -2,11 +2,7 @@ import type { State } from "@tauri-store/pinia";
 
 function sync(state: State) {
   return {
-    settings: safeParseWithDefault(
-      settingsSchema,
-      defaultSettings,
-      state.settings,
-    ),
+    settings: settingsSchema.parse(state.settings),
   };
 }
 

@@ -23,7 +23,7 @@ pub struct TokenResponse {
 
 #[derive(Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct AvatarDecorationData {
+pub struct AvatarDecoration {
     sku_id: String,
     asset: String,
 }
@@ -31,9 +31,12 @@ pub struct AvatarDecorationData {
 #[derive(Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct User {
-    avatar_decoration_data: Option<AvatarDecorationData>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    avatar_decoration: Option<AvatarDecoration>,
     is_self_deafened: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
     avatar: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     nick: Option<String>,
     is_self_muted: bool,
     is_deafened: bool,
@@ -46,9 +49,15 @@ pub struct User {
 #[derive(Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Channel {
-    name: Option<String>,
-    id: Option<String>,
     users: Vec<User>,
+    name: String,
+    id: String,
+}
+
+#[derive(Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct ConnectedUser {
+    id: String,
 }
 
 pub struct Discord {
@@ -103,11 +112,11 @@ fn parse_user(data: &Value) -> Option<User> {
         username: user["username"].as_str()?.to_string(),
         id: user["id"].as_str()?.to_string(),
         is_speaking: false,
-        avatar_decoration_data: user.get("avatar_decoration_data").and_then(|d| {
+        avatar_decoration: user.get("avatar_decoration_data").and_then(|d| {
             if d.is_null() {
                 return None;
             }
-            Some(AvatarDecorationData {
+            Some(AvatarDecoration {
                 sku_id: d["skuId"].as_str()?.to_string(),
                 asset: d["asset"].as_str()?.to_string(),
             })
@@ -176,14 +185,14 @@ fn send_and_wait(
 fn emit_channel_state(
     app: &AppHandle,
     id: &str,
-    name: Option<String>,
+    name: String,
     users: &HashMap<String, User>,
     speaking: &HashSet<String>,
 ) {
     let _ = app.emit(
         "channel-update",
         &Channel {
-            id: Some(id.to_string()),
+            id: id.to_string(),
             name,
             users: users
                 .values()
@@ -197,7 +206,7 @@ fn emit_channel_state(
     );
 }
 
-fn start_channel_listener(app_handle: &AppHandle) -> Result<String, String> {
+fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, String> {
     let discord_state = app_handle.state::<Discord>();
 
     {
@@ -238,7 +247,7 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<String, String> {
             }
         };
 
-        let current_user_id = match send_and_wait(
+        let connected_user_id = match send_and_wait(
             &mut channel_client,
             json!({
                 "args": { "access_token": access_token },
@@ -261,7 +270,9 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<String, String> {
             }
         };
 
-        let _ = tx.send(current_user_id);
+        let _ = tx.send(ConnectedUser {
+            id: connected_user_id,
+        });
 
         if send_and_wait(
             &mut channel_client,
@@ -292,7 +303,7 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<String, String> {
             &mut speaking,
         );
 
-        let mut current_channel_name: Option<String> = None;
+        let mut current_channel_name = String::new();
         let mut current_channel: Option<String> = None;
 
         if let Ok(ref response) = current_vc {
@@ -322,7 +333,7 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<String, String> {
                     );
                 }
 
-                current_channel_name = response["name"].as_str().map(|s| s.to_string());
+                current_channel_name = response["name"].as_str().unwrap_or("").to_string();
 
                 emit_channel_state(
                     &app,
@@ -407,8 +418,8 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<String, String> {
                                         }
                                     }
 
-                                    *&mut current_channel_name =
-                                        response["name"].as_str().map(|s| s.to_string());
+                                    current_channel_name =
+                                        response["name"].as_str().unwrap_or("").to_string();
                                 }
                             }
 
@@ -420,9 +431,9 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<String, String> {
                                 &mut speaking,
                             );
                         } else {
-                            *&mut current_channel_name = None;
+                            current_channel_name = String::new();
 
-                            emit_channel_state(&app, "", None, &HashMap::new(), &HashSet::new());
+                            let _ = app.emit("channel-update", serde_json::Value::Null);
                         }
                     } else if let Some(channel_id) = &current_channel {
                         match data["evt"].as_str() {
@@ -501,10 +512,11 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<String, String> {
         *channel_guard = Some(stop_flag);
     }
 
-    let current_user_id = rx
+    let connected_user = rx
         .recv()
         .map_err(|_| "Channel listener thread failed".to_string())?;
-    Ok(current_user_id)
+
+    Ok(connected_user)
 }
 
 fn save_tokens(app_handle: &AppHandle, token_response: &TokenResponse) -> Result<(), String> {
@@ -600,7 +612,7 @@ async fn authorize(app_handle: &AppHandle) -> Result<TokenResponse, String> {
 }
 
 #[tauri::command]
-pub async fn connect_discord(app_handle: AppHandle) -> Result<String, String> {
+pub async fn connect_discord(app_handle: AppHandle) -> Result<ConnectedUser, String> {
     let discord = app_handle.state::<Discord>();
 
     let access_token_expires_at = get_vault_item(&app_handle, "discord_access_token_expires_at")?;
@@ -691,14 +703,7 @@ pub fn disconnect_discord(app_handle: AppHandle) -> Result<(), String> {
     }
 
     app_handle
-        .emit(
-            "channel-update",
-            &Channel {
-                id: None,
-                name: None,
-                users: vec![],
-            },
-        )
+        .emit("channel-update", serde_json::Value::Null)
         .map_err(|e| e.to_string())?;
 
     Ok(())

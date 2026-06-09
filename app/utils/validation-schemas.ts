@@ -1,41 +1,86 @@
 import { z } from "zod";
 
-export const settingsSchema = z.object({
-  opacity: z.number().min(0).max(100),
-  x: z.number().min(-9999).max(9999),
-  y: z.number().min(-9999).max(9999),
-  radius: z.number().min(0).max(100),
-  orientation: z.enum(Orientation),
-  size: z.number().min(0).max(250),
-  gap: z.number().min(0).max(100),
-  preventCapture: z.boolean(),
-  showBackground: z.boolean(),
-  ignoreCursor: z.boolean(),
-  showSettings: z.boolean(),
-  isDraggable: z.boolean(),
-  autoStart: z.boolean(),
-  locale: z.enum(Locale),
-  theme: z.enum(Theme),
-}) satisfies z.ZodType<Settings>;
-
-export const discordSchema = z.object({
-  settings: z.object({
-    showAvatarDecorationAnimated: z.enum(Show),
-    userLimit: z.number().min(0).max(50),
-    showAvatarDecoration: z.enum(Show),
-    displayName: z.enum(DisplayName),
-    showAvatarAnimated: z.enum(Show),
-    showOnlySpeakers: z.boolean(),
-    showDisplayName: z.enum(Show),
-    showMe: z.boolean(),
+export const settingsSchema = z.preprocess(
+  (value) => {
+    if (!isObject(value)) {
+      return defaultSettings;
+    }
+    return value;
+  },
+  z.object({
+    orientation: z.enum(Orientation).catch(defaultSettings.orientation),
+    opacity: z.number().min(0).max(100).catch(defaultSettings.opacity),
+    preventCapture: z.boolean().catch(defaultSettings.preventCapture),
+    radius: z.number().min(0).max(100).catch(defaultSettings.radius),
+    showBackground: z.boolean().catch(defaultSettings.showBackground),
+    showSettings: z.boolean().catch(defaultSettings.showSettings),
+    ignoreCursor: z.boolean().catch(defaultSettings.ignoreCursor),
+    size: z.number().min(0).max(250).catch(defaultSettings.size),
+    isDraggable: z.boolean().catch(defaultSettings.isDraggable),
+    x: z.number().min(-9999).max(9999).catch(defaultSettings.x),
+    y: z.number().min(-9999).max(9999).catch(defaultSettings.y),
+    gap: z.number().min(0).max(100).catch(defaultSettings.gap),
+    autoStart: z.boolean().catch(defaultSettings.autoStart),
+    locale: z.enum(Locale).catch(defaultSettings.locale),
+    theme: z.enum(Theme).catch(defaultSettings.theme),
   }),
-  errors: z.array(
-    z.object({
-      createdAt: z.number(),
-      message: z.string(),
-      id: z.string(),
-    }),
-  ),
-  userId: z.string().optional(),
-  connected: z.boolean(),
-}) satisfies z.ZodType<Discord>;
+) satisfies z.ZodType<Settings>;
+
+export const discordSettingsSchema = z.preprocess(
+  (value) => {
+    if (!isObject(value)) {
+      return defaultDiscordSettings;
+    }
+    return value;
+  },
+  z.object({
+    showDisplayName: z.enum(Show).catch(defaultDiscordSettings.showDisplayName),
+    displayName: z.enum(DisplayName).catch(defaultDiscordSettings.displayName),
+    showMe: z.boolean().catch(defaultDiscordSettings.showMe),
+    showAvatarDecorationAnimated: z
+      .enum(Show)
+      .catch(defaultDiscordSettings.showAvatarDecorationAnimated),
+    showAvatarDecoration: z
+      .enum(Show)
+      .catch(defaultDiscordSettings.showAvatarDecoration),
+    showAvatarAnimated: z
+      .enum(Show)
+      .catch(defaultDiscordSettings.showAvatarAnimated),
+    showOnlySpeakers: z
+      .boolean()
+      .catch(defaultDiscordSettings.showOnlySpeakers),
+    userLimit: z
+      .number()
+      .min(0)
+      .max(50)
+      .catch(defaultDiscordSettings.userLimit),
+  }),
+) satisfies z.ZodType<DiscordSettings>;
+
+const discordErrorSchema = z.object({
+  createdAt: z.number(),
+  message: z.string(),
+  id: z.string(),
+});
+
+export const discordErrorsSchema = z.preprocess(
+  (value) => {
+    return Array.isArray(value) ? value : [];
+  },
+  z
+    .array(discordErrorSchema)
+    .transform((errors) =>
+      errors.filter((error) => discordErrorSchema.safeParse(error).success),
+    ),
+) satisfies z.ZodType<DiscordError[]>;
+
+export const discordConnectedUserSchema = z
+  .object({
+    id: z.string(),
+  })
+  .optional()
+  .nullable()
+  .catch(null)
+  .transform(
+    (value) => value ?? null,
+  ) satisfies z.ZodType<DiscordConnectedUser | null>;
