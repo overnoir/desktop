@@ -4,6 +4,7 @@ definePageMeta({
 });
 
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
+const isDragging = useState("is-dragging", () => false);
 const { users } = storeToRefs(useDiscordStore());
 const { settings } = storeToRefs(useSettingsStore());
 const isMacos = tauriOSType() === "macos";
@@ -76,7 +77,15 @@ async function updatePosition() {
       class="bg-background!"
       variant="outline"
       size="icon"
-      @mouseup="isMacos && updatePosition()"
+      @mouseup="
+        async () => {
+          if (isMacos) {
+            await updatePosition();
+            isDragging = false;
+          }
+        }
+      "
+      @mousedown="isDragging = true"
     >
       <Icon name="lucide:grip" class="pointer-events-none size-1/2" />
     </Button>

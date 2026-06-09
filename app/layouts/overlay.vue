@@ -2,6 +2,7 @@
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const discordStore = useDiscordStore();
 const { channel, connectedUser } = storeToRefs(discordStore);
+const isDragging = useState("is-dragging", () => false);
 const { settings } = storeToRefs(useSettingsStore());
 const { create } = useTray();
 
@@ -63,6 +64,11 @@ useResizeObserver(document.body, async (entries) => {
   }
 
   const { width, height } = entry.contentRect;
+
+  if (isDragging.value) {
+    await overlayWebviewWindow.setSize(new TauriDpiLogicalSize(width, height));
+    return;
+  }
 
   const [currentPosition, currentSize] = await Promise.all([
     overlayWebviewWindow.outerPosition(),
