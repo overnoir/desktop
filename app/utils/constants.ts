@@ -16,7 +16,7 @@ export const defaultSettings: Settings = {
   opacity: 100,
   radius: 50,
   size: 50,
-  gap: 10,
+  gap: 5,
   x: 0,
   y: 0,
 };
