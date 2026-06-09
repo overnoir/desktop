@@ -5,6 +5,7 @@ const name = await tauriAppGetName();
 
 export const defaultSettings: Settings = {
   orientation: Orientation.Horizontal,
+  alignment: Alignment.Left,
   locale: Locale.Turkish,
   preventCapture: false,
   showBackground: true,

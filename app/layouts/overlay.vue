@@ -1,8 +1,8 @@
 <script setup lang="ts">
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
-const { settings } = storeToRefs(useSettingsStore());
 const discordStore = useDiscordStore();
 const { channel, connectedUser } = storeToRefs(discordStore);
+const { settings } = storeToRefs(useSettingsStore());
 const { create } = useTray();
 
 const backgroundStyle = computed(() =>
@@ -56,12 +56,43 @@ if (connectedUser.value) {
 }
 
 useResizeObserver(document.body, async (entries) => {
-  const rect = entries[0]?.contentRect;
-  if (rect) {
-    await overlayWebviewWindow.setSize(
-      new TauriDpiLogicalSize(rect.width, rect.height),
-    );
+  const entry = entries[0];
+
+  if (!entry) {
+    return;
   }
+
+  const { width, height } = entry.contentRect;
+
+  const [currentPosition, currentSize] = await Promise.all([
+    overlayWebviewWindow.outerPosition(),
+    overlayWebviewWindow.outerSize(),
+  ]);
+
+  const deltaX = width - currentSize.width;
+  const deltaY = height - currentSize.height;
+
+  let newX = currentPosition.x;
+  let newY = currentPosition.y;
+
+  if (settings.value.orientation === Orientation.Vertical) {
+    if (settings.value.alignment === "center") {
+      newY = currentPosition.y - deltaY / 2;
+    } else if (settings.value.alignment === "right") {
+      newY = currentPosition.y - deltaY;
+    }
+  } else {
+    if (settings.value.alignment === "center") {
+      newX = currentPosition.x - deltaX / 2;
+    } else if (settings.value.alignment === "right") {
+      newX = currentPosition.x - deltaX;
+    }
+  }
+
+  await Promise.all([
+    overlayWebviewWindow.setPosition(new TauriDpiLogicalPosition(newX, newY)),
+    overlayWebviewWindow.setSize(new TauriDpiLogicalSize(width, height)),
+  ]);
 });
 
 onMounted(async () => {

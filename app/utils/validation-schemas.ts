@@ -15,6 +15,7 @@ export const settingsSchema = z.preprocess(
     showBackground: z.boolean().catch(defaultSettings.showBackground),
     showSettings: z.boolean().catch(defaultSettings.showSettings),
     ignoreCursor: z.boolean().catch(defaultSettings.ignoreCursor),
+    alignment: z.enum(Alignment).catch(defaultSettings.alignment),
     size: z.number().min(0).max(250).catch(defaultSettings.size),
     isDraggable: z.boolean().catch(defaultSettings.isDraggable),
     x: z.number().min(-9999).max(9999).catch(defaultSettings.x),

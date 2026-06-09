@@ -143,6 +143,26 @@ async function quickSelect(
     </SettingField>
     <Separator />
     <SettingField
+      :description="$t('settings.interface.alignment.description')"
+      :title="$t('settings.interface.alignment.title')"
+    >
+      <Select v-model="settings.alignment">
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem
+            v-for="alignment in Object.values(Alignment)"
+            :key="alignment"
+            :value="alignment"
+          >
+            {{ $t(`settings.interface.alignment.${alignment}`) }}
+          </SelectItem>
+        </SelectContent>
+      </Select>
+    </SettingField>
+    <Separator />
+    <SettingField
       :description="$t('settings.interface.position.description')"
       :title="$t('settings.interface.position.title')"
     >

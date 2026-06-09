@@ -45,6 +45,13 @@ export default {
         horizontal: "Yatay",
         vertical: "Dikey",
       },
+      alignment: {
+        title: "Hizalama",
+        description: "Overlayın hangi yönde hizalanacağını seçin.",
+        left: "Sol/Üst",
+        center: "Orta",
+        right: "Sağ/Alt",
+      },
       position: {
         title: "Pozisyon",
         description: "Uygulama pozisyonunu ayarlayın.",

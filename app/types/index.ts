@@ -32,6 +32,12 @@ export enum Show {
   Never = "never",
 }
 
+export enum Alignment {
+  Left = "left",
+  Center = "center",
+  Right = "right",
+}
+
 //#endregion
 
 //#region Types
@@ -53,6 +59,7 @@ export type Settings = {
   showSettings: boolean;
   ignoreCursor: boolean;
   isDraggable: boolean;
+  alignment: Alignment;
   autoStart: boolean;
   opacity: number;
   locale: Locale;
