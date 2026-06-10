@@ -95,7 +95,10 @@ export type DiscordError = {
 };
 
 export type DiscordChannel = {
+  guildIconUrl?: string;
   users: DiscordUser[];
+  guildName: string;
+  guildId: string;
   name: string;
   id: string;
 };

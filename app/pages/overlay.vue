@@ -5,7 +5,7 @@ definePageMeta({
 
 const { settings } = storeToRefs(useSettingsStore());
 const discordStore = useDiscordStore();
-const { users } = storeToRefs(discordStore);
+const { users, channel } = storeToRefs(discordStore);
 
 async function openMainWebviewWindow() {
   const mainWebviewWindow = (
@@ -35,6 +35,14 @@ async function openMainWebviewWindow() {
       gap: `${(settings.size * settings.gap) / 100}px`,
     }"
   >
+    <DiscordChannel
+      v-if="channel"
+      :channel="{
+        guildIconUrl: channel.guildIconUrl,
+        guildName: channel.guildName,
+        name: channel.name,
+      }"
+    />
     <DiscordUser v-for="user in users" :key="user.id" :user />
     <Button
       v-if="settings.showSettings"
