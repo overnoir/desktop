@@ -60,7 +60,11 @@ const radius = computed(
 <template>
   <div class="relative">
     <NuxtImg
-      :src="`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp?size=4096&animated=${showAvatarAnimated}`"
+      :src="
+        user.avatar
+          ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp?size=4096&animated=${showAvatarAnimated}`
+          : `https://cdn.discordapp.com/embed/avatars/${Number((BigInt(user.id) >> 22n) % 6n)}.png`
+      "
       class="size-full border border-input"
       :style="boxStyle"
       alt="Avatar"
