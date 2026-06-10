@@ -43,7 +43,6 @@ export const mainWebviewWindowOptions: Omit<
   hiddenTitle: true,
   transparent: true,
   resizable: false,
-  shadow: false,
   visible: false,
   center: true,
   title: name,

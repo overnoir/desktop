@@ -1,6 +1,6 @@
 <template>
   <Html class="rounded-lg overflow-hidden">
-    <Body class="rounded-lg border">
+    <Body class="rounded-lg">
       <NuxtLoadingIndicator color="var(--primary)" />
       <LayoutTitlebar />
       <SonnerToaster />
