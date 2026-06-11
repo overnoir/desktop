@@ -15,7 +15,6 @@ onMounted(async () => {
 
 <template>
   <NuxtLayout>
-    <span class="text-white"> </span>
     <NuxtPage />
   </NuxtLayout>
 </template>
