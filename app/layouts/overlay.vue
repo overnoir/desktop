@@ -2,20 +2,12 @@
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const discordStore = useDiscordStore();
 const { connectedUser, channel } = storeToRefs(discordStore);
-const { settings } = storeToRefs(useSettingsStore());
+const { advanced } = storeToRefs(useSettingsStore());
+const { overlayStyles } = useUi();
 const { create } = useTray();
 
-const backgroundStyle = computed(() =>
-  settings.value.showBackground
-    ? {
-        borderRadius: `${(settings.value.size * settings.value.radius) / 200 + settings.value.size / 25}px`,
-        padding: `${settings.value.size / 25}px`,
-      }
-    : undefined,
-);
-
-if (settings.value.autoStart !== (await tauriAutoStartIsEnabled())) {
-  if (settings.value.autoStart) {
+if (advanced.value.autoStart !== (await tauriAutoStartIsEnabled())) {
+  if (advanced.value.autoStart) {
     await tauriAutoStartEnable();
   } else {
     await tauriAutoStartDisable();
@@ -23,7 +15,7 @@ if (settings.value.autoStart !== (await tauriAutoStartIsEnabled())) {
 }
 
 await overlayWebviewWindow.setPosition(
-  new TauriDpiLogicalPosition(settings.value.x, settings.value.y),
+  new TauriDpiLogicalPosition(advanced.value.x, advanced.value.y),
 );
 
 await tauriEventListen<string>("channel-error", ({ payload }) => {
@@ -40,18 +32,18 @@ await tauriEventListen<DiscordChannel | null>(
 if (tauriOSType() === "macos") {
   await tauriCoreInvoke("init_nspanel");
   await tauriCoreInvoke("set_nspanel_ignore_cursor", {
-    value: settings.value.ignoreCursor,
+    value: advanced.value.ignoreCursor,
   });
   await tauriEventListen("nspanel-moved", async () => {
     const { x, y } = await overlayWebviewWindow.outerPosition();
-    settings.value.x = x;
-    settings.value.y = y;
+    advanced.value.x = x;
+    advanced.value.y = y;
   });
 } else {
   await overlayWebviewWindow.onMoved(({ payload }) => {
     const { x, y } = payload;
-    settings.value.x = x;
-    settings.value.y = y;
+    advanced.value.x = x;
+    advanced.value.y = y;
   });
 }
 
@@ -85,16 +77,16 @@ useResizeObserver(document.body, async (entries) => {
   let newX = currentPosition.x;
   let newY = currentPosition.y;
 
-  if (settings.value.orientation === Orientation.Vertical) {
-    if (settings.value.alignment === "center") {
+  if (advanced.value.orientation === Orientation.Vertical) {
+    if (advanced.value.alignment === "center") {
       newY = currentPosition.y - deltaY / 2;
-    } else if (settings.value.alignment === "right") {
+    } else if (advanced.value.alignment === "right") {
       newY = currentPosition.y - deltaY;
     }
   } else {
-    if (settings.value.alignment === "center") {
+    if (advanced.value.alignment === "center") {
       newX = currentPosition.x - deltaX / 2;
-    } else if (settings.value.alignment === "right") {
+    } else if (advanced.value.alignment === "right") {
       newX = currentPosition.x - deltaX;
     }
   }
@@ -121,15 +113,22 @@ onMounted(async () => {
 <template>
   <Html
     :style="{
-      opacity: `${settings.opacity}%`,
+      opacity: overlayStyles.opacity,
     }"
   >
     <Body class="size-max **:select-none **:transition-none">
       <main
         :class="{
-          'bg-background border': settings.showBackground,
+          'bg-background border border-border': advanced.showBackground,
         }"
-        :style="backgroundStyle"
+        :style="
+          advanced.showBackground
+            ? {
+                borderRadius: overlayStyles.backgroundBorderRadius,
+                padding: overlayStyles.backgroundPadding,
+              }
+            : undefined
+        "
       >
         <slot />
       </main>

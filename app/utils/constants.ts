@@ -3,23 +3,25 @@ import type { WindowOptions } from "@tauri-apps/api/window";
 
 const name = await tauriAppGetName();
 
-export const defaultSettings: Settings = {
+export const defaultSettingsAdvanced: SettingsAdvanced = {
   orientation: Orientation.Horizontal,
   alignment: Alignment.Left,
   locale: Locale.Turkish,
   preventCapture: false,
   showBackground: true,
   ignoreCursor: false,
-  theme: Theme.System,
   showSettings: true,
   isDraggable: true,
   autoStart: false,
+  x: 0,
+  y: 0,
+};
+
+export const defaultSettingsUI: SettingsUI = {
   opacity: 100,
   radius: 50,
   size: 50,
   gap: 5,
-  x: 0,
-  y: 0,
 };
 
 export const defaultDiscordSettings: DiscordSettings = {

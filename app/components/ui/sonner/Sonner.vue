@@ -11,15 +11,15 @@ const props = withDefaults(defineProps<ToasterProps>(), {
   <Sonner
     :class="cn('toaster group', props.class)"
     :style="{
-      '--normal-text': 'var(--popover-foreground)',
+      '--normal-text': 'var(--foreground)',
       '--normal-border': 'var(--border)',
       '--border-radius': 'var(--radius)',
-      '--normal-bg': 'var(--popover)',
+      '--normal-bg': 'var(--background)',
     }"
     v-bind="props"
     :toast-options="{
       classes: {
-        closeButton: 'border-border! text-foreground! hover:bg-popover!',
+        closeButton: 'border-border! text-foreground! hover:bg-background!',
       },
     }"
   >

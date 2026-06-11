@@ -2,20 +2,23 @@ import type { State } from "@tauri-store/pinia";
 
 function sync(state: State) {
   return {
-    settings: settingsSchema.parse(state.settings),
+    advanced: settingsAdvancedSchema.parse(state.advanced),
+    ui: settingsUISchema.parse(state.ui),
   };
 }
 
 export const useSettingsStore = defineStore(
   "settings",
   () => {
-    const settings = ref<Settings>({ ...defaultSettings });
+    const advanced = ref<SettingsAdvanced>({ ...defaultSettingsAdvanced });
+    const ui = ref<SettingsUI>({ ...defaultSettingsUI });
 
     function reset() {
-      settings.value = { ...defaultSettings };
+      advanced.value = { ...defaultSettingsAdvanced };
+      ui.value = { ...defaultSettingsUI };
     }
 
-    return { settings, reset };
+    return { advanced, ui, reset };
   },
   {
     tauri: {

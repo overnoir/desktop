@@ -1,31 +1,12 @@
 <script setup lang="ts">
 const currentWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
-const { settings } = storeToRefs(useSettingsStore());
-const classList = document.documentElement.classList;
-const isPreferredDark = usePreferredDark();
+const { advanced } = storeToRefs(useSettingsStore());
 const { setLocale } = useI18n();
 
-const systemTheme = computed(() =>
-  isPreferredDark.value ? Theme.Dark : Theme.Light,
-);
+await currentWebviewWindow.setContentProtected(advanced.value.preventCapture);
+await setLocale(advanced.value.locale);
 
-function updateThemeClass() {
-  classList.remove(...Object.values(Theme));
-
-  classList.add(
-    settings.value.theme === Theme.System
-      ? systemTheme.value
-      : settings.value.theme,
-  );
-}
-
-await currentWebviewWindow.setContentProtected(settings.value.preventCapture);
-await setLocale(settings.value.locale);
-updateThemeClass();
-
-watch(() => settings.value.locale, setLocale);
-
-watch(() => [systemTheme, settings.value.theme], updateThemeClass);
+watch(() => advanced.value.locale, setLocale);
 
 onMounted(async () => {
   await currentWebviewWindow.show();
@@ -34,6 +15,7 @@ onMounted(async () => {
 
 <template>
   <NuxtLayout>
+    <span class="text-white"> </span>
     <NuxtPage />
   </NuxtLayout>
 </template>

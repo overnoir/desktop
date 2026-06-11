@@ -3,9 +3,10 @@ definePageMeta({
   layout: "overlay",
 });
 
-const { settings } = storeToRefs(useSettingsStore());
+const { advanced } = storeToRefs(useSettingsStore());
 const discordStore = useDiscordStore();
 const { users, channel } = storeToRefs(discordStore);
+const { overlayStyles } = useUi();
 
 async function openMainWebviewWindow() {
   const mainWebviewWindow = (
@@ -27,13 +28,13 @@ async function openMainWebviewWindow() {
 
 <template>
   <section
-    class="flex"
     :class="{
-      'flex-col': settings.orientation === Orientation.Vertical,
+      'flex-col': advanced.orientation === Orientation.Vertical,
     }"
     :style="{
-      gap: `${(settings.size * settings.gap) / 100}px`,
+      gap: overlayStyles.gap,
     }"
+    class="flex"
   >
     <DiscordChannel
       v-if="channel"
@@ -45,11 +46,11 @@ async function openMainWebviewWindow() {
     />
     <DiscordUser v-for="user in users" :key="user.id" :user />
     <Button
-      v-if="settings.showSettings"
+      v-if="advanced.showSettings"
       :style="{
-        borderRadius: `${(settings.size * settings.radius) / 200}px`,
-        height: `${settings.size}px`,
-        width: `${settings.size}px`,
+        borderRadius: overlayStyles.borderRadius,
+        height: overlayStyles.size,
+        width: overlayStyles.size,
       }"
       class="bg-background!"
       variant="outline"
@@ -59,12 +60,12 @@ async function openMainWebviewWindow() {
       <Icon name="lucide:sliders-horizontal" class="size-1/2" />
     </Button>
     <Button
-      v-if="settings.isDraggable"
+      v-if="advanced.isDraggable"
       data-tauri-drag-region
       :style="{
-        borderRadius: `${(settings.size * settings.radius) / 200}px`,
-        height: `${settings.size}px`,
-        width: `${settings.size}px`,
+        borderRadius: overlayStyles.borderRadius,
+        height: overlayStyles.size,
+        width: overlayStyles.size,
       }"
       class="bg-background!"
       variant="outline"

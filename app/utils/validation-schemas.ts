@@ -1,31 +1,41 @@
 import { z } from "zod";
 
-export const settingsSchema = z.preprocess(
+export const settingsUISchema = z.preprocess(
   (value) => {
     if (!isObject(value)) {
-      return defaultSettings;
+      return defaultSettingsUI;
     }
     return value;
   },
   z.object({
-    orientation: z.enum(Orientation).catch(defaultSettings.orientation),
-    opacity: z.number().min(0).max(100).catch(defaultSettings.opacity),
-    preventCapture: z.boolean().catch(defaultSettings.preventCapture),
-    radius: z.number().min(0).max(100).catch(defaultSettings.radius),
-    showBackground: z.boolean().catch(defaultSettings.showBackground),
-    showSettings: z.boolean().catch(defaultSettings.showSettings),
-    ignoreCursor: z.boolean().catch(defaultSettings.ignoreCursor),
-    alignment: z.enum(Alignment).catch(defaultSettings.alignment),
-    size: z.number().min(0).max(250).catch(defaultSettings.size),
-    isDraggable: z.boolean().catch(defaultSettings.isDraggable),
-    x: z.number().min(-9999).max(9999).catch(defaultSettings.x),
-    y: z.number().min(-9999).max(9999).catch(defaultSettings.y),
-    gap: z.number().min(0).max(100).catch(defaultSettings.gap),
-    autoStart: z.boolean().catch(defaultSettings.autoStart),
-    locale: z.enum(Locale).catch(defaultSettings.locale),
-    theme: z.enum(Theme).catch(defaultSettings.theme),
+    opacity: z.number().min(0).max(100).catch(defaultSettingsUI.opacity),
+    radius: z.number().min(0).max(100).catch(defaultSettingsUI.radius),
+    size: z.number().min(0).max(250).catch(defaultSettingsUI.size),
+    gap: z.number().min(0).max(100).catch(defaultSettingsUI.gap),
   }),
-) satisfies z.ZodType<Settings>;
+) satisfies z.ZodType<SettingsUI>;
+
+export const settingsAdvancedSchema = z.preprocess(
+  (value) => {
+    if (!isObject(value)) {
+      return defaultSettingsAdvanced;
+    }
+    return value;
+  },
+  z.object({
+    orientation: z.enum(Orientation).catch(defaultSettingsAdvanced.orientation),
+    preventCapture: z.boolean().catch(defaultSettingsAdvanced.preventCapture),
+    showBackground: z.boolean().catch(defaultSettingsAdvanced.showBackground),
+    showSettings: z.boolean().catch(defaultSettingsAdvanced.showSettings),
+    ignoreCursor: z.boolean().catch(defaultSettingsAdvanced.ignoreCursor),
+    alignment: z.enum(Alignment).catch(defaultSettingsAdvanced.alignment),
+    isDraggable: z.boolean().catch(defaultSettingsAdvanced.isDraggable),
+    x: z.number().min(-9999).max(9999).catch(defaultSettingsAdvanced.x),
+    y: z.number().min(-9999).max(9999).catch(defaultSettingsAdvanced.y),
+    autoStart: z.boolean().catch(defaultSettingsAdvanced.autoStart),
+    locale: z.enum(Locale).catch(defaultSettingsAdvanced.locale),
+  }),
+) satisfies z.ZodType<SettingsAdvanced>;
 
 export const discordSettingsSchema = z.preprocess(
   (value) => {

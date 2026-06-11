@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import type { Monitor } from "@tauri-apps/api/window";
 
+const mainWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const overlayWebviewWindow = (
   await tauriWebviewWindowGetAllWebviewWindows()
 ).find(({ label }) => label === WebviewWindow.Overlay);
 const monitors = await tauriWindowAvailableMonitors();
 const settingsStore = useSettingsStore();
-const { settings } = storeToRefs(settingsStore);
+const { advanced, ui } = storeToRefs(settingsStore);
+const { t, locales } = useI18n();
 const { updateMenu } = useTray();
-const { locales } = useI18n();
+const { $toast } = useNuxtApp();
 
 async function quickSelect(
   { position, size }: { position: Monitor["position"]; size: Monitor["size"] },
@@ -43,65 +45,55 @@ async function quickSelect(
   const pos = positions[index - (index > 4 ? 1 : 0)];
 
   if (pos) {
-    settings.value.x = pos.x;
-    settings.value.y = pos.y;
+    advanced.value.x = pos.x;
+    advanced.value.y = pos.y;
 
     await overlayWebviewWindow.setPosition(
-      new TauriWindowLogicalPosition(settings.value.x, settings.value.y),
+      new TauriWindowLogicalPosition(advanced.value.x, advanced.value.y),
     );
   }
+}
+
+async function updateIgnoreCursor(value: boolean) {
+  if (!overlayWebviewWindow) {
+    return;
+  }
+
+  if (tauriOSType() === "macos") {
+    await tauriCoreInvoke("set_nspanel_ignore_cursor", { value });
+  } else {
+    await overlayWebviewWindow.setIgnoreCursorEvents(value);
+  }
+}
+
+async function reset() {
+  if (!overlayWebviewWindow) {
+    return;
+  }
+
+  settingsStore.reset();
+
+  await overlayWebviewWindow.setContentProtected(advanced.value.preventCapture);
+  await mainWebviewWindow.setContentProtected(advanced.value.preventCapture);
+  await overlayWebviewWindow.setPosition(
+    new TauriWindowLogicalPosition(advanced.value.x, advanced.value.y),
+  );
+  await updateIgnoreCursor(advanced.value.ignoreCursor);
+  await tauriAutoStartDisable();
+
+  $toast(t("settings.reset.success"));
 }
 </script>
 
 <template>
   <section class="grid gap-4">
     <SettingField
-      :description="$t('settings.interface.theme.description')"
-      :title="$t('settings.interface.theme.title')"
-    >
-      <Select v-model="settings.theme">
-        <SelectTrigger>
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem
-            v-for="theme in Object.values(Theme)"
-            :key="theme"
-            :value="theme"
-          >
-            {{ $t(`settings.interface.theme.${theme}`) }}
-          </SelectItem>
-        </SelectContent>
-      </Select>
-    </SettingField>
-    <Separator />
-    <SettingField
-      :description="$t('settings.interface.locale.description')"
-      :title="$t('settings.interface.locale.title')"
-    >
-      <Select v-model="settings.locale" @update:model-value="updateMenu">
-        <SelectTrigger>
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem
-            v-for="{ code, name } in locales"
-            :key="code"
-            :value="code"
-          >
-            {{ name }}
-          </SelectItem>
-        </SelectContent>
-      </Select>
-    </SettingField>
-    <Separator />
-    <SettingField
-      :description="$t('settings.interface.size.description')"
-      :title="$t('settings.interface.size.title')"
+      :description="$t('settings.size.description')"
+      :title="$t('settings.size.title')"
     >
       <div class="flex flex-col">
         <NumberField
-          v-model="settings.size"
+          v-model="ui.size"
           :format-options="{ useGrouping: false }"
           :max="250"
           :min="0"
@@ -114,19 +106,19 @@ async function quickSelect(
         </NumberField>
         <Slider
           class="*:data-[slot='slider-track']:rounded-t-none"
-          :model-value="[settings.size]"
+          :model-value="[ui.size]"
           :max="250"
           :min="0"
-          @update:model-value="settings.size = $event![0]!"
+          @update:model-value="ui.size = $event![0]!"
         />
       </div>
     </SettingField>
     <Separator />
     <SettingField
-      :description="$t('settings.interface.orientation.description')"
-      :title="$t('settings.interface.orientation.title')"
+      :description="$t('settings.orientation.description')"
+      :title="$t('settings.orientation.title')"
     >
-      <Select v-model="settings.orientation">
+      <Select v-model="advanced.orientation">
         <SelectTrigger>
           <SelectValue />
         </SelectTrigger>
@@ -136,17 +128,17 @@ async function quickSelect(
             :key="orientation"
             :value="orientation"
           >
-            {{ $t(`settings.interface.orientation.${orientation}`) }}
+            {{ $t(`settings.orientation.${orientation}`) }}
           </SelectItem>
         </SelectContent>
       </Select>
     </SettingField>
     <Separator />
     <SettingField
-      :description="$t('settings.interface.alignment.description')"
-      :title="$t('settings.interface.alignment.title')"
+      :description="$t('settings.alignment.description')"
+      :title="$t('settings.alignment.title')"
     >
-      <Select v-model="settings.alignment">
+      <Select v-model="advanced.alignment">
         <SelectTrigger>
           <SelectValue />
         </SelectTrigger>
@@ -156,26 +148,26 @@ async function quickSelect(
             :key="alignment"
             :value="alignment"
           >
-            {{ $t(`settings.interface.alignment.${alignment}`) }}
+            {{ $t(`settings.alignment.${alignment}`) }}
           </SelectItem>
         </SelectContent>
       </Select>
     </SettingField>
     <Separator />
     <SettingField
-      :description="$t('settings.interface.position.description')"
-      :title="$t('settings.interface.position.title')"
+      :description="$t('settings.position.description')"
+      :title="$t('settings.position.title')"
     >
       <div class="flex gap-2 max-w-53.5">
         <NumberField
-          v-model="settings.x"
+          v-model="advanced.x"
           :format-options="{ useGrouping: false }"
           :min="-9999"
           :max="9999"
           @update:model-value="
             overlayWebviewWindow &&
             overlayWebviewWindow.setPosition(
-              new TauriDpiLogicalPosition(settings.x, settings.y),
+              new TauriDpiLogicalPosition(advanced.x, advanced.y),
             )
           "
         >
@@ -186,14 +178,14 @@ async function quickSelect(
           </NumberFieldContent>
         </NumberField>
         <NumberField
-          v-model="settings.y"
+          v-model="advanced.y"
           :format-options="{ useGrouping: false }"
           :min="-9999"
           :max="9999"
           @update:model-value="
             overlayWebviewWindow &&
             overlayWebviewWindow.setPosition(
-              new TauriDpiLogicalPosition(settings.x, settings.y),
+              new TauriDpiLogicalPosition(advanced.x, advanced.y),
             )
           "
         >
@@ -208,11 +200,11 @@ async function quickSelect(
     <Accordion type="single" collapsible class="border rounded-lg">
       <AccordionItem value="quick-select" class="w-full">
         <AccordionTrigger class="p-3 font-normal text-xs">
-          {{ $t("settings.interface.position.quickSelect") }}
+          {{ $t("settings.position.quickSelect") }}
         </AccordionTrigger>
         <AccordionContent class="grid grid-cols-3 gap-3 p-3 pt-0">
           <div v-for="({ name, position, size }, i) in monitors" :key="i">
-            <h1 class="text-xs mb-1 text-muted-foreground">
+            <h1 class="text-xs mb-1 text-secondary-foreground">
               {{ name }}
             </h1>
             <Card class="aspect-video grid grid-cols-3 gap-2.5 p-0">
@@ -246,23 +238,23 @@ async function quickSelect(
     </Accordion>
     <Separator />
     <SettingField
-      :description="$t('settings.interface.showBackground.description')"
-      :title="$t('settings.interface.showBackground.title')"
+      :description="$t('settings.showBackground.description')"
+      :title="$t('settings.showBackground.title')"
     >
-      <Switch v-model="settings.showBackground" />
+      <Switch v-model="advanced.showBackground" />
     </SettingField>
     <Separator />
     <SettingField
-      :description="$t('settings.interface.gap.description')"
-      :title="$t('settings.interface.gap.title')"
+      :description="$t('settings.gap.description')"
+      :title="$t('settings.gap.title')"
     >
       <div class="flex flex-col">
         <NumberField
-          :model-value="settings.gap"
+          :model-value="ui.gap"
           :format-options="{ useGrouping: false }"
           :min="0"
           :max="100"
-          @update:model-value="settings.gap = $event"
+          @update:model-value="ui.gap = $event"
         >
           <NumberFieldContent>
             <NumberFieldDecrement />
@@ -272,26 +264,26 @@ async function quickSelect(
         </NumberField>
         <Slider
           class="*:data-[slot='slider-track']:rounded-t-none"
-          :model-value="[settings.gap]"
+          :model-value="[ui.gap]"
           :max="100"
           :min="0"
-          @update:model-value="settings.gap = $event![0]!"
+          @update:model-value="ui.gap = $event![0]!"
         />
       </div>
     </SettingField>
     <Separator />
     <SettingField
-      :description="$t('settings.interface.opacity.description')"
-      :title="$t('settings.interface.opacity.title')"
+      :description="$t('settings.opacity.description')"
+      :title="$t('settings.opacity.title')"
     >
       <div class="flex flex-col">
         <NumberField
-          :model-value="settings.opacity / 100"
+          :model-value="ui.opacity / 100"
           :format-options="{ style: 'percent' }"
           :step="0.01"
           :min="0"
           :max="1"
-          @update:model-value="settings.opacity = $event * 100"
+          @update:model-value="ui.opacity = $event * 100"
         >
           <NumberFieldContent>
             <NumberFieldDecrement />
@@ -301,26 +293,26 @@ async function quickSelect(
         </NumberField>
         <Slider
           class="*:data-[slot='slider-track']:rounded-t-none"
-          :model-value="[settings.opacity]"
+          :model-value="[ui.opacity]"
           :max="100"
           :min="0"
-          @update:model-value="settings.opacity = $event![0]!"
+          @update:model-value="ui.opacity = $event![0]!"
         />
       </div>
     </SettingField>
     <Separator />
     <SettingField
-      :description="$t('settings.interface.radius.description')"
-      :title="$t('settings.interface.radius.title')"
+      :description="$t('settings.radius.description')"
+      :title="$t('settings.radius.title')"
     >
       <div class="flex flex-col">
         <NumberField
-          :model-value="settings.radius / 100"
+          :model-value="ui.radius / 100"
           :format-options="{ style: 'percent' }"
           :step="0.01"
           :min="0"
           :max="1"
-          @update:model-value="settings.radius = $event * 100"
+          @update:model-value="ui.radius = $event * 100"
         >
           <NumberFieldContent>
             <NumberFieldDecrement />
@@ -330,12 +322,113 @@ async function quickSelect(
         </NumberField>
         <Slider
           class="*:data-[slot='slider-track']:rounded-t-none"
-          :model-value="[settings.radius]"
+          :model-value="[ui.radius]"
           :max="100"
           :min="0"
-          @update:model-value="settings.radius = $event![0]!"
+          @update:model-value="ui.radius = $event![0]!"
         />
       </div>
+    </SettingField>
+    <Separator />
+    <SettingField
+      :description="$t('settings.locale.description')"
+      :title="$t('settings.locale.title')"
+    >
+      <Select v-model="advanced.locale" @update:model-value="updateMenu">
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem
+            v-for="{ code, name } in locales"
+            :key="code"
+            :value="code"
+          >
+            {{ name }}
+          </SelectItem>
+        </SelectContent>
+      </Select>
+    </SettingField>
+    <Separator />
+    <SettingField
+      :description="$t('settings.isDraggable.description')"
+      :title="$t('settings.isDraggable.title')"
+    >
+      <Switch v-model="advanced.isDraggable" />
+    </SettingField>
+    <Separator />
+    <SettingField
+      :description="$t('settings.showSettings.description')"
+      :title="$t('settings.showSettings.title')"
+    >
+      <Switch v-model="advanced.showSettings" />
+    </SettingField>
+    <Separator />
+    <SettingField
+      :description="$t('settings.autoStart.description')"
+      :title="$t('settings.autoStart.title')"
+    >
+      <Switch
+        v-model="advanced.autoStart"
+        @update:model-value="
+          $event ? tauriAutoStartEnable() : tauriAutoStartDisable()
+        "
+      />
+    </SettingField>
+    <Separator />
+    <SettingField
+      :description="$t('settings.ignoreCursor.description')"
+      :title="$t('settings.ignoreCursor.title')"
+    >
+      <Switch
+        v-model="advanced.ignoreCursor"
+        @update:model-value="updateIgnoreCursor($event)"
+      />
+    </SettingField>
+    <Separator />
+    <SettingField
+      :description="$t('settings.preventCapture.description')"
+      :title="$t('settings.preventCapture.title')"
+    >
+      <Switch
+        v-model="advanced.preventCapture"
+        @update:model-value="
+          overlayWebviewWindow &&
+            overlayWebviewWindow.setContentProtected($event);
+          mainWebviewWindow.setContentProtected($event);
+        "
+      />
+    </SettingField>
+    <Separator />
+    <SettingField
+      :description="$t('settings.reset.description')"
+      :title="$t('settings.reset.title')"
+    >
+      <AlertDialog>
+        <AlertDialogTrigger as-child>
+          <Button variant="destructive">
+            {{ $t("settings.reset.title") }}
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {{ $t("settings.reset.dialog.title") }}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {{ $t("settings.reset.dialog.description") }}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>
+              {{ $t("settings.reset.dialog.cancel") }}
+            </AlertDialogCancel>
+            <AlertDialogAction variant="destructive" @click="reset">
+              {{ $t("settings.reset.dialog.confirm") }}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </SettingField>
   </section>
 </template>

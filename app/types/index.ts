@@ -4,12 +4,6 @@ export enum Orientation {
   Vertical = "vertical",
 }
 
-export enum Theme {
-  System = "system",
-  Dark = "dark",
-  Light = "light",
-}
-
 export enum Locale {
   Turkish = "tr",
   English = "en",
@@ -52,23 +46,25 @@ export type LinkGroup = {
   name: string;
 };
 
-export type Settings = {
+export type SettingsUI = {
+  opacity: number;
+  radius: number;
+  size: number;
+  gap: number;
+};
+
+export type SettingsAdvanced = {
   orientation: Orientation;
   preventCapture: boolean;
   showBackground: boolean;
   showSettings: boolean;
   ignoreCursor: boolean;
-  isDraggable: boolean;
   alignment: Alignment;
+  isDraggable: boolean;
   autoStart: boolean;
-  opacity: number;
   locale: Locale;
-  radius: number;
-  theme: Theme;
-  size: number;
-  gap: number;
-  x: number;
   y: number;
+  x: number;
 };
 
 export type VaultItemMetadata = {

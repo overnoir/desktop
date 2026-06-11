@@ -30,7 +30,7 @@ setTimeout(() => {
         :model-value="70"
         class="my-1.5"
       />
-      <p class="text-sm text-muted-foreground">
+      <p class="text-sm text-secondary-foreground">
         {{ $t(`updater.${status}`) }}
       </p>
     </div>

@@ -6,12 +6,12 @@ defineProps<{
 </script>
 
 <template>
-  <div class="flex items-center justify-between">
+  <div class="flex items-center justify-between gap-2">
     <div>
       <h1 class="text-sm">
         {{ title }}
       </h1>
-      <p class="text-muted-foreground text-xs">
+      <p class="text-secondary-foreground text-xs">
         {{ description }}
       </p>
     </div>

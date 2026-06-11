@@ -98,10 +98,10 @@ async function resetDiscordSettings() {
       </CardHeader>
       <Button
         :class="{
-          'bg-[#5865F2] hover:bg-[#5865F2]/90!': connectedUser,
+          'bg-[#5865F2] hover:bg-[#5865F2]/90!': !connectedUser,
         }"
         :loading
-        :variant="connectedUser ? 'ghost' : 'outline'"
+        :variant="!connectedUser ? 'ghost' : 'outline'"
         @click="toggleConnection"
       >
         {{

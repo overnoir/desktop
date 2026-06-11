@@ -6,7 +6,7 @@ const name = await tauriAppGetName();
 <template>
   <section class="grid grid-cols-2 gap-4">
     <Card
-      class="cursor-pointer p-0 hover:bg-card/90"
+      class="cursor-pointer p-0"
       @click="tauriOpenerOpenUrl('https://docs.overnoir.com')"
     >
       <CardHeader class="p-4">
@@ -20,7 +20,7 @@ const name = await tauriAppGetName();
       </CardHeader>
     </Card>
     <Card
-      class="cursor-pointer p-0 bg-[#5865F2] hover:bg-[#5865F2]/90"
+      class="cursor-pointer p-0 bg-[#5865F2]"
       @click="tauriOpenerOpenUrl('https://discord.com')"
     >
       <CardHeader class="p-4">
@@ -33,7 +33,7 @@ const name = await tauriAppGetName();
         </CardDescription>
       </CardHeader>
     </Card>
-    <span class="col-span-2 text-xs text-muted-foreground">
+    <span class="col-span-2 text-xs text-secondary-foreground">
       {{ name }} v{{ version }}
     </span>
   </section>
