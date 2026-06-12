@@ -13,6 +13,9 @@ export default defineNuxtConfig({
     "@vueuse/nuxt",
     "vue-sonner/nuxt",
   ],
+  app: {
+    pageTransition: { name: "page", mode: "out-in" },
+  },
   compatibilityDate: "2026-05-02",
   devtools: { enabled: false },
   ssr: false,
@@ -34,11 +37,12 @@ export default defineNuxtConfig({
       },
     ],
   },
-  vite: {
-    envPrefix: ["VITE_", "TAURI_"],
-    clearScreen: false,
-    server: {
-      strictPort: true,
+  security: {
+    headers: {
+      contentSecurityPolicy: {
+        "upgrade-insecure-requests": false,
+        "img-src": "'self' https:",
+      },
     },
   },
   fonts: {
@@ -51,12 +55,11 @@ export default defineNuxtConfig({
     ],
     provider: "local",
   },
-  security: {
-    headers: {
-      contentSecurityPolicy: {
-        "upgrade-insecure-requests": false,
-        "img-src": "'self' https:",
-      },
+  vite: {
+    envPrefix: ["VITE_", "TAURI_"],
+    clearScreen: false,
+    server: {
+      strictPort: true,
     },
   },
   experimental: {
@@ -68,6 +71,13 @@ export default defineNuxtConfig({
       Field: "VeeField",
     },
   },
+  icon: {
+    serverBundle: "local",
+    mode: "svg",
+    clientBundle: {
+      scan: true,
+    },
+  },
   typescript: {
     typeCheck: true,
   },
@@ -76,12 +86,5 @@ export default defineNuxtConfig({
   },
   shadcn: {
     prefix: "",
-  },
-  icon: {
-    serverBundle: "local",
-    mode: "svg",
-    clientBundle: {
-      scan: true,
-    },
   },
 });

@@ -19,22 +19,22 @@
 
 :root {
   --radius: 0.5rem;
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.274 0.006 286.033);
-  --secondary-foreground: oklch(0.705 0.015 286.067);
-  --primary: oklch(0.648 0.2 131.684);
-  --primary-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
+  --background: oklch(0.19 0 0);
+  --foreground: oklch(0.97 0 0);
+  --secondary: oklch(0.27 0.008 286);
+  --secondary-foreground: oklch(0.82 0.02 286);
+  --primary: oklch(0.68 0.19 132);
+  --primary-foreground: oklch(0.16 0 0);
+  --destructive: oklch(0.72 0.18 22);
+  --border: oklch(1 0 0 / 14%);
 }
 
 @layer base {
+  body {
+    @apply bg-background text-foreground overflow-hidden contain-paint selection:bg-primary/50 selection:text-foreground font-[Inter];
+  }
   * {
     @apply border-border outline-border/50 scrollbar-thumb-secondary scrollbar-thin;
-  }
-  body {
-    @apply bg-transparent text-foreground overflow-hidden selection:bg-primary/50 selection:text-foreground font-[Inter];
   }
   img {
     @apply select-none pointer-events-none;

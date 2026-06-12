@@ -217,7 +217,6 @@ fn get_guild_info(client: &mut DiscordIpcClient, guild_id: &str) -> (String, Opt
         match client.recv() {
             Ok((_, data)) => {
                 if data["nonce"].as_str() == Some(&nonce) {
-                    println!("{:#?}", data);
                     let name = data["data"]["name"].as_str().unwrap_or("").to_string();
                     let icon_url = data["data"]["icon_url"].as_str().map(|s| s.to_string());
                     return (name, icon_url);

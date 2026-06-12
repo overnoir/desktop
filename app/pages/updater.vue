@@ -19,10 +19,10 @@ setTimeout(() => {
 
 <template>
   <section
+    class="flex items-center justify-center flex-col gap-6 h-full **:pointer-events-none"
     data-tauri-drag-region
-    class="h-screen flex items-center justify-center flex-col gap-6 **:pointer-events-none"
   >
-    <NuxtImg src="/logo.png" class="size-17" />
+    <NuxtImg src="/logo.png" class="size-17" alt="Logo" />
     <div class="flex flex-col items-center gap-1.5">
       <Spinner v-if="status === 'checking'" class="size-5 text-primary" />
       <Progress

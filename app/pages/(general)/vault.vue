@@ -20,18 +20,18 @@ async function clear() {
 </script>
 
 <template>
-  <section class="grid gap-4">
-    <Card class="p-0 overflow-hidden">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>{{ $t("vault.heads.0") }}</TableHead>
-            <TableHead>{{ $t("vault.heads.1") }}</TableHead>
-            <TableHead>{{ $t("vault.heads.2") }}</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <template v-if="metadata.length">
+  <section class="space-y-4">
+    <template v-if="metadata.length">
+      <Card class="p-0">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{{ $t("vault.heads.0") }}</TableHead>
+              <TableHead>{{ $t("vault.heads.1") }}</TableHead>
+              <TableHead>{{ $t("vault.heads.2") }}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody class="text-secondary-foreground">
             <TableRow
               v-for="({ createdAt, updatedAt, key }, i) in metadata"
               :key="i"
@@ -44,14 +44,9 @@ async function clear() {
                 </template>
               </TableCell>
             </TableRow>
-          </template>
-          <TableEmpty v-else :colspan="3">
-            {{ $t("vault.empty") }}
-          </TableEmpty>
-        </TableBody>
-      </Table>
-    </Card>
-    <template v-if="metadata.length">
+          </TableBody>
+        </Table>
+      </Card>
       <Separator />
       <SettingField
         :description="$t('vault.clear.description')"
@@ -84,5 +79,14 @@ async function clear() {
         </AlertDialog>
       </SettingField>
     </template>
+    <Empty v-else>
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <Icon name="lucide:ghost" />
+        </EmptyMedia>
+      </EmptyHeader>
+      <EmptyTitle>{{ $t("vault.empty.title") }}</EmptyTitle>
+      <EmptyDescription>{{ $t("vault.empty.description") }}</EmptyDescription>
+    </Empty>
   </section>
 </template>

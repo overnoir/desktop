@@ -1,17 +1,29 @@
 <template>
-  <Html class="rounded-lg overflow-hidden">
-    <Body class="rounded-lg">
+  <Html class="rounded-xl">
+    <Body class="rounded-xl">
       <NuxtLoadingIndicator color="var(--primary)" />
       <LayoutTitlebar />
       <SonnerToaster />
-      <div class="flex p-1 pt-0 space-x-1 bg-secondary">
+      <div class="flex">
         <LayoutNavbar />
-        <main
-          class="rounded-lg bg-background border p-4 w-full h-[94.4vh] overflow-auto"
-        >
-          <slot />
-        </main>
+        <div class="p-36 relative w-full h-screen overflow-auto">
+          <LayoutHeader />
+          <main>
+            <slot />
+          </main>
+        </div>
       </div>
     </Body>
   </Html>
 </template>
+
+<style>
+.page-enter-active,
+.page-leave-active {
+  transition: all 0.25s;
+}
+.page-enter-from,
+.page-leave-to {
+  opacity: 0;
+}
+</style>

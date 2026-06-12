@@ -43,28 +43,28 @@ export type Link = {
 
 export type LinkGroup = {
   links: Link[];
-  name: string;
+  name?: string;
 };
 
-export type SettingsUI = {
+export type SettingsGeneral = {
+  orientation: Orientation;
+  showBackground: boolean;
+  showSettings: boolean;
+  alignment: Alignment;
+  isDraggable: boolean;
+  locale: Locale;
   opacity: number;
   radius: number;
   size: number;
   gap: number;
+  y: number;
+  x: number;
 };
 
 export type SettingsAdvanced = {
-  orientation: Orientation;
   preventCapture: boolean;
-  showBackground: boolean;
-  showSettings: boolean;
   ignoreCursor: boolean;
-  alignment: Alignment;
-  isDraggable: boolean;
   autoStart: boolean;
-  locale: Locale;
-  y: number;
-  x: number;
 };
 
 export type VaultItemMetadata = {

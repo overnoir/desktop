@@ -1,7 +1,7 @@
 <template>
-  <Html>
-    <Body class="**:select-none">
-      <main class="bg-background rounded-lg h-screen">
+  <Html class="rounded-xl">
+    <Body class="**:select-none rounded-xl">
+      <main class="h-screen">
         <slot />
       </main>
     </Body>

@@ -1,8 +1,8 @@
 export default function () {
-  const { ui } = storeToRefs(useSettingsStore());
+  const { general } = storeToRefs(useSettingsStore());
 
   const overlayStyles = computed(() => {
-    const { size, radius, opacity, gap } = ui.value;
+    const { size, radius, opacity, gap } = general.value;
 
     return {
       backgroundBorderRadius: `${Math.round(((size * radius) / 200) * 1.15)}px`,

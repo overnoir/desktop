@@ -1,12 +1,12 @@
 <script setup lang="ts">
 const currentWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
-const { advanced } = storeToRefs(useSettingsStore());
+const { general, advanced } = storeToRefs(useSettingsStore());
 const { setLocale } = useI18n();
 
 await currentWebviewWindow.setContentProtected(advanced.value.preventCapture);
-await setLocale(advanced.value.locale);
+await setLocale(general.value.locale);
 
-watch(() => advanced.value.locale, setLocale);
+watch(() => general.value.locale, setLocale);
 
 onMounted(async () => {
   await currentWebviewWindow.show();
@@ -15,6 +15,7 @@ onMounted(async () => {
 
 <template>
   <NuxtLayout>
+    <NuxtRouteAnnouncer />
     <NuxtPage />
   </NuxtLayout>
 </template>

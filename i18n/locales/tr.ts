@@ -1,15 +1,16 @@
 export default {
-  navbar: {
-    linkGroups: [
-      {
-        name: "Genel",
-        links: ["Ana Sayfa", "Kasa", "Ayarlar", "Yardım"],
-      },
-      {
-        name: "Bağlantılar",
-      },
-    ],
-  },
+  linkGroups: [
+    {
+      name: "GENEL",
+      links: ["Ana Sayfa", "Kasa", "Ayarlar"],
+    },
+    {
+      name: "BAĞLANTILAR",
+    },
+    {
+      links: ["Yardım"],
+    },
+  ],
   tray: {
     settings: "Ayarlar",
     quit: "Çıkış",
@@ -19,6 +20,7 @@ export default {
     downloading: "Güncelleme yükleniyor...",
   },
   settings: {
+    tabs: ["Genel", "Gelişmiş"],
     locale: {
       title: "Dil",
       description: "Uygulama arayüz dilini seçin.",
@@ -111,8 +113,11 @@ export default {
   },
   vault: {
     heads: ["Anahtar", "Oluşturulma Tarihi", "Güncellenme Tarihi"],
-    empty: "Kasanız boş.",
     error: "Kasa verileri yüklenirken bir hata oluştu.",
+    empty: {
+      title: "Kasanız Boş",
+      description: "Kasanızda herhangi bir veri yok.",
+    },
     clear: {
       title: "Verileri Sil",
       description: "Kasadaki tüm verileri silin.",
@@ -128,10 +133,15 @@ export default {
     },
   },
   discord: {
+    tabs: ["Bağlantı", "Ayarlar", "Hatalar"],
     errors: {
       title: "Hatalar",
-      description: "Discord hatalar.",
+      description: "Discord RPC hata geçmişi.",
       clear: "Hepsini Sil",
+      empty: {
+        title: "Her Şey Yolunda",
+        description: "Herhangi bir hata yok.",
+      },
     },
     connection: {
       connect: {

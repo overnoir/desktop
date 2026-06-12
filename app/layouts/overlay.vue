@@ -2,7 +2,7 @@
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const discordStore = useDiscordStore();
 const { connectedUser, channel } = storeToRefs(discordStore);
-const { advanced } = storeToRefs(useSettingsStore());
+const { general, advanced } = storeToRefs(useSettingsStore());
 const { overlayStyles } = useUi();
 const { create } = useTray();
 
@@ -15,7 +15,7 @@ if (advanced.value.autoStart !== (await tauriAutoStartIsEnabled())) {
 }
 
 await overlayWebviewWindow.setPosition(
-  new TauriDpiLogicalPosition(advanced.value.x, advanced.value.y),
+  new TauriDpiLogicalPosition(general.value.x, general.value.y),
 );
 
 await tauriEventListen<string>("channel-error", ({ payload }) => {
@@ -36,14 +36,14 @@ if (tauriOSType() === "macos") {
   });
   await tauriEventListen("nspanel-moved", async () => {
     const { x, y } = await overlayWebviewWindow.outerPosition();
-    advanced.value.x = x;
-    advanced.value.y = y;
+    general.value.x = x;
+    general.value.y = y;
   });
 } else {
   await overlayWebviewWindow.onMoved(({ payload }) => {
     const { x, y } = payload;
-    advanced.value.x = x;
-    advanced.value.y = y;
+    general.value.x = x;
+    general.value.y = y;
   });
 }
 
@@ -77,16 +77,16 @@ useResizeObserver(document.body, async (entries) => {
   let newX = currentPosition.x;
   let newY = currentPosition.y;
 
-  if (advanced.value.orientation === Orientation.Vertical) {
-    if (advanced.value.alignment === "center") {
+  if (general.value.orientation === Orientation.Vertical) {
+    if (general.value.alignment === "center") {
       newY = currentPosition.y - deltaY / 2;
-    } else if (advanced.value.alignment === "right") {
+    } else if (general.value.alignment === "right") {
       newY = currentPosition.y - deltaY;
     }
   } else {
-    if (advanced.value.alignment === "center") {
+    if (general.value.alignment === "center") {
       newX = currentPosition.x - deltaX / 2;
-    } else if (advanced.value.alignment === "right") {
+    } else if (general.value.alignment === "right") {
       newX = currentPosition.x - deltaX;
     }
   }
@@ -116,13 +116,13 @@ onMounted(async () => {
       opacity: overlayStyles.opacity,
     }"
   >
-    <Body class="size-max **:select-none **:transition-none">
+    <Body class="size-max **:select-none **:transition-none bg-transparent">
       <main
         :class="{
-          'bg-background border border-border': advanced.showBackground,
+          'bg-background border': general.showBackground,
         }"
         :style="
-          advanced.showBackground
+          general.showBackground
             ? {
                 borderRadius: overlayStyles.backgroundBorderRadius,
                 padding: overlayStyles.backgroundPadding,

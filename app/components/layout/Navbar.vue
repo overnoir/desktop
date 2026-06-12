@@ -1,65 +1,33 @@
 <script setup lang="ts">
-const linkGroups: LinkGroup[] = [
-  {
-    name: "navbar.linkGroups.0.name",
-    links: [
-      {
-        icon: "lucide:home",
-        name: "navbar.linkGroups.0.links.0",
-        to: "/",
-      },
-      {
-        icon: "lucide:vault",
-        name: "navbar.linkGroups.0.links.1",
-        to: "/vault",
-      },
-      {
-        icon: "lucide:sliders-horizontal",
-        name: "navbar.linkGroups.0.links.2",
-        to: "/settings",
-      },
-      {
-        icon: "lucide:info",
-        name: "navbar.linkGroups.0.links.3",
-        to: "/help",
-      },
-    ],
-  },
-  {
-    name: "navbar.linkGroups.1.name",
-    links: [
-      {
-        icon: "simple-icons:discord",
-        name: "Discord",
-        to: "/discord",
-      },
-    ],
-  },
-];
+const { general, connectors, help, activeLink } =
+  storeToRefs(useLinkGroupsStore());
 </script>
 
 <template>
   <nav
-    class="bg-background p-4 border rounded-lg w-50 shrink-0 sticky top-0 flex gap-2 flex-col"
+    class="p-4 pt-10 w-60 shrink-0 flex flex-col gap-4 border-r [&>ul]:last:mt-auto"
   >
-    <ul v-for="{ links, name } in linkGroups" :key="name">
-      <h1 class="text-secondary-foreground text-xs font-medium mb-1">
-        {{ $t(name) }}
+    <ul
+      v-for="({ links, name }, i) in [general, connectors, help]"
+      :key="i"
+      class="space-y-1"
+    >
+      <h1 v-if="name" class="mb-2 text-[.7rem] font-medium">
+        {{ name }}
       </h1>
-      <li v-for="{ name: linkName, to, icon } in links" :key="linkName">
+      <li v-for="{ name: linkName, to, icon } in links" :key="to">
         <Button
-          :variant="$route.path === $localePath(to) ? 'outline' : 'ghost'"
-          class="w-full justify-start text-xs"
+          :variant="activeLink.to === to ? 'secondary' : 'ghost'"
           :class="{
-            'border-0 ring ring-inset ring-border':
-              $route.path === $localePath(to),
+            'text-secondary-foreground!': activeLink.to !== to,
           }"
-          size="sm"
+          class="w-full justify-start text-foreground"
+          size="lg"
           as-child
         >
           <NuxtLinkLocale :to>
-            <Icon :name="icon" class="mr-1" />
-            {{ $te(linkName) ? $t(linkName) : linkName }}
+            <Icon :name="icon" class="size-4.5 mr-2" />
+            {{ linkName }}
           </NuxtLinkLocale>
         </Button>
       </li>

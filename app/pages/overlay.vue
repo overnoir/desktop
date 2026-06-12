@@ -3,7 +3,7 @@ definePageMeta({
   layout: "overlay",
 });
 
-const { advanced } = storeToRefs(useSettingsStore());
+const { general } = storeToRefs(useSettingsStore());
 const discordStore = useDiscordStore();
 const { users, channel } = storeToRefs(discordStore);
 const { overlayStyles } = useUi();
@@ -29,7 +29,7 @@ async function openMainWebviewWindow() {
 <template>
   <section
     :class="{
-      'flex-col': advanced.orientation === Orientation.Vertical,
+      'flex-col': general.orientation === Orientation.Vertical,
     }"
     :style="{
       gap: overlayStyles.gap,
@@ -46,7 +46,7 @@ async function openMainWebviewWindow() {
     />
     <DiscordUser v-for="user in users" :key="user.id" :user />
     <Button
-      v-if="advanced.showSettings"
+      v-if="general.showSettings"
       :style="{
         borderRadius: overlayStyles.borderRadius,
         height: overlayStyles.size,
@@ -60,7 +60,7 @@ async function openMainWebviewWindow() {
       <Icon name="lucide:sliders-horizontal" class="size-1/2" />
     </Button>
     <Button
-      v-if="advanced.isDraggable"
+      v-if="general.isDraggable"
       data-tauri-drag-region
       :style="{
         borderRadius: overlayStyles.borderRadius,

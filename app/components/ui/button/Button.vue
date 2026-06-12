@@ -29,6 +29,6 @@ const props = withDefaults(defineProps<Props>(), {
     :disabled="loading || disabled"
   >
     <Spinner v-if="loading" />
-    <slot />
+    <slot v-else />
   </Primitive>
 </template>

@@ -1,19 +1,27 @@
 import { z } from "zod";
 
-export const settingsUISchema = z.preprocess(
+export const settingsGeneralSchema = z.preprocess(
   (value) => {
     if (!isObject(value)) {
-      return defaultSettingsUI;
+      return defaultSettingsGeneral;
     }
     return value;
   },
   z.object({
-    opacity: z.number().min(0).max(100).catch(defaultSettingsUI.opacity),
-    radius: z.number().min(0).max(100).catch(defaultSettingsUI.radius),
-    size: z.number().min(0).max(250).catch(defaultSettingsUI.size),
-    gap: z.number().min(0).max(100).catch(defaultSettingsUI.gap),
+    orientation: z.enum(Orientation).catch(defaultSettingsGeneral.orientation),
+    showBackground: z.boolean().catch(defaultSettingsGeneral.showBackground),
+    showSettings: z.boolean().catch(defaultSettingsGeneral.showSettings),
+    alignment: z.enum(Alignment).catch(defaultSettingsGeneral.alignment),
+    isDraggable: z.boolean().catch(defaultSettingsGeneral.isDraggable),
+    x: z.number().min(-9999).max(9999).catch(defaultSettingsGeneral.x),
+    y: z.number().min(-9999).max(9999).catch(defaultSettingsGeneral.y),
+    locale: z.enum(Locale).catch(defaultSettingsGeneral.locale),
+    opacity: z.number().min(0).max(100).catch(defaultSettingsGeneral.opacity),
+    radius: z.number().min(0).max(100).catch(defaultSettingsGeneral.radius),
+    size: z.number().min(0).max(250).catch(defaultSettingsGeneral.size),
+    gap: z.number().min(0).max(100).catch(defaultSettingsGeneral.gap),
   }),
-) satisfies z.ZodType<SettingsUI>;
+) satisfies z.ZodType<SettingsGeneral>;
 
 export const settingsAdvancedSchema = z.preprocess(
   (value) => {
@@ -23,17 +31,9 @@ export const settingsAdvancedSchema = z.preprocess(
     return value;
   },
   z.object({
-    orientation: z.enum(Orientation).catch(defaultSettingsAdvanced.orientation),
     preventCapture: z.boolean().catch(defaultSettingsAdvanced.preventCapture),
-    showBackground: z.boolean().catch(defaultSettingsAdvanced.showBackground),
-    showSettings: z.boolean().catch(defaultSettingsAdvanced.showSettings),
     ignoreCursor: z.boolean().catch(defaultSettingsAdvanced.ignoreCursor),
-    alignment: z.enum(Alignment).catch(defaultSettingsAdvanced.alignment),
-    isDraggable: z.boolean().catch(defaultSettingsAdvanced.isDraggable),
-    x: z.number().min(-9999).max(9999).catch(defaultSettingsAdvanced.x),
-    y: z.number().min(-9999).max(9999).catch(defaultSettingsAdvanced.y),
     autoStart: z.boolean().catch(defaultSettingsAdvanced.autoStart),
-    locale: z.enum(Locale).catch(defaultSettingsAdvanced.locale),
   }),
 ) satisfies z.ZodType<SettingsAdvanced>;
 
