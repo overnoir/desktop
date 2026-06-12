@@ -19,6 +19,9 @@ export default {
     checking: "Güncelleme kontrol ediliyor...",
     downloading: "Güncelleme yükleniyor...",
   },
+  error: {
+    goHome: "Ana Sayfaya Git",
+  },
   settings: {
     tabs: ["Genel", "Gelişmiş"],
     locale: {
