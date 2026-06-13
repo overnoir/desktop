@@ -8,7 +8,7 @@ const { error } = defineProps<{ error: NuxtError }>();
   <Html class="rounded-xl">
     <Body class="rounded-xl">
       <LayoutTitlebar />
-      <main class="h-screen grid place-items-center">
+      <main class="h-screen overflow-auto grid place-items-center">
         <Empty>
           <EmptyHeader>
             <EmptyMedia variant="icon">
