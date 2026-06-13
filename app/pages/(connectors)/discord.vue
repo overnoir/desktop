@@ -48,13 +48,13 @@ onMounted(() => (route.meta.headerImageUrl = avatarUrl.value));
 </script>
 
 <template>
-  <section class="space-y-4">
+  <section class="space-y-4 max-w-3xl mx-auto">
     <Tabs
       class="flex-row gap-6 [&>div]:not-first:space-y-4"
       default-value="connection"
     >
       <TabsList
-        class="flex-col h-max sticky top-7.5 [&>button]:gap-3 [&>button]:w-40 [&>button]:justify-start"
+        class="flex-col h-max sticky top-10.75 [&>button]:gap-3 [&>button]:w-40 [&>button]:justify-start"
       >
         <TabsTrigger value="connection">
           <Icon name="lucide:plug" />

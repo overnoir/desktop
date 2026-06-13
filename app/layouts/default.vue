@@ -8,7 +8,7 @@
         <LayoutNavbar />
         <div class="w-full h-screen overflow-auto">
           <LayoutHeader />
-          <main class="p-36 pt-7.5">
+          <main class="pb-21 p-10">
             <slot />
           </main>
         </div>

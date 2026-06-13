@@ -4,7 +4,7 @@ const name = await tauriAppGetName();
 </script>
 
 <template>
-  <section class="grid grid-cols-2 gap-4">
+  <section class="grid grid-cols-2 gap-4 max-w-3xl mx-auto">
     <Card
       class="cursor-pointer p-0"
       @click="tauriOpenerOpenUrl('https://docs.overnoir.com')"

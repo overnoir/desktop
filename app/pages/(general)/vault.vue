@@ -20,7 +20,7 @@ async function clear() {
 </script>
 
 <template>
-  <section class="space-y-4">
+  <section class="space-y-4 max-w-3xl mx-auto">
     <template v-if="metadata.length">
       <Card class="p-0">
         <Table>

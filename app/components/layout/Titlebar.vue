@@ -7,25 +7,34 @@ const isMacos = tauriOSType() === "macos";
   <div
     class="fixed top-0 left-0 right-0 h-8.25 flex items-center justify-between z-50 **:select-none"
     data-tauri-drag-region
-    :class="{
-      'flex-row-reverse': !isMacos,
-    }"
+    :class="{ 'flex-row-reverse': !isMacos }"
   >
     <div
+      class="flex"
       :class="{
         'pl-2.25 flex-row-reverse gap-2 [&>button]:bg-secondary [&>button]:transition-none! [&>button]:size-4! [&>button]:p-0! [&>button]:rounded-full! [&>button]:border! [&_svg]:size-2.5! [&_svg]:hidden hover:[&_svg]:flex':
           isMacos,
         '[&>button]:rounded-none [&>button]:h-full': !isMacos,
       }"
-      class="flex"
     >
-      <Button variant="ghost" @click="currentWebviewWindow.minimize()">
-        <Icon name="lucide:minus" />
-      </Button>
+      <template v-if="isMacos">
+        <Button variant="ghost" @click="currentWebviewWindow.maximize()">
+          <Icon name="lucide:chevrons-left-right" class="rotate-45" />
+        </Button>
+        <Button variant="ghost" @click="currentWebviewWindow.minimize()">
+          <Icon name="lucide:minus" />
+        </Button>
+      </template>
+      <template v-else>
+        <Button variant="ghost" @click="currentWebviewWindow.minimize()">
+          <Icon name="lucide:minus" />
+        </Button>
+        <Button variant="ghost" @click="currentWebviewWindow.maximize()">
+          <Icon name="lucide:square" class="scale-80" />
+        </Button>
+      </template>
       <Button
-        :class="{
-          'hover:bg-red-600': !isMacos,
-        }"
+        :class="{ 'hover:bg-red-600': !isMacos }"
         variant="ghost"
         @click="currentWebviewWindow.destroy()"
       >
