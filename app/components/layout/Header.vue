@@ -17,6 +17,7 @@ const imageUrl = computed(() => route.meta.headerImageUrl as string);
       v-if="imageUrl"
       :src="imageUrl"
       class="absolute left-0 top-0 h-30 w-full -z-50 object-cover"
+      alt="Header Image"
     />
     <div
       class="absolute left-0 top-0 h-30 w-full bg-linear-to-r from-background"
