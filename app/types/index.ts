@@ -119,6 +119,8 @@ export type DiscordUser = {
 };
 
 export type DiscordConnectedUser = {
+  username: string;
+  avatar?: string;
   id: string;
 };
 

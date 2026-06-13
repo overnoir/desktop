@@ -6,9 +6,9 @@
       <SonnerToaster />
       <div class="flex">
         <LayoutNavbar />
-        <div class="p-36 relative w-full h-screen overflow-auto">
+        <div class="w-full h-screen overflow-auto">
           <LayoutHeader />
-          <main>
+          <main class="p-36 pt-7.5">
             <slot />
           </main>
         </div>

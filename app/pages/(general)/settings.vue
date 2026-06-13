@@ -92,7 +92,7 @@ async function reset() {
       default-value="general"
     >
       <TabsList
-        class="flex-col h-max sticky -top-25.25 [&>button]:gap-3 [&>button]:w-40 [&>button]:justify-start"
+        class="flex-col h-max sticky top-7.5 [&>button]:gap-3 [&>button]:w-40 [&>button]:justify-start"
       >
         <TabsTrigger value="general">
           <Icon name="lucide:settings" />

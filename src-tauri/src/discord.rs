@@ -62,6 +62,9 @@ pub struct Channel {
 #[derive(Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct ConnectedUser {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    avatar: Option<String>,
+    username: String,
     id: String,
 }
 
@@ -307,7 +310,7 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
             }
         };
 
-        let connected_user_id = match send_and_wait(
+        let (connected_user_id, connected_username, connected_avatar) = match send_and_wait(
             &mut channel_client,
             json!({
                 "args": { "access_token": access_token },
@@ -317,17 +320,27 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
             &mut users,
             &mut speaking,
         ) {
-            Ok(auth_data) => match auth_data["user"]["id"].as_str() {
-                Some(id) => id.to_string(),
-                None => {
-                    let _ = app.emit_to(
-                        "overlay",
-                        "channel-error",
-                        "Channel auth response missing user id",
-                    );
-                    return;
+            Ok(auth_data) => {
+                let user_data = &auth_data["user"];
+                match user_data["id"].as_str() {
+                    Some(id) => {
+                        let username = user_data["username"]
+                            .as_str()
+                            .unwrap_or("Unknown")
+                            .to_string();
+                        let avatar = user_data["avatar"].as_str().map(|s| s.to_string());
+                        (id.to_string(), username, avatar)
+                    }
+                    None => {
+                        let _ = app.emit_to(
+                            "overlay",
+                            "channel-error",
+                            "Channel auth response missing user id",
+                        );
+                        return;
+                    }
                 }
-            },
+            }
             Err(_) => {
                 let _ = app.emit_to("overlay", "channel-error", "Channel auth failed");
                 return;
@@ -336,6 +349,8 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
 
         let _ = tx.send(ConnectedUser {
             id: connected_user_id,
+            username: connected_username,
+            avatar: connected_avatar,
         });
 
         if send_and_wait(

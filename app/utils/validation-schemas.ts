@@ -87,6 +87,8 @@ export const discordErrorsSchema = z.preprocess(
 
 export const discordConnectedUserSchema = z
   .object({
+    avatar: z.string().optional(),
+    username: z.string(),
     id: z.string(),
   })
   .optional()

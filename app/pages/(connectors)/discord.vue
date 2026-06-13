@@ -3,7 +3,17 @@ const discordStore = useDiscordStore();
 const { connectedUser, errors, settings } = storeToRefs(discordStore);
 const { $toast } = useNuxtApp();
 const loading = ref(false);
+const route = useRoute();
 const { t } = useI18n();
+
+const avatarUrl = computed(
+  () =>
+    connectedUser.value &&
+    generateDiscordUserAvatarUrl({
+      avatar: connectedUser.value.avatar,
+      id: connectedUser.value.id,
+    }),
+);
 
 async function toggleConnection() {
   loading.value = true;
@@ -16,10 +26,11 @@ async function toggleConnection() {
       await tauriCoreInvoke("disconnect_discord");
       connectedUser.value = null;
     }
-    $toast(t(`discord.connection.${action}.success`));
+    route.meta.headerImageUrl = avatarUrl.value;
+    $toast(t(`discord.${action}.success`));
   } catch (error) {
     discordStore.addError(JSON.stringify(error));
-    $toast(t(`discord.connection.${action}.error`));
+    $toast(t(`discord.${action}.error`));
   }
   loading.value = false;
 }
@@ -28,6 +39,12 @@ async function resetDiscordSettings() {
   discordStore.resetSettings();
   $toast(t("discord.reset.success"));
 }
+
+watch(avatarUrl, (value) => {
+  route.meta.headerImageUrl = value;
+});
+
+onMounted(() => (route.meta.headerImageUrl = avatarUrl.value));
 </script>
 
 <template>
@@ -37,7 +54,7 @@ async function resetDiscordSettings() {
       default-value="connection"
     >
       <TabsList
-        class="flex-col h-max sticky -top-25.25 [&>button]:gap-3 [&>button]:w-40 [&>button]:justify-start"
+        class="flex-col h-max sticky top-7.5 [&>button]:gap-3 [&>button]:w-40 [&>button]:justify-start"
       >
         <TabsTrigger value="connection">
           <Icon name="lucide:plug" />
@@ -48,53 +65,40 @@ async function resetDiscordSettings() {
           {{ $t("discord.tabs.1") }}
         </TabsTrigger>
         <TabsTrigger value="errors">
-          <Icon name="lucide:circle-alert" />
+          <Icon name="lucide:triangle-alert" />
           {{ $t("discord.tabs.2") }}
         </TabsTrigger>
       </TabsList>
       <TabsContent value="connection">
-        <Card class="w-full p-4 gap-4">
-          <CardHeader class="flex items-start p-0 gap-4">
-            <div>
-              <div
-                class="bg-[#5865F2] text-white size-10 rounded-lg grid place-items-center"
-              >
-                <Icon name="simple-icons:discord" size="25" />
-              </div>
-            </div>
-            <div class="space-y-1">
-              <CardTitle>Discord RPC</CardTitle>
-              <CardDescription>Rich Presence Connection</CardDescription>
-            </div>
-            <Badge variant="outline" class="ml-auto">
-              <div
-                class="size-2 rounded-full mr-0.5"
-                :class="{
-                  'bg-green-500': connectedUser,
-                  'bg-red-500': !connectedUser,
-                }"
-              />
-              {{
-                $t(
-                  `discord.connection.${connectedUser ? "connect" : "disconnect"}.badge`,
-                )
-              }}
-            </Badge>
+        <Card class="text-center p-16">
+          <CardHeader>
+            <CardTitle class="text-xl">Discord RPC</CardTitle>
+            <CardDescription> Rich Presence Connection </CardDescription>
           </CardHeader>
-          <Button
-            :class="{
-              'bg-[#5865F2] hover:bg-[#5865F2]/90!': !connectedUser,
-            }"
-            :variant="connectedUser ? 'outline' : 'ghost'"
-            :loading
-            @click="toggleConnection"
-          >
-            {{
-              $t(
-                `discord.connection.${connectedUser ? "disconnect" : "connect"}.button`,
-              )
-            }}
-          </Button>
+          <CardContent class="space-y-8 text-sm">
+            <p>
+              {{
+                connectedUser
+                  ? $t("discord.disconnect.description", {
+                      username: connectedUser.username,
+                    })
+                  : $t("discord.connect.description")
+              }}
+            </p>
+            <Button
+              :class="{
+                'bg-[#5865F2] hover:bg-[#5865F2]/90!': !connectedUser,
+              }"
+              :variant="connectedUser ? 'secondary' : 'ghost'"
+              :loading
+              size="lg"
+              @click="toggleConnection"
+            >
+              {{
+                $t(`discord.${connectedUser ? "disconnect" : "connect"}.button`)
+              }}
+            </Button>
+          </CardContent>
         </Card>
       </TabsContent>
       <TabsContent value="settings">
@@ -278,6 +282,7 @@ async function resetDiscordSettings() {
               {{ $t("discord.errors.clear") }}
             </Button>
           </SettingField>
+          <Separator />
           <div class="flex flex-col gap-2">
             <Alert
               v-for="{ createdAt, id, message } in errors"

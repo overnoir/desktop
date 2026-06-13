@@ -2,13 +2,11 @@
 const { activeLink } = storeToRefs(useLinkGroupsStore());
 const route = useRoute();
 
-const imageUrl = computed(
-  () => route.meta.headerImageUrl as string | undefined,
-);
+const imageUrl = computed(() => route.meta.headerImageUrl as string);
 </script>
 
 <template>
-  <header class="left-0 top-0 w-full absolute flex p-9.5 items-center border-b">
+  <header class="flex p-9.5 items-center border-b relative">
     <div class="flex items-center gap-4 z-10">
       <Icon :name="activeLink.icon" class="size-10" />
       <h1 class="text-3xl font-bold">
@@ -18,7 +16,7 @@ const imageUrl = computed(
     <NuxtImg
       v-if="imageUrl"
       :src="imageUrl"
-      class="absolute left-0 top-0 h-29 w-full -z-50 object-cover objec"
+      class="absolute left-0 top-0 h-29 w-full -z-50 object-cover"
     />
     <div
       class="absolute left-0 top-0 h-29 w-full bg-linear-to-r from-background"

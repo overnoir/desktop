@@ -41,16 +41,20 @@ const showAvatarDecorationAnimated = computed(() => {
     return false;
   return true;
 });
+
+const avatarUrl = computed(() =>
+  generateDiscordUserAvatarUrl({
+    animated: showAvatarAnimated.value,
+    avatar: user.avatar,
+    id: user.id,
+  }),
+);
 </script>
 
 <template>
   <div class="relative">
     <NuxtImg
-      :src="
-        user.avatar
-          ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp?size=4096&animated=${showAvatarAnimated}`
-          : `https://cdn.discordapp.com/embed/avatars/${Number((BigInt(user.id) >> 22n) % 6n)}.png`
-      "
+      :src="avatarUrl"
       class="size-full border"
       :style="{
         borderRadius: overlayStyles.borderRadius,

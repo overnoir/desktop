@@ -146,19 +146,17 @@ export default {
         description: "Herhangi bir hata yok.",
       },
     },
-    connection: {
-      connect: {
-        success: "Bağlantı başarıyla yapıldı.",
-        error: "Bağlantı yapılırken bir sorun oluştu.",
-        button: "Bağlan",
-        badge: "Bağlanıldı",
-      },
-      disconnect: {
-        success: "Bağlantı başarıyla kesildi.",
-        error: "Bağlantı kesilirken bir sorun oluştu.",
-        button: "Bağlantıyı Kes",
-        badge: "Bağlantı Kesildi",
-      },
+    connect: {
+      success: "Bağlantı başarıyla yapıldı.",
+      error: "Bağlantı yapılırken bir sorun oluştu.",
+      description: "Bağlanmak için Discord sizden onay isteyecek.",
+      button: "Bağlan",
+    },
+    disconnect: {
+      success: "Bağlantı başarıyla kesildi.",
+      error: "Bağlantı kesilirken bir sorun oluştu.",
+      description: "{username} olarak bağlanıldı.",
+      button: "Bağlantıyı Kes",
     },
     show: {
       always: "Her Zaman",
