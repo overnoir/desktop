@@ -94,7 +94,7 @@ async function reset() {
   );
   await updateIgnoreCursor(advanced.value.ignoreCursor);
 
-  $toast(t("settings.reset.success"));
+  $toast.success(t("settings.reset.success"));
 }
 </script>
 

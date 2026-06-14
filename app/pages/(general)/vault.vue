@@ -6,16 +6,16 @@ const { t } = useI18n();
 try {
   metadata.value = await tauriCoreInvoke("get_vault_metadata");
 } catch {
-  $toast(t("vault.get.error"));
+  $toast.error(t("vault.get.error"));
 }
 
 async function clear() {
   try {
     await tauriCoreInvoke("clear_vault");
     metadata.value = [];
-    $toast(t("vault.clear.success"));
+    $toast.success(t("vault.clear.success"));
   } catch {
-    $toast(t("vault.clear.error"));
+    $toast.error(t("vault.clear.error"));
   }
 }
 </script>

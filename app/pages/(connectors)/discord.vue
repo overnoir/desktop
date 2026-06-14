@@ -31,17 +31,17 @@ async function toggleConnection() {
       connectedUser.value = null;
     }
     route.meta.headerImageUrl = avatarUrl.value;
-    $toast(t(`discord.${action}.success`));
+    $toast.success(t(`discord.${action}.success`));
   } catch (error) {
     discordStore.addError(JSON.stringify(error));
-    $toast(t(`discord.${action}.error`));
+    $toast.error(t(`discord.${action}.error`));
   }
   loading.value = false;
 }
 
 async function resetDiscordSettings() {
   discordStore.resetSettings();
-  $toast(t("discord.reset.success"));
+  $toast.success(t("discord.reset.success"));
 }
 
 watch(avatarUrl, (value) => {
