@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const discordStore = useDiscordStore();
-const { connectedUser, channel } = storeToRefs(discordStore);
+const { connectedUser, guild } = storeToRefs(discordStore);
 const { general, advanced } = storeToRefs(useSettingsStore());
 const { overlayStyles } = useUi();
 const { create } = useTray();
@@ -24,16 +24,13 @@ await overlayWebviewWindow.setPosition(
   new TauriDpiLogicalPosition(general.value.x, general.value.y),
 );
 
-await tauriEventListen<string>("channel-error", ({ payload }) => {
+await tauriEventListen<string>("guild-error", ({ payload }) => {
   discordStore.addError(payload);
 });
 
-await tauriEventListen<DiscordChannel | null>(
-  "channel-update",
-  ({ payload }) => {
-    channel.value = payload || undefined;
-  },
-);
+await tauriEventListen<DiscordGuild | null>("guild-update", ({ payload }) => {
+  guild.value = payload || undefined;
+});
 
 if (tauriOSType() === "macos") {
   await tauriCoreInvoke("init_nspanel");

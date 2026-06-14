@@ -3,7 +3,7 @@ use discord_rich_presence::{DiscordIpc, DiscordIpcClient};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::{
-    collections::{HashMap, HashSet},
+    collections::HashMap,
     env,
     sync::atomic::{AtomicBool, Ordering},
     sync::{mpsc, Arc, Mutex},
@@ -50,11 +50,17 @@ pub struct User {
 #[derive(Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Channel {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    guild_icon_url: Option<String>,
-    guild_name: String,
     users: Vec<User>,
-    guild_id: String,
+    name: String,
+    id: String,
+}
+
+#[derive(Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct Guild {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    icon_url: Option<String>,
+    channel: Channel,
     name: String,
     id: String,
 }
@@ -86,22 +92,13 @@ const CHANNEL_EVENTS: [&str; 5] = [
 ];
 
 macro_rules! try_emit {
-    ($app:expr, $channel_id:expr,$guild_id:expr, $guild_name:expr, $guild_icon:expr, $channel_name:expr, $users:expr, $speaking:expr, $last_emit:expr) => {{
+    ($app:expr, $guild:expr, $last_emit:expr) => {{
         let now = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .map(|d| d.as_millis() as u128)
             .unwrap_or(0);
         if now.saturating_sub($last_emit) >= 50 || $last_emit == 0 {
-            emit_channel_state(
-                $app,
-                $channel_id,
-                $guild_id,
-                $guild_name,
-                $guild_icon,
-                $channel_name,
-                $users,
-                $speaking,
-            );
+            let _ = $app.emit_to("overlay", "guild-update", $guild);
             $last_emit = now;
         }
     }};
@@ -152,7 +149,6 @@ fn recv_until_response(
     client: &mut DiscordIpcClient,
     nonce: &str,
     users: &mut HashMap<String, User>,
-    speaking: &mut HashSet<String>,
 ) -> Result<Value, String> {
     loop {
         let (_, data) = client.recv().map_err(|e| e.to_string())?;
@@ -170,17 +166,20 @@ fn recv_until_response(
             Some("VOICE_STATE_DELETE") => {
                 if let Some(user_id) = data["data"]["user"]["id"].as_str() {
                     users.remove(user_id);
-                    speaking.remove(user_id);
                 }
             }
             Some("SPEAKING_START") => {
                 if let Some(user_id) = data["data"]["user_id"].as_str() {
-                    speaking.insert(user_id.to_string());
+                    if let Some(user) = users.get_mut(user_id) {
+                        user.is_speaking = true;
+                    }
                 }
             }
             Some("SPEAKING_STOP") => {
                 if let Some(user_id) = data["data"]["user_id"].as_str() {
-                    speaking.remove(user_id);
+                    if let Some(user) = users.get_mut(user_id) {
+                        user.is_speaking = false;
+                    }
                 }
             }
             _ => {}
@@ -192,14 +191,13 @@ fn send_and_wait(
     client: &mut DiscordIpcClient,
     command: Value,
     users: &mut HashMap<String, User>,
-    speaking: &mut HashSet<String>,
 ) -> Result<Value, String> {
     let nonce = command["nonce"]
         .as_str()
         .ok_or("Command must have a nonce")?
         .to_string();
     client.send(command, 1).map_err(|e| e.to_string())?;
-    recv_until_response(client, &nonce, users, speaking)
+    recv_until_response(client, &nonce, users)
 }
 
 fn get_guild_info(client: &mut DiscordIpcClient, guild_id: &str) -> (String, Option<String>) {
@@ -230,37 +228,6 @@ fn get_guild_info(client: &mut DiscordIpcClient, guild_id: &str) -> (String, Opt
     }
 }
 
-fn emit_channel_state(
-    app: &AppHandle,
-    id: &str,
-    guild_id: String,
-    guild_name: String,
-    guild_icon_url: Option<String>,
-    name: String,
-    users: &HashMap<String, User>,
-    speaking: &HashSet<String>,
-) {
-    let _ = app.emit_to(
-        "overlay",
-        "channel-update",
-        &Channel {
-            id: id.to_string(),
-            guild_id,
-            guild_name,
-            guild_icon_url,
-            name,
-            users: users
-                .values()
-                .map(|u| {
-                    let mut user = u.clone();
-                    user.is_speaking = speaking.contains(&user.id);
-                    user
-                })
-                .collect(),
-        },
-    );
-}
-
 fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, String> {
     let discord_state = app_handle.state::<Discord>();
 
@@ -283,10 +250,9 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
     thread::spawn(move || {
         let mut channel_client = DiscordIpcClient::new(&client_id);
         let mut users: HashMap<String, User> = HashMap::new();
-        let mut speaking: HashSet<String> = HashSet::new();
 
         if channel_client.connect().is_err() {
-            let _ = app.emit_to("overlay", "channel-error", "Voice RPC connection failed");
+            let _ = app.emit_to("overlay", "guild-error", "Voice RPC connection failed");
             return;
         }
 
@@ -295,7 +261,7 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
             Ok(None) => {
                 let _ = app.emit_to(
                     "overlay",
-                    "channel-error",
+                    "guild-error",
                     "No access token for channel listener",
                 );
                 return;
@@ -303,7 +269,7 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
             Err(e) => {
                 let _ = app.emit_to(
                     "overlay",
-                    "channel-error",
+                    "guild-error",
                     format!("Failed to read token: {}", e),
                 );
                 return;
@@ -318,7 +284,6 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
                 "cmd": "AUTHENTICATE",
             }),
             &mut users,
-            &mut speaking,
         ) {
             Ok(auth_data) => {
                 let user_data = &auth_data["user"];
@@ -334,7 +299,7 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
                     None => {
                         let _ = app.emit_to(
                             "overlay",
-                            "channel-error",
+                            "guild-error",
                             "Channel auth response missing user id",
                         );
                         return;
@@ -342,7 +307,7 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
                 }
             }
             Err(_) => {
-                let _ = app.emit_to("overlay", "channel-error", "Channel auth failed");
+                let _ = app.emit_to("overlay", "guild-error", "Channel auth failed");
                 return;
             }
         };
@@ -361,13 +326,12 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
                 "cmd": "SUBSCRIBE",
             }),
             &mut users,
-            &mut speaking,
         )
         .is_err()
         {
             let _ = app.emit_to(
                 "overlay",
-                "channel-error",
+                "guild-error",
                 "Failed to subscribe to VOICE_CHANNEL_SELECT",
             );
             return;
@@ -380,25 +344,17 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
                 "nonce": Uuid::new_v4().to_string()
             }),
             &mut users,
-            &mut speaking,
         );
 
-        let mut current_channel_name = String::new();
-        let mut current_channel_id: Option<String> = None;
-        let mut current_guild_id = String::new();
-        let mut current_guild_name = String::new();
-        let mut current_guild_icon_url: Option<String> = None;
+        let mut current_guild: Option<Guild> = None;
 
         if let Ok(ref response) = current_vc {
             if response.is_object() && response["id"].is_string() {
                 let channel_id = response["id"].as_str().unwrap().to_string();
-                current_channel_id = Some(channel_id.clone());
-                current_guild_id = response["guild_id"].as_str().unwrap_or("").to_string();
+                let guild_id = response["guild_id"].as_str().unwrap_or("").to_string();
+                let channel_name = response["name"].as_str().unwrap_or("").to_string();
 
-                let (guild_name, guild_icon_url) =
-                    get_guild_info(&mut channel_client, &current_guild_id);
-                current_guild_name = guild_name;
-                current_guild_icon_url = guild_icon_url;
+                let (guild_name, guild_icon_url) = get_guild_info(&mut channel_client, &guild_id);
 
                 if let Some(voice_states) = response["voice_states"].as_array() {
                     for vs in voice_states {
@@ -418,22 +374,25 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
                             "evt": evt,
                         }),
                         &mut users,
-                        &mut speaking,
                     );
                 }
 
-                current_channel_name = response["name"].as_str().unwrap_or("").to_string();
+                current_guild = Some(Guild {
+                    id: guild_id,
+                    name: guild_name,
+                    icon_url: guild_icon_url,
+                    channel: Channel {
+                        id: channel_id,
+                        name: channel_name,
+                        users: vec![],
+                    },
+                });
 
-                emit_channel_state(
-                    &app,
-                    &channel_id,
-                    current_guild_id.clone(),
-                    current_guild_name.clone(),
-                    current_guild_icon_url.clone(),
-                    current_channel_name.clone(),
-                    &users,
-                    &speaking,
-                );
+                if let Some(ref guild) = current_guild {
+                    let mut g = guild.clone();
+                    g.channel.users = users.values().cloned().collect();
+                    let _ = &app.emit_to("overlay", "guild-update", &g);
+                }
             }
         }
 
@@ -446,24 +405,22 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
                         let new_channel_id =
                             data["data"]["channel_id"].as_str().map(|s| s.to_string());
 
-                        if let Some(old_id) = current_channel_id.take() {
+                        if let Some(old) = current_guild.take() {
                             for evt in &CHANNEL_EVENTS {
                                 let _ = send_and_wait(
                                     &mut channel_client,
                                     json!({
                                         "nonce": Uuid::new_v4().to_string(),
-                                        "args": { "channel_id": old_id },
+                                        "args": { "channel_id": old.channel.id },
                                         "cmd": "UNSUBSCRIBE",
                                         "evt": evt,
                                     }),
                                     &mut users,
-                                    &mut speaking,
                                 );
                             }
                         }
 
                         users.clear();
-                        speaking.clear();
 
                         if let Some(ref new_id) = new_channel_id {
                             for evt in &CHANNEL_EVENTS {
@@ -476,11 +433,8 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
                                         "evt": evt,
                                     }),
                                     &mut users,
-                                    &mut speaking,
                                 );
                             }
-
-                            *&mut current_channel_id = Some(new_id.clone());
 
                             let nonce = Uuid::new_v4().to_string();
 
@@ -495,12 +449,9 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
                                 )
                                 .is_ok()
                             {
-                                if let Ok(response) = recv_until_response(
-                                    &mut channel_client,
-                                    &nonce,
-                                    &mut users,
-                                    &mut speaking,
-                                ) {
+                                if let Ok(response) =
+                                    recv_until_response(&mut channel_client, &nonce, &mut users)
+                                {
                                     if let Some(voice_states) = response["voice_states"].as_array()
                                     {
                                         for vs in voice_states {
@@ -510,103 +461,75 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
                                         }
                                     }
 
-                                    current_guild_id =
+                                    let guild_id =
                                         response["guild_id"].as_str().unwrap_or("").to_string();
 
                                     let (guild_name, guild_icon_url) =
-                                        get_guild_info(&mut channel_client, &current_guild_id);
-                                    current_guild_name = guild_name;
-                                    current_guild_icon_url = guild_icon_url;
+                                        get_guild_info(&mut channel_client, &guild_id);
 
-                                    current_channel_name =
+                                    let channel_name =
                                         response["name"].as_str().unwrap_or("").to_string();
+
+                                    current_guild = Some(Guild {
+                                        id: guild_id,
+                                        name: guild_name,
+                                        icon_url: guild_icon_url,
+                                        channel: Channel {
+                                            id: new_id.clone(),
+                                            name: channel_name,
+                                            users: vec![],
+                                        },
+                                    });
                                 }
                             }
 
-                            emit_channel_state(
-                                &app,
-                                new_id,
-                                current_guild_id.clone(),
-                                current_guild_name.clone(),
-                                current_guild_icon_url.clone(),
-                                current_channel_name.clone(),
-                                &mut users,
-                                &mut speaking,
-                            );
+                            if let Some(ref guild) = current_guild {
+                                let mut g = guild.clone();
+                                g.channel.users = users.values().cloned().collect();
+                                let _ = &app.emit_to("overlay", "guild-update", &g);
+                            }
                         } else {
-                            current_channel_name = String::new();
-
-                            let _ =
-                                app.emit_to("overlay", "channel-update", serde_json::Value::Null);
+                            let _ = app.emit_to("overlay", "guild-update", serde_json::Value::Null);
                         }
-                    } else if let Some(channel_id) = &current_channel_id {
+                    } else if let Some(guild) = &current_guild {
                         match data["evt"].as_str() {
                             Some("VOICE_STATE_CREATE") | Some("VOICE_STATE_UPDATE") => {
                                 if let Some(user) = parse_user(&data["data"]) {
                                     users.insert(user.id.clone(), user);
-                                    try_emit!(
-                                        &app,
-                                        channel_id,
-                                        current_guild_id.clone(),
-                                        current_guild_name.clone(),
-                                        current_guild_icon_url.clone(),
-                                        current_channel_name.clone(),
-                                        &users,
-                                        &speaking,
-                                        last_emit
-                                    );
+                                    let mut g = guild.clone();
+                                    g.channel.users = users.values().cloned().collect();
+                                    try_emit!(&app, &g, last_emit);
                                 }
                             }
                             Some("VOICE_STATE_DELETE") => {
                                 if let Some(user_id) = data["data"]["user"]["id"].as_str() {
                                     users.remove(user_id);
-                                    speaking.remove(user_id);
 
-                                    try_emit!(
-                                        &app,
-                                        channel_id,
-                                        current_guild_id.clone(),
-                                        current_guild_name.clone(),
-                                        current_guild_icon_url.clone(),
-                                        current_channel_name.clone(),
-                                        &users,
-                                        &speaking,
-                                        last_emit
-                                    );
+                                    let mut g = guild.clone();
+                                    g.channel.users = users.values().cloned().collect();
+                                    try_emit!(&app, &g, last_emit);
                                 }
                             }
                             Some("SPEAKING_START") => {
                                 if let Some(user_id) = data["data"]["user_id"].as_str() {
-                                    speaking.insert(user_id.to_string());
+                                    if let Some(user) = users.get_mut(user_id) {
+                                        user.is_speaking = true;
+                                    }
 
-                                    try_emit!(
-                                        &app,
-                                        channel_id,
-                                        current_guild_id.clone(),
-                                        current_guild_name.clone(),
-                                        current_guild_icon_url.clone(),
-                                        current_channel_name.clone(),
-                                        &users,
-                                        &speaking,
-                                        last_emit
-                                    );
+                                    let mut g = guild.clone();
+                                    g.channel.users = users.values().cloned().collect();
+                                    try_emit!(&app, &g, last_emit);
                                 }
                             }
                             Some("SPEAKING_STOP") => {
                                 if let Some(user_id) = data["data"]["user_id"].as_str() {
-                                    speaking.remove(user_id);
+                                    if let Some(user) = users.get_mut(user_id) {
+                                        user.is_speaking = false;
+                                    }
 
-                                    try_emit!(
-                                        &app,
-                                        channel_id,
-                                        current_guild_id.clone(),
-                                        current_guild_name.clone(),
-                                        current_guild_icon_url.clone(),
-                                        current_channel_name.clone(),
-                                        &users,
-                                        &speaking,
-                                        last_emit
-                                    );
+                                    let mut g = guild.clone();
+                                    g.channel.users = users.values().cloned().collect();
+                                    try_emit!(&app, &g, last_emit);
                                 }
                             }
                             _ => {}
@@ -614,8 +537,7 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
                     }
                 }
                 Err(_) => {
-                    let _ =
-                        app.emit_to("overlay", "channel-error", "Channel listener disconnected");
+                    let _ = app.emit_to("overlay", "guild-error", "Channel listener disconnected");
                     break;
                 }
             }
@@ -835,7 +757,7 @@ pub fn disconnect_discord(app_handle: AppHandle, delete_vault_items: bool) -> Re
     }
 
     app_handle
-        .emit_to("overlay", "channel-update", serde_json::Value::Null)
+        .emit_to("overlay", "guild-update", serde_json::Value::Null)
         .map_err(|e| e.to_string())?;
 
     Ok(())

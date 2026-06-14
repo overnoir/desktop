@@ -13,17 +13,15 @@ export const useDiscordStore = defineStore(
   () => {
     const settings = ref<DiscordSettings>({ ...defaultDiscordSettings });
     const connectedUser = ref<DiscordConnectedUser | null>(null);
-    const channel = ref<DiscordChannel | undefined>(undefined);
+    const guild = ref<DiscordGuild | undefined>(undefined);
     const errors = ref<DiscordError[]>([]);
 
     const filtredUsers = computed(() => {
-      const currentChannel = channel.value;
-
-      if (!currentChannel) {
+      if (!guild.value) {
         return [];
       }
 
-      let users = currentChannel.users;
+      let users = guild.value.channel.users;
 
       if (!settings.value.showMe && connectedUser.value) {
         users = users.filter((user) => user.id !== connectedUser.value!.id);
@@ -68,7 +66,7 @@ export const useDiscordStore = defineStore(
       clearErrors,
       addError,
       settings,
-      channel,
+      guild,
       errors,
     };
   },
@@ -78,7 +76,7 @@ export const useDiscordStore = defineStore(
         beforeFrontendSync: sync,
         beforeBackendSync: sync,
       },
-      filterKeys: ["channel"],
+      filterKeys: ["guild"],
     },
   },
 );

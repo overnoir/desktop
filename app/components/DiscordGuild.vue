@@ -1,6 +1,8 @@
 <script setup lang="ts">
 defineProps<{
-  channel: Omit<DiscordChannel, "users" | "id" | "guildId">;
+  guild: Pick<DiscordGuild, "iconUrl" | "name"> & {
+    channel: Pick<DiscordGuild["channel"], "name">;
+  };
 }>();
 
 const { overlayStyles } = useUi();
@@ -9,9 +11,9 @@ const { overlayStyles } = useUi();
 <template>
   <div class="relative">
     <NuxtImg
-      v-if="channel.guildIconUrl"
+      v-if="guild.iconUrl"
       class="border"
-      :src="channel.guildIconUrl"
+      :src="guild.iconUrl"
       :style="{
         borderRadius: overlayStyles.borderRadius,
         height: overlayStyles.size,
@@ -36,7 +38,7 @@ const { overlayStyles } = useUi();
         maxWidth: overlayStyles.size,
       }"
     >
-      {{ channel.guildName }}
+      {{ guild.name }}
     </div>
     <div
       class="absolute bg-background/70 left-0 bottom-0 inline-block w-fit px-[4%] truncate"
@@ -46,7 +48,7 @@ const { overlayStyles } = useUi();
         maxWidth: overlayStyles.size,
       }"
     >
-      {{ channel.name }}
+      {{ guild.channel.name }}
     </div>
   </div>
 </template>
