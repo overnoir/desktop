@@ -1,4 +1,6 @@
-use crate::vault::{delete_vault_item, get_vault_item, save_vault, update_vault_item};
+use crate::vault::{
+    delete_vault_items as delete_vault_items_fn, get_vault_items, update_vault_items,
+};
 use discord_rich_presence::{DiscordIpc, DiscordIpcClient};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -256,21 +258,24 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
             return;
         }
 
-        let access_token = match get_vault_item(&app, "discord_access_token") {
-            Ok(Some(token)) => token,
-            Ok(None) => {
-                let _ = app.emit_to(
-                    "overlay",
-                    "guild-error",
-                    "No access token for channel listener",
-                );
-                return;
-            }
+        let vault = match get_vault_items(&app, &["discord_access_token"]) {
+            Ok(v) => v,
             Err(e) => {
                 let _ = app.emit_to(
                     "overlay",
                     "guild-error",
-                    format!("Failed to read token: {}", e),
+                    format!("Failed to read vault: {}", e),
+                );
+                return;
+            }
+        };
+        let access_token: String = match vault.get("discord_access_token").and_then(|v| v.clone()) {
+            Some(token) => token,
+            None => {
+                let _ = app.emit_to(
+                    "overlay",
+                    "guild-error",
+                    "No access token for channel listener",
                 );
                 return;
             }
@@ -564,30 +569,24 @@ fn save_tokens(app_handle: &AppHandle, token_response: &TokenResponse) -> Result
         .map_err(|e| e.to_string())?
         .as_millis() as u64;
 
-    update_vault_item(
+    update_vault_items(
         app_handle,
-        "discord_access_token",
-        token_response.access_token.clone(),
-    )?;
-    update_vault_item(
-        app_handle,
-        "discord_refresh_token",
-        token_response.refresh_token.clone().unwrap_or_default(),
-    )?;
-    update_vault_item(
-        app_handle,
-        "discord_access_token_expires_at",
-        (now + token_response.expires_in * 1000).to_string(),
-    )?;
-    update_vault_item(
-        app_handle,
-        "discord_refresh_token_expires_at",
-        (now + token_response.expires_in * 1000 + 30 * 24 * 60 * 60 * 1000).to_string(),
-    )?;
-
-    save_vault(app_handle)?;
-
-    Ok(())
+        vec![
+            ("discord_access_token", token_response.access_token.clone()),
+            (
+                "discord_refresh_token",
+                token_response.refresh_token.clone().unwrap_or_default(),
+            ),
+            (
+                "discord_access_token_expires_at",
+                (now + token_response.expires_in * 1000).to_string(),
+            ),
+            (
+                "discord_refresh_token_expires_at",
+                (now + token_response.expires_in * 1000 + 30 * 24 * 60 * 60 * 1000).to_string(),
+            ),
+        ],
+    )
 }
 
 async fn authorize(app_handle: &AppHandle) -> Result<TokenResponse, String> {
@@ -654,10 +653,26 @@ async fn authorize(app_handle: &AppHandle) -> Result<TokenResponse, String> {
 pub async fn connect_discord(app_handle: AppHandle) -> Result<ConnectedUser, String> {
     let discord = app_handle.state::<Discord>();
 
-    let access_token_expires_at = get_vault_item(&app_handle, "discord_access_token_expires_at")?;
-    let refresh_token_expires_at = get_vault_item(&app_handle, "discord_refresh_token_expires_at")?;
-    let refresh_token = get_vault_item(&app_handle, "discord_refresh_token")?;
-    let access_token = get_vault_item(&app_handle, "discord_access_token")?;
+    let vault = get_vault_items(
+        &app_handle,
+        &[
+            "discord_refresh_token_expires_at",
+            "discord_access_token_expires_at",
+            "discord_refresh_token",
+            "discord_access_token",
+        ],
+    )?;
+
+    let access_token_expires_at = vault
+        .get("discord_access_token_expires_at")
+        .cloned()
+        .flatten();
+    let refresh_token_expires_at = vault
+        .get("discord_refresh_token_expires_at")
+        .cloned()
+        .flatten();
+    let refresh_token = vault.get("discord_refresh_token").cloned().flatten();
+    let access_token = vault.get("discord_access_token").cloned().flatten();
 
     let now = SystemTime::now()
         .duration_since(UNIX_EPOCH)
@@ -741,24 +756,21 @@ pub fn disconnect_discord(app_handle: AppHandle, delete_vault_items: bool) -> Re
         *channel_guard = None;
     }
 
-    if delete_vault_items {
-        let keys = [
-            "discord_refresh_token_expires_at",
-            "discord_access_token_expires_at",
-            "discord_refresh_token",
-            "discord_access_token",
-        ];
-
-        for key in keys {
-            delete_vault_item(&app_handle, key)?;
-        }
-
-        save_vault(&app_handle)?;
-    }
-
     app_handle
         .emit_to("overlay", "guild-update", serde_json::Value::Null)
         .map_err(|e| e.to_string())?;
+
+    if delete_vault_items {
+        delete_vault_items_fn(
+            &app_handle,
+            &[
+                "discord_refresh_token_expires_at",
+                "discord_access_token_expires_at",
+                "discord_refresh_token",
+                "discord_access_token",
+            ],
+        )?;
+    }
 
     Ok(())
 }

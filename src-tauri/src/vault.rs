@@ -1,6 +1,7 @@
 use iota_stronghold::{Client, Store};
 use serde::Serialize;
 use std::{
+    collections::HashMap,
     sync::Mutex,
     time::{SystemTime, UNIX_EPOCH},
 };
@@ -115,24 +116,37 @@ pub fn get_vault_metadata(app_handle: AppHandle) -> Result<Vec<VaultItemMetadata
     Ok(metadata)
 }
 
-pub fn get_vault_item(app_handle: &AppHandle, key: &str) -> Result<Option<String>, String> {
+pub fn get_vault_items(
+    app_handle: &AppHandle,
+    keys: &[&str],
+) -> Result<HashMap<String, Option<String>>, String> {
     let vault_state = app_handle.state::<VaultState>();
     let store_guard = vault_state.store.lock().map_err(|e| e.to_string())?;
     let store = store_guard
         .as_ref()
         .ok_or("Vault store is not initialized")?;
 
-    match store.get(key.as_bytes()) {
-        Ok(Some(data)) => match serde_json::from_slice::<serde_json::Value>(&data) {
-            Ok(parsed) => Ok(parsed["value"].as_str().map(|s| s.to_string())),
-            Err(_) => Ok(None),
-        },
-        Ok(None) => Ok(None),
-        Err(e) => Err(format!("Failed to read vault: {}", e)),
+    let mut result = HashMap::new();
+
+    for &key in keys {
+        let value = match store.get(key.as_bytes()) {
+            Ok(Some(data)) => match serde_json::from_slice::<serde_json::Value>(&data) {
+                Ok(parsed) => parsed["value"].as_str().map(|s| s.to_string()),
+                Err(_) => None,
+            },
+            Ok(None) => None,
+            Err(e) => return Err(format!("Failed to read vault: {}", e)),
+        };
+        result.insert(key.to_string(), value);
     }
+
+    Ok(result)
 }
 
-pub fn update_vault_item(app_handle: &AppHandle, key: &str, value: String) -> Result<(), String> {
+pub fn update_vault_items(
+    app_handle: &AppHandle,
+    items: Vec<(&str, String)>,
+) -> Result<(), String> {
     let now = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map_err(|e| e.to_string())?
@@ -146,35 +160,37 @@ pub fn update_vault_item(app_handle: &AppHandle, key: &str, value: String) -> Re
             .as_ref()
             .ok_or("Vault store is not initialized")?;
 
-        let existing = store
-            .get(key.as_bytes())
-            .map_err(|e| e.to_string())?
-            .and_then(|data| serde_json::from_slice::<serde_json::Value>(&data).ok());
+        for (key, value) in items {
+            let existing = store
+                .get(key.as_bytes())
+                .map_err(|e| e.to_string())?
+                .and_then(|data| serde_json::from_slice::<serde_json::Value>(&data).ok());
 
-        let item = if let Some(ref existing) = existing {
-            let created_at = existing["createdAt"].as_u64().unwrap_or(now);
+            let item = if let Some(ref existing) = existing {
+                let created_at = existing["createdAt"].as_u64().unwrap_or(now);
 
-            serde_json::json!({
-                "createdAt": created_at,
-                "updatedAt": now,
-                "value": value,
-            })
-        } else {
-            serde_json::json!({
-                "createdAt": now,
-                "value": value,
-            })
-        };
+                serde_json::json!({
+                    "createdAt": created_at,
+                    "updatedAt": now,
+                    "value": value,
+                })
+            } else {
+                serde_json::json!({
+                    "createdAt": now,
+                    "value": value,
+                })
+            };
 
-        store
-            .insert(key.as_bytes().to_vec(), item.to_string().into_bytes(), None)
-            .map_err(|e| format!("Failed to update vault: {}", e))?;
+            store
+                .insert(key.as_bytes().to_vec(), item.to_string().into_bytes(), None)
+                .map_err(|e| format!("Failed to update vault: {}", e))?;
+        }
     }
 
-    Ok(())
+    save_vault(app_handle)
 }
 
-pub fn delete_vault_item(app_handle: &AppHandle, key: &str) -> Result<(), String> {
+pub fn delete_vault_items(app_handle: &AppHandle, keys: &[&str]) -> Result<(), String> {
     let vault_state = app_handle.state::<VaultState>();
 
     let store_guard = vault_state.store.lock().map_err(|e| e.to_string())?;
@@ -182,14 +198,16 @@ pub fn delete_vault_item(app_handle: &AppHandle, key: &str) -> Result<(), String
         .as_ref()
         .ok_or("Vault store is not initialized")?;
 
-    store
-        .delete(key.as_bytes())
-        .map_err(|e| format!("Failed to delete vault item: {}", e))?;
+    for &key in keys {
+        store
+            .delete(key.as_bytes())
+            .map_err(|e| format!("Failed to delete vault item: {}", e))?;
+    }
 
-    Ok(())
+    save_vault(app_handle)
 }
 
-pub fn save_vault(app_handle: &AppHandle) -> Result<(), String> {
+fn save_vault(app_handle: &AppHandle) -> Result<(), String> {
     let vault_state = app_handle.state::<VaultState>();
 
     {
