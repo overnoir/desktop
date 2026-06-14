@@ -151,8 +151,13 @@ fn recv_until_response(
     client: &mut DiscordIpcClient,
     nonce: &str,
     users: &mut HashMap<String, User>,
+    stop: &AtomicBool,
 ) -> Result<Value, String> {
     loop {
+        if stop.load(Ordering::Relaxed) {
+            return Err("Stopped".to_string());
+        }
+
         let (_, data) = client.recv().map_err(|e| e.to_string())?;
 
         if data["nonce"].as_str() == Some(nonce) {
@@ -193,13 +198,14 @@ fn send_and_wait(
     client: &mut DiscordIpcClient,
     command: Value,
     users: &mut HashMap<String, User>,
+    stop: &AtomicBool,
 ) -> Result<Value, String> {
     let nonce = command["nonce"]
         .as_str()
         .ok_or("Command must have a nonce")?
         .to_string();
     client.send(command, 1).map_err(|e| e.to_string())?;
-    recv_until_response(client, &nonce, users)
+    recv_until_response(client, &nonce, users, stop)
 }
 
 fn get_guild_info(client: &mut DiscordIpcClient, guild_id: &str) -> (String, Option<String>) {
@@ -289,6 +295,7 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
                 "cmd": "AUTHENTICATE",
             }),
             &mut users,
+            &*listener_stop,
         ) {
             Ok(auth_data) => {
                 let user_data = &auth_data["user"];
@@ -331,6 +338,7 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
                 "cmd": "SUBSCRIBE",
             }),
             &mut users,
+            &*listener_stop,
         )
         .is_err()
         {
@@ -349,6 +357,7 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
                 "nonce": Uuid::new_v4().to_string()
             }),
             &mut users,
+            &*listener_stop,
         );
 
         let mut current_guild: Option<Guild> = None;
@@ -379,6 +388,7 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
                             "evt": evt,
                         }),
                         &mut users,
+                        &*listener_stop,
                     );
                 }
 
@@ -406,6 +416,10 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
         while !listener_stop.load(Ordering::Relaxed) {
             match channel_client.recv() {
                 Ok((_, data)) => {
+                    if listener_stop.load(Ordering::Relaxed) {
+                        break;
+                    }
+
                     if data["evt"] == "VOICE_CHANNEL_SELECT" {
                         let new_channel_id =
                             data["data"]["channel_id"].as_str().map(|s| s.to_string());
@@ -421,6 +435,7 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
                                         "evt": evt,
                                     }),
                                     &mut users,
+                                    &*listener_stop,
                                 );
                             }
                         }
@@ -438,6 +453,7 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
                                         "evt": evt,
                                     }),
                                     &mut users,
+                                    &*listener_stop,
                                 );
                             }
 
@@ -455,7 +471,7 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
                                 .is_ok()
                             {
                                 if let Ok(response) =
-                                    recv_until_response(&mut channel_client, &nonce, &mut users)
+                                    recv_until_response(&mut channel_client, &nonce, &mut users, &*listener_stop)
                                 {
                                     if let Some(voice_states) = response["voice_states"].as_array()
                                     {
