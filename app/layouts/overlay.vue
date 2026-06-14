@@ -14,6 +14,12 @@ if (advanced.value.autoStart !== (await tauriAutoStartIsEnabled())) {
   }
 }
 
+if (
+  advanced.value.alwaysOnTop !== (await overlayWebviewWindow.isAlwaysOnTop())
+) {
+  await overlayWebviewWindow.setAlwaysOnTop(advanced.value.alwaysOnTop);
+}
+
 await overlayWebviewWindow.setPosition(
   new TauriDpiLogicalPosition(general.value.x, general.value.y),
 );

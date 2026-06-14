@@ -90,6 +90,10 @@ export default {
       description:
         "Uygulamanın diğer uygulamalar tarafından yakalanmasını engeller (örneğin ekran kaydı uygulamaları).",
     },
+    alwaysOnTop: {
+      title: "Her Zaman Üstte",
+      description: "Overlayın her zaman üstte olup olmayacağını ayarlayın.",
+    },
     reset: {
       title: "Sıfırla",
       description: "Tüm uygulama ayarlarını varsayılan ayarlarına döndürün.",

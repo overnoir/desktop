@@ -64,6 +64,7 @@ export type SettingsGeneral = {
 export type SettingsAdvanced = {
   preventCapture: boolean;
   ignoreCursor: boolean;
+  alwaysOnTop: boolean;
   autoStart: boolean;
 };
 

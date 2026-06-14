@@ -73,13 +73,26 @@ async function reset() {
 
   settingsStore.reset();
 
+  if (advanced.value.autoStart !== (await tauriAutoStartIsEnabled())) {
+    if (advanced.value.autoStart) {
+      await tauriAutoStartEnable();
+    } else {
+      await tauriAutoStartDisable();
+    }
+  }
+
+  if (
+    advanced.value.alwaysOnTop !== (await overlayWebviewWindow.isAlwaysOnTop())
+  ) {
+    await overlayWebviewWindow.setAlwaysOnTop(advanced.value.alwaysOnTop);
+  }
+
   await overlayWebviewWindow.setContentProtected(advanced.value.preventCapture);
   await mainWebviewWindow.setContentProtected(advanced.value.preventCapture);
   await overlayWebviewWindow.setPosition(
     new TauriWindowLogicalPosition(general.value.x, general.value.y),
   );
   await updateIgnoreCursor(advanced.value.ignoreCursor);
-  await tauriAutoStartDisable();
 
   $toast(t("settings.reset.success"));
 }
@@ -402,6 +415,19 @@ async function reset() {
               overlayWebviewWindow &&
                 overlayWebviewWindow.setContentProtected($event);
               mainWebviewWindow.setContentProtected($event);
+            "
+          />
+        </SettingField>
+        <Separator />
+        <SettingField
+          :description="$t('settings.alwaysOnTop.description')"
+          :title="$t('settings.alwaysOnTop.title')"
+        >
+          <Switch
+            v-model="advanced.alwaysOnTop"
+            @update:model-value="
+              overlayWebviewWindow &&
+              overlayWebviewWindow.setAlwaysOnTop($event)
             "
           />
         </SettingField>

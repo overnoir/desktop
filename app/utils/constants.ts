@@ -21,6 +21,7 @@ export const defaultSettingsGeneral: SettingsGeneral = {
 export const defaultSettingsAdvanced: SettingsAdvanced = {
   preventCapture: false,
   ignoreCursor: false,
+  alwaysOnTop: true,
   autoStart: false,
 };
 
@@ -62,7 +63,6 @@ export const overlayWebviewWindowOptions: Omit<
   acceptFirstMouse: true,
   decorations: false,
   transparent: true,
-  alwaysOnTop: true,
   skipTaskbar: true,
   resizable: false,
   url: "/overlay",
