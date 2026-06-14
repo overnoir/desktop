@@ -161,10 +161,17 @@ export default {
       error: "Bağlantı kesilirken bir sorun oluştu.",
       description: "{username} olarak bağlanıldı.",
       button: "Bağlantıyı Kes",
+      dialog: {
+        title: "Discord RPC Bağlantısını Kes",
+        description: "Discord bağlantınızı kesmek istediğinize emin misiniz?",
+        deleteVaultItems: "Token verilerini kasadan sil",
+        confirm: "Evet, kes",
+        cancel: "Vazgeç",
+      },
     },
     show: {
-      whileSpeaking: "Konuşurken",
       always: "Her Zaman",
+      whileSpeaking: "Konuşurken",
       never: "Gösterme",
     },
     showGuild: {

@@ -1,4 +1,4 @@
-use crate::vault::{get_vault_item, save_vault, update_vault};
+use crate::vault::{delete_vault_item, get_vault_item, save_vault, update_vault_item};
 use discord_rich_presence::{DiscordIpc, DiscordIpcClient};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -642,22 +642,22 @@ fn save_tokens(app_handle: &AppHandle, token_response: &TokenResponse) -> Result
         .map_err(|e| e.to_string())?
         .as_millis() as u64;
 
-    update_vault(
+    update_vault_item(
         app_handle,
         "discord_access_token",
         token_response.access_token.clone(),
     )?;
-    update_vault(
+    update_vault_item(
         app_handle,
         "discord_refresh_token",
         token_response.refresh_token.clone().unwrap_or_default(),
     )?;
-    update_vault(
+    update_vault_item(
         app_handle,
         "discord_access_token_expires_at",
         (now + token_response.expires_in * 1000).to_string(),
     )?;
-    update_vault(
+    update_vault_item(
         app_handle,
         "discord_refresh_token_expires_at",
         (now + token_response.expires_in * 1000 + 30 * 24 * 60 * 60 * 1000).to_string(),
@@ -806,7 +806,7 @@ pub async fn connect_discord(app_handle: AppHandle) -> Result<ConnectedUser, Str
 }
 
 #[tauri::command]
-pub fn disconnect_discord(app_handle: AppHandle) -> Result<(), String> {
+pub fn disconnect_discord(app_handle: AppHandle, delete_vault_items: bool) -> Result<(), String> {
     let discord = app_handle.state::<Discord>();
 
     {
@@ -817,6 +817,21 @@ pub fn disconnect_discord(app_handle: AppHandle) -> Result<(), String> {
         }
 
         *channel_guard = None;
+    }
+
+    if delete_vault_items {
+        let keys = [
+            "discord_refresh_token_expires_at",
+            "discord_access_token_expires_at",
+            "discord_refresh_token",
+            "discord_access_token",
+        ];
+
+        for key in keys {
+            delete_vault_item(&app_handle, key)?;
+        }
+
+        save_vault(&app_handle)?;
     }
 
     app_handle

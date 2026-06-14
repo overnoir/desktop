@@ -13,6 +13,7 @@ async function clear() {
   try {
     await tauriCoreInvoke("clear_vault");
     metadata.value = [];
+    $toast(t("vault.clear.success"));
   } catch {
     $toast(t("vault.clear.error"));
   }

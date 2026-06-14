@@ -71,28 +71,16 @@ pub fn init_vault(app_handle: &AppHandle) {
 pub fn clear_vault(app_handle: AppHandle) -> Result<(), String> {
     let vault_state = app_handle.state::<VaultState>();
 
-    {
-        let store_guard = vault_state.store.lock().map_err(|e| e.to_string())?;
-        let store = store_guard
-            .as_ref()
-            .ok_or("Vault store is not initialized")?;
+    let store_guard = vault_state.store.lock().map_err(|e| e.to_string())?;
+    let store = store_guard
+        .as_ref()
+        .ok_or("Vault store is not initialized")?;
 
-        store
-            .clear()
-            .map_err(|e| format!("Failed to clear vault: {}", e))?;
-    }
+    store
+        .clear()
+        .map_err(|e| format!("Failed to clear vault: {}", e))?;
 
-    {
-        let stronghold_guard = vault_state.stronghold.lock().map_err(|e| e.to_string())?;
-
-        let stronghold = stronghold_guard
-            .as_ref()
-            .ok_or("Vault stronghold is not initialized")?;
-
-        stronghold
-            .save()
-            .map_err(|e| format!("Failed to save vault after reset: {}", e))?;
-    }
+    save_vault(&app_handle)?;
 
     Ok(())
 }
@@ -144,7 +132,7 @@ pub fn get_vault_item(app_handle: &AppHandle, key: &str) -> Result<Option<String
     }
 }
 
-pub fn update_vault(app_handle: &AppHandle, key: &str, value: String) -> Result<(), String> {
+pub fn update_vault_item(app_handle: &AppHandle, key: &str, value: String) -> Result<(), String> {
     let now = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map_err(|e| e.to_string())?
@@ -182,6 +170,21 @@ pub fn update_vault(app_handle: &AppHandle, key: &str, value: String) -> Result<
             .insert(key.as_bytes().to_vec(), item.to_string().into_bytes(), None)
             .map_err(|e| format!("Failed to update vault: {}", e))?;
     }
+
+    Ok(())
+}
+
+pub fn delete_vault_item(app_handle: &AppHandle, key: &str) -> Result<(), String> {
+    let vault_state = app_handle.state::<VaultState>();
+
+    let store_guard = vault_state.store.lock().map_err(|e| e.to_string())?;
+    let store = store_guard
+        .as_ref()
+        .ok_or("Vault store is not initialized")?;
+
+    store
+        .delete(key.as_bytes())
+        .map_err(|e| format!("Failed to delete vault item: {}", e))?;
 
     Ok(())
 }
