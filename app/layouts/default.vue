@@ -1,6 +1,10 @@
+<script setup lang="ts">
+const isMacOS = tauriOSType() === "macos";
+</script>
+
 <template>
-  <Html class="rounded-xl">
-    <Body class="rounded-xl">
+  <Html :class="{ 'rounded-2xl': isMacOS }">
+    <Body :class="{ 'rounded-2xl': isMacOS }">
       <NuxtLoadingIndicator color="var(--primary)" />
       <LayoutTitlebar />
       <SonnerToaster />

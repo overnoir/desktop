@@ -31,7 +31,7 @@
 
 @layer base {
   body {
-    @apply bg-background text-foreground  contain-paint selection:bg-primary/50 selection:text-foreground font-[Inter];
+    @apply bg-background text-foreground contain-paint selection:bg-primary/50 selection:text-foreground font-[Inter];
   }
   * {
     @apply border-border outline-border/50 scrollbar-thumb-secondary scrollbar-thin;
