@@ -248,10 +248,10 @@ async function reset() {
         </Accordion>
         <Separator />
         <SettingField
-          :description="$t('settings.isDraggable.description')"
-          :title="$t('settings.isDraggable.title')"
+          :description="$t('settings.showDrag.description')"
+          :title="$t('settings.showDrag.title')"
         >
-          <Switch v-model="general.isDraggable" />
+          <Switch v-model="general.showDrag" />
         </SettingField>
         <Separator />
         <SettingField

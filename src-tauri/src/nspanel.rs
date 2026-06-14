@@ -26,7 +26,7 @@ pub fn init_nspanel(app_handle: AppHandle) {
     });
 
     panel.set_style_mask(StyleMask::empty().nonactivating_panel().into());
-    panel.set_level(PanelLevel::MainMenu.value());
+    panel.set_level(PanelLevel::ScreenSaver.value() + 1);
     panel.set_hides_on_deactivate(false);
     panel.set_works_when_modal(true);
     panel.set_collection_behavior(

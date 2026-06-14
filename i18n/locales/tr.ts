@@ -66,7 +66,7 @@ export default {
       title: "Köşe Yuvarlaklığı",
       description: "Uygulama köşelerinin yuvarlaklık seviyesini ayarlayın.",
     },
-    isDraggable: {
+    showDrag: {
       title: "Sürükleme",
       description: "Uygulamanın sürüklenebilir olup olmadığını belirleyin.",
     },

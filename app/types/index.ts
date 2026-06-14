@@ -51,10 +51,10 @@ export type SettingsGeneral = {
   showBackground: boolean;
   showSettings: boolean;
   alignment: Alignment;
-  isDraggable: boolean;
-  locale: Locale;
+  showDrag: boolean;
   opacity: number;
   radius: number;
+  locale: Locale;
   size: number;
   gap: number;
   y: number;

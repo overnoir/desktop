@@ -10,16 +10,16 @@ export const settingsGeneralSchema = z.preprocess(
   z.object({
     orientation: z.enum(Orientation).catch(defaultSettingsGeneral.orientation),
     showBackground: z.boolean().catch(defaultSettingsGeneral.showBackground),
-    showSettings: z.boolean().catch(defaultSettingsGeneral.showSettings),
-    alignment: z.enum(Alignment).catch(defaultSettingsGeneral.alignment),
-    isDraggable: z.boolean().catch(defaultSettingsGeneral.isDraggable),
-    x: z.number().min(-9999).max(9999).catch(defaultSettingsGeneral.x),
-    y: z.number().min(-9999).max(9999).catch(defaultSettingsGeneral.y),
-    locale: z.enum(Locale).catch(defaultSettingsGeneral.locale),
     opacity: z.number().min(0).max(100).catch(defaultSettingsGeneral.opacity),
     radius: z.number().min(0).max(100).catch(defaultSettingsGeneral.radius),
+    showSettings: z.boolean().catch(defaultSettingsGeneral.showSettings),
+    alignment: z.enum(Alignment).catch(defaultSettingsGeneral.alignment),
     size: z.number().min(0).max(250).catch(defaultSettingsGeneral.size),
+    x: z.number().min(-9999).max(9999).catch(defaultSettingsGeneral.x),
+    y: z.number().min(-9999).max(9999).catch(defaultSettingsGeneral.y),
     gap: z.number().min(0).max(100).catch(defaultSettingsGeneral.gap),
+    showDrag: z.boolean().catch(defaultSettingsGeneral.showDrag),
+    locale: z.enum(Locale).catch(defaultSettingsGeneral.locale),
   }),
 ) satisfies z.ZodType<SettingsGeneral>;
 

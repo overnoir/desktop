@@ -9,7 +9,7 @@ export const defaultSettingsGeneral: SettingsGeneral = {
   locale: Locale.Turkish,
   showBackground: true,
   showSettings: true,
-  isDraggable: true,
+  showDrag: true,
   opacity: 100,
   radius: 50,
   size: 50,

@@ -1,12 +1,15 @@
 <script setup lang="ts">
+import { PhysicalPosition } from "@tauri-apps/api/dpi";
+
 definePageMeta({
   layout: "overlay",
 });
 
+const { users, channel } = storeToRefs(useDiscordStore());
 const { general } = storeToRefs(useSettingsStore());
-const discordStore = useDiscordStore();
-const { users, channel } = storeToRefs(discordStore);
+const isMacOS = tauriOSType() === "macos";
 const { overlayStyles } = useUi();
+const dragButton = ref();
 
 async function openMainWebviewWindow() {
   const mainWebviewWindow = (
@@ -23,6 +26,44 @@ async function openMainWebviewWindow() {
       mainWebviewWindowOptions,
     );
   }
+}
+
+if (isMacOS) {
+  const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
+  const isDragging = ref(false);
+  const offsetX = ref(0);
+  const offsetY = ref(0);
+
+  useEventListener(dragButton, "mousedown", async (e) => {
+    if (e.button !== 0) {
+      return;
+    }
+
+    e.preventDefault();
+
+    const pos = await overlayWebviewWindow.outerPosition();
+
+    offsetX.value = e.screenX - pos.x;
+    offsetY.value = e.screenY - pos.y;
+    isDragging.value = true;
+  });
+
+  useEventListener(window, "mousemove", async (e) => {
+    if (!isDragging.value) {
+      return;
+    }
+
+    overlayWebviewWindow.setPosition(
+      new PhysicalPosition(
+        e.screenX - offsetX.value,
+        e.screenY - offsetY.value,
+      ),
+    );
+  });
+
+  useEventListener(window, "mouseup", async () => {
+    isDragging.value = false;
+  });
 }
 </script>
 
@@ -60,13 +101,14 @@ async function openMainWebviewWindow() {
       <Icon name="lucide:sliders-horizontal" class="size-1/2" />
     </Button>
     <Button
-      v-if="general.isDraggable"
-      data-tauri-drag-region
+      v-if="general.showDrag"
+      ref="dragButton"
       :style="{
         borderRadius: overlayStyles.borderRadius,
         height: overlayStyles.size,
         width: overlayStyles.size,
       }"
+      :data-tauri-drag-region="!isMacOS"
       class="bg-background!"
       variant="outline"
       size="icon"
