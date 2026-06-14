@@ -5,7 +5,7 @@ definePageMeta({
   layout: "overlay",
 });
 
-const { users, channel } = storeToRefs(useDiscordStore());
+const { users, channel, settings } = storeToRefs(useDiscordStore());
 const { general } = storeToRefs(useSettingsStore());
 const isMacOS = tauriOSType() === "macos";
 const { overlayStyles } = useUi();
@@ -78,7 +78,7 @@ if (isMacOS) {
     class="flex"
   >
     <DiscordChannel
-      v-if="channel"
+      v-if="channel && settings.showGuild"
       :channel="{
         guildIconUrl: channel.guildIconUrl,
         guildName: channel.guildName,

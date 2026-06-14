@@ -163,9 +163,14 @@ export default {
       button: "Bağlantıyı Kes",
     },
     show: {
-      always: "Her Zaman",
       whileSpeaking: "Konuşurken",
+      always: "Her Zaman",
       never: "Gösterme",
+    },
+    showGuild: {
+      title: "Sunucu Bilgisini Göster",
+      description:
+        "Sunucu adı, sunucu iconu ve kanal adı overlay'de görünüp görünmeyeceğini ayarlayın.",
     },
     showMe: {
       title: "Beni Göster",

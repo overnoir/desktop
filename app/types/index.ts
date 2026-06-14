@@ -81,6 +81,7 @@ export type DiscordSettings = {
   showAvatarAnimated: Show;
   displayName: DisplayName;
   showDisplayName: Show;
+  showGuild: boolean;
   userLimit: number;
   showMe: boolean;
 };

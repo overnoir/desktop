@@ -48,6 +48,7 @@ export const discordSettingsSchema = z.preprocess(
   z.object({
     showDisplayName: z.enum(Show).catch(defaultDiscordSettings.showDisplayName),
     displayName: z.enum(DisplayName).catch(defaultDiscordSettings.displayName),
+    showGuild: z.boolean().catch(defaultDiscordSettings.showGuild),
     showMe: z.boolean().catch(defaultDiscordSettings.showMe),
     showAvatarDecorationAnimated: z
       .enum(Show)

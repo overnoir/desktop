@@ -32,6 +32,7 @@ export const defaultDiscordSettings: DiscordSettings = {
   displayName: DisplayName.Nick,
   showDisplayName: Show.Always,
   showOnlySpeakers: false,
+  showGuild: true,
   userLimit: 25,
   showMe: true,
 };
