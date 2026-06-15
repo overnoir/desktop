@@ -71,9 +71,13 @@ onMounted(() => (route.meta.headerImageUrl = avatarUrl.value));
           <Icon name="lucide:sliders-horizontal" />
           {{ $t("discord.tabs.1") }}
         </TabsTrigger>
-        <TabsTrigger value="errors">
+        <TabsTrigger
+          :class="{ 'text-destructive': errors.length }"
+          value="errors"
+        >
           <Icon name="lucide:triangle-alert" />
           {{ $t("discord.tabs.2") }}
+          {{ errors.length ? `(${errors.length})` : undefined }}
         </TabsTrigger>
       </TabsList>
       <TabsContent value="connection">
