@@ -9,6 +9,7 @@ const { users, guild, settings } = storeToRefs(useDiscordStore());
 const { general } = storeToRefs(useSettingsStore());
 const isMacOS = tauriOSType() === "macos";
 const { overlayStyles } = useUi();
+const isOnline = useOnline();
 const dragButton = ref();
 
 async function openMainWebviewWindow() {
@@ -77,17 +78,32 @@ if (isMacOS) {
     }"
     class="flex"
   >
-    <DiscordGuild
-      v-if="guild && settings.showGuild"
-      :guild="{
-        channel: {
-          name: guild.channel.name,
-        },
-        iconUrl: guild.iconUrl,
-        name: guild.name,
+    <template v-if="isOnline">
+      <DiscordGuild
+        v-if="guild && settings.showGuild"
+        :guild="{
+          channel: {
+            name: guild.channel.name,
+          },
+          iconUrl: guild.iconUrl,
+          name: guild.name,
+        }"
+      />
+      <DiscordUser v-for="user in users" :key="user.id" :user />
+    </template>
+    <Button
+      v-else
+      :style="{
+        borderRadius: overlayStyles.borderRadius,
+        height: overlayStyles.size,
+        width: overlayStyles.size,
       }"
-    />
-    <DiscordUser v-for="user in users" :key="user.id" :user />
+      class="bg-red-500! border-red-600"
+      variant="outline"
+      size="icon"
+    >
+      <Icon name="lucide:wifi-off" class="size-1/2" />
+    </Button>
     <Button
       v-if="general.showSettings"
       :style="{
