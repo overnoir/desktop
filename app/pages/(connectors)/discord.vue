@@ -42,11 +42,6 @@ async function toggleConnection() {
   loading.value = false;
 }
 
-async function resetDiscordSettings() {
-  discordStore.resetSettings();
-  $toast.success(t("discord.reset.success"));
-}
-
 watch(avatarUrl, (value) => {
   route.meta.headerImageUrl = value;
 });
@@ -161,6 +156,13 @@ onMounted(() => (route.meta.headerImageUrl = avatarUrl.value));
           :title="$t('discord.showGuild.title')"
         >
           <Switch v-model="settings.showGuild" />
+        </SettingField>
+        <Separator />
+        <SettingField
+          :description="$t('discord.showGuildIconAnimated.description')"
+          :title="$t('discord.showGuildIconAnimated.title')"
+        >
+          <Switch v-model="settings.showGuildIconAnimated" />
         </SettingField>
         <Separator />
         <SettingField
@@ -338,7 +340,10 @@ onMounted(() => (route.meta.headerImageUrl = avatarUrl.value));
                 </AlertDialogCancel>
                 <AlertDialogAction
                   variant="destructive"
-                  @click="resetDiscordSettings"
+                  @click="
+                    discordStore.resetSettings();
+                    $toast.success(t('discord.reset.success'));
+                  "
                 >
                   {{ $t("discord.reset.dialog.confirm") }}
                 </AlertDialogAction>

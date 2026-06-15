@@ -179,6 +179,11 @@ export default {
       description:
         "Sunucu adı, sunucu iconu ve kanal adı overlay'de görünüp görünmeyeceğini ayarlayın.",
     },
+    showGuildIconAnimated: {
+      title: "Sunucu İkonu Animasyonu",
+      description:
+        "Sunucu ikonunun animasyonlu gösterilip gösterilmeyeceğini ayarlayın.",
+    },
     showMe: {
       title: "Beni Göster",
       description: "Kendinizin görünüp görünmeyeceğini ayarlayın.",

@@ -55,6 +55,9 @@ export const discordSettingsSchema = z.preprocess(
     showAvatarDecorationAnimated: z
       .enum(Show)
       .catch(defaultDiscordSettings.showAvatarDecorationAnimated),
+    showGuildIconAnimated: z
+      .boolean()
+      .catch(defaultDiscordSettings.showGuildIconAnimated),
     showAvatarDecoration: z
       .enum(Show)
       .catch(defaultDiscordSettings.showAvatarDecoration),
