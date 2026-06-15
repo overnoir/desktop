@@ -27,7 +27,10 @@ async function toggleConnection() {
       await tauriCoreInvoke("disconnect_discord", {
         deleteVaultItems: deleteVaultItemsOnDisconnect.value,
       });
-      deleteVaultItemsOnDisconnect.value = false;
+      if (deleteVaultItemsOnDisconnect.value) {
+        deleteVaultItemsOnDisconnect.value = false;
+        await discordStore.$tauri.saveNow();
+      }
       connectedUser.value = null;
     }
     route.meta.headerImageUrl = avatarUrl.value;
