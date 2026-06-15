@@ -43,6 +43,7 @@ if (tauriOSType() === "macos") {
     general.value.y = y;
   });
 } else {
+  await overlayWebviewWindow.setIgnoreCursorEvents(advanced.value.ignoreCursor);
   await overlayWebviewWindow.onMoved(({ payload }) => {
     const { x, y } = payload;
     general.value.x = x;
