@@ -4,7 +4,14 @@ const { user } = defineProps<{
 }>();
 
 const { settings: discordSettings } = storeToRefs(useDiscordStore());
-const { overlayStyles } = useUi();
+const {
+  boxStyles,
+  avatarDecorationStyles,
+  iconStyles,
+  speakingStyles,
+  borderRadiusStyles,
+  nameStyles,
+} = useUi();
 
 const displayName = computed(() =>
   discordSettings.value.displayName === DisplayName.Nick
@@ -56,11 +63,7 @@ const avatarUrl = computed(() =>
     <NuxtImg
       :src="avatarUrl"
       class="size-full border"
-      :style="{
-        borderRadius: overlayStyles.borderRadius,
-        height: overlayStyles.size,
-        width: overlayStyles.size,
-      }"
+      :style="boxStyles"
       alt="Avatar"
     />
     <NuxtImg
@@ -72,19 +75,11 @@ const avatarUrl = computed(() =>
       }`"
       class="absolute left-0 top-0 size-full scale-[1.2]"
       alt="Avatar Decoration"
-      :style="{
-        height: overlayStyles.size,
-        width: overlayStyles.size,
-      }"
+      :style="avatarDecorationStyles"
     />
     <div
       v-if="user.isSpeaking"
-      :style="{
-        '--tw-ring-shadow': `var(--tw-ring-inset) 0 0 0 ${overlayStyles.ringWidth} var(--tw-ring-color)`,
-        borderRadius: overlayStyles.borderRadius,
-        height: overlayStyles.size,
-        width: overlayStyles.size,
-      }"
+      :style="speakingStyles"
       class="absolute left-0 top-0 ring ring-inset ring-green-600"
     />
     <div
@@ -96,34 +91,23 @@ const avatarUrl = computed(() =>
         user.isBot
       "
       class="absolute bg-background/70 left-0 top-0 flex items-center gap-[4%] p-[4%]"
-      :style="{
-        borderRadius: overlayStyles.borderRadius,
-      }"
+      :style="borderRadiusStyles"
     >
       <Icon
         v-if="user.isMuted || user.isSelfMuted"
-        :style="{
-          width: overlayStyles.iconSize,
-          height: overlayStyles.iconSize,
-        }"
+        :style="iconStyles"
         :class="{ 'text-red-600': user.isMuted }"
         name="lucide:mic-off"
       />
       <Icon
         v-if="user.isDeafened || user.isSelfDeafened"
-        :style="{
-          width: overlayStyles.iconSize,
-          height: overlayStyles.iconSize,
-        }"
+        :style="iconStyles"
         :class="{ 'text-red-600': user.isDeafened }"
         name="lucide:headphone-off"
       />
       <Icon
         v-if="user.isBot"
-        :style="{
-          width: overlayStyles.iconSize,
-          height: overlayStyles.iconSize,
-        }"
+        :style="iconStyles"
         class="scale-110"
         name="lucide:bot"
       />
@@ -131,11 +115,7 @@ const avatarUrl = computed(() =>
     <div
       v-if="showDisplayName"
       class="absolute bg-background/70 left-0 bottom-0 inline-block w-fit px-[4%] truncate"
-      :style="{
-        borderRadius: overlayStyles.borderRadius,
-        fontSize: overlayStyles.nameFontSize,
-        maxWidth: overlayStyles.size,
-      }"
+      :style="nameStyles"
     >
       {{ displayName }}
     </div>

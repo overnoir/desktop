@@ -3,7 +3,7 @@ const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const discordStore = useDiscordStore();
 const { connectedUser, guild } = storeToRefs(discordStore);
 const { general, advanced } = storeToRefs(useSettingsStore());
-const { overlayStyles } = useUi();
+const { opacityStyles, backgroundStyles } = useUi();
 const { create } = useTray();
 
 if (advanced.value.autoStart !== (await tauriAutoStartIsEnabled())) {
@@ -115,24 +115,13 @@ onMounted(async () => {
 </script>
 
 <template>
-  <Html
-    :style="{
-      opacity: overlayStyles.opacity,
-    }"
-  >
+  <Html :style="opacityStyles">
     <Body class="size-max **:select-none **:transition-none bg-transparent">
       <main
         :class="{
           'bg-background border': general.showBackground,
         }"
-        :style="
-          general.showBackground
-            ? {
-                borderRadius: overlayStyles.backgroundBorderRadius,
-                padding: overlayStyles.backgroundPadding,
-              }
-            : undefined
-        "
+        :style="general.showBackground ? backgroundStyles : undefined"
       >
         <slot />
       </main>

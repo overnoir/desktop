@@ -8,7 +8,7 @@ definePageMeta({
 const { users, guild, settings } = storeToRefs(useDiscordStore());
 const { general } = storeToRefs(useSettingsStore());
 const isMacOS = tauriOSType() === "macos";
-const { overlayStyles } = useUi();
+const { gapStyles, boxStyles } = useUi();
 const isOnline = useOnline();
 const dragButton = ref();
 
@@ -73,9 +73,7 @@ if (isMacOS) {
     :class="{
       'flex-col': general.orientation === Orientation.Vertical,
     }"
-    :style="{
-      gap: overlayStyles.gap,
-    }"
+    :style="gapStyles"
     class="flex"
   >
     <template v-if="isOnline">
@@ -93,11 +91,7 @@ if (isMacOS) {
     </template>
     <Button
       v-else
-      :style="{
-        borderRadius: overlayStyles.borderRadius,
-        height: overlayStyles.size,
-        width: overlayStyles.size,
-      }"
+      :style="boxStyles"
       class="bg-red-500! border-red-600"
       variant="outline"
       size="icon"
@@ -106,11 +100,7 @@ if (isMacOS) {
     </Button>
     <Button
       v-if="general.showSettings"
-      :style="{
-        borderRadius: overlayStyles.borderRadius,
-        height: overlayStyles.size,
-        width: overlayStyles.size,
-      }"
+      :style="boxStyles"
       class="bg-background!"
       variant="outline"
       size="icon"
@@ -121,11 +111,7 @@ if (isMacOS) {
     <Button
       v-if="general.showDrag"
       ref="dragButton"
-      :style="{
-        borderRadius: overlayStyles.borderRadius,
-        height: overlayStyles.size,
-        width: overlayStyles.size,
-      }"
+      :style="boxStyles"
       :data-tauri-drag-region="!isMacOS"
       class="bg-background!"
       variant="outline"
