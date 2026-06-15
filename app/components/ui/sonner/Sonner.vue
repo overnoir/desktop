@@ -16,11 +16,11 @@ const props = withDefaults(defineProps<ToasterProps>(), {
       '--normal-border': 'var(--border)',
       '--border-radius': 'var(--radius)',
       '--normal-bg': 'var(--background)',
-      '--success-bg': 'var(--color-green-400)',
-      '--success-border': 'var(--color-green-500)',
+      '--success-bg': 'var(--color-green-500)',
+      '--success-border': 'var(--color-green-600)',
       '--success-text': 'var(--color-green-950)',
-      '--error-bg': 'var(--color-red-400)',
-      '--error-border': 'var(--color-red-500)',
+      '--error-bg': 'var(--color-red-500)',
+      '--error-border': 'var(--color-red-600)',
       '--error-text': 'var(--color-red-950)',
     }"
     v-bind="props"
