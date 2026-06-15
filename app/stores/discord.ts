@@ -31,6 +31,20 @@ export const useDiscordStore = defineStore(
         users = users.filter((user) => user.isSpeaking);
       }
 
+      if (!settings.value.showMutedUsers) {
+        users = users.filter((user) => !user.isSelfMuted && !user.isMuted);
+      }
+
+      if (!settings.value.showDeafenedUsers) {
+        users = users.filter(
+          (user) => !user.isSelfDeafened && !user.isDeafened,
+        );
+      }
+
+      if (!settings.value.showBots) {
+        users = users.filter((user) => !user.isBot);
+      }
+
       if (settings.value.userLimit > 0) {
         users = users.slice(0, settings.value.userLimit);
       }

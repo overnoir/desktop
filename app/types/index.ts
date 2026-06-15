@@ -77,12 +77,15 @@ export type VaultItemMetadata = {
 export type DiscordSettings = {
   showAvatarDecorationAnimated: Show;
   showAvatarDecoration: Show;
+  showDeafenedUsers: boolean;
   showOnlySpeakers: boolean;
   showAvatarAnimated: Show;
   displayName: DisplayName;
+  showMutedUsers: boolean;
   showDisplayName: Show;
   showGuild: boolean;
   userLimit: number;
+  showBots: boolean;
   showMe: boolean;
 };
 

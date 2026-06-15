@@ -48,7 +48,9 @@ export const discordSettingsSchema = z.preprocess(
   z.object({
     showDisplayName: z.enum(Show).catch(defaultDiscordSettings.showDisplayName),
     displayName: z.enum(DisplayName).catch(defaultDiscordSettings.displayName),
+    showMutedUsers: z.boolean().catch(defaultDiscordSettings.showMutedUsers),
     showGuild: z.boolean().catch(defaultDiscordSettings.showGuild),
+    showBots: z.boolean().catch(defaultDiscordSettings.showBots),
     showMe: z.boolean().catch(defaultDiscordSettings.showMe),
     showAvatarDecorationAnimated: z
       .enum(Show)
@@ -59,6 +61,9 @@ export const discordSettingsSchema = z.preprocess(
     showAvatarAnimated: z
       .enum(Show)
       .catch(defaultDiscordSettings.showAvatarAnimated),
+    showDeafenedUsers: z
+      .boolean()
+      .catch(defaultDiscordSettings.showDeafenedUsers),
     showOnlySpeakers: z
       .boolean()
       .catch(defaultDiscordSettings.showOnlySpeakers),

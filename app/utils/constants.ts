@@ -31,8 +31,11 @@ export const defaultDiscordSettings: DiscordSettings = {
   showAvatarDecoration: Show.Never,
   displayName: DisplayName.Nick,
   showDisplayName: Show.Always,
+  showDeafenedUsers: true,
   showOnlySpeakers: false,
+  showMutedUsers: true,
   showGuild: true,
+  showBots: true,
   userLimit: 25,
   showMe: true,
 };

@@ -171,6 +171,27 @@ onMounted(() => (route.meta.headerImageUrl = avatarUrl.value));
         </SettingField>
         <Separator />
         <SettingField
+          :description="$t('discord.showMutedUsers.description')"
+          :title="$t('discord.showMutedUsers.title')"
+        >
+          <Switch v-model="settings.showMutedUsers" />
+        </SettingField>
+        <Separator />
+        <SettingField
+          :description="$t('discord.showDeafenedUsers.description')"
+          :title="$t('discord.showDeafenedUsers.title')"
+        >
+          <Switch v-model="settings.showDeafenedUsers" />
+        </SettingField>
+        <Separator />
+        <SettingField
+          :description="$t('discord.showBots.description')"
+          :title="$t('discord.showBots.title')"
+        >
+          <Switch v-model="settings.showBots" />
+        </SettingField>
+        <Separator />
+        <SettingField
           :description="$t('discord.userLimit.description')"
           :title="$t('discord.userLimit.title')"
         >

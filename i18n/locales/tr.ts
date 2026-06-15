@@ -183,6 +183,21 @@ export default {
       title: "Beni Göster",
       description: "Kendinizin görünüp görünmeyeceğini ayarlayın.",
     },
+    showMutedUsers: {
+      title: "Sessiz Kullanıcıları Göster",
+      description:
+        "Sessiz kullanıcıların overlay'de görünüp görünmeyeceğini ayarlayın.",
+    },
+    showDeafenedUsers: {
+      title: "Sağır Kullanıcıları Göster",
+      description:
+        "Sağır kullanıcıların overlay'de görünüp görünmeyeceğini ayarlayın.",
+    },
+    showBots: {
+      title: "Botları Göster",
+      description:
+        "Bot kullanıcıların overlay'de görünüp görünmeyeceğini ayarlayın.",
+    },
     showOnlySpeakers: {
       title: "Sadece Konuşanları Göster",
       description: "Sadece konuşanların gözükmesini sağlayın.",
