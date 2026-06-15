@@ -11,5 +11,10 @@
       "type": "local",
       "enabled": true,
     },
+    "tauri": {
+      "command": ["npx", "-y", "@hypothesi/tauri-mcp-server"],
+      "type": "local",
+      "enabled": true,
+    },
   },
 }
