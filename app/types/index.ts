@@ -78,7 +78,7 @@ export type DiscordSettings = {
   showAvatarDecorationAnimated: Show;
   showAvatarDecoration: Show;
   showDeafenedUsers: boolean;
-  showOnlySpeakers: boolean;
+  showSpeakersOnly: boolean;
   showAvatarAnimated: Show;
   displayName: DisplayName;
   showMutedUsers: boolean;

@@ -27,7 +27,7 @@ export const useDiscordStore = defineStore(
         users = users.filter((user) => user.id !== connectedUser.value!.id);
       }
 
-      if (settings.value.showOnlySpeakers) {
+      if (settings.value.showSpeakersOnly) {
         users = users.filter((user) => user.isSpeaking);
       }
 

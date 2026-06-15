@@ -164,10 +164,10 @@ onMounted(() => (route.meta.headerImageUrl = avatarUrl.value));
         </SettingField>
         <Separator />
         <SettingField
-          :description="$t('discord.showOnlySpeakers.description')"
-          :title="$t('discord.showOnlySpeakers.title')"
+          :description="$t('discord.showSpeakersOnly.description')"
+          :title="$t('discord.showSpeakersOnly.title')"
         >
-          <Switch v-model="settings.showOnlySpeakers" />
+          <Switch v-model="settings.showSpeakersOnly" />
         </SettingField>
         <Separator />
         <SettingField

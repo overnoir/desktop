@@ -198,7 +198,7 @@ export default {
       description:
         "Bot kullanıcıların overlay'de görünüp görünmeyeceğini ayarlayın.",
     },
-    showOnlySpeakers: {
+    showSpeakersOnly: {
       title: "Sadece Konuşanları Göster",
       description: "Sadece konuşanların gözükmesini sağlayın.",
     },

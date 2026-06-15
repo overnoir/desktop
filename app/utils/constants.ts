@@ -32,7 +32,7 @@ export const defaultDiscordSettings: DiscordSettings = {
   displayName: DisplayName.Nick,
   showDisplayName: Show.Always,
   showDeafenedUsers: true,
-  showOnlySpeakers: false,
+  showSpeakersOnly: false,
   showMutedUsers: true,
   showGuild: true,
   showBots: true,

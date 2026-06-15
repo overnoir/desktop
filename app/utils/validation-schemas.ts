@@ -64,9 +64,9 @@ export const discordSettingsSchema = z.preprocess(
     showDeafenedUsers: z
       .boolean()
       .catch(defaultDiscordSettings.showDeafenedUsers),
-    showOnlySpeakers: z
+    showSpeakersOnly: z
       .boolean()
-      .catch(defaultDiscordSettings.showOnlySpeakers),
+      .catch(defaultDiscordSettings.showSpeakersOnly),
     userLimit: z
       .number()
       .min(0)
