@@ -45,11 +45,8 @@ async function quickSelect(
   const pos = positions[index - (index > 4 ? 1 : 0)];
 
   if (pos) {
-    general.value.x = pos.x;
-    general.value.y = pos.y;
-
     await overlayWebviewWindow.setPosition(
-      new TauriWindowLogicalPosition(general.value.x, general.value.y),
+      new TauriWindowLogicalPosition(pos.x, pos.y),
     );
   }
 }
