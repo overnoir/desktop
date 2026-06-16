@@ -1,68 +1,70 @@
+import type { CSSProperties } from "vue";
+
 export default function () {
   const { general } = storeToRefs(useSettingsStore());
 
-  const size = computed(() => Math.round(general.value.size));
-  const radius = computed(() =>
-    Math.round((general.value.size * general.value.radius) / 200),
-  );
-
-  const boxStyles = computed(() => ({
-    borderRadius: `${Math.round(radius.value)}px`,
-    height: `${Math.round(size.value)}px`,
-    width: `${Math.round(size.value)}px`,
+  const boxStyles = computed<CSSProperties>(() => ({
+    borderRadius: `${Math.round((general.value.size * general.value.radius) / 200)}px`,
+    height: `${Math.round(general.value.size)}px`,
+    width: `${Math.round(general.value.size)}px`,
   }));
 
-  const iconStyles = computed(() => ({
-    height: `${Math.round(general.value.size / 4.5)}px`,
-    width: `${Math.round(general.value.size / 4.5)}px`,
+  const iconStyles = computed<CSSProperties>(() => ({
+    height: `${Math.round(general.value.size / 5.5)}px`,
+    width: `${Math.round(general.value.size / 5.5)}px`,
   }));
 
-  const backgroundStyles = computed(() => ({
-    borderRadius: `${Math.round(radius.value * 1.15)}px`,
+  const backgroundStyles = computed<CSSProperties>(() => ({
+    borderRadius: `${Math.round(((general.value.size * general.value.radius) / 200) * 1.15)}px`,
     padding: `${Math.round(general.value.size / 25)}px`,
   }));
 
-  const nameStyles = computed(() => ({
-    borderRadius: `${Math.round(radius.value)}px`,
+  const nameStyles = computed<CSSProperties>(() => ({
+    borderRadius: `${Math.round((general.value.size * general.value.radius) / 200)}px`,
+    paddingInline: `${Math.round(general.value.size / 18)}px`,
     fontSize: `${Math.round(general.value.size / 5.5)}px`,
-    maxWidth: `${Math.round(size.value)}px`,
+    maxWidth: `${Math.round(general.value.size)}px`,
   }));
 
-  const avatarDecorationStyles = computed(() => ({
-    height: `${Math.round(size.value)}px`,
-    width: `${Math.round(size.value)}px`,
+  const avatarDecorationStyles = computed<CSSProperties>(() => ({
+    height: `${Math.round(general.value.size)}px`,
+    width: `${Math.round(general.value.size)}px`,
   }));
 
-  const speakingStyles = computed(() => ({
+  const speakingStyles = computed<CSSProperties>(() => ({
+    borderRadius: `${Math.round((general.value.size * general.value.radius) / 200)}px`,
+    height: `${Math.round(general.value.size)}px`,
+    width: `${Math.round(general.value.size)}px`,
     "--tw-ring-shadow": `var(--tw-ring-inset) 0 0 0 ${Math.round(
       general.value.size / 15,
     )}px var(--tw-ring-color)`,
-    borderRadius: `${Math.round(radius.value)}px`,
-    height: `${Math.round(size.value)}px`,
-    width: `${Math.round(size.value)}px`,
   }));
 
-  const gapStyles = computed(() => ({
+  const pageStyles = computed<CSSProperties>(() => ({
     gap: `${Math.round((general.value.size * general.value.gap) / 100)}px`,
+    flexDirection:
+      general.value.orientation === Orientation.Vertical ? "column" : "row",
   }));
 
-  const opacityStyles = computed(() => ({
+  const htmlStyles = computed<CSSProperties>(() => ({
     opacity: `${Math.round(general.value.opacity)}%`,
   }));
 
-  const borderRadiusStyles = computed(() => ({
-    borderRadius: `${Math.round(radius.value)}px`,
+  const iconsStyles = computed<CSSProperties>(() => ({
+    borderRadius: `${Math.round((general.value.size * general.value.radius) / 200)}px`,
+    padding: `${Math.round(general.value.size / 22)}px`,
+    gap: `${Math.round(general.value.size / 22)}px`,
   }));
 
   return {
     avatarDecorationStyles,
-    borderRadiusStyles,
     backgroundStyles,
     speakingStyles,
-    opacityStyles,
+    iconsStyles,
+    htmlStyles,
     nameStyles,
     iconStyles,
-    gapStyles,
+    pageStyles,
     boxStyles,
   };
 }

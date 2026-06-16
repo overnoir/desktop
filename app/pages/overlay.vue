@@ -8,7 +8,7 @@ definePageMeta({
 const { users, guild, settings } = storeToRefs(useDiscordStore());
 const { general } = storeToRefs(useSettingsStore());
 const isMacOS = tauriOSType() === "macos";
-const { gapStyles, boxStyles } = useUi();
+const { pageStyles, boxStyles } = useUi();
 const isOnline = useOnline();
 const dragButton = ref();
 
@@ -69,13 +69,7 @@ if (isMacOS) {
 </script>
 
 <template>
-  <section
-    :class="{
-      'flex-col': general.orientation === Orientation.Vertical,
-    }"
-    :style="gapStyles"
-    class="flex"
-  >
+  <section class="flex" :style="pageStyles">
     <template v-if="isOnline">
       <DiscordGuild
         v-if="guild && settings.showGuild"

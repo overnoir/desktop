@@ -5,12 +5,12 @@ const { user } = defineProps<{
 
 const { settings: discordSettings } = storeToRefs(useDiscordStore());
 const {
-  boxStyles,
   avatarDecorationStyles,
-  iconStyles,
   speakingStyles,
-  borderRadiusStyles,
+  iconsStyles,
+  iconStyles,
   nameStyles,
+  boxStyles,
 } = useUi();
 
 const displayName = computed(() =>
@@ -90,8 +90,8 @@ const avatarUrl = computed(() =>
         user.isMuted ||
         user.isBot
       "
-      class="absolute bg-background/70 left-0 top-0 flex items-center gap-[4%] p-[4%]"
-      :style="borderRadiusStyles"
+      class="absolute bg-background/70 left-0 top-0 flex items-center"
+      :style="iconsStyles"
     >
       <Icon
         v-if="user.isMuted || user.isSelfMuted"
@@ -114,7 +114,7 @@ const avatarUrl = computed(() =>
     </div>
     <div
       v-if="showDisplayName"
-      class="absolute bg-background/70 left-0 bottom-0 inline-block w-fit px-[4%] truncate"
+      class="absolute bg-background/70 left-0 bottom-0 inline-block w-fit truncate"
       :style="nameStyles"
     >
       {{ displayName }}
