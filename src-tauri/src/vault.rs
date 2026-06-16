@@ -38,17 +38,13 @@ pub fn init_vault(app_handle: &AppHandle) {
     let name = &app_handle.package_info().name;
 
     let entry = Entry::new(name, name).expect("failed to create keyring entry");
-    let password = match entry.get_password() {
-        Ok(pwd) => pwd,
-        Err(keyring::Error::NoEntry) => {
-            let new = Uuid::new_v4().simple().to_string();
-            entry
-                .set_password(&new)
-                .expect("failed to save keychain password");
-            new
-        }
-        Err(e) => panic!("keychain error: {}", e),
-    };
+    let password = entry.get_password().unwrap_or_else(|_| {
+        let new = Uuid::new_v4().simple().to_string();
+        entry
+            .set_password(&new)
+            .expect("failed to save keychain password");
+        new
+    });
 
     let stronghold = Stronghold::new(vault_path, password.into_bytes()).unwrap();
     let client: Client;
