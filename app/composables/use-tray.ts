@@ -1,4 +1,7 @@
+import type { Image } from "@tauri-apps/api/image";
+
 export default function () {
+  const isMacOS = tauriOSType() === "macos";
   const { t } = useI18n();
 
   async function generateMenu() {
@@ -41,10 +44,22 @@ export default function () {
       await tray.close();
     }
 
+    let icon: string | Image | undefined;
+
+    if (isMacOS) {
+      const bytes = new Uint8Array(
+        await $fetch("/macos-tray-icon.png", { responseType: "arrayBuffer" }),
+      );
+      icon = await TauriImageImage.fromBytes(bytes);
+    } else {
+      icon = (await tauriAppDefaultWindowIcon()) || undefined;
+    }
+
     await TauriTrayTrayIcon.new({
-      icon: (await tauriAppDefaultWindowIcon()) || undefined,
       tooltip: id.charAt(0).toUpperCase() + id.slice(1),
       menu: await generateMenu(),
+      iconAsTemplate: true,
+      icon,
       id,
     });
   }
