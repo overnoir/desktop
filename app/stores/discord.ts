@@ -17,33 +17,57 @@ export const useDiscordStore = defineStore(
     const errors = ref<DiscordError[]>([]);
 
     const filtredUsers = computed(() => {
-      if (!guild.value) {
+      if (!guild.value || !connectedUser.value) {
         return [];
       }
 
       let users = guild.value.channel.users;
 
-      if (!settings.value.showMe && connectedUser.value) {
-        users = users.filter((user) => user.id !== connectedUser.value!.id);
+      if (!settings.value.showMe) {
+        users = users.filter(({ id }) => id !== connectedUser.value!.id);
       }
 
       if (settings.value.showSpeakersOnly) {
-        users = users.filter((user) => user.isSpeaking);
+        users = users.filter(({ isSpeaking }) => isSpeaking);
       }
 
       if (!settings.value.showMutedUsers) {
-        users = users.filter((user) => !user.isSelfMuted && !user.isMuted);
+        users = users.filter(
+          ({ isMuted, isSelfMuted }) => !isMuted && !isSelfMuted,
+        );
       }
 
       if (!settings.value.showDeafenedUsers) {
         users = users.filter(
-          (user) => !user.isSelfDeafened && !user.isDeafened,
+          ({ isDeafened, isSelfDeafened }) => !isDeafened && !isSelfDeafened,
         );
       }
 
       if (!settings.value.showBots) {
-        users = users.filter((user) => !user.isBot);
+        users = users.filter(({ isBot }) => !isBot);
       }
+
+      users.sort((a, b) => {
+        if (a.isSpeaking !== b.isSpeaking) return a.isSpeaking ? -1 : 1;
+
+        const aMuted = a.isMuted || a.isSelfMuted;
+        const bMuted = b.isMuted || b.isSelfMuted;
+        if (aMuted !== bMuted) return aMuted ? 1 : -1;
+
+        if (a.isBot !== b.isBot) return a.isBot ? 1 : -1;
+
+        const aName = (
+          settings.value.displayName === DisplayName.Nick
+            ? a.nick || a.username
+            : a.username
+        ).toLowerCase();
+        const bName = (
+          settings.value.displayName === DisplayName.Nick
+            ? b.nick || b.username
+            : b.username
+        ).toLowerCase();
+        return aName.localeCompare(bName);
+      });
 
       if (settings.value.userLimit > 0) {
         users = users.slice(0, settings.value.userLimit);
@@ -80,8 +104,8 @@ export const useDiscordStore = defineStore(
       clearErrors,
       addError,
       settings,
-      guild,
       errors,
+      guild,
     };
   },
   {
