@@ -1,4 +1,5 @@
 use iota_stronghold::{Client, Store};
+use keyring::Entry;
 use serde::Serialize;
 use std::{
     collections::HashMap,
@@ -6,7 +7,6 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
 };
 use tauri::{AppHandle, Manager};
-use tauri_plugin_keyring::KeyringExt;
 use tauri_plugin_stronghold::stronghold::Stronghold;
 use uuid::Uuid;
 
@@ -36,22 +36,19 @@ pub fn init_vault(app_handle: &AppHandle) {
 
     let vault_path = app_handle.path().app_data_dir().unwrap().join("vault.hold");
     let name = &app_handle.package_info().name;
-    let password: String;
 
-    let current_password = app_handle.keyring().get_password(&name, &name).unwrap();
-
-    if let Some(current_password) = current_password {
-        password = current_password;
-    } else {
-        let new_password = Uuid::new_v4().simple().to_string();
-
-        app_handle
-            .keyring()
-            .set_password(&name, &name, &new_password)
-            .unwrap();
-
-        password = new_password;
-    }
+    let entry = Entry::new(name, name).expect("failed to create keyring entry");
+    let password = match entry.get_password() {
+        Ok(pwd) => pwd,
+        Err(keyring::Error::NoEntry) => {
+            let new = Uuid::new_v4().simple().to_string();
+            entry
+                .set_password(&new)
+                .expect("failed to save keychain password");
+            new
+        }
+        Err(e) => panic!("keychain error: {}", e),
+    };
 
     let stronghold = Stronghold::new(vault_path, password.into_bytes()).unwrap();
     let client: Client;
