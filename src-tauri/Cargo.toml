@@ -35,6 +35,9 @@ tauri-plugin-opener = "2.5.4"
 tauri-plugin-stronghold = "2"
 tauri-plugin-keyring = "0.1.0"
 iota_stronghold = "2.1.0"
+sha2 = "0.10"
+base64 = "0.22"
+rand = "0.8"
 
 [target.'cfg(target_os = "macos")'.dependencies]
 tauri-nspanel = { git = "https://github.com/ahkohd/tauri-nspanel", branch = "v2.1" }

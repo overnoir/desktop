@@ -1,9 +1,13 @@
 use crate::vault::{
     delete_vault_items as delete_vault_items_fn, get_vault_items, update_vault_items,
 };
+use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine as _};
 use discord_rich_presence::{DiscordIpc, DiscordIpcClient};
+use rand::rngs::OsRng;
+use rand::RngCore;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
+use sha2::{Digest, Sha256};
 use std::{
     collections::HashMap,
     env,
@@ -15,7 +19,7 @@ use std::{
 use tauri::{AppHandle, Emitter, Manager};
 use uuid::Uuid;
 
-#[derive(Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct TokenResponse {
     refresh_token: Option<String>,
     access_token: String,
@@ -78,7 +82,6 @@ pub struct ConnectedUser {
 pub struct Discord {
     stop_flag: Mutex<Option<Arc<AtomicBool>>>,
     client: Mutex<Option<DiscordIpcClient>>,
-    client_secret: String,
     client_id: String,
 }
 
@@ -96,11 +99,25 @@ pub fn init_discord(app_handle: &AppHandle) {
     let client_id = env::var("DISCORD_CLIENT_ID").unwrap().to_string();
 
     app_handle.manage(Discord {
-        client_secret: env::var("DISCORD_CLIENT_SECRET").unwrap().to_string(),
         client: Mutex::new(Some(DiscordIpcClient::new(&client_id))),
         stop_flag: Mutex::new(None),
         client_id,
     });
+}
+
+fn generate_code_verifier() -> Result<String, String> {
+    let mut bytes = [0u8; 32];
+    OsRng
+        .try_fill_bytes(&mut bytes)
+        .map_err(|e| format!("Failed to generate code verifier: {}", e))?;
+    Ok(URL_SAFE_NO_PAD.encode(bytes))
+}
+
+fn derive_code_challenge(verifier: &str) -> String {
+    let mut hasher = Sha256::new();
+    hasher.update(verifier.as_bytes());
+    let hash = hasher.finalize();
+    URL_SAFE_NO_PAD.encode(hash)
 }
 
 fn parse_user(data: &Value) -> Option<User> {
@@ -563,7 +580,6 @@ pub async fn connect_discord(app_handle: AppHandle) -> Result<ConnectedUser, Str
 
     if let Some(ref refresh) = refresh_token {
         let token_response = exchange_code(&[
-            ("client_secret", discord.client_secret.as_str()),
             ("client_id", discord.client_id.as_str()),
             ("refresh_token", refresh.as_str()),
             ("grant_type", "refresh_token"),
@@ -573,6 +589,9 @@ pub async fn connect_discord(app_handle: AppHandle) -> Result<ConnectedUser, Str
         save_tokens(&app_handle, &token_response)?;
         return start_channel_listener(&app_handle);
     }
+
+    let verifier = generate_code_verifier()?;
+    let challenge = derive_code_challenge(&verifier);
 
     let code = {
         let mut client_guard = discord
@@ -594,7 +613,9 @@ pub async fn connect_discord(app_handle: AppHandle) -> Result<ConnectedUser, Str
                     "cmd": "AUTHORIZE",
                     "args": {
                         "client_id": discord.client_id,
-                        "scopes": ["rpc"]
+                        "scopes": ["rpc"],
+                        "code_challenge": challenge,
+                        "code_challenge_method": "S256"
                     },
                 }),
                 1,
@@ -619,9 +640,9 @@ pub async fn connect_discord(app_handle: AppHandle) -> Result<ConnectedUser, Str
     };
 
     let token_response = exchange_code(&[
-        ("client_secret", discord.client_secret.as_str()),
         ("client_id", discord.client_id.as_str()),
         ("grant_type", "authorization_code"),
+        ("code_verifier", verifier.as_str()),
         ("code", code.as_str()),
     ])
     .await?;
