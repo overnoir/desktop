@@ -73,8 +73,8 @@ export const overlayWebviewWindowOptions: Omit<
   url: "/overlay",
   visible: false,
   shadow: false,
-  height: 0,
-  width: 0,
+  height: 1,
+  width: 1,
   x: 0,
   y: 0,
 };
