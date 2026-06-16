@@ -78,6 +78,9 @@ export default defineNuxtConfig({
       scan: true,
     },
   },
+  image: {
+    provider: "none",
+  },
   typescript: {
     typeCheck: true,
   },
