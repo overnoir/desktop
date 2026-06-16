@@ -21,7 +21,7 @@ const name = await tauriAppGetName();
     </Card>
     <Card
       class="cursor-pointer p-0 bg-[#5865F2]"
-      @click="tauriOpenerOpenUrl('https://discord.com')"
+      @click="tauriOpenerOpenUrl('https://discord.gg/')"
     >
       <CardHeader class="p-4">
         <CardTitle class="text-white flex gap-2 mb-1">

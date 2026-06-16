@@ -18,14 +18,23 @@
     "core:window:allow-minimize",
     "core:window:allow-maximize",
     "core:window:allow-destroy",
-    "opener:allow-default-urls",
     "core:window:allow-show",
-    "opener:allow-open-url",
     "process:allow-exit",
     "autostart:default",
     "pinia:default",
     "core:default",
     "http:default",
-    "os:default"
+    "os:default",
+    {
+      "identifier": "opener:allow-open-url",
+      "allow": [
+        {
+          "url": "https://docs.overnoir.com"
+        },
+        {
+          "url": "https://discord.gg/"
+        }
+      ]
+    }
   ]
 }
