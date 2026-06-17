@@ -36,13 +36,12 @@ pub fn init_vault(app_handle: &AppHandle) {
 
     let vault_path = app_handle.path().app_data_dir().unwrap().join("vault.hold");
     let name = &app_handle.package_info().name;
-
-    let entry = Entry::new(name, name).expect("failed to create keyring entry");
+    let entry = Entry::new(&name, &whoami::username()).expect("failed to create keyring entry");
     let password = entry.get_password().unwrap_or_else(|_| {
         let new = Uuid::new_v4().simple().to_string();
         entry
             .set_password(&new)
-            .expect("failed to save keychain password");
+            .expect("failed to save keychain passwords");
         new
     });
 
