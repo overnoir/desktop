@@ -292,7 +292,11 @@ fn fetch_guild_info(
     })
 }
 
-fn start_channel_listener(app_handle: &AppHandle, access_token: String) -> Result<ConnectedUser, String> {
+fn start_channel_listener(
+    app_handle: &AppHandle,
+    access_token: String,
+    connected_client: Option<DiscordIpcClient>,
+) -> Result<ConnectedUser, String> {
     let discord_state = app_handle.state::<Discord>();
 
     {
@@ -313,13 +317,17 @@ fn start_channel_listener(app_handle: &AppHandle, access_token: String) -> Resul
     let app_handle_clone = app_handle.clone();
 
     thread::spawn(move || {
-        let mut client = DiscordIpcClient::new(&client_id);
+        let mut client = if let Some(c) = connected_client {
+            c
+        } else {
+            let mut c = DiscordIpcClient::new(&client_id);
+            if c.connect().is_err() {
+                let _ = tx.send(Err("Voice RPC connection failed".to_string()));
+                return;
+            }
+            c
+        };
         let mut users: HashMap<String, User> = HashMap::new();
-
-        if client.connect().is_err() {
-            let _ = tx.send(Err("Voice RPC connection failed".to_string()));
-            return;
-        }
 
         let result = (|| -> Result<ConnectedUser, String> {
             let auth = send_and_wait(
@@ -389,8 +397,7 @@ fn start_channel_listener(app_handle: &AppHandle, access_token: String) -> Resul
         if let Ok(ref response) = current_vc {
             if response.is_object() && response["id"].is_string() {
                 let channel_id = response["id"].as_str().unwrap().to_string();
-                current_guild =
-                    build_guild_from_channel(response, &channel_id, &mut users);
+                current_guild = build_guild_from_channel(response, &channel_id, &mut users);
 
                 if let Some(ref guild) = current_guild {
                     let mut guild_clone = guild.clone();
@@ -480,20 +487,15 @@ fn start_channel_listener(app_handle: &AppHandle, access_token: String) -> Resul
                                     &guild_clone,
                                 );
 
-                                if let Some((name, icon_url)) = fetch_guild_info(
-                                    &mut client,
-                                    &guild.id,
-                                    &listener_stop,
-                                ) {
+                                if let Some((name, icon_url)) =
+                                    fetch_guild_info(&mut client, &guild.id, &listener_stop)
+                                {
                                     if let Some(ref mut g) = current_guild {
                                         g.name = name;
                                         g.icon_url = icon_url;
                                         g.channel.users = users.values().cloned().collect();
-                                        let _ = app_handle_clone.emit_to(
-                                            "overlay",
-                                            "guild-update",
-                                            &g,
-                                        );
+                                        let _ =
+                                            app_handle_clone.emit_to("overlay", "guild-update", &g);
                                     }
                                 }
                             }
@@ -604,7 +606,7 @@ pub async fn connect_discord(app_handle: AppHandle) -> Result<ConnectedUser, Str
             .and_then(|e| e.parse::<u64>().ok())
             .map_or(false, |e| e > now)
         {
-            return start_channel_listener(&app_handle, token.clone());
+            return start_channel_listener(&app_handle, token.clone(), None);
         }
     }
 
@@ -617,68 +619,58 @@ pub async fn connect_discord(app_handle: AppHandle) -> Result<ConnectedUser, Str
         .await?;
 
         save_tokens(&app_handle, &token_response)?;
-        return start_channel_listener(&app_handle, token_response.access_token.clone());
+        return start_channel_listener(&app_handle, token_response.access_token.clone(), None);
     }
 
     let verifier = generate_code_verifier()?;
     let challenge = derive_code_challenge(&verifier);
 
-    let code = {
+    let mut client = {
         let mut client_guard = discord
             .client
             .lock()
             .map_err(|e| format!("Failed to acquire client lock: {}", e))?;
-        let client = client_guard
-            .as_mut()
-            .ok_or("Discord client is not initialized")?;
-
-        client
-            .connect()
-            .map_err(|e| format!("Failed to connect Discord IPC: {}", e))?;
-
-        client
-            .send(
-                json!({
-                    "nonce": Uuid::new_v4().to_string(),
-                    "cmd": "AUTHORIZE",
-                    "args": {
-                        "client_id": discord.client_id,
-                        "scopes": ["rpc"],
-                        "code_challenge": challenge,
-                        "code_challenge_method": "S256"
-                    },
-                }),
-                1,
-            )
-            .map_err(|e| format!("Failed to send AUTHORIZE command: {}", e))?;
-
-        let received = client
-            .recv()
-            .map_err(|e| format!("Failed to receive AUTHORIZE response: {}", e))?;
-
-        if received.1["evt"] == "ERROR" {
-            return Err(received.1["data"]["message"]
-                .as_str()
-                .unwrap_or("Unknown error")
-                .to_string());
-        }
-
-        received.1["data"]["code"]
-            .as_str()
-            .ok_or("Failed to get authorization code")?
-            .to_string()
+        client_guard
+            .take()
+            .ok_or("Discord client is not initialized")?
     };
 
-    {
-        let mut client_guard = discord
-            .client
-            .lock()
-            .map_err(|e| format!("Failed to acquire client lock: {}", e))?;
-        if let Some(client) = client_guard.as_mut() {
-            let _ = client.close();
-        }
-        *client_guard = Some(DiscordIpcClient::new(&discord.client_id));
+    client
+        .connect()
+        .map_err(|e| format!("Failed to connect Discord IPC: {}", e))?;
+
+    client
+        .send(
+            json!({
+                "nonce": Uuid::new_v4().to_string(),
+                "cmd": "AUTHORIZE",
+                "args": {
+                    "client_id": discord.client_id,
+                    "scopes": ["rpc"],
+                    "code_challenge": challenge,
+                    "code_challenge_method": "S256"
+                },
+            }),
+            1,
+        )
+        .map_err(|e| format!("Failed to send AUTHORIZE command: {}", e))?;
+
+    let received = client
+        .recv()
+        .map_err(|e| format!("Failed to receive AUTHORIZE response: {}", e))?;
+
+    if received.1["evt"] == "ERROR" {
+        let _ = client.close();
+        return Err(received.1["data"]["message"]
+            .as_str()
+            .unwrap_or("Unknown error")
+            .to_string());
     }
+
+    let code = received.1["data"]["code"]
+        .as_str()
+        .ok_or("Failed to get authorization code")?
+        .to_string();
 
     let token_response = exchange_code(&[
         ("client_id", discord.client_id.as_str()),
@@ -689,7 +681,22 @@ pub async fn connect_discord(app_handle: AppHandle) -> Result<ConnectedUser, Str
     .await?;
 
     save_tokens(&app_handle, &token_response)?;
-    start_channel_listener(&app_handle, token_response.access_token.clone())
+
+    let result = start_channel_listener(
+        &app_handle,
+        token_response.access_token.clone(),
+        Some(client),
+    );
+
+    {
+        let mut client_guard = discord
+            .client
+            .lock()
+            .map_err(|e| format!("Failed to acquire client lock: {}", e))?;
+        *client_guard = Some(DiscordIpcClient::new(&discord.client_id));
+    }
+
+    result
 }
 
 #[tauri::command]
