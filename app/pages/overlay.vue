@@ -5,12 +5,15 @@ definePageMeta({
   layout: "overlay",
 });
 
+const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const { users, guild, settings } = storeToRefs(useDiscordStore());
 const { general } = storeToRefs(useSettingsStore());
-const isMacOS = tauriOSType() === "macos";
 const { pageStyles, boxStyles } = useUi();
 const isOnline = useOnline();
+const isDragging = ref(false);
 const dragButton = ref();
+const offsetX = ref(0);
+const offsetY = ref(0);
 
 async function openMainWebviewWindow() {
   const mainWebviewWindow = (
@@ -29,43 +32,33 @@ async function openMainWebviewWindow() {
   }
 }
 
-if (isMacOS) {
-  const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
-  const isDragging = ref(false);
-  const offsetX = ref(0);
-  const offsetY = ref(0);
+useEventListener(dragButton, "mousedown", async (e) => {
+  if (e.button !== 0) {
+    return;
+  }
 
-  useEventListener(dragButton, "mousedown", async (e) => {
-    if (e.button !== 0) {
-      return;
-    }
+  e.preventDefault();
 
-    e.preventDefault();
+  const pos = await overlayWebviewWindow.outerPosition();
 
-    const pos = await overlayWebviewWindow.outerPosition();
+  offsetX.value = e.screenX - pos.x;
+  offsetY.value = e.screenY - pos.y;
+  isDragging.value = true;
+});
 
-    offsetX.value = e.screenX - pos.x;
-    offsetY.value = e.screenY - pos.y;
-    isDragging.value = true;
-  });
+useEventListener(window, "mousemove", async (e) => {
+  if (!isDragging.value) {
+    return;
+  }
 
-  useEventListener(window, "mousemove", async (e) => {
-    if (!isDragging.value) {
-      return;
-    }
+  overlayWebviewWindow.setPosition(
+    new PhysicalPosition(e.screenX - offsetX.value, e.screenY - offsetY.value),
+  );
+});
 
-    overlayWebviewWindow.setPosition(
-      new PhysicalPosition(
-        e.screenX - offsetX.value,
-        e.screenY - offsetY.value,
-      ),
-    );
-  });
-
-  useEventListener(window, "mouseup", async () => {
-    isDragging.value = false;
-  });
-}
+useEventListener(window, "mouseup", async () => {
+  isDragging.value = false;
+});
 </script>
 
 <template>
@@ -105,9 +98,8 @@ if (isMacOS) {
     <Button
       v-if="general.showDrag"
       ref="dragButton"
-      :style="boxStyles"
-      :data-tauri-drag-region="!isMacOS"
       class="bg-background!"
+      :style="boxStyles"
       variant="outline"
       size="icon"
     >
