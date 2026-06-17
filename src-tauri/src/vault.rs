@@ -1,15 +1,17 @@
 use iota_stronghold::{Client, Store};
 use keyring::Entry;
+use rand::{rngs::OsRng, RngCore};
 use serde::Serialize;
 use std::{
     collections::HashMap,
+    fs,
+    io::Write,
     sync::Mutex,
     time::{SystemTime, UNIX_EPOCH},
 };
 use tauri::{AppHandle, Manager};
 use tauri_plugin_stronghold::stronghold::Stronghold;
 use uuid::Uuid;
-
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct VaultItemMetadata {
@@ -28,7 +30,18 @@ pub fn init_vault(app_handle: &AppHandle) {
         .path()
         .app_local_data_dir()
         .unwrap()
-        .join("salt.txt");
+        .join("vault-salt.txt");
+
+    if let Some(parent_dir) = salt_path.parent() {
+        fs::create_dir_all(parent_dir).unwrap();
+    }
+
+    if !salt_path.exists() {
+        let mut salt = [0u8; 32];
+        OsRng.fill_bytes(&mut salt);
+        let mut file = fs::File::create(&salt_path).unwrap();
+        file.write_all(&salt).unwrap();
+    }
 
     app_handle
         .plugin(tauri_plugin_stronghold::Builder::with_argon2(&salt_path).build())
