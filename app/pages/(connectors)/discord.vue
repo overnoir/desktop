@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const discordStore = useDiscordStore();
 const { connectedUser, errors, settings } = storeToRefs(discordStore);
-const deleteVaultItemsOnDisconnect = ref(false);
+const deleteVaultItemsOnDisconnect = ref(true);
 const { $toast } = useNuxtApp();
 const loading = ref(false);
 const route = useRoute();
@@ -28,7 +28,7 @@ async function toggleConnection() {
         deleteVaultItems: deleteVaultItemsOnDisconnect.value,
       });
       if (deleteVaultItemsOnDisconnect.value) {
-        deleteVaultItemsOnDisconnect.value = false;
+        deleteVaultItemsOnDisconnect.value = true;
         await discordStore.$tauri.saveNow();
       }
       connectedUser.value = null;
