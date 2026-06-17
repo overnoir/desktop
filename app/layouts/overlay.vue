@@ -13,41 +13,6 @@ if (advanced.value.autoStart !== (await tauriAutoStartIsEnabled())) {
   }
 }
 
-if (
-  advanced.value.alwaysOnTop !== (await overlayWebviewWindow.isAlwaysOnTop())
-) {
-  await overlayWebviewWindow.setAlwaysOnTop(advanced.value.alwaysOnTop);
-}
-
-await overlayWebviewWindow.setPosition(
-  new TauriDpiLogicalPosition(general.value.x, general.value.y),
-);
-
-if (tauriOSType() === "macos") {
-  await tauriCoreInvoke("init_nspanel");
-  await tauriCoreInvoke("set_nspanel_ignore_cursor", {
-    value: advanced.value.ignoreCursor,
-  });
-  await tauriEventListen("nspanel-moved", async () => {
-    if (!isDragging.value) {
-      return;
-    }
-    const { x, y } = await overlayWebviewWindow.outerPosition();
-    general.value.x = x;
-    general.value.y = y;
-  });
-} else {
-  await overlayWebviewWindow.setIgnoreCursorEvents(advanced.value.ignoreCursor);
-  await overlayWebviewWindow.onMoved(({ payload }) => {
-    if (!isDragging.value) {
-      return;
-    }
-    const { x, y } = payload;
-    general.value.x = x;
-    general.value.y = y;
-  });
-}
-
 useResizeObserver(document.body, async (entries) => {
   const entry = entries[0];
 
@@ -96,6 +61,43 @@ onMounted(async () => {
   if (updaterWebviewWindow) {
     await updaterWebviewWindow.destroy();
   }
+
+  if (
+    advanced.value.alwaysOnTop !== (await overlayWebviewWindow.isAlwaysOnTop())
+  ) {
+    await overlayWebviewWindow.setAlwaysOnTop(advanced.value.alwaysOnTop);
+  }
+
+  if (tauriOSType() === "macos") {
+    await tauriCoreInvoke("init_nspanel");
+    await tauriCoreInvoke("set_nspanel_ignore_cursor", {
+      value: advanced.value.ignoreCursor,
+    });
+    await tauriEventListen("nspanel-moved", async () => {
+      if (!isDragging.value) {
+        return;
+      }
+      const { x, y } = await overlayWebviewWindow.outerPosition();
+      general.value.x = x;
+      general.value.y = y;
+    });
+  } else {
+    await overlayWebviewWindow.setIgnoreCursorEvents(
+      advanced.value.ignoreCursor,
+    );
+    await overlayWebviewWindow.onMoved(({ payload }) => {
+      if (!isDragging.value) {
+        return;
+      }
+      const { x, y } = payload;
+      general.value.x = x;
+      general.value.y = y;
+    });
+  }
+
+  await overlayWebviewWindow.setPosition(
+    new TauriDpiLogicalPosition(general.value.x, general.value.y),
+  );
 
   await create();
 });
