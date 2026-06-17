@@ -241,32 +241,12 @@ fn subscribe_to_events(
 }
 
 fn build_guild_from_channel(
-    client: &mut DiscordIpcClient,
     response: &Value,
     channel_id: &str,
     users: &mut HashMap<String, User>,
 ) -> Option<Guild> {
     let guild_id = response["guild_id"].as_str().unwrap_or("").to_string();
     let channel_name = response["name"].as_str().unwrap_or("").to_string();
-
-    let (guild_name, guild_icon_url) = send_and_wait(
-        client,
-        json!({
-            "nonce": Uuid::new_v4().to_string(),
-            "cmd": "GET_GUILD",
-            "args": { "guild_id": guild_id },
-        }),
-        &mut HashMap::new(),
-        &AtomicBool::new(false),
-    )
-    .ok()
-    .and_then(|data| {
-        Some((
-            data["name"].as_str().unwrap_or("").to_string(),
-            data["icon_url"].as_str().map(|s| s.to_string()),
-        ))
-    })
-    .unwrap_or_default();
 
     if let Some(voice_states) = response["voice_states"].as_array() {
         for voice_state in voice_states {
@@ -277,9 +257,9 @@ fn build_guild_from_channel(
     }
 
     Some(Guild {
-        id: guild_id,
-        name: guild_name,
-        icon_url: guild_icon_url,
+        id: guild_id.clone(),
+        name: channel_name.clone(),
+        icon_url: None,
         channel: Channel {
             id: channel_id.to_string(),
             name: channel_name,
@@ -288,7 +268,31 @@ fn build_guild_from_channel(
     })
 }
 
-fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, String> {
+fn fetch_guild_info(
+    client: &mut DiscordIpcClient,
+    guild_id: &str,
+    stop: &AtomicBool,
+) -> Option<(String, Option<String>)> {
+    send_and_wait(
+        client,
+        json!({
+            "nonce": Uuid::new_v4().to_string(),
+            "cmd": "GET_GUILD",
+            "args": { "guild_id": guild_id },
+        }),
+        &mut HashMap::new(),
+        stop,
+    )
+    .ok()
+    .and_then(|data| {
+        Some((
+            data["name"].as_str().unwrap_or("").to_string(),
+            data["icon_url"].as_str().map(|s| s.to_string()),
+        ))
+    })
+}
+
+fn start_channel_listener(app_handle: &AppHandle, access_token: String) -> Result<ConnectedUser, String> {
     let discord_state = app_handle.state::<Discord>();
 
     {
@@ -302,7 +306,7 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
         *channel_guard = None;
     }
 
-    let (tx, rx) = mpsc::channel();
+    let (tx, rx) = mpsc::channel::<Result<ConnectedUser, String>>();
     let stop_flag = Arc::new(AtomicBool::new(false));
     let client_id = discord_state.client_id.clone();
     let listener_stop = stop_flag.clone();
@@ -313,23 +317,16 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
         let mut users: HashMap<String, User> = HashMap::new();
 
         if client.connect().is_err() {
-            let _ =
-                app_handle_clone.emit_to("overlay", "guild-error", "Voice RPC connection failed");
+            let _ = tx.send(Err("Voice RPC connection failed".to_string()));
             return;
         }
 
         let result = (|| -> Result<ConnectedUser, String> {
-            let vault = get_vault_items(&app_handle_clone, &["discord_access_token"])?;
-            let token = vault
-                .get("discord_access_token")
-                .and_then(|v| v.clone())
-                .ok_or("No access token for channel listener".to_string())?;
-
             let auth = send_and_wait(
                 &mut client,
                 json!({
                     "nonce": Uuid::new_v4().to_string(),
-                    "args": { "access_token": token },
+                    "args": { "access_token": access_token },
                     "cmd": "AUTHENTICATE",
                 }),
                 &mut users,
@@ -349,10 +346,10 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
 
         match result {
             Ok(user) => {
-                let _ = tx.send(user);
+                let _ = tx.send(Ok(user));
             }
             Err(e) => {
-                let _ = app_handle_clone.emit_to("overlay", "guild-error", e);
+                let _ = tx.send(Err(e));
                 return;
             }
         };
@@ -393,14 +390,25 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
             if response.is_object() && response["id"].is_string() {
                 let channel_id = response["id"].as_str().unwrap().to_string();
                 current_guild =
-                    build_guild_from_channel(&mut client, response, &channel_id, &mut users);
+                    build_guild_from_channel(response, &channel_id, &mut users);
 
-                if current_guild.is_some() {
+                if let Some(ref guild) = current_guild {
+                    let mut guild_clone = guild.clone();
+                    guild_clone.channel.users = users.values().cloned().collect();
+                    let _ = app_handle_clone.emit_to("overlay", "guild-update", &guild_clone);
+
                     subscribe_to_events(&mut client, &channel_id, &mut users, &listener_stop);
 
-                    let mut guild = current_guild.as_ref().unwrap().clone();
-                    guild.channel.users = users.values().cloned().collect();
-                    let _ = app_handle_clone.emit_to("overlay", "guild-update", &guild);
+                    if let Some((name, icon_url)) =
+                        fetch_guild_info(&mut client, &guild.id, &listener_stop)
+                    {
+                        if let Some(ref mut g) = current_guild {
+                            g.name = name;
+                            g.icon_url = icon_url;
+                            g.channel.users = users.values().cloned().collect();
+                            let _ = app_handle_clone.emit_to("overlay", "guild-update", &g);
+                        }
+                    }
                 }
             }
         }
@@ -435,6 +443,12 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
 
                         users.clear();
 
+                        let _ = app_handle_clone.emit_to(
+                            "overlay",
+                            "guild-update",
+                            serde_json::Value::Null,
+                        );
+
                         if let Some(ref new_channel_id) = new_id {
                             subscribe_to_events(
                                 &mut client,
@@ -453,12 +467,8 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
                                 &mut users,
                                 &listener_stop,
                             ) {
-                                current_guild = build_guild_from_channel(
-                                    &mut client,
-                                    &response,
-                                    new_channel_id,
-                                    &mut users,
-                                );
+                                current_guild =
+                                    build_guild_from_channel(&response, new_channel_id, &mut users);
                             }
 
                             if let Some(ref guild) = current_guild {
@@ -469,13 +479,24 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
                                     "guild-update",
                                     &guild_clone,
                                 );
+
+                                if let Some((name, icon_url)) = fetch_guild_info(
+                                    &mut client,
+                                    &guild.id,
+                                    &listener_stop,
+                                ) {
+                                    if let Some(ref mut g) = current_guild {
+                                        g.name = name;
+                                        g.icon_url = icon_url;
+                                        g.channel.users = users.values().cloned().collect();
+                                        let _ = app_handle_clone.emit_to(
+                                            "overlay",
+                                            "guild-update",
+                                            &g,
+                                        );
+                                    }
+                                }
                             }
-                        } else {
-                            let _ = app_handle_clone.emit_to(
-                                "overlay",
-                                "guild-update",
-                                serde_json::Value::Null,
-                            );
                         }
                     } else if let Some(guild) = &current_guild {
                         apply_voice_event(evt, &data["data"], &mut users);
@@ -511,8 +532,11 @@ fn start_channel_listener(app_handle: &AppHandle) -> Result<ConnectedUser, Strin
         *channel_guard = Some(stop_flag);
     }
 
-    rx.recv()
-        .map_err(|_| "Channel listener thread failed".to_string())
+    match rx.recv() {
+        Ok(Ok(user)) => Ok(user),
+        Ok(Err(e)) => Err(e),
+        Err(_) => Err("Channel listener thread failed".to_string()),
+    }
 }
 
 fn save_tokens(app_handle: &AppHandle, token_response: &TokenResponse) -> Result<(), String> {
@@ -521,20 +545,19 @@ fn save_tokens(app_handle: &AppHandle, token_response: &TokenResponse) -> Result
         .map_err(|e| format!("System time error: {}", e))?
         .as_millis() as u64;
 
-    update_vault_items(
-        app_handle,
-        vec![
-            ("discord_access_token", token_response.access_token.clone()),
-            (
-                "discord_refresh_token",
-                token_response.refresh_token.clone().unwrap_or_default(),
-            ),
-            (
-                "discord_access_token_expires_at",
-                (now + token_response.expires_in * 1000).to_string(),
-            ),
-        ],
-    )
+    let mut items = vec![
+        ("discord_access_token", token_response.access_token.clone()),
+        (
+            "discord_access_token_expires_at",
+            (now + token_response.expires_in * 1000).to_string(),
+        ),
+    ];
+
+    if let Some(ref refresh) = token_response.refresh_token {
+        items.push(("discord_refresh_token", refresh.clone()));
+    }
+
+    update_vault_items(app_handle, items)
 }
 
 async fn exchange_code(params: &[(&str, &str)]) -> Result<TokenResponse, String> {
@@ -576,12 +599,13 @@ pub async fn connect_discord(app_handle: AppHandle) -> Result<ConnectedUser, Str
         .cloned()
         .flatten();
 
-    if access_token.is_some()
-        && expires_at
+    if let Some(ref token) = access_token {
+        if expires_at
             .and_then(|e| e.parse::<u64>().ok())
             .map_or(false, |e| e > now)
-    {
-        return start_channel_listener(&app_handle);
+        {
+            return start_channel_listener(&app_handle, token.clone());
+        }
     }
 
     if let Some(ref refresh) = refresh_token {
@@ -593,7 +617,7 @@ pub async fn connect_discord(app_handle: AppHandle) -> Result<ConnectedUser, Str
         .await?;
 
         save_tokens(&app_handle, &token_response)?;
-        return start_channel_listener(&app_handle);
+        return start_channel_listener(&app_handle, token_response.access_token.clone());
     }
 
     let verifier = generate_code_verifier()?;
@@ -645,14 +669,6 @@ pub async fn connect_discord(app_handle: AppHandle) -> Result<ConnectedUser, Str
             .to_string()
     };
 
-    let token_response = exchange_code(&[
-        ("client_id", discord.client_id.as_str()),
-        ("grant_type", "authorization_code"),
-        ("code_verifier", verifier.as_str()),
-        ("code", code.as_str()),
-    ])
-    .await?;
-
     {
         let mut client_guard = discord
             .client
@@ -664,8 +680,16 @@ pub async fn connect_discord(app_handle: AppHandle) -> Result<ConnectedUser, Str
         *client_guard = Some(DiscordIpcClient::new(&discord.client_id));
     }
 
+    let token_response = exchange_code(&[
+        ("client_id", discord.client_id.as_str()),
+        ("grant_type", "authorization_code"),
+        ("code_verifier", verifier.as_str()),
+        ("code", code.as_str()),
+    ])
+    .await?;
+
     save_tokens(&app_handle, &token_response)?;
-    start_channel_listener(&app_handle)
+    start_channel_listener(&app_handle, token_response.access_token.clone())
 }
 
 #[tauri::command]
