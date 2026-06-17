@@ -1,7 +1,5 @@
 <script setup lang="ts">
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
-const discordStore = useDiscordStore();
-const { connectedUser, guild } = storeToRefs(discordStore);
 const { general, advanced } = storeToRefs(useSettingsStore());
 const { htmlStyles, backgroundStyles } = useUi();
 const { create } = useTray();
@@ -24,14 +22,6 @@ await overlayWebviewWindow.setPosition(
   new TauriDpiLogicalPosition(general.value.x, general.value.y),
 );
 
-await tauriEventListen<string>("guild-error", ({ payload }) => {
-  discordStore.addError(payload);
-});
-
-await tauriEventListen<DiscordGuild | null>("guild-update", ({ payload }) => {
-  guild.value = payload || undefined;
-});
-
 if (tauriOSType() === "macos") {
   await tauriCoreInvoke("init_nspanel");
   await tauriCoreInvoke("set_nspanel_ignore_cursor", {
@@ -49,16 +39,6 @@ if (tauriOSType() === "macos") {
     general.value.x = x;
     general.value.y = y;
   });
-}
-
-if (connectedUser.value) {
-  try {
-    connectedUser.value =
-      await tauriCoreInvoke<DiscordConnectedUser>("connect_discord");
-  } catch (error) {
-    discordStore.addError(JSON.stringify(error));
-    connectedUser.value = null;
-  }
 }
 
 useResizeObserver(document.body, async (entries) => {

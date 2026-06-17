@@ -5,8 +5,9 @@ definePageMeta({
   layout: "overlay",
 });
 
+const discordStore = useDiscordStore();
+const { users, guild, settings, connectedUser } = storeToRefs(discordStore);
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
-const { users, guild, settings } = storeToRefs(useDiscordStore());
 const { general } = storeToRefs(useSettingsStore());
 const { pageStyles, boxStyles } = useUi();
 const isOnline = useOnline();
@@ -14,6 +15,24 @@ const isDragging = ref(false);
 const dragButton = ref();
 const offsetX = ref(0);
 const offsetY = ref(0);
+
+await tauriEventListen<DiscordGuild | null>("guild-update", ({ payload }) => {
+  guild.value = payload || undefined;
+});
+
+await tauriEventListen<string>("guild-error", ({ payload }) => {
+  discordStore.addError(payload);
+});
+
+if (connectedUser.value) {
+  try {
+    connectedUser.value =
+      await tauriCoreInvoke<DiscordConnectedUser>("connect_discord");
+  } catch (error) {
+    discordStore.addError(JSON.stringify(error));
+    connectedUser.value = null;
+  }
+}
 
 async function openMainWebviewWindow() {
   const mainWebviewWindow = (
