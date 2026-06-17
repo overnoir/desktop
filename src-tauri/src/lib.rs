@@ -1,5 +1,3 @@
-use std::env;
-
 use tauri::Manager;
 mod discord;
 mod nspanel;
@@ -68,13 +66,7 @@ pub fn run() {
                 )
                 .unwrap();
 
-            let client_id = env::var("DISCORD_CLIENT_ID").unwrap_or_else(|_| {
-                option_env!("DISCORD_CLIENT_ID")
-                    .expect("DISCORD_CLIENT_ID must be set")
-                    .to_string()
-            });
-
-            init_discord(&app.app_handle(), &client_id);
+            init_discord(&app.app_handle());
             init_vault(&app.app_handle());
 
             Ok(())

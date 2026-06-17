@@ -10,8 +10,11 @@ use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use std::{
     collections::HashMap,
-    sync::atomic::{AtomicBool, Ordering},
-    sync::{mpsc, Arc, Mutex},
+    env,
+    sync::{
+        atomic::{AtomicBool, Ordering},
+        mpsc, Arc, Mutex,
+    },
     thread,
     time::{SystemTime, UNIX_EPOCH},
 };
@@ -94,7 +97,13 @@ const CHANNEL_EVENTS: [&str; 5] = [
     "SPEAKING_STOP",
 ];
 
-pub fn init_discord(app_handle: &AppHandle, client_id: &String) {
+pub fn init_discord(app_handle: &AppHandle) {
+    let client_id = env::var("DISCORD_CLIENT_ID").unwrap_or_else(|_| {
+        option_env!("DISCORD_CLIENT_ID")
+            .expect("DISCORD_CLIENT_ID must be set")
+            .to_string()
+    });
+
     app_handle.manage(Discord {
         client: Mutex::new(Some(DiscordIpcClient::new(&client_id))),
         client_id: client_id.to_string(),
