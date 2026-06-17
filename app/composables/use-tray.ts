@@ -1,7 +1,6 @@
 import type { Image } from "@tauri-apps/api/image";
 
 export default function () {
-  const isMacOS = tauriOSType() === "macos";
   const { t } = useI18n();
 
   async function generateMenu() {
@@ -46,7 +45,7 @@ export default function () {
 
     let icon: string | Image | undefined;
 
-    if (isMacOS) {
+    if (tauriOSType() === "macos") {
       const bytes = new Uint8Array(
         await $fetch("/macos-tray-icon.png", { responseType: "arrayBuffer" }),
       );

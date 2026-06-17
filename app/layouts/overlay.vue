@@ -3,6 +3,7 @@ const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const { general, advanced } = storeToRefs(useSettingsStore());
 const isDragging = useState("is-dragging", () => false);
 const { htmlStyles, backgroundStyles } = useUi();
+const isMacOS = tauriOSType() === "macos";
 const { create } = useTray();
 
 if (advanced.value.autoStart !== (await tauriAutoStartIsEnabled())) {
@@ -62,16 +63,13 @@ onMounted(async () => {
     await updaterWebviewWindow.destroy();
   }
 
-  if (
-    advanced.value.alwaysOnTop !== (await overlayWebviewWindow.isAlwaysOnTop())
-  ) {
-    await overlayWebviewWindow.setAlwaysOnTop(advanced.value.alwaysOnTop);
-  }
-
-  if (tauriOSType() === "macos") {
+  if (isMacOS) {
     await tauriCoreInvoke("init_nspanel");
     await tauriCoreInvoke("set_nspanel_ignore_cursor", {
       value: advanced.value.ignoreCursor,
+    });
+    await tauriCoreInvoke("set_nspanel_always_on_top", {
+      value: advanced.value.alwaysOnTop,
     });
     await tauriEventListen("nspanel-moved", async () => {
       if (!isDragging.value) {
@@ -82,6 +80,7 @@ onMounted(async () => {
       general.value.y = y;
     });
   } else {
+    await overlayWebviewWindow.setAlwaysOnTop(advanced.value.alwaysOnTop);
     await overlayWebviewWindow.setIgnoreCursorEvents(
       advanced.value.ignoreCursor,
     );

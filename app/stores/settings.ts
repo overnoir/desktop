@@ -2,7 +2,7 @@ import type { State } from "@tauri-store/pinia";
 
 function sync(state: State) {
   return {
-    advanced: settingsGeneralSchema.parse(state.advanced),
+    advanced: settingsAdvancedSchema.parse(state.advanced),
     general: settingsGeneralSchema.parse(state.general),
   };
 }

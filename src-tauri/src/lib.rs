@@ -6,7 +6,7 @@ mod nspanel;
 mod vault;
 use discord::{connect_discord, disconnect_discord, init_discord};
 #[cfg(target_os = "macos")]
-use nspanel::{init_nspanel, set_nspanel_ignore_cursor};
+use nspanel::{init_nspanel, set_nspanel_always_on_top, set_nspanel_ignore_cursor};
 use vault::{clear_vault, get_vault_metadata, init_vault};
 
 pub fn run() {
@@ -20,6 +20,8 @@ pub fn run() {
             init_nspanel,
             #[cfg(target_os = "macos")]
             set_nspanel_ignore_cursor,
+            #[cfg(target_os = "macos")]
+            set_nspanel_always_on_top
         ])
         .plugin(tauri_plugin_single_instance::init(|app, _, _| {
             if let Some(window) = app.get_webview_window("updater") {

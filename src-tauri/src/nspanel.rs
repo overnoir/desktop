@@ -26,7 +26,6 @@ pub fn init_nspanel(app_handle: AppHandle) {
     });
 
     panel.set_style_mask(StyleMask::empty().nonactivating_panel().into());
-    panel.set_level(PanelLevel::ScreenSaver.value() + 1);
     panel.set_hides_on_deactivate(false);
     panel.set_works_when_modal(true);
     panel.set_collection_behavior(
@@ -43,5 +42,16 @@ pub fn init_nspanel(app_handle: AppHandle) {
 pub fn set_nspanel_ignore_cursor(app_handle: AppHandle, value: bool) {
     if let Ok(panel) = app_handle.get_webview_panel("overlay") {
         panel.set_ignores_mouse_events(value);
+    }
+}
+
+#[tauri::command]
+pub fn set_nspanel_always_on_top(app_handle: AppHandle, value: bool) {
+    if let Ok(panel) = app_handle.get_webview_panel("overlay") {
+        if value {
+            panel.set_level(PanelLevel::ScreenSaver.value() + 1);
+        } else {
+            panel.set_level(PanelLevel::Normal.value());
+        }
     }
 }
