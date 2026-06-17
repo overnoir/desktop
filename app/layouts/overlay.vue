@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const { general, advanced } = storeToRefs(useSettingsStore());
+const isDragging = useState("is-dragging", () => false);
 const { htmlStyles, backgroundStyles } = useUi();
 const { create } = useTray();
 
@@ -28,6 +29,9 @@ if (tauriOSType() === "macos") {
     value: advanced.value.ignoreCursor,
   });
   await tauriEventListen("nspanel-moved", async () => {
+    if (!isDragging.value) {
+      return;
+    }
     const { x, y } = await overlayWebviewWindow.outerPosition();
     general.value.x = x;
     general.value.y = y;
@@ -35,6 +39,9 @@ if (tauriOSType() === "macos") {
 } else {
   await overlayWebviewWindow.setIgnoreCursorEvents(advanced.value.ignoreCursor);
   await overlayWebviewWindow.onMoved(({ payload }) => {
+    if (!isDragging.value) {
+      return;
+    }
     const { x, y } = payload;
     general.value.x = x;
     general.value.y = y;

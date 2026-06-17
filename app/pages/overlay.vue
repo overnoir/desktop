@@ -8,10 +8,10 @@ definePageMeta({
 const discordStore = useDiscordStore();
 const { users, guild, settings, connectedUser } = storeToRefs(discordStore);
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
+const isDragging = useState("is-dragging", () => false);
 const { general } = storeToRefs(useSettingsStore());
 const { pageStyles, boxStyles } = useUi();
 const isOnline = useOnline();
-const isDragging = ref(false);
 const dragButton = ref();
 const offsetX = ref(0);
 const offsetY = ref(0);
