@@ -17,6 +17,7 @@ export enum WebviewWindow {
 
 export enum DisplayName {
   Nick = "nick",
+  GlobalName = "globalName",
   Username = "username",
 }
 
@@ -121,6 +122,8 @@ export type DiscordUser = {
   isSpeaking: boolean;
   isDeafened: boolean;
   username: string;
+  discriminator: string;
+  globalName?: string;
   isMuted: boolean;
   avatar?: string;
   isBot: boolean;
@@ -133,5 +136,4 @@ export type DiscordConnectedUser = {
   avatar?: string;
   id: string;
 };
-
 //#endregion

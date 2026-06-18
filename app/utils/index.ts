@@ -23,3 +23,20 @@ export function generateDiscordUserAvatarUrl({
     ? `https://cdn.discordapp.com/avatars/${id}/${avatar}.webp?size=4096&animated=${animated || false}`
     : `https://cdn.discordapp.com/embed/avatars/${Number((BigInt(id || 0) >> 22n) % 6n)}.png`;
 }
+
+export function generateDiscordUserDisplayName({
+  user,
+  displayName,
+}: {
+  user: Pick<DiscordUser, "username" | "discriminator" | "nick" | "globalName">;
+  displayName: DisplayName;
+}) {
+  const username =
+    user.discriminator === "0"
+      ? user.username
+      : `${user.username}#${user.discriminator}`;
+  if (displayName === DisplayName.Nick) return user.nick || username;
+  if (displayName === DisplayName.GlobalName)
+    return user.globalName || user.nick || username;
+  return username;
+}

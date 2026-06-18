@@ -48,24 +48,31 @@ export const useDiscordStore = defineStore(
       }
 
       users.sort((a, b) => {
-        if (a.isSpeaking !== b.isSpeaking) return a.isSpeaking ? -1 : 1;
+        if (a.isSpeaking !== b.isSpeaking) {
+          return a.isSpeaking ? -1 : 1;
+        }
 
         const aMuted = a.isMuted || a.isSelfMuted;
         const bMuted = b.isMuted || b.isSelfMuted;
-        if (aMuted !== bMuted) return aMuted ? 1 : -1;
 
-        if (a.isBot !== b.isBot) return a.isBot ? 1 : -1;
+        if (aMuted !== bMuted) {
+          return aMuted ? 1 : -1;
+        }
 
-        const aName = (
-          settings.value.displayName === DisplayName.Nick
-            ? a.nick || a.username
-            : a.username
-        ).toLowerCase();
-        const bName = (
-          settings.value.displayName === DisplayName.Nick
-            ? b.nick || b.username
-            : b.username
-        ).toLowerCase();
+        if (a.isBot !== b.isBot) {
+          return a.isBot ? 1 : -1;
+        }
+
+        const aName = generateDiscordUserDisplayName({
+          user: a,
+          displayName: settings.value.displayName,
+        }).toLowerCase();
+
+        const bName = generateDiscordUserDisplayName({
+          user: b,
+          displayName: settings.value.displayName,
+        }).toLowerCase();
+
         return aName.localeCompare(bName);
       });
 

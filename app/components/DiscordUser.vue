@@ -3,7 +3,7 @@ const { user } = defineProps<{
   user: DiscordUser;
 }>();
 
-const { settings: discordSettings } = storeToRefs(useDiscordStore());
+const { settings } = storeToRefs(useDiscordStore());
 const {
   avatarDecorationStyles,
   speakingStyles,
@@ -14,38 +14,38 @@ const {
 } = useUi();
 
 const displayName = computed(() =>
-  discordSettings.value.displayName === DisplayName.Nick
-    ? user.nick || user.username
-    : user.username,
+  generateDiscordUserDisplayName({
+    user,
+    displayName: settings.value.displayName,
+  }),
 );
 
 const showDisplayName = computed(() => {
-  if (discordSettings.value.showDisplayName === Show.WhileSpeaking)
+  if (settings.value.showDisplayName === Show.WhileSpeaking)
     return user.isSpeaking;
-  if (discordSettings.value.showDisplayName === Show.Never) return false;
+  if (settings.value.showDisplayName === Show.Never) return false;
   return true;
 });
 
 const showAvatarAnimated = computed(() => {
-  if (discordSettings.value.showAvatarAnimated === Show.WhileSpeaking)
+  if (settings.value.showAvatarAnimated === Show.WhileSpeaking)
     return user.isSpeaking;
-  if (discordSettings.value.showAvatarAnimated === Show.Never) return false;
+  if (settings.value.showAvatarAnimated === Show.Never) return false;
   return true;
 });
 
 const showAvatarDecoration = computed(() => {
   if (!user.avatarDecoration) return false;
-  if (discordSettings.value.showAvatarDecoration === Show.WhileSpeaking)
+  if (settings.value.showAvatarDecoration === Show.WhileSpeaking)
     return user.isSpeaking;
-  if (discordSettings.value.showAvatarDecoration === Show.Never) return false;
+  if (settings.value.showAvatarDecoration === Show.Never) return false;
   return true;
 });
 
 const showAvatarDecorationAnimated = computed(() => {
-  if (discordSettings.value.showAvatarDecorationAnimated === Show.WhileSpeaking)
+  if (settings.value.showAvatarDecorationAnimated === Show.WhileSpeaking)
     return user.isSpeaking;
-  if (discordSettings.value.showAvatarDecorationAnimated === Show.Never)
-    return false;
+  if (settings.value.showAvatarDecorationAnimated === Show.Never) return false;
   return true;
 });
 

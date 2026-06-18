@@ -233,7 +233,8 @@ export default {
       title: "Gösterilecek Ad",
       description: "Kullanıcının hangi adının gözükeceğini seçin.",
       username: "Kullanıcı Adı",
-      nick: "Görünen Ad",
+      nick: "Sunucu Takma Adı",
+      globalName: "Görünen Ad",
     },
     reset: {
       title: "Sıfırla",
