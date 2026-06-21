@@ -33,6 +33,9 @@ export enum Alignment {
   Right = "right",
 }
 
+export enum Source {
+  Discord = "discord",
+}
 //#endregion
 
 //#region Types
@@ -91,8 +94,9 @@ export type DiscordSettings = {
   showMe: boolean;
 };
 
-export type DiscordError = {
+export type AppError = {
   createdAt: number;
+  source?: Source;
   message: string;
   id: string;
 };

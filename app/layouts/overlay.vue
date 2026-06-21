@@ -4,7 +4,15 @@ const { general, advanced } = storeToRefs(useSettingsStore());
 const isDragging = useState("is-dragging", () => false);
 const { htmlStyles, backgroundStyles } = useUi();
 const isMacOS = tauriOSType() === "macos";
+const errorsStore = useErrorsStore();
 const { create } = useTray();
+
+await tauriEventListen<Pick<AppError, "message" | "source">>(
+  "error",
+  ({ payload }) => {
+    errorsStore.addError(payload.message, payload.source);
+  },
+);
 
 if (advanced.value.autoStart !== (await tauriAutoStartIsEnabled())) {
   if (advanced.value.autoStart) {

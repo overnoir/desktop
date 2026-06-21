@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const discordStore = useDiscordStore();
-const { connectedUser, errors, settings } = storeToRefs(discordStore);
+const errorsStore = useErrorsStore();
+const { connectedUser, settings } = storeToRefs(discordStore);
 const deleteVaultItemsOnDisconnect = ref(true);
 const { $toast } = useNuxtApp();
 const loading = ref(false);
@@ -36,7 +37,7 @@ async function toggleConnection() {
     route.meta.headerImageUrl = avatarUrl.value;
     $toast.success(t(`discord.${action}.success`));
   } catch (error) {
-    discordStore.addError(JSON.stringify(error));
+    errorsStore.addError(JSON.stringify(error), Source.Discord);
     $toast.error(t(`discord.${action}.error`));
   }
   loading.value = false;
@@ -65,14 +66,6 @@ onMounted(() => (route.meta.headerImageUrl = avatarUrl.value));
         <TabsTrigger value="settings">
           <Icon name="lucide:sliders-horizontal" />
           {{ $t("discord.tabs.1") }}
-        </TabsTrigger>
-        <TabsTrigger
-          :class="{ 'text-destructive': errors.length }"
-          value="errors"
-        >
-          <Icon name="lucide:triangle-alert" />
-          {{ $t("discord.tabs.2") }}
-          {{ errors.length ? `(${errors.length})` : undefined }}
         </TabsTrigger>
       </TabsList>
       <TabsContent value="connection">
@@ -351,54 +344,6 @@ onMounted(() => (route.meta.headerImageUrl = avatarUrl.value));
             </AlertDialogContent>
           </AlertDialog>
         </SettingField>
-      </TabsContent>
-      <TabsContent value="errors">
-        <template v-if="errors.length">
-          <SettingField
-            :description="$t('discord.errors.description')"
-            :title="`${$t('discord.errors.title')} (${errors.length})`"
-          >
-            <Button variant="destructive" @click="discordStore.clearErrors">
-              {{ $t("discord.errors.clear") }}
-            </Button>
-          </SettingField>
-          <Separator />
-          <div class="flex flex-col gap-2">
-            <Alert
-              v-for="{ createdAt, id, message } in errors"
-              :key="id"
-              variant="destructive"
-            >
-              <AlertTitle class="line-clamp-none">
-                <div class="flex justify-between">
-                  {{ message }}
-                  <Button
-                    variant="secondary"
-                    class="size-5"
-                    size="icon"
-                    @click="discordStore.removeError(id)"
-                  >
-                    <Icon name="lucide:x" />
-                  </Button>
-                </div>
-              </AlertTitle>
-              <AlertDescription class="text-xs">
-                {{ new Date(createdAt).toLocaleString() }}
-              </AlertDescription>
-            </Alert>
-          </div>
-        </template>
-        <Empty v-else>
-          <EmptyHeader>
-            <EmptyMedia variant="icon">
-              <Icon name="lucide:thumbs-up" />
-            </EmptyMedia>
-          </EmptyHeader>
-          <EmptyTitle>{{ $t("discord.errors.empty.title") }}</EmptyTitle>
-          <EmptyDescription>
-            {{ $t("discord.errors.empty.description") }}
-          </EmptyDescription>
-        </Empty>
       </TabsContent>
     </Tabs>
   </section>

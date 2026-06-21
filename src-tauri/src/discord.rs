@@ -380,8 +380,11 @@ fn start_channel_listener(
         {
             let _ = app_handle_clone.emit_to(
                 "overlay",
-                "guild-error",
-                "Failed to subscribe to VOICE_CHANNEL_SELECT",
+                "error",
+                json!({
+                    "message": "Failed to subscribe to VOICE_CHANNEL_SELECT",
+                    "source": "discord"
+                }),
             );
             return;
         }
@@ -514,8 +517,11 @@ fn start_channel_listener(
                 Err(_) => {
                     let _ = app_handle_clone.emit_to(
                         "overlay",
-                        "guild-error",
-                        "Channel listener disconnected",
+                        "error",
+                        json!({
+                            "message": "Channel listener disconnected",
+                            "source": "discord"
+                        }),
                     );
                     let _ = app_handle_clone.emit_to(
                         "overlay",

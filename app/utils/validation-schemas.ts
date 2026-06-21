@@ -78,22 +78,23 @@ export const discordSettingsSchema = z.preprocess(
   }),
 ) satisfies z.ZodType<DiscordSettings>;
 
-const discordErrorSchema = z.object({
+const errorSchema = z.object({
+  source: z.enum(Source).optional(),
   createdAt: z.number(),
   message: z.string(),
   id: z.string(),
 });
 
-export const discordErrorsSchema = z.preprocess(
+export const errorsSchema = z.preprocess(
   (value) => {
     return Array.isArray(value) ? value : [];
   },
   z
-    .array(discordErrorSchema)
+    .array(errorSchema)
     .transform((errors) =>
-      errors.filter((error) => discordErrorSchema.safeParse(error).success),
+      errors.filter((error) => errorSchema.safeParse(error).success),
     ),
-) satisfies z.ZodType<DiscordError[]>;
+) satisfies z.ZodType<AppError[]>;
 
 export const discordConnectedUserSchema = z
   .object({

@@ -2,7 +2,7 @@ export default {
   linkGroups: [
     {
       name: "GENEL",
-      links: ["Ana Sayfa", "Kasa", "Ayarlar"],
+      links: ["Ana Sayfa", "Ayarlar", "Kasa", "Hatalar"],
     },
     {
       name: "BAĞLANTILAR",
@@ -107,6 +107,15 @@ export default {
       },
     },
   },
+  errors: {
+    title: "Hata Kayıtları",
+    description: "Uygulamada oluşan hatalar.",
+    clear: "Hepsini Sil",
+    empty: {
+      title: "Her Şey Yolunda",
+      description: "Herhangi bir hata yok.",
+    },
+  },
   help: {
     docs: {
       title: "Dokümantasyon",
@@ -140,16 +149,7 @@ export default {
     },
   },
   discord: {
-    tabs: ["Bağlantı", "Ayarlar", "Hatalar"],
-    errors: {
-      title: "Hatalar",
-      description: "Discord RPC hata geçmişi.",
-      clear: "Hepsini Sil",
-      empty: {
-        title: "Her Şey Yolunda",
-        description: "Herhangi bir hata yok.",
-      },
-    },
+    tabs: ["Bağlantı", "Ayarlar"],
     connect: {
       success: "Bağlantı başarıyla yapıldı.",
       error: "Bağlantı yapılırken bir sorun oluştu.",

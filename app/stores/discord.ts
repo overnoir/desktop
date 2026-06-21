@@ -4,7 +4,6 @@ function sync(state: State) {
   return {
     connectedUser: discordConnectedUserSchema.parse(state.connectedUser),
     settings: discordSettingsSchema.parse(state.settings),
-    errors: discordErrorsSchema.parse(state.errors),
   };
 }
 
@@ -14,7 +13,6 @@ export const useDiscordStore = defineStore(
     const settings = ref<DiscordSettings>({ ...defaultDiscordSettings });
     const connectedUser = ref<DiscordConnectedUser | null>(null);
     const guild = ref<DiscordGuild | undefined>(undefined);
-    const errors = ref<DiscordError[]>([]);
 
     const filtredUsers = computed(() => {
       if (!guild.value || !connectedUser.value) {
@@ -87,31 +85,11 @@ export const useDiscordStore = defineStore(
       settings.value = { ...defaultDiscordSettings };
     }
 
-    function addError(message: DiscordError["message"]) {
-      errors.value.unshift({
-        id: crypto.randomUUID(),
-        createdAt: Date.now(),
-        message,
-      });
-    }
-
-    function removeError(errorId: DiscordError["id"]) {
-      errors.value = errors.value.filter(({ id }) => id !== errorId);
-    }
-
-    function clearErrors() {
-      errors.value = [];
-    }
-
     return {
       users: filtredUsers,
       connectedUser,
       resetSettings,
-      removeError,
-      clearErrors,
-      addError,
       settings,
-      errors,
       guild,
     };
   },

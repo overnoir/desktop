@@ -6,6 +6,7 @@ definePageMeta({
 });
 
 const discordStore = useDiscordStore();
+const errorsStore = useErrorsStore();
 const { users, guild, settings, connectedUser } = storeToRefs(discordStore);
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const isDragging = useState("is-dragging", () => false);
@@ -20,16 +21,12 @@ await tauriEventListen<DiscordGuild | null>("guild-update", ({ payload }) => {
   guild.value = payload || undefined;
 });
 
-await tauriEventListen<string>("guild-error", ({ payload }) => {
-  discordStore.addError(payload);
-});
-
 if (connectedUser.value) {
   try {
     connectedUser.value =
       await tauriCoreInvoke<DiscordConnectedUser>("connect_discord");
   } catch (error) {
-    discordStore.addError(JSON.stringify(error));
+    errorsStore.addError(JSON.stringify(error), Source.Discord);
     connectedUser.value = null;
   }
 }
