@@ -1,11 +1,14 @@
 use tauri::Manager;
 mod discord;
+mod env;
 mod nspanel;
 mod vault;
 use discord::{connect_discord, disconnect_discord, init_discord};
 #[cfg(target_os = "macos")]
 use nspanel::{init_nspanel, set_nspanel_always_on_top, set_nspanel_ignore_cursor};
 use vault::{clear_vault, get_vault_metadata, init_vault};
+
+use crate::env::Env;
 
 pub fn run() {
     tauri::Builder::default()
@@ -65,6 +68,8 @@ pub fn run() {
                         .build(),
                 )
                 .unwrap();
+
+            app.manage(Env::init());
 
             init_discord(&app.app_handle());
             init_vault(&app.app_handle());

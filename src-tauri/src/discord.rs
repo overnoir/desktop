@@ -1,5 +1,6 @@
-use crate::vault::{
-    delete_vault_items as delete_vault_items_fn, get_vault_items, update_vault_items,
+use crate::{
+    env::Env,
+    vault::{delete_vault_items as delete_vault_items_fn, get_vault_items, update_vault_items},
 };
 use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine as _};
 use discord_rich_presence::{DiscordIpc, DiscordIpcClient};
@@ -10,7 +11,6 @@ use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use std::{
     collections::HashMap,
-    env,
     sync::{
         atomic::{AtomicBool, Ordering},
         mpsc, Arc, Mutex,
@@ -101,11 +101,7 @@ const CHANNEL_EVENTS: [&str; 5] = [
 ];
 
 pub fn init_discord(app_handle: &AppHandle) {
-    let client_id = env::var("DISCORD_CLIENT_ID").unwrap_or_else(|_| {
-        option_env!("DISCORD_CLIENT_ID")
-            .expect("DISCORD_CLIENT_ID must be set")
-            .to_string()
-    });
+    let client_id = app_handle.state::<Env>().discord_client_id.clone();
 
     app_handle.manage(Discord {
         client: Mutex::new(Some(DiscordIpcClient::new(&client_id))),
