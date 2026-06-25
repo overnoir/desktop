@@ -23,7 +23,6 @@
     "autostart:default",
     "pinia:default",
     "core:default",
-    "http:default",
     "os:default",
     {
       "identifier": "opener:allow-open-url",

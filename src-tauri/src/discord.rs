@@ -573,7 +573,7 @@ fn save_tokens(app_handle: &AppHandle, token_response: &TokenResponse) -> Result
 }
 
 async fn exchange_code(params: &[(&str, &str)]) -> Result<TokenResponse, String> {
-    let response = tauri_plugin_http::reqwest::Client::new()
+    let response = reqwest::Client::new()
         .post(DISCORD_API_OAUTH2_TOKEN_URL)
         .form(params)
         .send()

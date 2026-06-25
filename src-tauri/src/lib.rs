@@ -39,7 +39,6 @@ pub fn run() {
         .plugin(tauri_plugin_prevent_default::debug())
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_opener::init())
-        .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_os::init())
         .setup(|app| {
             #[cfg(debug_assertions)]
