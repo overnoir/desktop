@@ -69,13 +69,10 @@ onMounted(() => (route.meta.headerImageUrl = avatarUrl.value));
         </TabsTrigger>
       </TabsList>
       <TabsContent value="connection">
-        <Card class="text-center p-16">
+        <Card class="text-center gap-12 p-16">
           <CardHeader>
             <CardTitle class="text-xl">Discord RPC</CardTitle>
-            <CardDescription> Rich Presence Connection </CardDescription>
-          </CardHeader>
-          <CardContent class="space-y-8 text-sm">
-            <p>
+            <CardDescription>
               {{
                 connectedUser
                   ? $t("discord.disconnect.description", {
@@ -83,7 +80,9 @@ onMounted(() => (route.meta.headerImageUrl = avatarUrl.value));
                     })
                   : $t("discord.connect.description")
               }}
-            </p>
+            </CardDescription>
+          </CardHeader>
+          <CardContent class="space-y-8 text-sm">
             <template v-if="connectedUser">
               <AlertDialog>
                 <AlertDialogTrigger as-child>
