@@ -1,15 +1,67 @@
 <script setup lang="ts">
-const { handleSubmit } = useForm({
+const draft = ref<
+  (KickStreamer & { status: "saved" | "pending" | "removed" })[]
+>([]);
+const kickStore = useKickStore();
+const { settings, streamers } = storeToRefs(kickStore);
+const { handleSubmit, resetForm } = useForm({
   validationSchema: kickAddStreamerSchema,
 });
-
-const kickStore = useKickStore();
-const { settings } = storeToRefs(kickStore);
-const slugs = ref<string[]>([]);
+const { fetchKickStreamers } = useApi();
+const errorsStore = useErrorsStore();
+const { $toast } = useNuxtApp();
+const loading = ref(false);
 const { t } = useI18n();
 
-const onSubmit = handleSubmit(async (values) => {
-  slugs.value.push(values.slug);
+const onSubmit = handleSubmit(async ({ slug }) => {
+  if (draft.value.some((streamer) => streamer.slug === slug)) {
+    $toast.error(t("kick.addStreamer.alreadyAdded"));
+    return;
+  }
+  draft.value.push({ slug, id: 0, status: "pending", profilePicture: "" });
+  resetForm();
+});
+
+async function save() {
+  loading.value = true;
+  try {
+    const newSlugs = draft.value
+      .filter(({ status, id }) => status === "pending" && id === 0)
+      .map(({ slug }) => slug);
+
+    if (newSlugs.length) {
+      const { data } = await fetchKickStreamers(newSlugs);
+      for (const item of draft.value) {
+        if (item.status === "pending" && item.id === 0) {
+          const match = data.value?.find(({ slug }) => slug === item.slug);
+          if (match) {
+            item.profilePicture = match.profilePicture;
+            item.id = match.id;
+          }
+        }
+      }
+    }
+
+    const saved = draft.value.filter(({ status }) => status !== "removed");
+
+    kickStore.streamers = saved.map(({ status: _, ...rest }) => rest);
+    draft.value = saved.map((streamer) => ({ ...streamer, status: "saved" }));
+
+    await kickStore.$tauri.saveNow();
+
+    $toast.success(t("kick.addStreamer.success"));
+  } catch (error) {
+    errorsStore.addError(JSON.stringify(error));
+    $toast.error(t("kick.addStreamer.error"));
+  }
+  loading.value = false;
+}
+
+onNuxtReady(() => {
+  draft.value = streamers.value.map((streamer) => ({
+    ...streamer,
+    status: "saved",
+  }));
 });
 </script>
 
@@ -38,11 +90,11 @@ const onSubmit = handleSubmit(async (values) => {
               <Field :data-invalid="!!errors.length">
                 <div class="flex items-center gap-2">
                   <Input
-                    :placeholder="$t('kick.slug.placeholder')"
+                    :placeholder="$t('kick.addStreamer.placeholder')"
                     :aria-invalid="!!errors.length"
                     v-bind="field"
                   />
-                  <Button type="submit" size="icon">
+                  <Button type="submit" size="icon" :disabled="loading">
                     <Icon name="lucide:plus" />
                   </Button>
                 </div>
@@ -54,21 +106,53 @@ const onSubmit = handleSubmit(async (values) => {
             </VeeField>
           </FieldGroup>
         </form>
-        <template v-if="slugs.length">
+        <template v-if="draft.length">
           <div
-            v-for="(slug, i) in slugs"
-            :key="i"
+            v-for="item in draft"
+            :key="item.slug"
+            :class="{
+              'opacity-40': item.status === 'removed',
+            }"
             class="flex gap-2 items-center"
           >
-            <Input disabled :model-value="slug" class="opacity-100!" />
-            <Button
-              size="icon"
-              variant="secondary"
-              @click="slugs = slugs.filter((value) => value !== slug)"
+            <NuxtImg
+              v-if="item.profilePicture"
+              class="shrink-0 size-9 bg-secondary rounded-lg border"
+              :src="item.profilePicture"
+              alt="Profile Picture"
+            />
+            <div
+              v-else
+              class="shrink-0 size-9 bg-secondary rounded-lg border grid place-items-center"
             >
-              <Icon name="lucide:x" />
+              <Icon name="lucide:user" />
+            </div>
+            <Input disabled :model-value="item.slug" class="opacity-100!" />
+            <Button
+              variant="secondary"
+              size="icon"
+              @click="
+                item.status =
+                  item.status === 'removed'
+                    ? item.id
+                      ? 'saved'
+                      : 'pending'
+                    : 'removed'
+              "
+            >
+              <Icon
+                :name="item.status === 'removed' ? 'lucide:undo-2' : 'lucide:x'"
+              />
             </Button>
           </div>
+          <Button
+            v-if="draft.some((s) => s.status !== 'saved')"
+            :loading
+            class="float-end"
+            @click="save"
+          >
+            {{ $t("kick.addStreamer.save") }}
+          </Button>
         </template>
         <Empty v-else>
           <EmptyHeader>

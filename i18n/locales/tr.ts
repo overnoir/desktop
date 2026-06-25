@@ -251,12 +251,14 @@ export default {
   },
   kick: {
     tabs: ["Yayıncılar", "Ayarlar"],
-    slug: {
+    addStreamer: {
       placeholder: "Yayıncı kullanıcı adı",
-      errors: {
-        empty: "Kullanıcı adı giriniz.",
-        invalid: "Geçerli bir kullanıcı adı giriniz.",
-      },
+      empty: "Kullanıcı adı giriniz.",
+      invalid: "Geçerli bir kullanıcı adı giriniz.",
+      alreadyAdded: "Bu kullanıcı adı zaten listede.",
+      success: "Yayıncılar başarıyla kaydedildi.",
+      error: "Yayıncılar kaydedilirken bir hata oluştu.",
+      save: "Kaydet",
     },
     empty: {
       title: "Yayıncı Yok",

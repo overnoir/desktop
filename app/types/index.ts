@@ -144,4 +144,10 @@ export type DiscordConnectedUser = {
 export type KickSettings = {
   showOnlyLive: boolean;
 };
+
+export type KickStreamer = {
+  profilePicture: string;
+  slug: string;
+  id: number;
+};
 //#endregion

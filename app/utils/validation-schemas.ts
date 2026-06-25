@@ -113,10 +113,10 @@ export const kickAddStreamerSchema = toTypedSchema(
   z.object({
     slug: z
       .string({
-        error: "kick.slug.errors.empty",
+        error: "kick.addStreamer.empty",
       })
       .regex(/^(?!\d+$)(?!_)(?!.*_$)(?!.*__)[a-z0-9_]{3,25}$/, {
-        error: "kick.slug.errors.invalid",
+        error: "kick.addStreamer.invalid",
       }),
   }),
 );
@@ -132,3 +132,22 @@ export const kickSettingsSchema = z.preprocess(
     showOnlyLive: z.boolean().catch(defaultKickSettings.showOnlyLive),
   }),
 ) satisfies z.ZodType<KickSettings>;
+
+const kickStreamerSchema = z.object({
+  profilePicture: z.string(),
+  slug: z.string(),
+  id: z.number(),
+});
+
+export const kickStreamersSchema = z.preprocess(
+  (value) => {
+    return Array.isArray(value) ? value : [];
+  },
+  z
+    .array(kickStreamerSchema)
+    .transform((streamers) =>
+      streamers.filter(
+        (stream) => kickStreamerSchema.safeParse(stream).success,
+      ),
+    ),
+) satisfies z.ZodType<KickStreamer[]>;
