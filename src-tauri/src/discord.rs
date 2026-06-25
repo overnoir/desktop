@@ -1,6 +1,5 @@
-use crate::{
-    env::Env,
-    vault::{delete_vault_items as delete_vault_items_fn, get_vault_items, update_vault_items},
+use crate::vault::{
+    delete_vault_items as delete_vault_items_fn, get_vault_items, update_vault_items,
 };
 use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine as _};
 use discord_rich_presence::{DiscordIpc, DiscordIpcClient};
@@ -100,9 +99,7 @@ const CHANNEL_EVENTS: [&str; 5] = [
     "SPEAKING_STOP",
 ];
 
-pub fn init_discord(app_handle: &AppHandle) {
-    let client_id = app_handle.state::<Env>().discord_client_id.clone();
-
+pub fn init_discord(app_handle: &AppHandle, client_id: &String) {
     app_handle.manage(Discord {
         client: Mutex::new(Some(DiscordIpcClient::new(&client_id))),
         client_id: client_id.to_string(),
