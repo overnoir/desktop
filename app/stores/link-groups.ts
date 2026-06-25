@@ -39,6 +39,11 @@ export const useLinkGroupsStore = defineStore(
           to: localePath("/discord"),
           name: "Discord",
         },
+        {
+          icon: "simple-icons:kick",
+          to: localePath("/kick"),
+          name: "Kick",
+        },
       ],
     }));
 

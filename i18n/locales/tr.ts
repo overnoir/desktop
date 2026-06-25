@@ -107,26 +107,6 @@ export default {
       },
     },
   },
-  errors: {
-    title: "Hata Kayıtları",
-    description: "Uygulamada oluşan hatalar.",
-    clear: "Hepsini Sil",
-    empty: {
-      title: "Her Şey Yolunda",
-      description: "Herhangi bir hata yok.",
-    },
-  },
-  help: {
-    docs: {
-      title: "Dokümantasyon",
-      description:
-        "Uygulama hakkında çoğu bilgiyi dokümantasyonda bulabilirsiniz.",
-    },
-    discord: {
-      description:
-        "Discord sunucumuza katılarak yardım alabilir, önerilerde bulunabilir, hata bildirebilir ve yeniliklerden haberdar olabilirsiniz.",
-    },
-  },
   vault: {
     heads: ["Anahtar", "Oluşturulma Tarihi", "Güncellenme Tarihi"],
     error: "Kasa verileri yüklenirken bir hata oluştu.",
@@ -146,6 +126,26 @@ export default {
         confirm: "Evet, sil",
         cancel: "Vazgeç",
       },
+    },
+  },
+  errors: {
+    title: "Hata Kayıtları",
+    description: "Uygulamada oluşan hatalar.",
+    clear: "Hepsini Sil",
+    empty: {
+      title: "Her Şey Yolunda",
+      description: "Herhangi bir hata yok.",
+    },
+  },
+  help: {
+    docs: {
+      title: "Dokümantasyon",
+      description:
+        "Uygulama hakkında çoğu bilgiyi dokümantasyonda bulabilirsiniz.",
+    },
+    discord: {
+      description:
+        "Discord sunucumuza katılarak yardım alabilir, önerilerde bulunabilir, hata bildirebilir ve yeniliklerden haberdar olabilirsiniz.",
     },
   },
   discord: {
@@ -244,6 +244,36 @@ export default {
         title: "Tüm Discord ayarlarını sıfırla",
         description:
           "Tüm Discord ayarlarınızı sıfırlamak istediğinize emin misiniz? Bu işlem geri alınamaz.",
+        confirm: "Evet, sıfırla",
+        cancel: "Vazgeç",
+      },
+    },
+  },
+  kick: {
+    tabs: ["Yayıncılar", "Ayarlar"],
+    slug: {
+      placeholder: "Yayıncı kullanıcı adı",
+      errors: {
+        empty: "Kullanıcı adı giriniz.",
+        invalid: "Geçerli bir kullanıcı adı giriniz.",
+      },
+    },
+    empty: {
+      title: "Yayıncı Yok",
+      description: "Henüz bir yayıncı eklemediniz.",
+    },
+    showOnlyLive: {
+      title: "Sadece Yayında Olanları Göster",
+      description: "Sadece canlı yayında olanların gözükmesini sağlayın.",
+    },
+    reset: {
+      title: "Sıfırla",
+      description: "Tüm Kick ayarlarını varsayılan ayarlarına döndürün.",
+      success: "Tüm Kick ayarları başarıyla sıfırlandı.",
+      dialog: {
+        title: "Tüm Kick ayarlarını sıfırla",
+        description:
+          "Tüm Kick ayarlarınızı sıfırlamak istediğinize emin misiniz? Bu işlem geri alınamaz.",
         confirm: "Evet, sıfırla",
         cancel: "Vazgeç",
       },

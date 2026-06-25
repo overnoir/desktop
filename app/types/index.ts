@@ -140,4 +140,8 @@ export type DiscordConnectedUser = {
   avatar?: string;
   id: string;
 };
+
+export type KickSettings = {
+  showOnlyLive: boolean;
+};
 //#endregion

@@ -108,3 +108,27 @@ export const discordConnectedUserSchema = z
   .transform(
     (value) => value ?? null,
   ) satisfies z.ZodType<DiscordConnectedUser | null>;
+
+export const kickAddStreamerSchema = toTypedSchema(
+  z.object({
+    slug: z
+      .string({
+        error: "kick.slug.errors.empty",
+      })
+      .regex(/^(?!\d+$)(?!_)(?!.*_$)(?!.*__)[a-z0-9_]{3,25}$/, {
+        error: "kick.slug.errors.invalid",
+      }),
+  }),
+);
+
+export const kickSettingsSchema = z.preprocess(
+  (value) => {
+    if (!isObject(value)) {
+      return defaultKickSettings;
+    }
+    return value;
+  },
+  z.object({
+    showOnlyLive: z.boolean().catch(defaultKickSettings.showOnlyLive),
+  }),
+) satisfies z.ZodType<KickSettings>;

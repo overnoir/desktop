@@ -41,6 +41,10 @@ export const defaultDiscordSettings: DiscordSettings = {
   showMe: true,
 };
 
+export const defaultKickSettings: KickSettings = {
+  showOnlyLive: false,
+};
+
 export const mainWebviewWindowOptions: Omit<
   WebviewOptions,
   "x" | "y" | "width" | "height"
