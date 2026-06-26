@@ -86,9 +86,9 @@ export const useDiscordStore = defineStore(
     }
 
     return {
-      users: filtredUsers,
       connectedUser,
       resetSettings,
+      filtredUsers,
       settings,
       guild,
     };

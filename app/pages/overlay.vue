@@ -4,9 +4,10 @@ definePageMeta({
 });
 
 const { filtredStreamers, streams, streamers } = storeToRefs(useKickStore());
-const discordStore = useDiscordStore();
-const { users, guild, settings, connectedUser } = storeToRefs(discordStore);
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
+const discordStore = useDiscordStore();
+const { filtredUsers, guild, settings, connectedUser } =
+  storeToRefs(discordStore);
 const isDragging = useState("is-dragging", () => false);
 const { general } = storeToRefs(useSettingsStore());
 const { pageStyles, boxStyles } = useUi();
@@ -106,7 +107,7 @@ useEventListener(window, "mouseup", async () => {
           name: guild.name,
         }"
       />
-      <DiscordUser v-for="user in users" :key="user.id" :user />
+      <DiscordUser v-for="user in filtredUsers" :key="user.id" :user />
       <KickStreamer
         v-for="streamer in filtredStreamers"
         :key="streamer.slug"
