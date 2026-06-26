@@ -3,11 +3,11 @@ const draft = ref<
   (KickStreamer & { status: "saved" | "pending" | "removed" })[]
 >([]);
 const kickStore = useKickStore();
-const { settings, streamers } = storeToRefs(kickStore);
+const { settings, streamers, streams } = storeToRefs(kickStore);
 const { handleSubmit, resetForm } = useForm({
   validationSchema: kickAddStreamerSchema,
 });
-const { fetchKickStreamers } = useApi();
+const { fetchKickStreamers, fetchKickStreams } = useApi();
 const errorsStore = useErrorsStore();
 const { $toast } = useNuxtApp();
 const loading = ref(false);
@@ -40,14 +40,41 @@ async function save() {
           }
         }
       }
+
+      draft.value = draft.value.filter(
+        (item) => !(item.status === "pending" && item.id === 0),
+      );
+
+      const newIds = data.value?.map(({ id }) => id) || [];
+
+      if (newIds.length) {
+        const { data } = await fetchKickStreams(newIds);
+        const newStreams = data.value || [];
+        streams.value = [
+          ...(streams.value || []).filter(
+            (stream) => !newStreams.some(({ slug }) => slug === stream.slug),
+          ),
+          ...newStreams,
+        ];
+      }
     }
+
+    const removedSlugs = draft.value
+      .filter(({ status }) => status === "removed")
+      .map(({ slug }) => slug);
 
     const saved = draft.value.filter(({ status }) => status !== "removed");
 
-    kickStore.streamers = saved.map(({ status: _, ...rest }) => rest);
+    streamers.value = saved.map(({ status: _, ...rest }) => rest);
     draft.value = saved.map((streamer) => ({ ...streamer, status: "saved" }));
 
-    await kickStore.$tauri.saveNow();
+    if (removedSlugs.length && streams.value) {
+      streams.value = streams.value.filter(
+        (s) => !removedSlugs.includes(s.slug),
+      );
+    }
+
+    await kickStore.$tauri.saveAllNow();
 
     $toast.success(t("kick.addStreamer.success"));
   } catch (error) {
@@ -86,12 +113,19 @@ onNuxtReady(() => {
       <TabsContent value="streamers" class="space-y-4">
         <form @submit="onSubmit">
           <FieldGroup>
-            <VeeField v-slot="{ field, errors }" name="slug">
+            <VeeField
+              v-slot="{ field, errors }"
+              name="slug"
+              :validate-on-blur="false"
+            >
               <Field :data-invalid="!!errors.length">
                 <div class="flex items-center gap-2">
                   <Input
                     :placeholder="$t('kick.addStreamer.placeholder')"
                     :aria-invalid="!!errors.length"
+                    autocapitalize="off"
+                    autocorrect="off"
+                    type="text"
                     v-bind="field"
                   />
                   <Button type="submit" size="icon" :disabled="loading">
@@ -147,8 +181,8 @@ onNuxtReady(() => {
           </div>
           <Button
             v-if="draft.some((s) => s.status !== 'saved')"
-            :loading
             class="float-end"
+            :loading
             @click="save"
           >
             {{ $t("kick.addStreamer.save") }}

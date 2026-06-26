@@ -35,6 +35,7 @@ export enum Alignment {
 
 export enum Source {
   Discord = "discord",
+  Kick = "kick",
 }
 //#endregion
 
@@ -149,5 +150,10 @@ export type KickStreamer = {
   profilePicture: string;
   slug: string;
   id: number;
+};
+
+export type KickStream = {
+  category: string;
+  slug: string;
 };
 //#endregion

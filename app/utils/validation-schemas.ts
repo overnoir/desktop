@@ -151,3 +151,19 @@ export const kickStreamersSchema = z.preprocess(
       ),
     ),
 ) satisfies z.ZodType<KickStreamer[]>;
+
+const kickStreamSchema = z.object({
+  category: z.string(),
+  slug: z.string(),
+});
+
+export const kickStreamsSchema = z.preprocess(
+  (value) => {
+    return Array.isArray(value) ? value : [];
+  },
+  z
+    .array(kickStreamSchema)
+    .transform((streamers) =>
+      streamers.filter((stream) => kickStreamSchema.safeParse(stream).success),
+    ),
+) satisfies z.ZodType<KickStream[]>;

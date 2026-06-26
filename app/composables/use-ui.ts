@@ -23,6 +23,7 @@ export default function () {
     borderRadius: `${Math.round((general.value.size * general.value.radius) / 200)}px`,
     paddingInline: `${Math.round(general.value.size / 18)}px`,
     fontSize: `${Math.round(general.value.size / 5.5)}px`,
+    gap: `${Math.round(general.value.size / 18)}px`,
     maxWidth: `${Math.round(general.value.size)}px`,
   }));
 
@@ -36,7 +37,7 @@ export default function () {
     height: `${Math.round(general.value.size)}px`,
     width: `${Math.round(general.value.size)}px`,
     "--tw-ring-shadow": `var(--tw-ring-inset) 0 0 0 ${Math.round(
-      general.value.size / 15,
+      general.value.size / 18,
     )}px var(--tw-ring-color)`,
   }));
 
@@ -56,6 +57,11 @@ export default function () {
     gap: `${Math.round(general.value.size / 22)}px`,
   }));
 
+  const liveStyles = computed<CSSProperties>(() => ({
+    height: `${Math.round(general.value.size / 9)}px`,
+    width: `${Math.round(general.value.size / 9)}px`,
+  }));
+
   return {
     avatarDecorationStyles,
     backgroundStyles,
@@ -65,6 +71,7 @@ export default function () {
     nameStyles,
     iconStyles,
     pageStyles,
+    liveStyles,
     boxStyles,
   };
 }

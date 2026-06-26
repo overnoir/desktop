@@ -5,13 +5,15 @@ definePageMeta({
   layout: "overlay",
 });
 
+const { filtredStreamers, streams, streamers } = storeToRefs(useKickStore());
 const discordStore = useDiscordStore();
-const errorsStore = useErrorsStore();
 const { users, guild, settings, connectedUser } = storeToRefs(discordStore);
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const isDragging = useState("is-dragging", () => false);
 const { general } = storeToRefs(useSettingsStore());
 const { pageStyles, boxStyles } = useUi();
+const { fetchKickStreams } = useApi();
+const errorsStore = useErrorsStore();
 const isOnline = useOnline();
 const dragButton = ref();
 const offsetX = ref(0);
@@ -20,16 +22,6 @@ const offsetY = ref(0);
 await tauriEventListen<DiscordGuild | null>("guild-update", ({ payload }) => {
   guild.value = payload || undefined;
 });
-
-if (connectedUser.value) {
-  try {
-    connectedUser.value =
-      await tauriCoreInvoke<DiscordConnectedUser>("connect_discord");
-  } catch (error) {
-    errorsStore.addError(JSON.stringify(error), Source.Discord);
-    connectedUser.value = null;
-  }
-}
 
 async function openMainWebviewWindow() {
   const mainWebviewWindow = (
@@ -75,6 +67,31 @@ useEventListener(window, "mousemove", async (e) => {
 useEventListener(window, "mouseup", async () => {
   isDragging.value = false;
 });
+
+onMounted(async () => {
+  try {
+    if (connectedUser.value) {
+      connectedUser.value =
+        await tauriCoreInvoke<DiscordConnectedUser>("connect_discord");
+    }
+  } catch (error) {
+    errorsStore.addError(JSON.stringify(error), Source.Discord);
+    connectedUser.value = null;
+  }
+
+  try {
+    if (streamers.value.length) {
+      const { data } = await fetchKickStreams(
+        streamers.value.map(({ id }) => id),
+      );
+      if (data.value) {
+        streams.value = data.value;
+      }
+    }
+  } catch (error) {
+    errorsStore.addError(JSON.stringify(error), Source.Kick);
+  }
+});
 </script>
 
 <template>
@@ -91,6 +108,12 @@ useEventListener(window, "mouseup", async () => {
         }"
       />
       <DiscordUser v-for="user in users" :key="user.id" :user />
+      <KickStreamer
+        v-for="streamer in filtredStreamers"
+        :key="streamer.slug"
+        :stream="streams?.find(({ slug }) => slug === streamer.slug)"
+        :streamer
+      />
     </template>
     <Button
       v-else

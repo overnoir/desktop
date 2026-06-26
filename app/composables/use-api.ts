@@ -11,5 +11,13 @@ export default function () {
     });
   }
 
-  return { fetchKickStreamers };
+  async function fetchKickStreams(id: number[]) {
+    return useApiFetch<KickStream[]>("/kick/streams", {
+      query: {
+        id,
+      },
+    });
+  }
+
+  return { fetchKickStreamers, fetchKickStreams };
 }
