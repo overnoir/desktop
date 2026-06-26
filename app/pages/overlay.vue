@@ -3,7 +3,7 @@ definePageMeta({
   layout: "overlay",
 });
 
-const { filtredStreamers, streams, streamers } = storeToRefs(useKickStore());
+const { filtredChannels, channels } = storeToRefs(useKickStore());
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const discordStore = useDiscordStore();
 const { filtredUsers, guild, settings, connectedUser } =
@@ -11,7 +11,7 @@ const { filtredUsers, guild, settings, connectedUser } =
 const isDragging = useState("is-dragging", () => false);
 const { general } = storeToRefs(useSettingsStore());
 const { pageStyles, boxStyles } = useUi();
-const { fetchKickStreams } = useApi();
+const { fetchKickLivestreams } = useApi();
 const errorsStore = useErrorsStore();
 const isOnline = useOnline();
 const dragButton = ref();
@@ -33,12 +33,15 @@ try {
 }
 
 try {
-  if (streamers.value.length) {
-    const { data } = await fetchKickStreams(
-      streamers.value.map(({ id }) => id),
+  if (channels.value.length) {
+    const { data } = await fetchKickLivestreams(
+      channels.value.map(({ id }) => id),
     );
     if (data.value) {
-      streams.value = data.value;
+      for (const channel of channels.value) {
+        const match = data.value.find((s) => s.slug === channel.slug);
+        channel.livestream = match ?? undefined;
+      }
     }
   }
 } catch (error) {
@@ -108,11 +111,10 @@ useEventListener(window, "mouseup", async () => {
         }"
       />
       <DiscordUser v-for="user in filtredUsers" :key="user.id" :user />
-      <KickStreamer
-        v-for="streamer in filtredStreamers"
-        :key="streamer.slug"
-        :stream="streams?.find(({ slug }) => slug === streamer.slug)"
-        :streamer
+      <KickChannel
+        v-for="channel in filtredChannels"
+        :key="channel.slug"
+        :channel
       />
     </template>
     <Button

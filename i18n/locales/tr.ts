@@ -252,7 +252,7 @@ export default {
   },
   kick: {
     tabs: ["Yayıncılar", "Ayarlar"],
-    addStreamer: {
+    addChannel: {
       placeholder: "Yayıncı kullanıcı adı",
       empty: "Kullanıcı adı giriniz.",
       invalid: "Geçerli bir kullanıcı adı giriniz.",

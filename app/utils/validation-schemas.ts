@@ -109,14 +109,14 @@ export const discordConnectedUserSchema = z
     (value) => value ?? null,
   ) satisfies z.ZodType<DiscordConnectedUser | null>;
 
-export const kickAddStreamerSchema = toTypedSchema(
+export const kickAddChannelSchema = toTypedSchema(
   z.object({
     slug: z
       .string({
-        error: "kick.addStreamer.empty",
+        error: "kick.addChannel.empty",
       })
       .regex(/^(?!\d+$)(?!_)(?!.*_$)(?!.*__)[a-z0-9_]{3,25}$/, {
-        error: "kick.addStreamer.invalid",
+        error: "kick.addChannel.invalid",
       }),
   }),
 );
@@ -133,37 +133,26 @@ export const kickSettingsSchema = z.preprocess(
   }),
 ) satisfies z.ZodType<KickSettings>;
 
-const kickStreamerSchema = z.object({
+const kickChannelSchema = z.object({
   profilePicture: z.string(),
   slug: z.string(),
   id: z.number(),
-});
+  livestream: z
+    .object({
+      category: z.string(),
+    })
+    .optional(),
+}) satisfies z.ZodType<KickChannel>;
 
-export const kickStreamersSchema = z.preprocess(
+export const kickChannelsSchema = z.preprocess(
   (value) => {
     return Array.isArray(value) ? value : [];
   },
   z
-    .array(kickStreamerSchema)
-    .transform((streamers) =>
-      streamers.filter(
-        (stream) => kickStreamerSchema.safeParse(stream).success,
+    .array(kickChannelSchema)
+    .transform((channels) =>
+      channels.filter(
+        (channel) => kickChannelSchema.safeParse(channel).success,
       ),
     ),
-) satisfies z.ZodType<KickStreamer[]>;
-
-const kickStreamSchema = z.object({
-  category: z.string(),
-  slug: z.string(),
-});
-
-export const kickStreamsSchema = z.preprocess(
-  (value) => {
-    return Array.isArray(value) ? value : [];
-  },
-  z
-    .array(kickStreamSchema)
-    .transform((streamers) =>
-      streamers.filter((stream) => kickStreamSchema.safeParse(stream).success),
-    ),
-) satisfies z.ZodType<KickStream[]>;
+) satisfies z.ZodType<KickChannel[]>;

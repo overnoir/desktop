@@ -2,9 +2,8 @@ import type { State } from "@tauri-store/pinia";
 
 function sync(state: State) {
   return {
-    streamers: kickStreamersSchema.parse(state.streamers),
+    channels: kickChannelsSchema.parse(state.channels),
     settings: kickSettingsSchema.parse(state.settings),
-    streams: kickStreamsSchema.parse(state.streams),
   };
 }
 
@@ -12,24 +11,22 @@ export const useKickStore = defineStore(
   "kick",
   () => {
     const settings = ref<KickSettings>({ ...defaultKickSettings });
-    const streamers = ref<KickStreamer[]>([]);
-    const streams = ref<KickStream[]>([]);
+    const channels = ref<KickChannel[]>([]);
 
     function resetSettings() {
       settings.value = { ...defaultKickSettings };
     }
 
-    const filtredStreamers = computed(() => {
-      let items = [...streamers.value];
+    const filtredChannels = computed(() => {
+      let items = [...channels.value];
 
       if (settings.value.showOnlyLive) {
-        const liveSlugs = new Set(streams.value?.map((s) => s.slug) ?? []);
-        items = items.filter((s) => liveSlugs.has(s.slug));
+        items = items.filter((s) => s.livestream);
       }
 
       items.sort((a, b) => {
-        const aLive = streams.value?.some((s) => s.slug === a.slug) ?? false;
-        const bLive = streams.value?.some((s) => s.slug === b.slug) ?? false;
+        const aLive = !!a.livestream;
+        const bLive = !!b.livestream;
         if (aLive !== bLive) return Number(bLive) - Number(aLive);
         return a.slug.localeCompare(b.slug);
       });
@@ -38,11 +35,10 @@ export const useKickStore = defineStore(
     });
 
     return {
-      filtredStreamers,
+      filtredChannels,
       resetSettings,
-      streamers,
+      channels,
       settings,
-      streams,
     };
   },
   {

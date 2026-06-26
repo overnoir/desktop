@@ -3,21 +3,21 @@ export const useApiFetch = createUseFetch({
 });
 
 export default function () {
-  async function fetchKickStreamers(slug: string[]) {
-    return useApiFetch<KickStreamer[]>("/kick/streamers", {
+  async function fetchKickChannels(slug: string[]) {
+    return useApiFetch<KickChannelsResponse>("/kick/channels", {
       query: {
         slug,
       },
     });
   }
 
-  async function fetchKickStreams(id: number[]) {
-    return useApiFetch<KickStream[]>("/kick/streams", {
+  async function fetchKickLivestreams(id: number[]) {
+    return useApiFetch<KickLivestreamsResponse>("/kick/livestreams", {
       query: {
         id,
       },
     });
   }
 
-  return { fetchKickStreamers, fetchKickStreams };
+  return { fetchKickChannels, fetchKickLivestreams };
 }

@@ -1,21 +1,21 @@
 <script setup lang="ts">
 const draft = ref<
-  (KickStreamer & { status: "saved" | "pending" | "removed" })[]
+  (KickChannel & { status: "saved" | "pending" | "removed" })[]
 >([]);
 const kickStore = useKickStore();
-const { settings, streamers, streams } = storeToRefs(kickStore);
+const { settings, channels } = storeToRefs(kickStore);
 const { handleSubmit, resetForm } = useForm({
-  validationSchema: kickAddStreamerSchema,
+  validationSchema: kickAddChannelSchema,
 });
-const { fetchKickStreamers, fetchKickStreams } = useApi();
+const { fetchKickChannels, fetchKickLivestreams } = useApi();
 const errorsStore = useErrorsStore();
 const { $toast } = useNuxtApp();
 const loading = ref(false);
 const { t } = useI18n();
 
 const onSubmit = handleSubmit(async ({ slug }) => {
-  if (draft.value.some((streamer) => streamer.slug === slug)) {
-    $toast.error(t("kick.addStreamer.alreadyAdded"));
+  if (draft.value.some((channel) => channel.slug === slug)) {
+    $toast.error(t("kick.addChannel.alreadyAdded"));
     return;
   }
   draft.value.push({ slug, id: 0, status: "pending", profilePicture: "" });
@@ -30,7 +30,7 @@ async function save() {
       .map(({ slug }) => slug);
 
     if (newSlugs.length) {
-      const { data } = await fetchKickStreamers(newSlugs);
+      const { data } = await fetchKickChannels(newSlugs);
       for (const item of draft.value) {
         if (item.status === "pending" && item.id === 0) {
           const match = data.value?.find(({ slug }) => slug === item.slug);
@@ -48,14 +48,14 @@ async function save() {
       const newIds = data.value?.map(({ id }) => id) || [];
 
       if (newIds.length) {
-        const { data } = await fetchKickStreams(newIds);
-        const newStreams = data.value || [];
-        streams.value = [
-          ...(streams.value || []).filter(
-            (stream) => !newStreams.some(({ slug }) => slug === stream.slug),
-          ),
-          ...newStreams,
-        ];
+        const { data: livestreamsData } = await fetchKickLivestreams(newIds);
+        const newLivestreams = livestreamsData.value || [];
+        for (const item of draft.value) {
+          if (item.status === "pending" && item.id > 0) {
+            const match = newLivestreams.find((s) => s.slug === item.slug);
+            item.livestream = match ?? undefined;
+          }
+        }
       }
     }
 
@@ -63,30 +63,30 @@ async function save() {
       .filter(({ status }) => status === "removed")
       .map(({ slug }) => slug);
 
+    for (const item of draft.value) {
+      if (removedSlugs.includes(item.slug)) {
+        item.livestream = undefined;
+      }
+    }
+
     const saved = draft.value.filter(({ status }) => status !== "removed");
 
-    streamers.value = saved.map(({ status: _, ...rest }) => rest);
-    draft.value = saved.map((streamer) => ({ ...streamer, status: "saved" }));
-
-    if (removedSlugs.length && streams.value) {
-      streams.value = streams.value.filter(
-        (s) => !removedSlugs.includes(s.slug),
-      );
-    }
+    channels.value = saved.map(({ status: _, ...rest }) => rest);
+    draft.value = saved.map((channel) => ({ ...channel, status: "saved" }));
 
     await kickStore.$tauri.saveAllNow();
 
-    $toast.success(t("kick.addStreamer.success"));
+    $toast.success(t("kick.addChannel.success"));
   } catch (error) {
     errorsStore.addError(JSON.stringify(error));
-    $toast.error(t("kick.addStreamer.error"));
+    $toast.error(t("kick.addChannel.error"));
   }
   loading.value = false;
 }
 
 onNuxtReady(() => {
-  draft.value = streamers.value.map((streamer) => ({
-    ...streamer,
+  draft.value = channels.value.map((channel) => ({
+    ...channel,
     status: "saved",
   }));
 });
@@ -96,12 +96,12 @@ onNuxtReady(() => {
   <section class="space-y-4 max-w-3xl mx-auto">
     <Tabs
       class="flex-row gap-6 [&>div]:not-first:space-y-4"
-      default-value="streamers"
+      default-value="channels"
     >
       <TabsList
         class="flex-col h-max sticky top-10.75 [&>button]:gap-3 [&>button]:w-40 [&>button]:justify-start"
       >
-        <TabsTrigger value="streamers">
+        <TabsTrigger value="channels">
           <Icon name="lucide:radio" />
           {{ $t("kick.tabs.0") }}
         </TabsTrigger>
@@ -110,7 +110,7 @@ onNuxtReady(() => {
           {{ $t("kick.tabs.1") }}
         </TabsTrigger>
       </TabsList>
-      <TabsContent value="streamers" class="space-y-4">
+      <TabsContent value="channels" class="space-y-4">
         <form @submit="onSubmit">
           <FieldGroup>
             <VeeField
@@ -121,7 +121,7 @@ onNuxtReady(() => {
               <Field :data-invalid="!!errors.length">
                 <div class="flex items-center gap-2">
                   <Input
-                    :placeholder="$t('kick.addStreamer.placeholder')"
+                    :placeholder="$t('kick.addChannel.placeholder')"
                     :aria-invalid="!!errors.length"
                     autocapitalize="off"
                     autocorrect="off"
@@ -185,7 +185,7 @@ onNuxtReady(() => {
             :loading
             @click="save"
           >
-            {{ $t("kick.addStreamer.save") }}
+            {{ $t("kick.addChannel.save") }}
           </Button>
         </template>
         <Empty v-else>

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 defineProps<{
-  streamer: KickStreamer;
-  stream?: KickStream;
+  channel: KickChannel;
 }>();
 
 const { boxStyles, nameStyles, liveStyles } = useUi();
@@ -10,33 +9,33 @@ const { boxStyles, nameStyles, liveStyles } = useUi();
 <template>
   <div
     :class="{
-      'grayscale-100': !stream,
+      'grayscale-100': !channel.livestream,
     }"
     class="relative"
   >
     <NuxtImg
-      :src="streamer.profilePicture"
+      :src="channel.profilePicture"
       class="border bg-secondary"
       alt="Profile Picture"
       :style="boxStyles"
     />
     <div
-      v-if="stream"
+      v-if="channel.livestream"
       class="absolute bg-background/70 left-0 top-0 inline-block w-fit truncate"
       :style="nameStyles"
     >
-      {{ stream.category }}
+      {{ channel.livestream.category }}
     </div>
     <div
       class="absolute bg-background/70 left-0 bottom-0 inline-flex items-center w-fit truncate"
       :style="nameStyles"
     >
       <span
-        v-if="stream"
+        v-if="channel.livestream"
         class="bg-green-600 rounded-full shrink-0"
         :style="liveStyles"
       />
-      <span class="truncate">{{ streamer.slug }}</span>
+      <span class="truncate">{{ channel.slug }}</span>
     </div>
   </div>
 </template>
