@@ -12,7 +12,7 @@ const { t, locales } = useI18n();
 const { updateMenu } = useTray();
 const { $toast } = useNuxtApp();
 
-async function quickSelect(
+async function quickPositionSelect(
   { position, size }: { position: Monitor["position"]; size: Monitor["size"] },
   index: number,
 ) {
@@ -46,8 +46,10 @@ async function quickSelect(
 
   if (pos) {
     await overlayWebviewWindow.setPosition(
-      new TauriWindowLogicalPosition(pos.x, pos.y),
+      new TauriDpiLogicalPosition(pos.x, pos.y),
     );
+    general.value.x = pos.x;
+    general.value.y = pos.y;
   }
 }
 
@@ -234,7 +236,7 @@ async function reset() {
                         'rounded-tl-lg rounded-br-lg border-b-0 border-r-0':
                           j === 8,
                       }"
-                      @click="quickSelect({ position, size }, j)"
+                      @click="quickPositionSelect({ position, size }, j)"
                     />
                     <div v-else />
                   </template>

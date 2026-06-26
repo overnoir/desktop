@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { PhysicalPosition } from "@tauri-apps/api/dpi";
-
 definePageMeta({
   layout: "overlay",
 });
@@ -60,7 +58,10 @@ useEventListener(window, "mousemove", async (e) => {
   }
 
   overlayWebviewWindow.setPosition(
-    new PhysicalPosition(e.screenX - offsetX.value, e.screenY - offsetY.value),
+    new TauriDpiLogicalPosition(
+      e.screenX - offsetX.value,
+      e.screenY - offsetY.value,
+    ),
   );
 });
 
