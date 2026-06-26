@@ -20,11 +20,21 @@ export const useKickStore = defineStore(
     }
 
     const filtredStreamers = computed(() => {
-      return [...streamers.value].sort((a, b) => {
-        const aStream = streams.value?.some((s) => s.slug === a.slug) || false;
-        const bStream = streams.value?.some((s) => s.slug === b.slug) || false;
-        return Number(bStream) - Number(aStream);
+      let items = [...streamers.value];
+
+      if (settings.value.showOnlyLive) {
+        const liveSlugs = new Set(streams.value?.map((s) => s.slug) ?? []);
+        items = items.filter((s) => liveSlugs.has(s.slug));
+      }
+
+      items.sort((a, b) => {
+        const aLive = streams.value?.some((s) => s.slug === a.slug) ?? false;
+        const bLive = streams.value?.some((s) => s.slug === b.slug) ?? false;
+        if (aLive !== bLive) return Number(bLive) - Number(aLive);
+        return a.slug.localeCompare(b.slug);
       });
+
+      return items;
     });
 
     return {
