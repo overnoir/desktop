@@ -113,12 +113,7 @@ onMounted(async () => {
 <template>
   <Html :style="htmlStyles">
     <Body class="size-max **:select-none **:transition-none bg-transparent">
-      <main
-        :class="{
-          'bg-background border': general.showBackground,
-        }"
-        :style="general.showBackground ? backgroundStyles : undefined"
-      >
+      <main :style="backgroundStyles">
         <slot />
       </main>
     </Body>

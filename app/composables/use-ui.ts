@@ -14,10 +14,18 @@ export default function () {
     width: `${Math.round(general.value.size / 5.5)}px`,
   }));
 
-  const backgroundStyles = computed<CSSProperties>(() => ({
-    borderRadius: `${Math.round(((general.value.size * general.value.radius) / 200) * 1.15)}px`,
-    padding: `${Math.round(general.value.size / 25)}px`,
-  }));
+  const backgroundStyles = computed<CSSProperties>(() => {
+    if (!general.value.showBackground) {
+      return {};
+    }
+
+    return {
+      borderRadius: `${Math.round(((general.value.size * general.value.radius) / 200) * 1.15)}px`,
+      padding: `${Math.round(general.value.size / 25)}px`,
+      backgroundColor: "var(--background)",
+      border: "1px solid var(--border)",
+    };
+  });
 
   const nameStyles = computed<CSSProperties>(() => ({
     borderRadius: `${Math.round((general.value.size * general.value.radius) / 200)}px`,
