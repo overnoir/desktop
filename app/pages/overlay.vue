@@ -21,6 +21,29 @@ await tauriEventListen<DiscordGuild | null>("guild-update", ({ payload }) => {
   guild.value = payload || undefined;
 });
 
+try {
+  if (connectedUser.value) {
+    connectedUser.value =
+      await tauriCoreInvoke<DiscordConnectedUser>("connect_discord");
+  }
+} catch (error) {
+  errorsStore.addError(JSON.stringify(error), Source.Discord);
+  connectedUser.value = null;
+}
+
+try {
+  if (streamers.value.length) {
+    const { data } = await fetchKickStreams(
+      streamers.value.map(({ id }) => id),
+    );
+    if (data.value) {
+      streams.value = data.value;
+    }
+  }
+} catch (error) {
+  errorsStore.addError(JSON.stringify(error), Source.Kick);
+}
+
 async function openMainWebviewWindow() {
   const mainWebviewWindow = (
     await tauriWebviewWindowGetAllWebviewWindows()
@@ -67,31 +90,6 @@ useEventListener(window, "mousemove", async (e) => {
 
 useEventListener(window, "mouseup", async () => {
   isDragging.value = false;
-});
-
-onMounted(async () => {
-  try {
-    if (connectedUser.value) {
-      connectedUser.value =
-        await tauriCoreInvoke<DiscordConnectedUser>("connect_discord");
-    }
-  } catch (error) {
-    errorsStore.addError(JSON.stringify(error), Source.Discord);
-    connectedUser.value = null;
-  }
-
-  try {
-    if (streamers.value.length) {
-      const { data } = await fetchKickStreams(
-        streamers.value.map(({ id }) => id),
-      );
-      if (data.value) {
-        streams.value = data.value;
-      }
-    }
-  } catch (error) {
-    errorsStore.addError(JSON.stringify(error), Source.Kick);
-  }
 });
 </script>
 

@@ -18,6 +18,7 @@ export default {
   updater: {
     checking: "Güncelleme kontrol ediliyor...",
     downloading: "Güncelleme yükleniyor...",
+    loading: "Lütfen bekleyin...",
   },
   error: {
     goHome: "Ana Sayfaya Git",

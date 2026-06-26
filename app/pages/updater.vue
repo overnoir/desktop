@@ -3,7 +3,7 @@ definePageMeta({
   layout: "updater",
 });
 
-const status = ref<"checking" | "downloading">("checking");
+const status = ref<"checking" | "downloading" | "loading">("checking");
 
 setTimeout(() => {
   status.value = "downloading";
@@ -13,6 +13,7 @@ setTimeout(() => {
       WebviewWindow.Overlay,
       overlayWebviewWindowOptions,
     );
+    status.value = "loading";
   }, 1000);
 }, 1000);
 </script>
@@ -24,12 +25,12 @@ setTimeout(() => {
   >
     <NuxtImg src="/logo.png" class="size-17" alt="Logo" />
     <div class="flex flex-col items-center gap-1.5">
-      <Spinner v-if="status === 'checking'" class="size-5 text-primary" />
       <Progress
         v-if="status === 'downloading'"
         :model-value="70"
         class="my-1.5"
       />
+      <Spinner v-else class="size-5 text-primary" />
       <p class="text-sm text-secondary-foreground">
         {{ $t(`updater.${status}`) }}
       </p>
