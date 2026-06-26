@@ -4,7 +4,7 @@ import type { Monitor } from "@tauri-apps/api/window";
 const mainWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const overlayWebviewWindow = (
   await tauriWebviewWindowGetAllWebviewWindows()
-).find(({ label }) => label === WebviewWindow.Overlay);
+).find(({ label }) => label === WebviewWindowLabel.Overlay);
 const settingsStore = useSettingsStore();
 const { general, advanced } = storeToRefs(settingsStore);
 const monitors = await tauriWindowAvailableMonitors();

@@ -37,7 +37,7 @@ async function toggleConnection() {
     route.meta.headerImageUrl = avatarUrl.value;
     $toast.success(t(`discord.${action}.success`));
   } catch (error) {
-    errorsStore.addError(JSON.stringify(error), Source.Discord);
+    errorsStore.addError(JSON.stringify(error), ErrorSource.Discord);
     $toast.error(t(`discord.${action}.error`));
   }
   loading.value = false;
@@ -217,7 +217,7 @@ onMounted(() => (route.meta.headerImageUrl = avatarUrl.value));
             </SelectTrigger>
             <SelectContent>
               <SelectItem
-                v-for="displayName in Object.values(DisplayName)"
+                v-for="displayName in Object.values(DiscordDisplayName)"
                 :key="displayName"
                 :value="displayName"
               >
@@ -237,7 +237,7 @@ onMounted(() => (route.meta.headerImageUrl = avatarUrl.value));
             </SelectTrigger>
             <SelectContent>
               <SelectItem
-                v-for="show in Object.values(Show)"
+                v-for="show in Object.values(DiscordShow)"
                 :key="show"
                 :value="show"
               >
@@ -257,7 +257,7 @@ onMounted(() => (route.meta.headerImageUrl = avatarUrl.value));
             </SelectTrigger>
             <SelectContent>
               <SelectItem
-                v-for="show in Object.values(Show)"
+                v-for="show in Object.values(DiscordShow)"
                 :key="show"
                 :value="show"
               >
@@ -277,7 +277,7 @@ onMounted(() => (route.meta.headerImageUrl = avatarUrl.value));
             </SelectTrigger>
             <SelectContent>
               <SelectItem
-                v-for="show in Object.values(Show)"
+                v-for="show in Object.values(DiscordShow)"
                 :key="show"
                 :value="show"
               >
@@ -297,7 +297,7 @@ onMounted(() => (route.meta.headerImageUrl = avatarUrl.value));
             </SelectTrigger>
             <SelectContent>
               <SelectItem
-                v-for="show in Object.values(Show)"
+                v-for="show in Object.values(DiscordShow)"
                 :key="show"
                 :value="show"
               >

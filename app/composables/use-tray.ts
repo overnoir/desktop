@@ -10,7 +10,7 @@ export default function () {
           action: async () => {
             const mainWebviewWindow = (
               await tauriWebviewWindowGetAllWebviewWindows()
-            ).find(({ label }) => label === WebviewWindow.Main);
+            ).find(({ label }) => label === WebviewWindowLabel.Main);
 
             if (mainWebviewWindow) {
               await mainWebviewWindow.show();
@@ -18,7 +18,7 @@ export default function () {
               await mainWebviewWindow.setFocus();
             } else {
               new TauriWebviewWindowWebviewWindow(
-                WebviewWindow.Main,
+                WebviewWindowLabel.Main,
                 mainWebviewWindowOptions,
               );
             }

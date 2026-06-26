@@ -21,31 +21,32 @@ const displayName = computed(() =>
 );
 
 const showDisplayName = computed(() => {
-  if (settings.value.showDisplayName === Show.WhileSpeaking)
+  if (settings.value.showDisplayName === DiscordShow.WhileSpeaking)
     return user.isSpeaking;
-  if (settings.value.showDisplayName === Show.Never) return false;
+  if (settings.value.showDisplayName === DiscordShow.Never) return false;
   return true;
 });
 
 const showAvatarAnimated = computed(() => {
-  if (settings.value.showAvatarAnimated === Show.WhileSpeaking)
+  if (settings.value.showAvatarAnimated === DiscordShow.WhileSpeaking)
     return user.isSpeaking;
-  if (settings.value.showAvatarAnimated === Show.Never) return false;
+  if (settings.value.showAvatarAnimated === DiscordShow.Never) return false;
   return true;
 });
 
 const showAvatarDecoration = computed(() => {
   if (!user.avatarDecoration) return false;
-  if (settings.value.showAvatarDecoration === Show.WhileSpeaking)
+  if (settings.value.showAvatarDecoration === DiscordShow.WhileSpeaking)
     return user.isSpeaking;
-  if (settings.value.showAvatarDecoration === Show.Never) return false;
+  if (settings.value.showAvatarDecoration === DiscordShow.Never) return false;
   return true;
 });
 
 const showAvatarDecorationAnimated = computed(() => {
-  if (settings.value.showAvatarDecorationAnimated === Show.WhileSpeaking)
+  if (settings.value.showAvatarDecorationAnimated === DiscordShow.WhileSpeaking)
     return user.isSpeaking;
-  if (settings.value.showAvatarDecorationAnimated === Show.Never) return false;
+  if (settings.value.showAvatarDecorationAnimated === DiscordShow.Never)
+    return false;
   return true;
 });
 

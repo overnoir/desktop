@@ -26,11 +26,11 @@ export const defaultSettingsAdvanced: SettingsAdvanced = {
 };
 
 export const defaultDiscordSettings: DiscordSettings = {
-  showAvatarDecorationAnimated: Show.WhileSpeaking,
-  showAvatarAnimated: Show.WhileSpeaking,
-  showAvatarDecoration: Show.Never,
-  displayName: DisplayName.Nick,
-  showDisplayName: Show.Always,
+  showAvatarDecorationAnimated: DiscordShow.WhileSpeaking,
+  showAvatarAnimated: DiscordShow.WhileSpeaking,
+  showAvatarDecoration: DiscordShow.Never,
+  displayName: DiscordDisplayName.Nick,
+  showDisplayName: DiscordShow.Always,
   showGuildIconAnimated: false,
   showDeafenedUsers: true,
   showSpeakersOnly: false,
@@ -42,7 +42,10 @@ export const defaultDiscordSettings: DiscordSettings = {
 };
 
 export const defaultKickSettings: KickSettings = {
+  showCategory: KickShow.WhileLive,
+  showSlug: KickShow.Always,
   showOnlyLive: false,
+  channelLimit: 10,
 };
 
 export const mainWebviewWindowOptions: Omit<

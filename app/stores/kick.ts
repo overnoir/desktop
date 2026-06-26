@@ -31,6 +31,8 @@ export const useKickStore = defineStore(
         return a.slug.localeCompare(b.slug);
       });
 
+      items = items.slice(0, settings.value.channelLimit);
+
       return items;
     });
 

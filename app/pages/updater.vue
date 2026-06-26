@@ -10,7 +10,7 @@ setTimeout(() => {
 
   setTimeout(() => {
     new TauriWebviewWindowWebviewWindow(
-      WebviewWindow.Overlay,
+      WebviewWindowLabel.Overlay,
       overlayWebviewWindowOptions,
     );
     status.value = "loading";

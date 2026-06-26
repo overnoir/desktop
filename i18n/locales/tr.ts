@@ -265,9 +265,26 @@ export default {
       title: "Yayıncı Yok",
       description: "Henüz bir yayıncı eklemediniz.",
     },
+    show: {
+      whileLive: "Yayındayken",
+      always: "Her Zaman",
+      never: "Asla",
+    },
     showOnlyLive: {
       title: "Sadece Yayında Olanları Göster",
       description: "Sadece canlı yayında olanların gözükmesini sağlayın.",
+    },
+    showSlug: {
+      title: "Yayıncı Adını Göster",
+      description: "Yayıncı adının ne zaman gözükeceğini seçin.",
+    },
+    showCategory: {
+      title: "Yayın Kategorisini Göster",
+      description: "Yayının kategorisinin ne zaman gözükeceğini seçin.",
+    },
+    channelLimit: {
+      title: "Yayıncı Limiti",
+      description: "En fazla kaç tane yayıncı gözükeceğini seçin.",
     },
     reset: {
       title: "Sıfırla",

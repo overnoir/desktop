@@ -29,14 +29,14 @@ export function generateDiscordUserDisplayName({
   displayName,
 }: {
   user: Pick<DiscordUser, "username" | "discriminator" | "nick" | "globalName">;
-  displayName: DisplayName;
+  displayName: DiscordDisplayName;
 }) {
   const username =
     user.discriminator === "0"
       ? user.username
       : `${user.username}#${user.discriminator}`;
-  if (displayName === DisplayName.Nick) return user.nick || username;
-  if (displayName === DisplayName.GlobalName)
+  if (displayName === DiscordDisplayName.Nick) return user.nick || username;
+  if (displayName === DiscordDisplayName.GlobalName)
     return user.globalName || user.nick || username;
   return username;
 }

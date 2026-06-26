@@ -9,19 +9,19 @@ export enum Locale {
   English = "en",
 }
 
-export enum WebviewWindow {
+export enum WebviewWindowLabel {
   Updater = "updater",
   Overlay = "overlay",
   Main = "main",
 }
 
-export enum DisplayName {
+export enum DiscordDisplayName {
   Nick = "nick",
   GlobalName = "globalName",
   Username = "username",
 }
 
-export enum Show {
+export enum DiscordShow {
   Always = "always",
   WhileSpeaking = "whileSpeaking",
   Never = "never",
@@ -33,9 +33,15 @@ export enum Alignment {
   Right = "right",
 }
 
-export enum Source {
+export enum ErrorSource {
   Discord = "discord",
   Kick = "kick",
+}
+
+export enum KickShow {
+  Always = "always",
+  WhileLive = "whileLive",
+  Never = "never",
 }
 //#endregion
 
@@ -80,15 +86,15 @@ export type VaultItemMetadata = {
 };
 
 export type DiscordSettings = {
-  showAvatarDecorationAnimated: Show;
+  showAvatarDecorationAnimated: DiscordShow;
   showGuildIconAnimated: boolean;
-  showAvatarDecoration: Show;
+  showAvatarDecoration: DiscordShow;
   showDeafenedUsers: boolean;
   showSpeakersOnly: boolean;
-  showAvatarAnimated: Show;
-  displayName: DisplayName;
+  showAvatarAnimated: DiscordShow;
+  displayName: DiscordDisplayName;
   showMutedUsers: boolean;
-  showDisplayName: Show;
+  showDisplayName: DiscordShow;
   showGuild: boolean;
   userLimit: number;
   showBots: boolean;
@@ -97,7 +103,7 @@ export type DiscordSettings = {
 
 export type AppError = {
   createdAt: number;
-  source?: Source;
+  source?: ErrorSource;
   message: string;
   id: string;
 };
@@ -143,7 +149,10 @@ export type DiscordConnectedUser = {
 };
 
 export type KickSettings = {
+  showCategory: KickShow.WhileLive | KickShow.Never;
   showOnlyLive: boolean;
+  channelLimit: number;
+  showSlug: KickShow;
 };
 
 export type KickLivestreamsResponse = {

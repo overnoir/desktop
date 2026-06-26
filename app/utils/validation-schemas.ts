@@ -9,8 +9,8 @@ export const settingsGeneralSchema = z.preprocess(
   },
   z.object({
     orientation: z.enum(Orientation).catch(defaultSettingsGeneral.orientation),
-    showBackground: z.boolean().catch(defaultSettingsGeneral.showBackground),
     opacity: z.number().min(0).max(100).catch(defaultSettingsGeneral.opacity),
+    showBackground: z.boolean().catch(defaultSettingsGeneral.showBackground),
     radius: z.number().min(0).max(100).catch(defaultSettingsGeneral.radius),
     showSettings: z.boolean().catch(defaultSettingsGeneral.showSettings),
     alignment: z.enum(Alignment).catch(defaultSettingsGeneral.alignment),
@@ -46,23 +46,27 @@ export const discordSettingsSchema = z.preprocess(
     return value;
   },
   z.object({
-    showDisplayName: z.enum(Show).catch(defaultDiscordSettings.showDisplayName),
-    displayName: z.enum(DisplayName).catch(defaultDiscordSettings.displayName),
+    showDisplayName: z
+      .enum(DiscordShow)
+      .catch(defaultDiscordSettings.showDisplayName),
+    displayName: z
+      .enum(DiscordDisplayName)
+      .catch(defaultDiscordSettings.displayName),
     showMutedUsers: z.boolean().catch(defaultDiscordSettings.showMutedUsers),
     showGuild: z.boolean().catch(defaultDiscordSettings.showGuild),
     showBots: z.boolean().catch(defaultDiscordSettings.showBots),
     showMe: z.boolean().catch(defaultDiscordSettings.showMe),
     showAvatarDecorationAnimated: z
-      .enum(Show)
+      .enum(DiscordShow)
       .catch(defaultDiscordSettings.showAvatarDecorationAnimated),
     showGuildIconAnimated: z
       .boolean()
       .catch(defaultDiscordSettings.showGuildIconAnimated),
     showAvatarDecoration: z
-      .enum(Show)
+      .enum(DiscordShow)
       .catch(defaultDiscordSettings.showAvatarDecoration),
     showAvatarAnimated: z
-      .enum(Show)
+      .enum(DiscordShow)
       .catch(defaultDiscordSettings.showAvatarAnimated),
     showDeafenedUsers: z
       .boolean()
@@ -79,7 +83,7 @@ export const discordSettingsSchema = z.preprocess(
 ) satisfies z.ZodType<DiscordSettings>;
 
 const errorSchema = z.object({
-  source: z.enum(Source).optional(),
+  source: z.enum(ErrorSource).optional(),
   createdAt: z.number(),
   message: z.string(),
   id: z.string(),
@@ -129,7 +133,16 @@ export const kickSettingsSchema = z.preprocess(
     return value;
   },
   z.object({
+    showCategory: z
+      .enum([KickShow.WhileLive, KickShow.Never])
+      .catch(defaultKickSettings.showCategory),
     showOnlyLive: z.boolean().catch(defaultKickSettings.showOnlyLive),
+    showSlug: z.enum(KickShow).catch(defaultKickSettings.showSlug),
+    channelLimit: z
+      .number()
+      .min(0)
+      .max(10)
+      .catch(defaultKickSettings.channelLimit),
   }),
 ) satisfies z.ZodType<KickSettings>;
 
@@ -150,6 +163,7 @@ export const kickChannelsSchema = z.preprocess(
   },
   z
     .array(kickChannelSchema)
+    .max(10)
     .transform((channels) =>
       channels.filter(
         (channel) => kickChannelSchema.safeParse(channel).success,

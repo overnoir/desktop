@@ -63,7 +63,9 @@ async function save() {
           for (const item of draft.value) {
             if (item.status === "pending") {
               const match = data.find((s) => s.slug === item.slug);
-              item.livestream = match ?? undefined;
+              item.livestream = match
+                ? { category: match.category }
+                : undefined;
             }
           }
         } catch (error) {
@@ -141,12 +143,17 @@ onNuxtReady(() => {
                   <Input
                     :placeholder="$t('kick.addChannel.placeholder')"
                     :aria-invalid="!!errors.length"
+                    :disabled="draft.length >= 10"
                     autocapitalize="off"
                     autocorrect="off"
                     type="text"
                     v-bind="field"
                   />
-                  <Button type="submit" size="icon" :disabled="loading">
+                  <Button
+                    :disabled="loading || draft.length >= 10"
+                    type="submit"
+                    size="icon"
+                  >
                     <Icon name="lucide:plus" />
                   </Button>
                 </div>
@@ -224,6 +231,71 @@ onNuxtReady(() => {
           :title="$t('kick.showOnlyLive.title')"
         >
           <Switch v-model="settings.showOnlyLive" />
+        </SettingField>
+        <Separator />
+        <SettingField
+          :description="$t('kick.showSlug.description')"
+          :title="$t('kick.showSlug.title')"
+        >
+          <Select v-model="settings.showSlug">
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem
+                v-for="show in Object.values(KickShow)"
+                :key="show"
+                :value="show"
+              >
+                {{ $t(`kick.show.${show}`) }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </SettingField>
+        <Separator />
+        <SettingField
+          :description="$t('kick.showCategory.description')"
+          :title="$t('kick.showCategory.title')"
+        >
+          <Select v-model="settings.showCategory">
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem
+                v-for="show in Object.values([
+                  KickShow.WhileLive,
+                  KickShow.Never,
+                ])"
+                :key="show"
+                :value="show"
+              >
+                {{ $t(`kick.show.${show}`) }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </SettingField>
+        <Separator />
+        <SettingField
+          :description="$t('kick.channelLimit.description')"
+          :title="$t('kick.channelLimit.title')"
+        >
+          <div class="flex flex-col">
+            <NumberField v-model="settings.channelLimit" :max="50" :min="0">
+              <NumberFieldContent>
+                <NumberFieldDecrement />
+                <NumberFieldInput class="rounded-b-none border-b-0" />
+                <NumberFieldIncrement />
+              </NumberFieldContent>
+            </NumberField>
+            <Slider
+              class="*:data-[slot='slider-track']:rounded-t-none"
+              :model-value="[settings.channelLimit]"
+              :max="10"
+              :min="0"
+              @update:model-value="settings.channelLimit = $event![0]!"
+            />
+          </div>
         </SettingField>
         <Separator />
         <SettingField

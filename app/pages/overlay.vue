@@ -28,7 +28,7 @@ try {
       await tauriCoreInvoke<DiscordConnectedUser>("connect_discord");
   }
 } catch (error) {
-  errorsStore.addError(JSON.stringify(error), Source.Discord);
+  errorsStore.addError(JSON.stringify(error), ErrorSource.Discord);
   connectedUser.value = null;
 }
 
@@ -44,13 +44,13 @@ try {
   }
 } catch (error) {
   channels.value = channels.value.map(({ livestream, ...rest }) => rest);
-  errorsStore.addError(JSON.stringify(error), Source.Kick);
+  errorsStore.addError(JSON.stringify(error), ErrorSource.Kick);
 }
 
 async function openMainWebviewWindow() {
   const mainWebviewWindow = (
     await tauriWebviewWindowGetAllWebviewWindows()
-  ).find(({ label }) => label === WebviewWindow.Main);
+  ).find(({ label }) => label === WebviewWindowLabel.Main);
 
   if (mainWebviewWindow) {
     await mainWebviewWindow.show();
@@ -58,7 +58,7 @@ async function openMainWebviewWindow() {
     await mainWebviewWindow.setFocus();
   } else {
     new TauriWebviewWindowWebviewWindow(
-      WebviewWindow.Main,
+      WebviewWindowLabel.Main,
       mainWebviewWindowOptions,
     );
   }

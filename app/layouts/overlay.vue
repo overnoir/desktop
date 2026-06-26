@@ -65,7 +65,7 @@ useResizeObserver(document.body, async (entries) => {
 onMounted(async () => {
   const updaterWebviewWindow = (
     await tauriWebviewWindowGetAllWebviewWindows()
-  ).find(({ label }) => label === WebviewWindow.Updater);
+  ).find(({ label }) => label === WebviewWindowLabel.Updater);
 
   if (updaterWebviewWindow) {
     await updaterWebviewWindow.destroy();
