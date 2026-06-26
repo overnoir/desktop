@@ -30,10 +30,20 @@ async function save() {
       .map(({ slug }) => slug);
 
     if (newSlugs.length) {
-      const { data } = await fetchKickChannels(newSlugs);
+      let channelsData: KickChannel[];
+      try {
+        channelsData = await fetchKickChannels(newSlugs);
+      } catch (error) {
+        errorsStore.addError(JSON.stringify(error));
+        draft.value = draft.value.filter(
+          (item) => !(item.status === "pending" && item.id === 0),
+        );
+        channelsData = [];
+      }
+
       for (const item of draft.value) {
         if (item.status === "pending" && item.id === 0) {
-          const match = data.value?.find(({ slug }) => slug === item.slug);
+          const match = channelsData.find(({ slug }) => slug === item.slug);
           if (match) {
             item.profilePicture = match.profilePicture;
             item.id = match.id;
@@ -45,16 +55,24 @@ async function save() {
         (item) => !(item.status === "pending" && item.id === 0),
       );
 
-      const newIds = data.value?.map(({ id }) => id) || [];
+      const newIds = channelsData.map(({ id }) => id);
 
       if (newIds.length) {
-        const { data: livestreamsData } = await fetchKickLivestreams(newIds);
-        const newLivestreams = livestreamsData.value || [];
-        for (const item of draft.value) {
-          if (item.status === "pending" && item.id > 0) {
-            const match = newLivestreams.find((s) => s.slug === item.slug);
-            item.livestream = match ?? undefined;
+        try {
+          const data = await fetchKickLivestreams(newIds);
+          for (const item of draft.value) {
+            if (item.status === "pending") {
+              const match = data.find((s) => s.slug === item.slug);
+              item.livestream = match ?? undefined;
+            }
           }
+        } catch (error) {
+          errorsStore.addError(JSON.stringify(error));
+          const newSlugsSet = new Set(newSlugs);
+          draft.value = draft.value.filter(
+            (item) =>
+              !(item.status === "pending" && newSlugsSet.has(item.slug)),
+          );
         }
       }
     }

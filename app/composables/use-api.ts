@@ -1,4 +1,4 @@
-export const useApiFetch = createUseFetch({
+export const useApiFetch = $fetch.create({
   baseURL: useRuntimeConfig().public.apiUrl,
 });
 

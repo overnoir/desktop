@@ -34,17 +34,16 @@ try {
 
 try {
   if (channels.value.length) {
-    const { data } = await fetchKickLivestreams(
-      channels.value.map(({ id }) => id),
-    );
-    if (data.value) {
+    const data = await fetchKickLivestreams(channels.value.map(({ id }) => id));
+    if (data) {
       for (const channel of channels.value) {
-        const match = data.value.find((s) => s.slug === channel.slug);
-        channel.livestream = match ?? undefined;
+        const match = data.find(({ slug }) => slug === channel.slug);
+        channel.livestream = match;
       }
     }
   }
 } catch (error) {
+  channels.value = channels.value.map(({ livestream, ...rest }) => rest);
   errorsStore.addError(JSON.stringify(error), Source.Kick);
 }
 
