@@ -16,11 +16,6 @@ export default defineNuxtConfig({
   app: {
     pageTransition: { name: "page", mode: "out-in" },
   },
-  runtimeConfig: {
-    public: {
-      apiUrl: process.env.API_URL,
-    },
-  },
   compatibilityDate: "2026-05-02",
   devtools: { enabled: false },
   ssr: false,

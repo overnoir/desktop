@@ -7,7 +7,6 @@ const { settings, channels } = storeToRefs(kickStore);
 const { handleSubmit, resetForm } = useForm({
   validationSchema: kickAddChannelSchema,
 });
-const { fetchKickChannels, fetchKickLivestreams } = useApi();
 const errorsStore = useErrorsStore();
 const { $toast } = useNuxtApp();
 const loading = ref(false);
@@ -32,7 +31,10 @@ async function save() {
     if (newSlugs.length) {
       let channelsData: KickChannel[];
       try {
-        channelsData = await fetchKickChannels(newSlugs);
+        channelsData = await tauriCoreInvoke<KickChannelsResponse>(
+          "api_fetch_kick_channels",
+          { slugs: newSlugs },
+        );
       } catch (error) {
         errorsStore.addError(JSON.stringify(error));
         draft.value = draft.value.filter(
@@ -59,7 +61,10 @@ async function save() {
 
       if (newIds.length) {
         try {
-          const data = await fetchKickLivestreams(newIds);
+          const data = await tauriCoreInvoke<KickLivestreamsResponse>(
+            "api_fetch_kick_livestreams",
+            { ids: newIds },
+          );
           for (const item of draft.value) {
             if (item.status === "pending") {
               const match = data.find((s) => s.slug === item.slug);

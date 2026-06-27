@@ -11,7 +11,6 @@ const { filtredUsers, guild, settings, connectedUser } =
 const isDragging = useState("is-dragging", () => false);
 const { general } = storeToRefs(useSettingsStore());
 const { pageStyles, boxStyles } = useUi();
-const { fetchKickLivestreams } = useApi();
 const errorsStore = useErrorsStore();
 const isOnline = useOnline();
 const dragButton = ref();
@@ -34,7 +33,10 @@ try {
 
 try {
   if (channels.value.length) {
-    const data = await fetchKickLivestreams(channels.value.map(({ id }) => id));
+    const data = await tauriCoreInvoke<KickLivestreamsResponse>(
+      "api_fetch_kick_livestreams",
+      { ids: channels.value.map(({ id }) => id) },
+    );
     if (data) {
       for (const channel of channels.value) {
         const match = data.find(({ slug }) => slug === channel.slug);
