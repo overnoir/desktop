@@ -23,7 +23,7 @@ const imageUrl = computed(() => route.meta.headerImageUrl as string);
       class="absolute left-0 top-0 h-30 w-full bg-linear-to-r from-background"
       :class="{
         'via-background/65 to-transparent': imageUrl,
-        'via-black/25 to-black/65': !imageUrl,
+        'via-secondary/25 to-secondary/65': !imageUrl,
       }"
     />
   </header>
