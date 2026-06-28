@@ -45,7 +45,7 @@ export default function () {
     height: `${Math.round(general.value.size)}px`,
     width: `${Math.round(general.value.size)}px`,
     "--tw-ring-shadow": `var(--tw-ring-inset) 0 0 0 ${Math.round(
-      general.value.size / 18,
+      general.value.size / 17,
     )}px var(--tw-ring-color)`,
   }));
 
