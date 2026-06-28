@@ -10,7 +10,7 @@ const { filtredUsers, guild, settings, connectedUser } =
   storeToRefs(discordStore);
 const isDragging = useState("is-dragging", () => false);
 const { general } = storeToRefs(useSettingsStore());
-const { pageStyles, boxStyles } = useUi();
+const { pageStyles, boxStyles } = useStyles();
 const errorsStore = useErrorsStore();
 const isOnline = useOnline();
 const dragButton = ref();

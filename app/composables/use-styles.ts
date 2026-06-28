@@ -2,6 +2,13 @@ import type { CSSProperties } from "vue";
 
 export default function () {
   const { general } = storeToRefs(useSettingsStore());
+  const {
+    guild,
+    filtredUsers,
+    settings: discordSettings,
+  } = storeToRefs(useDiscordStore());
+  const { filtredStreamers } = storeToRefs(useKickStore());
+  const isOnline = useOnline();
 
   const boxStyles = computed<CSSProperties>(() => ({
     borderRadius: `${Math.round((general.value.size * general.value.radius) / 200)}px`,
@@ -15,8 +22,19 @@ export default function () {
   }));
 
   const backgroundStyles = computed<CSSProperties>(() => {
-    if (!general.value.showBackground) {
-      return {};
+    if (
+      !general.value.showBackground ||
+      (isOnline.value &&
+        !(guild.value && discordSettings.value.showGuild) &&
+        filtredStreamers.value.length === 0 &&
+        filtredUsers.value.length === 0 &&
+        !general.value.showSettings &&
+        !general.value.showDrag)
+    ) {
+      return {
+        minHeight: "1px",
+        minWidth: "1px",
+      };
     }
 
     return {

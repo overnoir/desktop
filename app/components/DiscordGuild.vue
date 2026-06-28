@@ -6,7 +6,7 @@ const props = defineProps<{
 }>();
 
 const { settings } = storeToRefs(useDiscordStore());
-const { boxStyles, nameStyles } = useUi();
+const { boxStyles, nameStyles } = useStyles();
 
 const guildIconUrl = computed(() => {
   if (!props.guild.iconUrl) return undefined;

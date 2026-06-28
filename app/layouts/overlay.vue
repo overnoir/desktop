@@ -2,7 +2,7 @@
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const { general, advanced } = storeToRefs(useSettingsStore());
 const isDragging = useState("is-dragging", () => false);
-const { htmlStyles, backgroundStyles } = useUi();
+const { htmlStyles, backgroundStyles } = useStyles();
 const isMacOS = tauriOSType() === "macos";
 const errorsStore = useErrorsStore();
 const { create } = useTray();

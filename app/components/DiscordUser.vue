@@ -11,7 +11,7 @@ const {
   iconStyles,
   nameStyles,
   boxStyles,
-} = useUi();
+} = useStyles();
 
 const displayName = computed(() =>
   generateDiscordUserDisplayName({

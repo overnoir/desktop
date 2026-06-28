@@ -3,7 +3,7 @@ const { streamer } = defineProps<{
   streamer: KickStreamer;
 }>();
 
-const { boxStyles, nameStyles, liveStyles } = useUi();
+const { boxStyles, nameStyles, liveStyles } = useStyles();
 const { settings } = storeToRefs(useKickStore());
 
 const showCategory = computed(() => {
