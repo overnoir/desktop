@@ -8,6 +8,7 @@ export default {
       name: "BAĞLANTILAR",
     },
     {
+      name: "TOPLULUK",
       links: ["Yardım"],
     },
   ],

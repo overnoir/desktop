@@ -48,6 +48,7 @@ export const useLinkGroupsStore = defineStore(
     }));
 
     const help = computed<LinkGroup>(() => ({
+      name: t("linkGroups.2.name"),
       links: [
         {
           name: t("linkGroups.2.links.0"),

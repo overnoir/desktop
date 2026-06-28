@@ -11,10 +11,10 @@ export const useErrorsStore = defineStore(
   () => {
     const errors = ref<AppError[]>([]);
 
-    function addError(
-      message: AppError["message"],
-      source?: AppError["source"],
-    ) {
+    function addError({
+      message,
+      source,
+    }: Pick<AppError, "message" | "source">) {
       errors.value.unshift({
         id: crypto.randomUUID(),
         createdAt: Date.now(),

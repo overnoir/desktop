@@ -27,7 +27,10 @@ try {
       await tauriCoreInvoke<DiscordConnectedUser>("connect_discord");
   }
 } catch (error) {
-  errorsStore.addError(JSON.stringify(error), ErrorSource.Discord);
+  errorsStore.addError({
+    message: JSON.stringify(error),
+    source: ErrorSource.Discord,
+  });
   connectedUser.value = null;
 }
 
@@ -40,7 +43,10 @@ try {
     streamers.value = data;
   }
 } catch (error) {
-  errorsStore.addError(JSON.stringify(error), ErrorSource.Kick);
+  errorsStore.addError({
+    message: JSON.stringify(error),
+    source: ErrorSource.Kick,
+  });
   streamers.value = [];
 }
 

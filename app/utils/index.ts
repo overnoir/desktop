@@ -16,7 +16,7 @@ export function generateDiscordUserAvatarUrl({
   animated,
 }: {
   id?: string;
-  avatar?: string;
+  avatar: string | null;
   animated?: boolean;
 }) {
   return id && avatar

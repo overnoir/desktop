@@ -37,7 +37,10 @@ async function toggleConnection() {
     route.meta.headerImageUrl = avatarUrl.value;
     $toast.success(t(`discord.${action}.success`));
   } catch (error) {
-    errorsStore.addError(JSON.stringify(error), ErrorSource.Discord);
+    errorsStore.addError({
+      message: JSON.stringify(error),
+      source: ErrorSource.Discord,
+    });
     $toast.error(t(`discord.${action}.error`));
   }
   loading.value = false;

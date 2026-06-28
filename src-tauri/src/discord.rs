@@ -37,13 +37,9 @@ pub struct AvatarDecoration {
 #[derive(Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct User {
-    #[serde(skip_serializing_if = "Option::is_none")]
     avatar_decoration: Option<AvatarDecoration>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     avatar: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     nick: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     global_name: Option<String>,
     is_self_deafened: bool,
     discriminator: String,
@@ -67,7 +63,6 @@ pub struct Channel {
 #[derive(Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Guild {
-    #[serde(skip_serializing_if = "Option::is_none")]
     icon_url: Option<String>,
     channel: Channel,
     name: String,
@@ -77,7 +72,6 @@ pub struct Guild {
 #[derive(Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct ConnectedUser {
-    #[serde(skip_serializing_if = "Option::is_none")]
     avatar: Option<String>,
     username: String,
     id: String,

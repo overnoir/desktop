@@ -54,7 +54,7 @@ export type Link = {
 
 export type LinkGroup = {
   links: Link[];
-  name?: string;
+  name: string;
 };
 
 export type SettingsGeneral = {
@@ -102,8 +102,8 @@ export type DiscordSettings = {
 };
 
 export type AppError = {
+  source: ErrorSource;
   createdAt: number;
-  source?: ErrorSource;
   message: string;
   id: string;
 };
@@ -116,7 +116,7 @@ export type DiscordChannel = {
 
 export type DiscordGuild = {
   channel: DiscordChannel;
-  iconUrl?: string;
+  iconUrl: string | null;
   name: string;
   id: string;
 };
@@ -127,24 +127,24 @@ export type AvatarDecoration = {
 };
 
 export type DiscordUser = {
-  avatarDecoration?: AvatarDecoration;
+  avatarDecoration: AvatarDecoration | null;
   isSelfDeafened: boolean;
   isSelfMuted: boolean;
   isSpeaking: boolean;
   isDeafened: boolean;
   username: string;
   discriminator: string;
-  globalName?: string;
+  globalName: string | null;
   isMuted: boolean;
-  avatar?: string;
+  avatar: string | null;
   isBot: boolean;
-  nick?: string;
+  nick: string | null;
   id: string;
 };
 
 export type DiscordConnectedUser = {
   username: string;
-  avatar?: string;
+  avatar: string | null;
   id: string;
 };
 

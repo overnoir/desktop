@@ -83,7 +83,7 @@ export const discordSettingsSchema = z.preprocess(
 ) satisfies z.ZodType<DiscordSettings>;
 
 const errorSchema = z.object({
-  source: z.enum(ErrorSource).optional(),
+  source: z.enum(ErrorSource),
   createdAt: z.number(),
   message: z.string(),
   id: z.string(),
@@ -102,7 +102,10 @@ export const errorsSchema = z.preprocess(
 
 export const discordConnectedUserSchema = z
   .object({
-    avatar: z.string().optional(),
+    avatar: z
+      .string()
+      .nullish()
+      .transform((v) => v ?? null),
     username: z.string(),
     id: z.string(),
   })

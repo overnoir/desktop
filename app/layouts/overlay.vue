@@ -10,7 +10,7 @@ const { create } = useTray();
 await tauriEventListen<Pick<AppError, "message" | "source">>(
   "error",
   ({ payload }) => {
-    errorsStore.addError(payload.message, payload.source);
+    errorsStore.addError({ message: payload.message, source: payload.source });
   },
 );
 
