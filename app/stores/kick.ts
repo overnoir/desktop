@@ -2,7 +2,7 @@ import type { State } from "@tauri-store/pinia";
 
 function sync(state: State) {
   return {
-    channels: kickChannelsSchema.parse(state.channels),
+    streamers: kickStreamersSchema.parse(state.streamers),
     settings: kickSettingsSchema.parse(state.settings),
   };
 }
@@ -11,24 +11,24 @@ export const useKickStore = defineStore(
   "kick",
   () => {
     const settings = ref<KickSettings>({ ...defaultKickSettings });
-    const channels = ref<KickChannel[]>([]);
+    const streamers = ref<KickStreamer[]>([]);
 
     function resetSettings() {
       settings.value = { ...defaultKickSettings };
     }
 
-    const filtredChannels = computed(() => {
-      let items = [...channels.value];
+    const filtredStreamers = computed(() => {
+      let items = [...streamers.value];
 
       if (settings.value.showOnlyLive) {
-        items = items.filter((s) => s.livestream);
+        items = items.filter(({ channel }) => channel.stream.isLive);
       }
 
       items.sort((a, b) => {
-        const aLive = !!a.livestream;
-        const bLive = !!b.livestream;
+        const aLive = !!a.channel.stream.isLive;
+        const bLive = !!b.channel.stream.isLive;
         if (aLive !== bLive) return Number(bLive) - Number(aLive);
-        return a.slug.localeCompare(b.slug);
+        return a.user.name.localeCompare(b.user.name);
       });
 
       items = items.slice(0, settings.value.channelLimit);
@@ -37,9 +37,9 @@ export const useKickStore = defineStore(
     });
 
     return {
-      filtredChannels,
+      filtredStreamers,
       resetSettings,
-      channels,
+      streamers,
       settings,
     };
   },

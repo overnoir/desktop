@@ -146,27 +146,33 @@ export const kickSettingsSchema = z.preprocess(
   }),
 ) satisfies z.ZodType<KickSettings>;
 
-const kickChannelSchema = z.object({
-  profilePicture: z.string(),
-  slug: z.string(),
-  id: z.number(),
-  livestream: z
-    .object({
-      category: z.string(),
-    })
-    .optional(),
-}) satisfies z.ZodType<KickChannel>;
+const kickStreamerSchema = z.object({
+  user: z.object({
+    profilePicture: z.string(),
+    name: z.string(),
+    id: z.number(),
+  }),
+  channel: z.object({
+    stream: z.object({
+      isLive: z.boolean(),
+    }),
+    category: z.object({
+      name: z.string(),
+    }),
+    slug: z.string(),
+  }),
+}) satisfies z.ZodType<KickStreamer>;
 
-export const kickChannelsSchema = z.preprocess(
+export const kickStreamersSchema = z.preprocess(
   (value) => {
     return Array.isArray(value) ? value : [];
   },
   z
-    .array(kickChannelSchema)
+    .array(kickStreamerSchema)
     .max(10)
-    .transform((channels) =>
-      channels.filter(
-        (channel) => kickChannelSchema.safeParse(channel).success,
+    .transform((streamers) =>
+      streamers.filter(
+        (streamer) => kickStreamerSchema.safeParse(streamer).success,
       ),
     ),
-) satisfies z.ZodType<KickChannel[]>;
+) satisfies z.ZodType<KickStreamer[]>;

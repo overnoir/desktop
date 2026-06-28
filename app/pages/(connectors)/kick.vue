@@ -1,9 +1,9 @@
 <script setup lang="ts">
 const draft = ref<
-  (KickChannel & { status: "saved" | "pending" | "removed" })[]
+  (KickStreamer & { status: "saved" | "pending" | "removed" })[]
 >([]);
 const kickStore = useKickStore();
-const { settings, channels } = storeToRefs(kickStore);
+const { settings, streamers } = storeToRefs(kickStore);
 const { handleSubmit, resetForm } = useForm({
   validationSchema: kickAddChannelSchema,
 });
@@ -13,91 +13,55 @@ const loading = ref(false);
 const { t } = useI18n();
 
 const onSubmit = handleSubmit(async ({ slug }) => {
-  if (draft.value.some((channel) => channel.slug === slug)) {
+  if (draft.value.some(({ channel }) => channel.slug === slug)) {
     $toast.error(t("kick.addChannel.alreadyAdded"));
     return;
   }
-  draft.value.push({ slug, id: 0, status: "pending", profilePicture: "" });
+  draft.value.push({
+    channel: { stream: { isLive: false }, category: { name: "" }, slug },
+    user: { profilePicture: "", name: "", id: 0 },
+    status: "pending",
+  });
   resetForm();
 });
 
 async function save() {
   loading.value = true;
   try {
-    const newSlugs = draft.value
-      .filter(({ status, id }) => status === "pending" && id === 0)
-      .map(({ slug }) => slug);
+    let newDraft = [...draft.value];
+
+    newDraft = newDraft.filter(({ status }) => status !== "removed");
+
+    const newSlugs = newDraft
+      .filter(({ status }) => status === "pending")
+      .map(({ channel }) => channel.slug);
 
     if (newSlugs.length) {
-      let channelsData: KickChannel[];
-      try {
-        channelsData = await tauriCoreInvoke<KickChannelsResponse>(
-          "api_fetch_kick_channels",
-          { slugs: newSlugs },
-        );
-      } catch (error) {
-        errorsStore.addError(JSON.stringify(error));
-        draft.value = draft.value.filter(
-          (item) => !(item.status === "pending" && item.id === 0),
-        );
-        channelsData = [];
-      }
-
-      for (const item of draft.value) {
-        if (item.status === "pending" && item.id === 0) {
-          const match = channelsData.find(({ slug }) => slug === item.slug);
-          if (match) {
-            item.profilePicture = match.profilePicture;
-            item.id = match.id;
-          }
-        }
-      }
-
-      draft.value = draft.value.filter(
-        (item) => !(item.status === "pending" && item.id === 0),
+      const streamersData = await tauriCoreInvoke<KickStreamer[]>(
+        "api_get_kick_streamers",
+        { slugs: newSlugs },
       );
 
-      const newIds = channelsData.map(({ id }) => id);
-
-      if (newIds.length) {
-        try {
-          const data = await tauriCoreInvoke<KickLivestreamsResponse>(
-            "api_fetch_kick_livestreams",
-            { ids: newIds },
+      for (const item of newDraft) {
+        if (item.status === "pending") {
+          const streamer = streamersData.find(
+            ({ channel }) => channel.slug === item.channel.slug,
           );
-          for (const item of draft.value) {
-            if (item.status === "pending") {
-              const match = data.find((s) => s.slug === item.slug);
-              item.livestream = match
-                ? { category: match.category }
-                : undefined;
-            }
+          if (streamer) {
+            item.channel = streamer.channel;
+            item.user = streamer.user;
+            item.status = "saved";
+          } else {
+            newDraft = newDraft.filter(
+              ({ channel }) => channel.slug !== item.channel.slug,
+            );
           }
-        } catch (error) {
-          errorsStore.addError(JSON.stringify(error));
-          const newSlugsSet = new Set(newSlugs);
-          draft.value = draft.value.filter(
-            (item) =>
-              !(item.status === "pending" && newSlugsSet.has(item.slug)),
-          );
         }
       }
     }
 
-    const removedSlugs = draft.value
-      .filter(({ status }) => status === "removed")
-      .map(({ slug }) => slug);
-
-    for (const item of draft.value) {
-      if (removedSlugs.includes(item.slug)) {
-        item.livestream = undefined;
-      }
-    }
-
-    const saved = draft.value.filter(({ status }) => status !== "removed");
-
-    channels.value = saved.map(({ status: _, ...rest }) => rest);
-    draft.value = saved.map((channel) => ({ ...channel, status: "saved" }));
+    streamers.value = newDraft.map(({ status, ...rest }) => rest);
+    draft.value = newDraft;
 
     await kickStore.$tauri.saveAllNow();
 
@@ -110,9 +74,9 @@ async function save() {
 }
 
 onNuxtReady(() => {
-  draft.value = channels.value.map((channel) => ({
-    ...channel,
+  draft.value = streamers.value.map((streamer) => ({
     status: "saved",
+    ...streamer,
   }));
 });
 </script>
@@ -173,16 +137,16 @@ onNuxtReady(() => {
         <template v-if="draft.length">
           <div
             v-for="item in draft"
-            :key="item.slug"
+            :key="item.channel.slug"
             :class="{
               'opacity-40': item.status === 'removed',
             }"
             class="flex gap-2 items-center"
           >
             <NuxtImg
-              v-if="item.profilePicture"
+              v-if="item.user.profilePicture"
               class="shrink-0 size-9 bg-secondary rounded-lg border"
-              :src="item.profilePicture"
+              :src="item.user.profilePicture"
               alt="Profile Picture"
             />
             <div
@@ -191,14 +155,18 @@ onNuxtReady(() => {
             >
               <Icon name="lucide:user" />
             </div>
-            <Input disabled :model-value="item.slug" class="opacity-100!" />
+            <Input
+              disabled
+              :model-value="item.channel.slug"
+              class="opacity-100!"
+            />
             <Button
               variant="secondary"
               size="icon"
               @click="
                 item.status =
                   item.status === 'removed'
-                    ? item.id
+                    ? item.user.id
                       ? 'saved'
                       : 'pending'
                     : 'removed'

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-const { channel } = defineProps<{
-  channel: KickChannel;
+const { streamer } = defineProps<{
+  streamer: KickStreamer;
 }>();
 
 const { boxStyles, nameStyles, liveStyles } = useUi();
@@ -8,14 +8,14 @@ const { settings } = storeToRefs(useKickStore());
 
 const showCategory = computed(() => {
   if (settings.value.showCategory === KickShow.WhileLive)
-    return !!channel.livestream;
+    return streamer.channel.stream.isLive;
   if (settings.value.showCategory === KickShow.Never) return false;
   return true;
 });
 
 const showSlug = computed(() => {
   if (settings.value.showSlug === KickShow.WhileLive)
-    return !!channel.livestream;
+    return streamer.channel.stream.isLive;
   if (settings.value.showSlug === KickShow.Never) return false;
   return true;
 });
@@ -24,22 +24,22 @@ const showSlug = computed(() => {
 <template>
   <div
     :class="{
-      'grayscale-100': !channel.livestream,
+      'grayscale-100': !streamer.channel.stream.isLive,
     }"
     class="relative"
   >
     <NuxtImg
-      :src="channel.profilePicture"
+      :src="streamer.user.profilePicture"
       class="border bg-secondary"
       alt="Profile Picture"
       :style="boxStyles"
     />
     <div
-      v-if="channel.livestream && showCategory"
+      v-if="streamer.channel.stream.isLive && showCategory"
       class="absolute bg-background/70 left-0 top-0 inline-block w-fit truncate"
       :style="nameStyles"
     >
-      {{ channel.livestream.category }}
+      {{ streamer.channel.category.name }}
     </div>
     <div
       v-if="showSlug"
@@ -47,11 +47,11 @@ const showSlug = computed(() => {
       :style="nameStyles"
     >
       <span
-        v-if="channel.livestream"
+        v-if="streamer.channel.stream.isLive"
         class="bg-green-600 rounded-full shrink-0"
         :style="liveStyles"
       />
-      <span class="truncate">{{ channel.slug }}</span>
+      <span class="truncate">{{ streamer.channel.slug }}</span>
     </div>
   </div>
 </template>

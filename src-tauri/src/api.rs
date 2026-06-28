@@ -4,17 +4,38 @@ use tauri::Manager;
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct KickChannel {
+pub struct KickUser {
     pub profile_picture: String,
+    pub name: String,
+    pub id: u64,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct KickChannelStream {
+    pub is_live: bool,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct KickChannelCategory {
+    pub name: String,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct KickChannel {
+    pub category: KickChannelCategory,
+    pub stream: KickChannelStream,
     pub slug: String,
     pub id: u64,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct KickLivestream {
-    pub category: String,
-    pub slug: String,
+pub struct KickStreamer {
+    pub channel: KickChannel,
+    pub user: KickUser,
 }
 
 pub struct ApiClient {
@@ -49,20 +70,11 @@ impl ApiClient {
             .map_err(|e| format!("Failed to parse API response: {}", e))
     }
 
-    pub async fn fetch_kick_channels(
+    pub async fn get_kick_streamers(
         &self,
         slugs: Vec<String>,
-    ) -> Result<Vec<KickChannel>, String> {
-        self.get_with_query("/kick/channels", "slug", &slugs).await
-    }
-
-    pub async fn fetch_kick_livestreams(
-        &self,
-        ids: Vec<u64>,
-    ) -> Result<Vec<KickLivestream>, String> {
-        let ids_str: Vec<String> = ids.iter().map(|id| id.to_string()).collect();
-        self.get_with_query("/kick/livestreams", "id", &ids_str)
-            .await
+    ) -> Result<Vec<KickStreamer>, String> {
+        self.get_with_query("/kick/streamers", "slug", &slugs).await
     }
 }
 
@@ -74,23 +86,12 @@ pub fn init_api(app_handle: &AppHandle, base_url: &str) {
 }
 
 #[tauri::command]
-pub async fn api_fetch_kick_channels(
+pub async fn api_get_kick_streamers(
     app_handle: AppHandle,
     slugs: Vec<String>,
-) -> Result<Vec<KickChannel>, String> {
+) -> Result<Vec<KickStreamer>, String> {
     app_handle
         .state::<ApiClient>()
-        .fetch_kick_channels(slugs)
-        .await
-}
-
-#[tauri::command]
-pub async fn api_fetch_kick_livestreams(
-    app_handle: AppHandle,
-    ids: Vec<u64>,
-) -> Result<Vec<KickLivestream>, String> {
-    app_handle
-        .state::<ApiClient>()
-        .fetch_kick_livestreams(ids)
+        .get_kick_streamers(slugs)
         .await
 }

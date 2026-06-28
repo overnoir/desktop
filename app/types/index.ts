@@ -155,18 +155,21 @@ export type KickSettings = {
   showSlug: KickShow;
 };
 
-export type KickLivestreamsResponse = {
-  category: string;
-  slug: string;
-}[];
-
-export type KickChannelsResponse = {
-  profilePicture: string;
-  slug: string;
-  id: number;
-}[];
-
-export type KickChannel = KickChannelsResponse[0] & {
-  livestream?: Pick<KickLivestreamsResponse[0], "category">;
+export type KickStreamer = {
+  user: {
+    profilePicture: string;
+    name: string;
+    id: number;
+  };
+  channel: {
+    stream: {
+      isLive: boolean;
+    };
+    category: {
+      name: string;
+    };
+    slug: string;
+  };
 };
+
 //#endregion

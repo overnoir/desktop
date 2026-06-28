@@ -3,7 +3,7 @@ definePageMeta({
   layout: "overlay",
 });
 
-const { filtredChannels, channels } = storeToRefs(useKickStore());
+const { filtredStreamers, streamers } = storeToRefs(useKickStore());
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const discordStore = useDiscordStore();
 const { filtredUsers, guild, settings, connectedUser } =
@@ -32,21 +32,16 @@ try {
 }
 
 try {
-  if (channels.value.length) {
-    const data = await tauriCoreInvoke<KickLivestreamsResponse>(
-      "api_fetch_kick_livestreams",
-      { ids: channels.value.map(({ id }) => id) },
+  if (streamers.value.length) {
+    const data = await tauriCoreInvoke<KickStreamer[]>(
+      "api_get_kick_streamers",
+      { slugs: streamers.value.map(({ channel }) => channel.slug) },
     );
-    if (data) {
-      for (const channel of channels.value) {
-        const match = data.find(({ slug }) => slug === channel.slug);
-        channel.livestream = match;
-      }
-    }
+    streamers.value = data;
   }
 } catch (error) {
-  channels.value = channels.value.map(({ livestream, ...rest }) => rest);
   errorsStore.addError(JSON.stringify(error), ErrorSource.Kick);
+  streamers.value = [];
 }
 
 async function openMainWebviewWindow() {
@@ -112,10 +107,10 @@ useEventListener(window, "mouseup", async () => {
         }"
       />
       <DiscordUser v-for="user in filtredUsers" :key="user.id" :user />
-      <KickChannel
-        v-for="channel in filtredChannels"
-        :key="channel.slug"
-        :channel
+      <KickStreamer
+        v-for="streamer in filtredStreamers"
+        :key="streamer.user.id"
+        :streamer
       />
     </template>
     <Button
