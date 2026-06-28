@@ -210,10 +210,30 @@ onNuxtReady(() => {
         </SettingField>
         <Separator />
         <SettingField
-          :description="$t('kick.showSlug.description')"
-          :title="$t('kick.showSlug.title')"
+          :description="$t('kick.displayName.description')"
+          :title="$t('kick.displayName.title')"
         >
-          <Select v-model="settings.showSlug">
+          <Select v-model="settings.displayName">
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem
+                v-for="displayName in Object.values(KickDisplayName)"
+                :key="displayName"
+                :value="displayName"
+              >
+                {{ $t(`kick.displayName.${displayName}`) }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </SettingField>
+        <Separator />
+        <SettingField
+          :description="$t('kick.showDisplayName.description')"
+          :title="$t('kick.showDisplayName.title')"
+        >
+          <Select v-model="settings.showDisplayName">
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
@@ -253,11 +273,11 @@ onNuxtReady(() => {
         </SettingField>
         <Separator />
         <SettingField
-          :description="$t('kick.channelLimit.description')"
-          :title="$t('kick.channelLimit.title')"
+          :description="$t('kick.streamerLimit.description')"
+          :title="$t('kick.streamerLimit.title')"
         >
           <div class="flex flex-col">
-            <NumberField v-model="settings.channelLimit" :max="50" :min="0">
+            <NumberField v-model="settings.streamerLimit" :max="50" :min="0">
               <NumberFieldContent>
                 <NumberFieldDecrement />
                 <NumberFieldInput class="rounded-b-none border-b-0" />
@@ -266,10 +286,10 @@ onNuxtReady(() => {
             </NumberField>
             <Slider
               class="*:data-[slot='slider-track']:rounded-t-none"
-              :model-value="[settings.channelLimit]"
+              :model-value="[settings.streamerLimit]"
               :max="10"
               :min="0"
-              @update:model-value="settings.channelLimit = $event![0]!"
+              @update:model-value="settings.streamerLimit = $event![0]!"
             />
           </div>
         </SettingField>

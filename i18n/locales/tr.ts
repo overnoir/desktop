@@ -275,15 +275,21 @@ export default {
       title: "Sadece Yayında Olanları Göster",
       description: "Sadece canlı yayında olanların gözükmesini sağlayın.",
     },
-    showSlug: {
-      title: "Yayıncı Adını Göster",
+    showDisplayName: {
+      title: "Ad Gösterimi",
       description: "Yayıncı adının ne zaman gözükeceğini seçin.",
+    },
+    displayName: {
+      title: "Gösterilecek Ad",
+      description: "Yayıncının hangi adının gözükeceğini seçin.",
+      name: "Yayıncı Adı",
+      slug: "Kanal Slug'ı",
     },
     showCategory: {
       title: "Yayın Kategorisini Göster",
       description: "Yayının kategorisinin ne zaman gözükeceğini seçin.",
     },
-    channelLimit: {
+    streamerLimit: {
       title: "Yayıncı Limiti",
       description: "En fazla kaç tane yayıncı gözükeceğini seçin.",
     },

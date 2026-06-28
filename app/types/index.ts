@@ -43,6 +43,11 @@ export enum KickShow {
   WhileLive = "whileLive",
   Never = "never",
 }
+
+export enum KickDisplayName {
+  Name = "name",
+  Slug = "slug",
+}
 //#endregion
 
 //#region Types
@@ -150,9 +155,10 @@ export type DiscordConnectedUser = {
 
 export type KickSettings = {
   showCategory: KickShow.WhileLive | KickShow.Never;
+  displayName: KickDisplayName;
+  showDisplayName: KickShow;
+  streamerLimit: number;
   showOnlyLive: boolean;
-  channelLimit: number;
-  showSlug: KickShow;
 };
 
 export type KickStreamer = {

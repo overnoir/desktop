@@ -42,10 +42,11 @@ export const defaultDiscordSettings: DiscordSettings = {
 };
 
 export const defaultKickSettings: KickSettings = {
+  displayName: KickDisplayName.Name,
+  showDisplayName: KickShow.Always,
   showCategory: KickShow.WhileLive,
-  showSlug: KickShow.Always,
   showOnlyLive: false,
-  channelLimit: 10,
+  streamerLimit: 10,
 };
 
 export const mainWebviewWindowOptions: Omit<

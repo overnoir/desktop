@@ -31,7 +31,7 @@ export const useKickStore = defineStore(
         return a.user.name.localeCompare(b.user.name);
       });
 
-      items = items.slice(0, settings.value.channelLimit);
+      items = items.slice(0, settings.value.streamerLimit);
 
       return items;
     });

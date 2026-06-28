@@ -136,16 +136,19 @@ export const kickSettingsSchema = z.preprocess(
     return value;
   },
   z.object({
+    displayName: z.enum(KickDisplayName).catch(defaultKickSettings.displayName),
     showCategory: z
       .enum([KickShow.WhileLive, KickShow.Never])
       .catch(defaultKickSettings.showCategory),
     showOnlyLive: z.boolean().catch(defaultKickSettings.showOnlyLive),
-    showSlug: z.enum(KickShow).catch(defaultKickSettings.showSlug),
-    channelLimit: z
+    showDisplayName: z
+      .enum(KickShow)
+      .catch(defaultKickSettings.showDisplayName),
+    streamerLimit: z
       .number()
       .min(0)
       .max(10)
-      .catch(defaultKickSettings.channelLimit),
+      .catch(defaultKickSettings.streamerLimit),
   }),
 ) satisfies z.ZodType<KickSettings>;
 

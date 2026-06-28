@@ -13,12 +13,18 @@ const showCategory = computed(() => {
   return true;
 });
 
-const showSlug = computed(() => {
-  if (settings.value.showSlug === KickShow.WhileLive)
+const showDisplayName = computed(() => {
+  if (settings.value.showDisplayName === KickShow.WhileLive)
     return streamer.channel.stream.isLive;
-  if (settings.value.showSlug === KickShow.Never) return false;
+  if (settings.value.showDisplayName === KickShow.Never) return false;
   return true;
 });
+
+const displayName = computed(() =>
+  settings.value.displayName === KickDisplayName.Name
+    ? streamer.user.name
+    : streamer.channel.slug,
+);
 </script>
 
 <template>
@@ -42,7 +48,7 @@ const showSlug = computed(() => {
       {{ streamer.channel.category.name }}
     </div>
     <div
-      v-if="showSlug"
+      v-if="showDisplayName"
       class="absolute bg-background/70 left-0 bottom-0 inline-flex items-center w-fit truncate"
       :style="nameStyles"
     >
@@ -51,7 +57,9 @@ const showSlug = computed(() => {
         class="bg-green-600 rounded-full shrink-0"
         :style="liveStyles"
       />
-      <span class="truncate">{{ streamer.channel.slug }}</span>
+      <span class="truncate">
+        {{ displayName }}
+      </span>
     </div>
   </div>
 </template>
