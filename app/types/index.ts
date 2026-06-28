@@ -92,14 +92,14 @@ export type VaultItemMetadata = {
 
 export type DiscordSettings = {
   showAvatarDecorationAnimated: DiscordShow;
-  showGuildIconAnimated: boolean;
   showAvatarDecoration: DiscordShow;
+  displayName: DiscordDisplayName;
+  showAvatarAnimated: DiscordShow;
+  showGuildIconAnimated: boolean;
+  showDisplayName: DiscordShow;
   showDeafenedUsers: boolean;
   showSpeakersOnly: boolean;
-  showAvatarAnimated: DiscordShow;
-  displayName: DiscordDisplayName;
   showMutedUsers: boolean;
-  showDisplayName: DiscordShow;
   showGuild: boolean;
   userLimit: number;
   showBots: boolean;
@@ -133,23 +133,23 @@ export type AvatarDecoration = {
 
 export type DiscordUser = {
   avatarDecoration: AvatarDecoration | null;
+  globalName: string | null;
   isSelfDeafened: boolean;
+  discriminator: string;
+  avatar: string | null;
   isSelfMuted: boolean;
+  nick: string | null;
   isSpeaking: boolean;
   isDeafened: boolean;
   username: string;
-  discriminator: string;
-  globalName: string | null;
   isMuted: boolean;
-  avatar: string | null;
   isBot: boolean;
-  nick: string | null;
   id: string;
 };
 
 export type DiscordConnectedUser = {
-  username: string;
   avatar: string | null;
+  username: string;
   id: string;
 };
 
@@ -177,5 +177,4 @@ export type KickStreamer = {
     slug: string;
   };
 };
-
 //#endregion
