@@ -47,7 +47,7 @@ export const useLinkGroupsStore = defineStore(
       ],
     }));
 
-    const help = computed<LinkGroup>(() => ({
+    const community = computed<LinkGroup>(() => ({
       name: t("linkGroups.2.name"),
       links: [
         {
@@ -61,12 +61,12 @@ export const useLinkGroupsStore = defineStore(
     const activeLink = computed(() => {
       return [
         ...connectors.value.links,
+        ...community.value.links,
         ...general.value.links,
-        ...help.value.links,
       ].find(({ to }) => to === route.path)!;
     });
 
-    return { general, connectors, help, activeLink };
+    return { general, connectors, community, activeLink };
   },
   {
     tauri: {

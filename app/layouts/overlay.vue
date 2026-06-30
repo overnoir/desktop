@@ -22,46 +22,6 @@ if (advanced.value.autoStart !== (await tauriAutoStartIsEnabled())) {
   }
 }
 
-useResizeObserver(document.body, async (entries) => {
-  const entry = entries[0];
-
-  if (!entry) {
-    return;
-  }
-
-  const { width, height } = entry.contentRect;
-
-  const [currentPosition, currentSize] = await Promise.all([
-    overlayWebviewWindow.outerPosition(),
-    overlayWebviewWindow.outerSize(),
-  ]);
-
-  const deltaX = width - currentSize.width;
-  const deltaY = height - currentSize.height;
-
-  let newX = currentPosition.x;
-  let newY = currentPosition.y;
-
-  if (general.value.orientation === Orientation.Vertical) {
-    if (general.value.alignment === "center") {
-      newY = currentPosition.y - deltaY / 2;
-    } else if (general.value.alignment === "right") {
-      newY = currentPosition.y - deltaY;
-    }
-  } else {
-    if (general.value.alignment === "center") {
-      newX = currentPosition.x - deltaX / 2;
-    } else if (general.value.alignment === "right") {
-      newX = currentPosition.x - deltaX;
-    }
-  }
-
-  await Promise.all([
-    overlayWebviewWindow.setPosition(new TauriDpiLogicalPosition(newX, newY)),
-    overlayWebviewWindow.setSize(new TauriDpiLogicalSize(width, height)),
-  ]);
-});
-
 onMounted(async () => {
   const updaterWebviewWindow = (
     await tauriWebviewWindowGetAllWebviewWindows()
@@ -107,6 +67,46 @@ onMounted(async () => {
   );
 
   await create();
+
+  useResizeObserver(document.body, async (entries) => {
+    const entry = entries[0];
+
+    if (!entry) {
+      return;
+    }
+
+    const { width, height } = entry.contentRect;
+
+    const [currentPosition, currentSize] = await Promise.all([
+      overlayWebviewWindow.outerPosition(),
+      overlayWebviewWindow.outerSize(),
+    ]);
+
+    const deltaX = width - currentSize.width;
+    const deltaY = height - currentSize.height;
+
+    let newX = currentPosition.x;
+    let newY = currentPosition.y;
+
+    if (general.value.orientation === Orientation.Vertical) {
+      if (general.value.alignment === "center") {
+        newY = currentPosition.y - deltaY / 2;
+      } else if (general.value.alignment === "right") {
+        newY = currentPosition.y - deltaY;
+      }
+    } else {
+      if (general.value.alignment === "center") {
+        newX = currentPosition.x - deltaX / 2;
+      } else if (general.value.alignment === "right") {
+        newX = currentPosition.x - deltaX;
+      }
+    }
+
+    await Promise.all([
+      overlayWebviewWindow.setPosition(new TauriDpiLogicalPosition(newX, newY)),
+      overlayWebviewWindow.setSize(new TauriDpiLogicalSize(width, height)),
+    ]);
+  });
 });
 </script>
 

@@ -31,13 +31,13 @@ const guildIconUrl = computed(() => {
     />
     <div v-else :style="boxStyles" class="border bg-[#5865F2]" />
     <div
-      class="absolute bg-background/70 left-0 top-0 inline-block w-fit truncate"
+      class="absolute bg-background border left-0 top-0 text-nowrap overflow-hidden leading-tight"
       :style="nameStyles"
     >
       {{ guild.name }}
     </div>
     <div
-      class="absolute bg-background/70 left-0 bottom-0 inline-block w-fit truncate"
+      class="absolute bg-background border left-0 bottom-0 text-nowrap overflow-hidden leading-tight"
       :style="nameStyles"
     >
       {{ guild.channel.name }}

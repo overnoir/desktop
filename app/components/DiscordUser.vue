@@ -91,7 +91,7 @@ const avatarUrl = computed(() =>
         user.isMuted ||
         user.isBot
       "
-      class="absolute bg-background/70 left-0 top-0 flex items-center"
+      class="absolute bg-background border left-0 top-0 flex items-center"
       :style="iconsStyles"
     >
       <Icon
@@ -115,7 +115,7 @@ const avatarUrl = computed(() =>
     </div>
     <div
       v-if="showDisplayName"
-      class="absolute bg-background/70 left-0 bottom-0 inline-block w-fit truncate"
+      class="absolute bg-background border left-0 bottom-0 text-nowrap overflow-hidden leading-tight"
       :style="nameStyles"
     >
       {{ displayName }}

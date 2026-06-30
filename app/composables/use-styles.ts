@@ -1,14 +1,14 @@
 import type { CSSProperties } from "vue";
 
 export default function () {
-  const { general } = storeToRefs(useSettingsStore());
-  const {
-    guild,
-    filtredUsers,
-    settings: discordSettings,
-  } = storeToRefs(useDiscordStore());
   const { filtredStreamers } = storeToRefs(useKickStore());
+  const { general } = storeToRefs(useSettingsStore());
   const isOnline = useOnline();
+  const {
+    settings: discordSettings,
+    filtredUsers,
+    guild,
+  } = storeToRefs(useDiscordStore());
 
   const boxStyles = computed<CSSProperties>(() => ({
     borderRadius: `${Math.round((general.value.size * general.value.radius) / 200)}px`,
@@ -47,9 +47,8 @@ export default function () {
 
   const nameStyles = computed<CSSProperties>(() => ({
     borderRadius: `${Math.round((general.value.size * general.value.radius) / 200)}px`,
-    paddingInline: `${Math.round(general.value.size / 18)}px`,
+    paddingInline: `${Math.round(general.value.size / 22)}px`,
     fontSize: `${Math.round(general.value.size / 5.5)}px`,
-    gap: `${Math.round(general.value.size / 18)}px`,
     maxWidth: `${Math.round(general.value.size)}px`,
   }));
 
@@ -83,11 +82,6 @@ export default function () {
     gap: `${Math.round(general.value.size / 22)}px`,
   }));
 
-  const liveStyles = computed<CSSProperties>(() => ({
-    height: `${Math.round(general.value.size / 9)}px`,
-    width: `${Math.round(general.value.size / 9)}px`,
-  }));
-
   return {
     avatarDecorationStyles,
     backgroundStyles,
@@ -97,7 +91,6 @@ export default function () {
     nameStyles,
     iconStyles,
     pageStyles,
-    liveStyles,
     boxStyles,
   };
 }

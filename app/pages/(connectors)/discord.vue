@@ -30,7 +30,7 @@ async function toggleConnection() {
       });
       if (deleteVaultItemsOnDisconnect.value) {
         deleteVaultItemsOnDisconnect.value = true;
-        await discordStore.$tauri.saveNow();
+        await discordStore.$tauri.saveAllNow();
       }
       connectedUser.value = null;
     }

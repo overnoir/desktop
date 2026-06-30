@@ -3,7 +3,7 @@ const { streamer } = defineProps<{
   streamer: KickStreamer;
 }>();
 
-const { boxStyles, nameStyles, liveStyles } = useStyles();
+const { boxStyles, nameStyles } = useStyles();
 const { settings } = storeToRefs(useKickStore());
 
 const showCategory = computed(() => {
@@ -42,24 +42,17 @@ const displayName = computed(() =>
     />
     <div
       v-if="streamer.channel.stream.isLive && showCategory"
-      class="absolute bg-background/70 left-0 top-0 inline-block w-fit truncate"
+      class="absolute bg-background border left-0 top-0 text-nowrap overflow-hidden leading-tight"
       :style="nameStyles"
     >
       {{ streamer.channel.category.name }}
     </div>
     <div
       v-if="showDisplayName"
-      class="absolute bg-background/70 left-0 bottom-0 inline-flex items-center w-fit truncate"
+      class="absolute bg-background border left-0 bottom-0 text-nowrap overflow-hidden leading-tight"
       :style="nameStyles"
     >
-      <span
-        v-if="streamer.channel.stream.isLive"
-        class="bg-green-600 rounded-full shrink-0"
-        :style="liveStyles"
-      />
-      <span class="truncate">
-        {{ displayName }}
-      </span>
+      {{ displayName }}
     </div>
   </div>
 </template>

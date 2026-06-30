@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { general, connectors, help, activeLink } =
+const { general, connectors, community, activeLink } =
   storeToRefs(useLinkGroupsStore());
 </script>
 
@@ -8,7 +8,7 @@ const { general, connectors, help, activeLink } =
     class="p-4 pt-10 w-60 shrink-0 flex flex-col gap-4 border-r [&>ul]:last:mt-auto"
   >
     <ul
-      v-for="({ links, name }, i) in [general, connectors, help]"
+      v-for="({ links, name }, i) in [general, connectors, community]"
       :key="i"
       class="space-y-1"
     >
@@ -25,10 +25,10 @@ const { general, connectors, help, activeLink } =
           size="lg"
           as-child
         >
-          <NuxtLinkLocale :to>
+          <NuxtLink :to>
             <Icon :name="icon" class="size-4.5 mr-2" />
             {{ linkName }}
-          </NuxtLinkLocale>
+          </NuxtLink>
         </Button>
       </li>
     </ul>
