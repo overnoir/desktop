@@ -1,14 +1,16 @@
 <script setup lang="ts">
+import type { CSSProperties } from "vue";
+
 definePageMeta({
   layout: "overlay",
 });
 
-const { filtredStreamers, streamers } = storeToRefs(useKickStore());
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
+const { filtredStreamers, streamers } = storeToRefs(useKickStore());
+const isDragging = useState("is-dragging", () => false);
 const discordStore = useDiscordStore();
 const { filtredUsers, guild, settings, connectedUser } =
   storeToRefs(discordStore);
-const isDragging = useState("is-dragging", () => false);
 const {
   settings: systemSettings,
   isConnected,
@@ -18,12 +20,16 @@ const {
   cpu,
 } = storeToRefs(useSystemStore());
 const { general } = storeToRefs(useSettingsStore());
-const { pageStyles, boxStyles } = useStyles();
 const errorsStore = useErrorsStore();
 const isOnline = useOnline();
-const dragButton = ref();
 const offsetX = ref(0);
 const offsetY = ref(0);
+
+const styles = computed<CSSProperties>(() => ({
+  flexDirection:
+    general.value.orientation === Orientation.Vertical ? "column" : "row",
+  gap: `${Math.round((general.value.size * general.value.gap) / 100)}px`,
+}));
 
 await tauriEventListen<DiscordGuild | null>("guild-update", ({ payload }) => {
   guild.value = payload || undefined;
@@ -99,7 +105,7 @@ async function openMainWebviewWindow() {
   }
 }
 
-useEventListener(dragButton, "mousedown", async (e) => {
+async function onDragStart(e: MouseEvent) {
   if (e.button !== 0) {
     return;
   }
@@ -111,7 +117,9 @@ useEventListener(dragButton, "mousedown", async (e) => {
   offsetX.value = e.screenX - pos.x;
   offsetY.value = e.screenY - pos.y;
   isDragging.value = true;
-});
+}
+
+useEventListener(window, "mouseup", () => (isDragging.value = false));
 
 useEventListener(window, "mousemove", async (e) => {
   if (!isDragging.value) {
@@ -125,16 +133,12 @@ useEventListener(window, "mousemove", async (e) => {
     ),
   );
 });
-
-useEventListener(window, "mouseup", async () => {
-  isDragging.value = false;
-});
 </script>
 
 <template>
-  <section class="flex" :style="pageStyles">
+  <section class="flex" :style="styles">
     <template v-if="isOnline">
-      <DiscordGuild
+      <OverlayDiscordGuild
         v-if="guild && settings.showGuild"
         :guild="{
           channel: {
@@ -144,47 +148,28 @@ useEventListener(window, "mouseup", async () => {
           name: guild.name,
         }"
       />
-      <DiscordUser v-for="user in filtredUsers" :key="user.id" :user />
-      <KickStreamer
+      <OverlayDiscordUser v-for="user in filtredUsers" :key="user.id" :user />
+      <OverlayKickStreamer
         v-for="streamer in filtredStreamers"
         :key="streamer.user.id"
         :streamer
       />
     </template>
-    <template v-if="isConnected">
-      <SystemCpu v-if="systemSettings.showCpu && cpu" :cpu />
-      <SystemMemory v-if="systemSettings.showMemory && memory" :memory />
-      <SystemNetwork v-if="systemSettings.showNetwork && network" :network />
-      <SystemBattery v-if="systemSettings.showBattery && battery" :battery />
-    </template>
-    <Button
-      v-if="!isOnline"
-      :style="boxStyles"
-      class="bg-red-500! border-red-600"
-      variant="outline"
-      size="icon"
-    >
-      <Icon name="lucide:wifi-off" class="size-1/2" />
-    </Button>
-    <Button
+    <OverlaySystemCpu v-if="systemSettings.showCpu && cpu" :cpu />
+    <OverlaySystemMemory v-if="systemSettings.showMemory && memory" :memory />
+    <OverlaySystemNetwork
+      v-if="systemSettings.showNetwork && network"
+      :network
+    />
+    <OverlaySystemBattery
+      v-if="systemSettings.showBattery && battery"
+      :battery
+    />
+    <OverlayOffline v-if="!isOnline" />
+    <OverlaySettings
       v-if="general.showSettings"
-      :style="boxStyles"
-      class="bg-background!"
-      variant="outline"
-      size="icon"
       @click="openMainWebviewWindow"
-    >
-      <Icon name="lucide:sliders-horizontal" class="size-1/2" />
-    </Button>
-    <Button
-      v-if="general.showDrag"
-      ref="dragButton"
-      class="bg-background!"
-      :style="boxStyles"
-      variant="outline"
-      size="icon"
-    >
-      <Icon name="lucide:grip" class="pointer-events-none size-1/2" />
-    </Button>
+    />
+    <OverlayDrag v-if="general.showDrag" @mousedown="onDragStart" />
   </section>
 </template>

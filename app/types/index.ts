@@ -63,6 +63,11 @@ export type LinkGroup = {
   name: string;
 };
 
+export type OverlayBaseIcon = {
+  variant?: "default" | "destructive";
+  name: string;
+};
+
 export type SettingsGeneral = {
   orientation: Orientation;
   showBackground: boolean;

@@ -1,11 +1,32 @@
 <script setup lang="ts">
+import type { CSSProperties } from "vue";
+
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const { general, advanced } = storeToRefs(useSettingsStore());
 const isDragging = useState("is-dragging", () => false);
-const { htmlStyles, backgroundStyles } = useStyles();
 const isMacOS = tauriOSType() === "macos";
 const errorsStore = useErrorsStore();
 const { create } = useTray();
+
+const backgroundStyles = computed<CSSProperties>(() => {
+  if (!general.value.showBackground) {
+    return {
+      minHeight: "1px",
+      minWidth: "1px",
+    };
+  }
+
+  return {
+    borderRadius: `${Math.round(((general.value.size * general.value.radius) / 200) * 1.15)}px`,
+    padding: `${Math.round(general.value.size / 25)}px`,
+    backgroundColor: "var(--background)",
+    border: "1px solid var(--border)",
+  };
+});
+
+const htmlStyles = computed<CSSProperties>(() => ({
+  opacity: `${general.value.opacity}%`,
+}));
 
 await tauriEventListen<Pick<AppError, "message" | "source">>(
   "error",
