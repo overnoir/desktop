@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import type { SwitchRootEmits, SwitchRootProps } from "reka-ui";
 import type { HTMLAttributes } from "vue";
-import { reactiveOmit } from "@vueuse/core";
-import { SwitchRoot, SwitchThumb, useForwardPropsEmits } from "reka-ui";
+import {
+  useForwardPropsEmits,
+  type SwitchRootEmits,
+  type SwitchRootProps,
+  SwitchThumb,
+  SwitchRoot,
+} from "reka-ui";
 
 const props = defineProps<
   SwitchRootProps & { class?: HTMLAttributes["class"] }

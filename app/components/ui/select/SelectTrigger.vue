@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import type { SelectTriggerProps } from "reka-ui";
 import type { HTMLAttributes } from "vue";
-import { reactiveOmit } from "@vueuse/core";
-import { SelectIcon, SelectTrigger, useForwardProps } from "reka-ui";
+import {
+  type SelectTriggerProps,
+  useForwardProps,
+  SelectTrigger,
+  SelectIcon,
+} from "reka-ui";
 
 const props = withDefaults(
   defineProps<

@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import type { NumberFieldRootEmits, NumberFieldRootProps } from "reka-ui";
 import type { HTMLAttributes } from "vue";
-import { reactiveOmit } from "@vueuse/core";
-import { NumberFieldRoot, useForwardPropsEmits } from "reka-ui";
+import {
+  type NumberFieldRootEmits,
+  type NumberFieldRootProps,
+  useForwardPropsEmits,
+  NumberFieldRoot,
+} from "reka-ui";
 
 const props = defineProps<
   NumberFieldRootProps & { class?: HTMLAttributes["class"] }

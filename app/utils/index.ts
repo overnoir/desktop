@@ -1,6 +1,5 @@
+import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import type { ClassValue } from "clsx";
-import { clsx } from "clsx";
 
 export function isObject(value: unknown) {
   return value !== null && typeof value === "object" && !Array.isArray(value);

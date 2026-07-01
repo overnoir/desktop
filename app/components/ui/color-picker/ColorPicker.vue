@@ -1,19 +1,18 @@
 <script setup lang="ts">
-import type { Color } from "reka-ui";
 import type { HTMLAttributes } from "vue";
-import { useVModel } from "@vueuse/core";
 import {
-  ColorAreaArea,
-  ColorAreaRoot,
-  ColorAreaThumb,
-  ColorFieldInput,
-  ColorFieldRoot,
-  ColorSliderRoot,
-  ColorSliderThumb,
   ColorSliderTrack,
-  ColorSwatch,
-  colorToString,
+  ColorSliderThumb,
+  ColorFieldInput,
+  ColorSliderRoot,
+  ColorAreaThumb,
   normalizeColor,
+  ColorFieldRoot,
+  ColorAreaRoot,
+  ColorAreaArea,
+  colorToString,
+  ColorSwatch,
+  type Color,
 } from "reka-ui";
 
 const props = defineProps<{

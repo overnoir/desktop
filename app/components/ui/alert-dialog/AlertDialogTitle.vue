@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import type { AlertDialogTitleProps } from "reka-ui";
+import { AlertDialogTitle, type AlertDialogTitleProps } from "reka-ui";
 import type { HTMLAttributes } from "vue";
-import { reactiveOmit } from "@vueuse/core";
-import { AlertDialogTitle } from "reka-ui";
 
 const props = defineProps<
   AlertDialogTitleProps & { class?: HTMLAttributes["class"] }

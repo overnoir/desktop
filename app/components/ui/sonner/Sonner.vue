@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import type { ToasterProps } from "vue-sonner";
-import { Toaster as Sonner } from "vue-sonner";
+import { Toaster as Sonner, type ToasterProps } from "vue-sonner";
 
 const props = withDefaults(defineProps<ToasterProps>(), {
   closeButton: true,

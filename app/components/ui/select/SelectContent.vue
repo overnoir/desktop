@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { SelectContentEmits, SelectContentProps } from "reka-ui";
-import type { HTMLAttributes } from "vue";
-import { reactiveOmit } from "@vueuse/core";
-import {
-  SelectContent,
-  SelectPortal,
-  SelectViewport,
-  useForwardPropsEmits,
-} from "reka-ui";
 import { SelectScrollDownButton, SelectScrollUpButton } from ".";
+import type { HTMLAttributes } from "vue";
+import {
+  type SelectContentEmits,
+  type SelectContentProps,
+  useForwardPropsEmits,
+  SelectContent,
+  SelectViewport,
+  SelectPortal,
+} from "reka-ui";
 
 defineOptions({
   inheritAttrs: false,

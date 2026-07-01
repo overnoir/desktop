@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
-import { cn } from "@/utils/index";
-import { Label } from "@/components/ui/label";
 
 const props = defineProps<{
   class?: HTMLAttributes["class"];
