@@ -6,6 +6,7 @@ export default {
     },
     {
       name: "BAĞLANTILAR",
+      links: ["Sistem"],
     },
     {
       name: "TOPLULUK",
@@ -301,6 +302,47 @@ export default {
         title: "Tüm Kick ayarlarını sıfırla",
         description:
           "Tüm Kick ayarlarınızı sıfırlamak istediğinize emin misiniz? Bu işlem geri alınamaz.",
+        confirm: "Evet, sıfırla",
+        cancel: "Vazgeç",
+      },
+    },
+  },
+  system: {
+    tabs: ["Bağlantı", "Ayarlar"],
+    connect: {
+      success: "Bağlantı başarıyla yapıldı.",
+      error: "Bağlantı yapılırken bir sorun oluştu.",
+      button: "Bağlan",
+    },
+    disconnect: {
+      success: "Bağlantı başarıyla kesildi.",
+      error: "Bağlantı kesilirken bir sorun oluştu.",
+      button: "Bağlantıyı Kes",
+    },
+    showCpu: {
+      title: "CPU Kullanımını Göster",
+      description: "CPU kullanımının gözükmesini sağlayın.",
+    },
+    showMemory: {
+      title: "RAM Kullanımını Göster",
+      description: "RAM kullanımının gözükmesini sağlayın.",
+    },
+    showNetwork: {
+      title: "Ağ Kullanımını Göster",
+      description: "Ağ kullanımının gözükmesini sağlayın.",
+    },
+    showBattery: {
+      title: "Batarya Durumunu Göster",
+      description: "Batarya durumunun gözükmesini sağlayın.",
+    },
+    reset: {
+      title: "Sıfırla",
+      description: "Tüm Sistem ayarlarını varsayılan ayarlarına döndürün.",
+      success: "Tüm Sistem ayarları başarıyla sıfırlandı.",
+      dialog: {
+        title: "Tüm Sistem ayarlarını sıfırla",
+        description:
+          "Tüm Sistem ayarlarınızı sıfırlamak istediğinize emin misiniz? Bu işlem geri alınamaz.",
         confirm: "Evet, sıfırla",
         cancel: "Vazgeç",
       },

@@ -44,6 +44,11 @@ export const useLinkGroupsStore = defineStore(
           to: localePath("/kick"),
           name: "Kick",
         },
+        {
+          icon: "lucide:gauge",
+          to: localePath("/system"),
+          name: t("linkGroups.1.links.0"),
+        },
       ],
     }));
 

@@ -182,3 +182,20 @@ export const kickStreamersSchema = z.preprocess(
       ),
     ),
 ) satisfies z.ZodType<KickStreamer[]>;
+
+export const systemIsConnectedSchema = z.boolean().catch(false);
+
+export const systemSettingsSchema = z.preprocess(
+  (value) => {
+    if (!isObject(value)) {
+      return defaultSystemSettings;
+    }
+    return value;
+  },
+  z.object({
+    showBattery: z.boolean().catch(defaultSystemSettings.showBattery),
+    showNetwork: z.boolean().catch(defaultSystemSettings.showNetwork),
+    showMemory: z.boolean().catch(defaultSystemSettings.showMemory),
+    showCpu: z.boolean().catch(defaultSystemSettings.showCpu),
+  }),
+) satisfies z.ZodType<SystemSettings>;

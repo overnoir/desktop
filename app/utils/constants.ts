@@ -49,6 +49,13 @@ export const defaultKickSettings: KickSettings = {
   streamerLimit: 10,
 };
 
+export const defaultSystemSettings: SystemSettings = {
+  showBattery: true,
+  showNetwork: true,
+  showMemory: true,
+  showCpu: true,
+};
+
 export const mainWebviewWindowOptions: Omit<
   WebviewOptions,
   "x" | "y" | "width" | "height"

@@ -9,6 +9,14 @@ const discordStore = useDiscordStore();
 const { filtredUsers, guild, settings, connectedUser } =
   storeToRefs(discordStore);
 const isDragging = useState("is-dragging", () => false);
+const {
+  settings: systemSettings,
+  isConnected,
+  battery,
+  network,
+  memory,
+  cpu,
+} = storeToRefs(useSystemStore());
 const { general } = storeToRefs(useSettingsStore());
 const { pageStyles, boxStyles } = useStyles();
 const errorsStore = useErrorsStore();
@@ -19,6 +27,18 @@ const offsetY = ref(0);
 
 await tauriEventListen<DiscordGuild | null>("guild-update", ({ payload }) => {
   guild.value = payload || undefined;
+});
+
+await tauriEventListen<{
+  network: SystemNetwork;
+  battery: SystemBattery;
+  memory: SystemMemory;
+  cpu: SystemCpu;
+} | null>("system-update", ({ payload }) => {
+  network.value = payload?.network;
+  battery.value = payload?.battery;
+  memory.value = payload?.memory;
+  cpu.value = payload?.cpu;
 });
 
 try {
@@ -48,6 +68,18 @@ try {
     source: ErrorSource.Kick,
   });
   streamers.value = [];
+}
+
+try {
+  if (isConnected.value) {
+    await tauriCoreInvoke("connect_system");
+  }
+} catch (error) {
+  errorsStore.addError({
+    message: JSON.stringify(error),
+    source: ErrorSource.System,
+  });
+  isConnected.value = false;
 }
 
 async function openMainWebviewWindow() {
@@ -119,8 +151,14 @@ useEventListener(window, "mouseup", async () => {
         :streamer
       />
     </template>
+    <template v-if="isConnected">
+      <SystemCpu v-if="systemSettings.showCpu && cpu" :cpu />
+      <SystemMemory v-if="systemSettings.showMemory && memory" :memory />
+      <SystemNetwork v-if="systemSettings.showNetwork && network" :network />
+      <SystemBattery v-if="systemSettings.showBattery && battery" :battery />
+    </template>
     <Button
-      v-else
+      v-if="!isOnline"
       :style="boxStyles"
       class="bg-red-500! border-red-600"
       variant="outline"

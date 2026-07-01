@@ -35,6 +35,7 @@ export enum Alignment {
 
 export enum ErrorSource {
   Discord = "discord",
+  System = "system",
   Kick = "kick",
 }
 
@@ -176,5 +177,34 @@ export type KickStreamer = {
     };
     slug: string;
   };
+};
+
+export type SystemCpu = {
+  usagePercent: number;
+  total: number;
+  active: number;
+};
+
+export type SystemMemory = {
+  usagePercent: number;
+  totalGb: number;
+  usedGb: number;
+};
+
+export type SystemNetwork = {
+  download: number;
+  upload: number;
+};
+
+export type SystemBattery = {
+  percent: number | null;
+  isCharging: boolean;
+};
+
+export type SystemSettings = {
+  showBattery: boolean;
+  showNetwork: boolean;
+  showMemory: boolean;
+  showCpu: boolean;
 };
 //#endregion

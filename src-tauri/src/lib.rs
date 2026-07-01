@@ -3,11 +3,13 @@ use tauri::Manager;
 mod api;
 mod discord;
 mod nspanel;
+mod system;
 mod vault;
 use api::{api_get_kick_streamers, init_api};
 use discord::{connect_discord, disconnect_discord, init_discord};
 #[cfg(target_os = "macos")]
 use nspanel::{init_nspanel, set_nspanel_always_on_top, set_nspanel_ignore_cursor};
+use system::{connect_system, disconnect_system, init_system};
 use vault::{clear_vault, get_vault_metadata, init_vault};
 
 pub fn run() {
@@ -18,6 +20,8 @@ pub fn run() {
             disconnect_discord,
             connect_discord,
             clear_vault,
+            connect_system,
+            disconnect_system,
             #[cfg(target_os = "macos")]
             init_nspanel,
             #[cfg(target_os = "macos")]
@@ -41,6 +45,7 @@ pub fn run() {
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_os::init())
+        .plugin(tauri_plugin_system_info::init())
         .setup(|app| {
             #[cfg(debug_assertions)]
             {
@@ -76,6 +81,7 @@ pub fn run() {
 
             init_discord(&app.app_handle(), &discord_client_id);
             init_api(&app.app_handle(), &api_url);
+            init_system(&app.app_handle());
             init_vault(&app.app_handle());
 
             Ok(())
