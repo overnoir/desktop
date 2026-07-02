@@ -65,6 +65,7 @@ export const mainWebviewWindowOptions: Omit<
   decorations: false,
   hiddenTitle: true,
   transparent: true,
+  url: "/settings",
   visible: false,
   minHeight: 600,
   minWidth: 960,

@@ -9,22 +9,17 @@ export const useLinkGroupsStore = defineStore(
       name: t("linkGroups.0.name"),
       links: [
         {
-          name: t("linkGroups.0.links.0"),
-          icon: "lucide:home",
-          to: localePath("/"),
-        },
-        {
           icon: "lucide:sliders-horizontal",
-          name: t("linkGroups.0.links.1"),
+          name: t("linkGroups.0.links.0"),
           to: localePath("/settings"),
         },
         {
-          name: t("linkGroups.0.links.2"),
+          name: t("linkGroups.0.links.1"),
           to: localePath("/vault"),
           icon: "lucide:vault",
         },
         {
-          name: t("linkGroups.0.links.3"),
+          name: t("linkGroups.0.links.2"),
           to: localePath("/errors"),
           icon: "lucide:triangle-alert",
         },

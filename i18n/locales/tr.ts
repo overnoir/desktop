@@ -2,7 +2,7 @@ export default {
   linkGroups: [
     {
       name: "GENEL",
-      links: ["Ana Sayfa", "Ayarlar", "Kasa", "Hatalar"],
+      links: ["Ayarlar", "Kasa", "Hatalar"],
     },
     {
       name: "BAĞLANTILAR",
