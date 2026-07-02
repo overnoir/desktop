@@ -61,22 +61,6 @@ try {
 }
 
 try {
-  if (streamers.value.length) {
-    const data = await tauriCoreInvoke<KickStreamer[]>(
-      "api_get_kick_streamers",
-      { slugs: streamers.value.map(({ channel }) => channel.slug) },
-    );
-    streamers.value = data;
-  }
-} catch (error) {
-  errorsStore.addError({
-    message: JSON.stringify(error),
-    source: ErrorSource.Kick,
-  });
-  streamers.value = [];
-}
-
-try {
   if (isConnected.value) {
     await tauriCoreInvoke("connect_system");
   }
@@ -118,6 +102,28 @@ async function onDragStart(e: MouseEvent) {
   offsetY.value = e.screenY - pos.y;
   isDragging.value = true;
 }
+
+useIntervalFn(
+  async () => {
+    try {
+      if (streamers.value.length) {
+        const data = await tauriCoreInvoke<KickStreamer[]>(
+          "api_get_kick_streamers",
+          { slugs: streamers.value.map(({ channel }) => channel.slug) },
+        );
+        streamers.value = data;
+      }
+    } catch (error) {
+      errorsStore.addError({
+        message: JSON.stringify(error),
+        source: ErrorSource.Kick,
+      });
+      streamers.value = [];
+    }
+  },
+  300000,
+  { immediateCallback: true },
+);
 
 useEventListener(window, "mouseup", () => (isDragging.value = false));
 
