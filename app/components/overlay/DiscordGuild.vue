@@ -35,11 +35,11 @@ const guildIconUrl = computed(() => {
       />
       <div v-else class="size-full bg-[#5865F2]" />
     </OverlayItemContent>
-    <OverlayItemLabel position="top">
+    <OverlayItemBadge position="top">
       {{ guild.name }}
-    </OverlayItemLabel>
-    <OverlayItemLabel position="bottom">
+    </OverlayItemBadge>
+    <OverlayItemBadge position="bottom">
       {{ guild.channel.name }}
-    </OverlayItemLabel>
+    </OverlayItemBadge>
   </OverlayItem>
 </template>

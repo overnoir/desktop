@@ -7,11 +7,11 @@ defineProps<{ cpu: SystemCpu }>();
     <OverlayItemContent>
       <Icon name="lucide:cpu" class="size-[35%]" />
     </OverlayItemContent>
-    <OverlayItemLabel position="top">
+    <OverlayItemBadge position="top">
       {{ cpu.active }}/{{ cpu.total }}
-    </OverlayItemLabel>
-    <OverlayItemLabel position="bottom">
+    </OverlayItemBadge>
+    <OverlayItemBadge position="bottom">
       {{ cpu.usagePercent.toFixed(1) }}%
-    </OverlayItemLabel>
+    </OverlayItemBadge>
   </OverlayItem>
 </template>

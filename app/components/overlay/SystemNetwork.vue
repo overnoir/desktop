@@ -7,11 +7,11 @@ defineProps<{ network: SystemNetwork }>();
     <OverlayItemContent>
       <Icon name="lucide:wifi" class="size-[35%]" />
     </OverlayItemContent>
-    <OverlayItemLabel position="top">
+    <OverlayItemBadge position="top">
       {{ network.upload.toFixed(2) }}MB
-    </OverlayItemLabel>
-    <OverlayItemLabel position="bottom">
+    </OverlayItemBadge>
+    <OverlayItemBadge position="bottom">
       {{ network.download.toFixed(2) }}MB
-    </OverlayItemLabel>
+    </OverlayItemBadge>
   </OverlayItem>
 </template>

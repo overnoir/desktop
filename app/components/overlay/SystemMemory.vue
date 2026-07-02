@@ -7,11 +7,11 @@ defineProps<{ memory: SystemMemory }>();
     <OverlayItemContent>
       <Icon name="lucide:memory-stick" class="size-[35%]" />
     </OverlayItemContent>
-    <OverlayItemLabel position="top">
+    <OverlayItemBadge position="top">
       {{ memory.usedGb.toFixed(0) }}/{{ memory.totalGb.toFixed(0) }}GB
-    </OverlayItemLabel>
-    <OverlayItemLabel position="bottom">
+    </OverlayItemBadge>
+    <OverlayItemBadge position="bottom">
       {{ memory.usagePercent.toFixed(1) }}%
-    </OverlayItemLabel>
+    </OverlayItemBadge>
   </OverlayItem>
 </template>

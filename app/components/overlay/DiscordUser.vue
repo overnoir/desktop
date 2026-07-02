@@ -22,28 +22,6 @@ const showAvatarAnimated = computed(
       user.isSpeaking),
 );
 
-const statusIcons = computed(() => {
-  const icons: OverlayItemIcon[] = [];
-
-  if (user.isMuted || user.isSelfMuted) {
-    icons.push({
-      variant: user.isMuted ? "destructive" : "default",
-      name: "lucide:mic-off",
-    });
-  }
-  if (user.isDeafened || user.isSelfDeafened) {
-    icons.push({
-      variant: user.isDeafened ? "destructive" : "default",
-      name: "lucide:headphone-off",
-    });
-  }
-  if (user.isBot) {
-    icons.push({ name: "lucide:bot" });
-  }
-
-  return icons;
-});
-
 const speakingStyles = computed<CSSProperties>(() => ({
   borderRadius: `${Math.round((general.value.size * general.value.radius) / 200)}px`,
   "--tw-ring-shadow": `var(--tw-ring-inset) 0 0 0 ${Math.round(
@@ -74,10 +52,34 @@ const avatarUrl = computed(() =>
     <OverlayItemContent>
       <NuxtImg :src="avatarUrl" class="size-full" alt="Avatar" />
     </OverlayItemContent>
-    <OverlayItemIcons v-if="statusIcons.length" :icons="statusIcons" />
-    <OverlayItemLabel v-if="showDisplayName" position="bottom">
+    <OverlayItemBadge
+      v-if="
+        user.isSelfDeafened ||
+        user.isSelfMuted ||
+        user.isDeafened ||
+        user.isMuted ||
+        user.isBot
+      "
+      position="top"
+    >
+      <Icon
+        v-if="user.isMuted || user.isSelfMuted"
+        :class="{ 'text-red-600': user.isMuted }"
+        name="lucide:mic-off"
+      />
+      <Icon
+        v-if="user.isDeafened || user.isSelfDeafened"
+        :class="{ 'text-red-600': user.isDeafened }"
+        name="lucide:headphone-off"
+      />
+      <Icon v-if="user.isBot" name="lucide:bot" />
+    </OverlayItemBadge>
+    <OverlayItemBadge v-if="showDisplayName" position="bottom">
       {{ displayName }}
-    </OverlayItemLabel>
+    </OverlayItemBadge>
+    <OverlayItemBadge v-if="showDisplayName" position="bottom">
+      {{ displayName }}
+    </OverlayItemBadge>
     <div
       v-if="user.isSpeaking"
       class="absolute left-0 top-0 ring ring-inset ring-green-600"

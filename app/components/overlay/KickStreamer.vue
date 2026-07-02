@@ -39,14 +39,14 @@ const displayName = computed(() =>
         class="size-full"
       />
     </OverlayItemContent>
-    <OverlayItemLabel
+    <OverlayItemBadge
       v-if="streamer.channel.stream.isLive && showCategory"
       position="top"
     >
       {{ streamer.channel.category.name }}
-    </OverlayItemLabel>
-    <OverlayItemLabel v-if="showDisplayName" position="bottom">
+    </OverlayItemBadge>
+    <OverlayItemBadge v-if="showDisplayName" position="bottom">
       {{ displayName }}
-    </OverlayItemLabel>
+    </OverlayItemBadge>
   </OverlayItem>
 </template>

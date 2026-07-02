@@ -7,12 +7,11 @@ defineProps<{ battery: SystemBattery }>();
     <OverlayItemContent>
       <Icon name="lucide:battery-full" class="size-[35%]" />
     </OverlayItemContent>
-    <OverlayItemLabel position="bottom">
+    <OverlayItemBadge position="bottom">
       {{ (battery.percent || 0).toFixed(0) }}%
-    </OverlayItemLabel>
-    <OverlayItemIcons
-      v-if="battery.isCharging"
-      :icons="[{ name: 'lucide:zap' }]"
-    />
+    </OverlayItemBadge>
+    <OverlayItemBadge v-if="battery.isCharging" position="top">
+      <Icon name="lucide:zap" />
+    </OverlayItemBadge>
   </OverlayItem>
 </template>
