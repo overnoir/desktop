@@ -50,10 +50,16 @@ const statusIcons = computed(() => {
   const icons: OverlayItemIcon[] = [];
 
   if (user.isDeafened || user.isSelfDeafened) {
-    icons.push({ name: "lucide:headphone-off", variant: "destructive" });
+    icons.push({
+      variant: user.isDeafened ? "destructive" : "default",
+      name: "lucide:headphone-off",
+    });
   }
   if (user.isMuted || user.isSelfMuted) {
-    icons.push({ name: "lucide:mic-off", variant: "destructive" });
+    icons.push({
+      variant: user.isMuted ? "destructive" : "default",
+      name: "lucide:mic-off",
+    });
   }
   if (user.isBot) {
     icons.push({ name: "lucide:bot" });
