@@ -63,7 +63,7 @@ export type LinkGroup = {
   name: string;
 };
 
-export type OverlayBaseIcon = {
+export type OverlayItemIcon = {
   variant?: "default" | "destructive";
   name: string;
 };

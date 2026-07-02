@@ -3,15 +3,15 @@ defineProps<{ network: SystemNetwork }>();
 </script>
 
 <template>
-  <OverlayBase>
-    <OverlayBaseContent>
+  <OverlayItem>
+    <OverlayItemContent>
       <Icon name="lucide:wifi" class="size-[35%]" />
-    </OverlayBaseContent>
-    <OverlayBaseLabel position="top">
+    </OverlayItemContent>
+    <OverlayItemLabel position="top">
       {{ network.upload.toFixed(2) }}MB
-    </OverlayBaseLabel>
-    <OverlayBaseLabel position="bottom">
+    </OverlayItemLabel>
+    <OverlayItemLabel position="bottom">
       {{ network.download.toFixed(2) }}MB
-    </OverlayBaseLabel>
-  </OverlayBase>
+    </OverlayItemLabel>
+  </OverlayItem>
 </template>

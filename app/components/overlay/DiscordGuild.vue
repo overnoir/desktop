@@ -25,8 +25,8 @@ const guildIconUrl = computed(() => {
 </script>
 
 <template>
-  <OverlayBase>
-    <OverlayBaseContent>
+  <OverlayItem>
+    <OverlayItemContent>
       <NuxtImg
         v-if="guild.iconUrl"
         :src="guildIconUrl"
@@ -34,12 +34,12 @@ const guildIconUrl = computed(() => {
         alt="Icon"
       />
       <div v-else class="size-full bg-[#5865F2]" />
-    </OverlayBaseContent>
-    <OverlayBaseLabel position="top">
+    </OverlayItemContent>
+    <OverlayItemLabel position="top">
       {{ guild.name }}
-    </OverlayBaseLabel>
-    <OverlayBaseLabel position="bottom">
+    </OverlayItemLabel>
+    <OverlayItemLabel position="bottom">
       {{ guild.channel.name }}
-    </OverlayBaseLabel>
-  </OverlayBase>
+    </OverlayItemLabel>
+  </OverlayItem>
 </template>

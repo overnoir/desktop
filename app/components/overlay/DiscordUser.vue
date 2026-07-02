@@ -47,7 +47,7 @@ const showAvatarDecorationAnimated = computed(
 );
 
 const statusIcons = computed(() => {
-  const icons: OverlayBaseIcon[] = [];
+  const icons: OverlayItemIcon[] = [];
 
   if (user.isDeafened || user.isSelfDeafened) {
     icons.push({ name: "lucide:headphone-off", variant: "destructive" });
@@ -93,14 +93,14 @@ const avatarUrl = computed(() =>
 </script>
 
 <template>
-  <OverlayBase>
-    <OverlayBaseContent>
+  <OverlayItem>
+    <OverlayItemContent>
       <NuxtImg :src="avatarUrl" class="size-full" alt="Avatar" />
-    </OverlayBaseContent>
-    <OverlayBaseIcons v-if="statusIcons.length" :icons="statusIcons" />
-    <OverlayBaseLabel v-if="showDisplayName" position="bottom">
+    </OverlayItemContent>
+    <OverlayItemIcons v-if="statusIcons.length" :icons="statusIcons" />
+    <OverlayItemLabel v-if="showDisplayName" position="bottom">
       {{ displayName }}
-    </OverlayBaseLabel>
+    </OverlayItemLabel>
     <NuxtImg
       v-if="avatarDecorationUrl && showAvatarDecoration"
       class="absolute left-0 top-0 size-full scale-[1.2]"
@@ -113,5 +113,5 @@ const avatarUrl = computed(() =>
       class="absolute left-0 top-0 ring ring-inset ring-green-600"
       :style="speakingStyles"
     />
-  </OverlayBase>
+  </OverlayItem>
 </template>

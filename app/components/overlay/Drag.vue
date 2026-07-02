@@ -5,9 +5,9 @@ defineOptions({
 </script>
 
 <template>
-  <OverlayBase>
-    <OverlayBaseContent v-bind="$attrs">
+  <OverlayItem>
+    <OverlayItemContent v-bind="$attrs">
       <Icon name="lucide:grip" class="size-[50%]" />
-    </OverlayBaseContent>
-  </OverlayBase>
+    </OverlayItemContent>
+  </OverlayItem>
 </template>

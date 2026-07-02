@@ -27,26 +27,26 @@ const displayName = computed(() =>
 </script>
 
 <template>
-  <OverlayBase
+  <OverlayItem
     :class="{
       'grayscale-100': !streamer.channel.stream.isLive,
     }"
   >
-    <OverlayBaseContent>
+    <OverlayItemContent>
       <NuxtImg
         :src="streamer.user.profilePicture"
         alt="Profile Picture"
         class="size-full"
       />
-    </OverlayBaseContent>
-    <OverlayBaseLabel
+    </OverlayItemContent>
+    <OverlayItemLabel
       v-if="streamer.channel.stream.isLive && showCategory"
       position="top"
     >
       {{ streamer.channel.category.name }}
-    </OverlayBaseLabel>
-    <OverlayBaseLabel v-if="showDisplayName" position="bottom">
+    </OverlayItemLabel>
+    <OverlayItemLabel v-if="showDisplayName" position="bottom">
       {{ displayName }}
-    </OverlayBaseLabel>
-  </OverlayBase>
+    </OverlayItemLabel>
+  </OverlayItem>
 </template>

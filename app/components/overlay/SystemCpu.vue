@@ -3,15 +3,15 @@ defineProps<{ cpu: SystemCpu }>();
 </script>
 
 <template>
-  <OverlayBase>
-    <OverlayBaseContent>
+  <OverlayItem>
+    <OverlayItemContent>
       <Icon name="lucide:cpu" class="size-[35%]" />
-    </OverlayBaseContent>
-    <OverlayBaseLabel position="top">
+    </OverlayItemContent>
+    <OverlayItemLabel position="top">
       {{ cpu.active }}/{{ cpu.total }}
-    </OverlayBaseLabel>
-    <OverlayBaseLabel position="bottom">
+    </OverlayItemLabel>
+    <OverlayItemLabel position="bottom">
       {{ cpu.usagePercent.toFixed(1) }}%
-    </OverlayBaseLabel>
-  </OverlayBase>
+    </OverlayItemLabel>
+  </OverlayItem>
 </template>

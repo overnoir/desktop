@@ -2,7 +2,7 @@
 import type { CSSProperties } from "vue";
 
 defineProps<{
-  icons: OverlayBaseIcon[];
+  icons: OverlayItemIcon[];
 }>();
 
 const { general } = storeToRefs(useSettingsStore());
