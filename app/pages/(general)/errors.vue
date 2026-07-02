@@ -34,9 +34,11 @@ const { errors } = storeToRefs(errorsStore);
               </Button>
             </div>
           </AlertTitle>
-          <AlertDescription class="text-xs text-secondary-foreground!">
+          <AlertDescription
+            class="text-xs text-secondary-foreground text-nowrap"
+          >
             {{ new Date(createdAt).toLocaleString() }}
-            <template v-if="source"> ({{ source }}) </template>
+            <span v-if="source" class="uppercase">[{{ source }}]</span>
           </AlertDescription>
         </Alert>
       </div>

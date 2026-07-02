@@ -5,7 +5,6 @@ const { connectedUser, settings } = storeToRefs(discordStore);
 const deleteVaultItemsOnDisconnect = ref(true);
 const { $toast } = useNuxtApp();
 const loading = ref(false);
-const route = useRoute();
 const { t } = useI18n();
 
 const avatarUrl = computed(
@@ -34,7 +33,6 @@ async function toggleConnection() {
       }
       connectedUser.value = null;
     }
-    route.meta.headerImageUrl = avatarUrl.value;
     $toast.success(t(`discord.${action}.success`));
   } catch (error) {
     errorsStore.addError({
@@ -45,12 +43,6 @@ async function toggleConnection() {
   }
   loading.value = false;
 }
-
-watch(avatarUrl, (value) => {
-  route.meta.headerImageUrl = value;
-});
-
-onMounted(() => (route.meta.headerImageUrl = avatarUrl.value));
 </script>
 
 <template>
@@ -60,7 +52,7 @@ onMounted(() => (route.meta.headerImageUrl = avatarUrl.value));
       default-value="connection"
     >
       <TabsList
-        class="flex-col h-max sticky top-10.75 [&>button]:gap-3 [&>button]:w-40 [&>button]:justify-start"
+        class="flex-col h-max sticky top-0 [&>button]:gap-3 [&>button]:w-40 [&>button]:justify-start"
       >
         <TabsTrigger value="connection">
           <Icon name="lucide:plug" />
@@ -75,6 +67,12 @@ onMounted(() => (route.meta.headerImageUrl = avatarUrl.value));
         <Card class="text-center gap-12 p-16">
           <CardHeader>
             <CardTitle class="text-xl">Discord RPC</CardTitle>
+            <NuxtImg
+              v-if="avatarUrl"
+              :src="avatarUrl"
+              alt="Avatar"
+              class="size-20 rounded-lg border mx-auto mt-4 mb-2"
+            />
             <CardDescription>
               {{
                 connectedUser

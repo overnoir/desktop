@@ -35,7 +35,7 @@ async function toggleConnection() {
       default-value="connection"
     >
       <TabsList
-        class="flex-col h-max sticky top-10.75 [&>button]:gap-3 [&>button]:w-40 [&>button]:justify-start"
+        class="flex-col h-max sticky top-0 [&>button]:gap-3 [&>button]:w-40 [&>button]:justify-start"
       >
         <TabsTrigger value="connection">
           <Icon name="lucide:plug" />

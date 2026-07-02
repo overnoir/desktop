@@ -104,7 +104,7 @@ async function reset() {
       default-value="general"
     >
       <TabsList
-        class="flex-col h-max sticky top-10.75 [&>button]:gap-3 [&>button]:w-40 [&>button]:justify-start"
+        class="flex-col h-max sticky top-0 [&>button]:gap-3 [&>button]:w-40 [&>button]:justify-start"
       >
         <TabsTrigger value="general">
           <Icon name="lucide:settings" />
@@ -174,8 +174,7 @@ async function reset() {
               :min="-9999"
               :max="9999"
               @update:model-value="
-                overlayWebviewWindow &&
-                overlayWebviewWindow.setPosition(
+                overlayWebviewWindow?.setPosition(
                   new TauriDpiLogicalPosition(general.x, general.y),
                 )
               "
@@ -192,8 +191,7 @@ async function reset() {
               :min="-9999"
               :max="9999"
               @update:model-value="
-                overlayWebviewWindow &&
-                overlayWebviewWindow.setPosition(
+                overlayWebviewWindow?.setPosition(
                   new TauriDpiLogicalPosition(general.x, general.y),
                 )
               "
@@ -424,10 +422,7 @@ async function reset() {
         >
           <Switch
             v-model="advanced.alwaysOnTop"
-            @update:model-value="
-              overlayWebviewWindow &&
-              overlayWebviewWindow.setAlwaysOnTop($event)
-            "
+            @update:model-value="overlayWebviewWindow?.setAlwaysOnTop($event)"
           />
         </SettingField>
         <Separator />

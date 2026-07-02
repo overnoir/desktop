@@ -2,7 +2,6 @@ export const useLinkGroupsStore = defineStore(
   "link-groups",
   () => {
     const localePath = useLocalePath();
-    const route = useRoute();
     const { t } = useI18n();
 
     const general = computed<LinkGroup>(() => ({
@@ -58,15 +57,7 @@ export const useLinkGroupsStore = defineStore(
       ],
     }));
 
-    const activeLink = computed(() => {
-      return [
-        ...connectors.value.links,
-        ...community.value.links,
-        ...general.value.links,
-      ].find(({ to }) => to === route.path)!;
-    });
-
-    return { general, connectors, community, activeLink };
+    return { general, connectors, community };
   },
   {
     tauri: {

@@ -8,14 +8,13 @@ const isMacOS = tauriOSType() === "macos";
       <NuxtLoadingIndicator color="var(--primary)" />
       <LayoutTitlebar />
       <SonnerToaster />
-      <div class="flex">
+      <div class="flex h-screen pt-8.25">
         <LayoutNavbar />
-        <div class="w-full h-screen overflow-auto">
-          <LayoutHeader />
-          <main class="pb-21 p-10">
-            <slot />
-          </main>
-        </div>
+        <main
+          class="p-8.25 pb-33 w-full overflow-auto border-l border-t rounded-tl-2xl"
+        >
+          <slot />
+        </main>
       </div>
     </Body>
   </Html>
