@@ -29,15 +29,7 @@ pub struct TokenResponse {
 
 #[derive(Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct AvatarDecoration {
-    sku_id: String,
-    asset: String,
-}
-
-#[derive(Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
 pub struct User {
-    avatar_decoration: Option<AvatarDecoration>,
     avatar: Option<String>,
     nick: Option<String>,
     global_name: Option<String>,
@@ -135,15 +127,6 @@ fn parse_user(data: &Value) -> Option<User> {
             .map(|s| s.to_string()),
         id: user["id"].as_str()?.to_string(),
         is_speaking: false,
-        avatar_decoration: user.get("avatar_decoration_data").and_then(|d| {
-            if d.is_null() {
-                return None;
-            }
-            Some(AvatarDecoration {
-                sku_id: d["skuId"].as_str()?.to_string(),
-                asset: d["asset"].as_str()?.to_string(),
-            })
-        }),
         avatar: user
             .get("avatar")
             .and_then(|a| a.as_str())

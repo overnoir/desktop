@@ -97,8 +97,6 @@ export type VaultItemMetadata = {
 };
 
 export type DiscordSettings = {
-  showAvatarDecorationAnimated: DiscordShow;
-  showAvatarDecoration: DiscordShow;
   displayName: DiscordDisplayName;
   showAvatarAnimated: DiscordShow;
   showGuildIconAnimated: boolean;
@@ -132,13 +130,7 @@ export type DiscordGuild = {
   id: string;
 };
 
-export type AvatarDecoration = {
-  skuId: string;
-  asset: string;
-};
-
 export type DiscordUser = {
-  avatarDecoration: AvatarDecoration | null;
   globalName: string | null;
   isSelfDeafened: boolean;
   discriminator: string;

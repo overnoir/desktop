@@ -26,9 +26,7 @@ export const defaultSettingsAdvanced: SettingsAdvanced = {
 };
 
 export const defaultDiscordSettings: DiscordSettings = {
-  showAvatarDecorationAnimated: DiscordShow.WhileSpeaking,
   showAvatarAnimated: DiscordShow.WhileSpeaking,
-  showAvatarDecoration: DiscordShow.Never,
   displayName: DiscordDisplayName.Nick,
   showDisplayName: DiscordShow.Always,
   showGuildIconAnimated: false,

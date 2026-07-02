@@ -8,14 +8,6 @@ const { user } = defineProps<{
 const { settings } = storeToRefs(useDiscordStore());
 const { general } = storeToRefs(useSettingsStore());
 
-const avatarDecorationUrl = computed(() =>
-  !user.avatarDecoration
-    ? undefined
-    : showAvatarDecorationAnimated.value
-      ? `https://cdn.discordapp.com/avatar-decoration-presets/${user.avatarDecoration.asset}.png?size=4096`
-      : `https://cdn.discordapp.com/media/v1/collectibles-shop/${user.avatarDecoration.skuId}/static`,
-);
-
 const showDisplayName = computed(
   () =>
     settings.value.showDisplayName !== DiscordShow.Never &&
@@ -27,22 +19,6 @@ const showAvatarAnimated = computed(
   () =>
     settings.value.showAvatarAnimated !== DiscordShow.Never &&
     (settings.value.showAvatarAnimated !== DiscordShow.WhileSpeaking ||
-      user.isSpeaking),
-);
-
-const showAvatarDecoration = computed(
-  () =>
-    !!user.avatarDecoration &&
-    settings.value.showAvatarDecoration !== DiscordShow.Never &&
-    (settings.value.showAvatarDecoration !== DiscordShow.WhileSpeaking ||
-      user.isSpeaking),
-);
-
-const showAvatarDecorationAnimated = computed(
-  () =>
-    settings.value.showAvatarDecorationAnimated !== DiscordShow.Never &&
-    (settings.value.showAvatarDecorationAnimated !==
-      DiscordShow.WhileSpeaking ||
       user.isSpeaking),
 );
 
@@ -77,11 +53,6 @@ const speakingStyles = computed<CSSProperties>(() => ({
   width: `${general.value.size}px`,
 }));
 
-const avatarDecorationStyles = computed<CSSProperties>(() => ({
-  height: `${general.value.size}px`,
-  width: `${general.value.size}px`,
-}));
-
 const displayName = computed(() =>
   generateDiscordUserDisplayName({
     user,
@@ -107,13 +78,6 @@ const avatarUrl = computed(() =>
     <OverlayItemLabel v-if="showDisplayName" position="bottom">
       {{ displayName }}
     </OverlayItemLabel>
-    <NuxtImg
-      v-if="avatarDecorationUrl && showAvatarDecoration"
-      class="absolute left-0 top-0 size-full scale-[1.2]"
-      :style="avatarDecorationStyles"
-      :src="avatarDecorationUrl"
-      alt="Avatar Decoration"
-    />
     <div
       v-if="user.isSpeaking"
       class="absolute left-0 top-0 ring ring-inset ring-green-600"

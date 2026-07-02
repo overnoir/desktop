@@ -269,46 +269,6 @@ async function toggleConnection() {
         </SettingField>
         <Separator />
         <SettingField
-          :description="$t('discord.showAvatarDecoration.description')"
-          :title="$t('discord.showAvatarDecoration.title')"
-        >
-          <Select v-model="settings.showAvatarDecoration">
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem
-                v-for="show in Object.values(DiscordShow)"
-                :key="show"
-                :value="show"
-              >
-                {{ $t(`discord.show.${show}`) }}
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </SettingField>
-        <Separator />
-        <SettingField
-          :description="$t('discord.showAvatarDecorationAnimated.description')"
-          :title="$t('discord.showAvatarDecorationAnimated.title')"
-        >
-          <Select v-model="settings.showAvatarDecorationAnimated">
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem
-                v-for="show in Object.values(DiscordShow)"
-                :key="show"
-                :value="show"
-              >
-                {{ $t(`discord.show.${show}`) }}
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </SettingField>
-        <Separator />
-        <SettingField
           :description="$t('discord.reset.description')"
           :title="$t('discord.reset.title')"
         >

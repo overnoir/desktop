@@ -219,15 +219,6 @@ export default {
       title: "Ad Gösterimi",
       description: "Kullanıcı adının ne zaman gözükeceğini seçin.",
     },
-    showAvatarDecoration: {
-      title: "Avatar Dekorasyonu",
-      description: "Avatar dekorasyonun ne zaman gözükeceğini seçin.",
-    },
-    showAvatarDecorationAnimated: {
-      title: "Avatar Dekorasyon Animasyonu",
-      description:
-        "Avatar dekorasyonun ne zaman animasyonlu gözükeceğini seçin.",
-    },
     showAvatarAnimated: {
       title: "Avatar Animasyonu",
       description: "Avatarın ne zaman animasyonlu gözükeceğini seçin.",
