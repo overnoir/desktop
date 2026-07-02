@@ -49,16 +49,16 @@ const showAvatarDecorationAnimated = computed(
 const statusIcons = computed(() => {
   const icons: OverlayItemIcon[] = [];
 
-  if (user.isDeafened || user.isSelfDeafened) {
-    icons.push({
-      variant: user.isDeafened ? "destructive" : "default",
-      name: "lucide:headphone-off",
-    });
-  }
   if (user.isMuted || user.isSelfMuted) {
     icons.push({
       variant: user.isMuted ? "destructive" : "default",
       name: "lucide:mic-off",
+    });
+  }
+  if (user.isDeafened || user.isSelfDeafened) {
+    icons.push({
+      variant: user.isDeafened ? "destructive" : "default",
+      name: "lucide:headphone-off",
     });
   }
   if (user.isBot) {
