@@ -1,11 +1,11 @@
 <script setup lang="ts">
-const { general, connectors, community } = storeToRefs(useLinkGroupsStore());
+const { general, connectors } = storeToRefs(useLinkGroupsStore());
 </script>
 
 <template>
-  <nav class="w-60 p-4 pt-0 shrink-0 flex flex-col gap-4 [&>ul]:last:mt-auto">
+  <nav class="w-60 p-4 pt-0 shrink-0 flex flex-col gap-4">
     <ul
-      v-for="({ links, name }, i) in [general, connectors, community]"
+      v-for="({ links, name }, i) in [general, connectors]"
       :key="i"
       class="space-y-1"
     >

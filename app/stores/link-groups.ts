@@ -19,8 +19,13 @@ export const useLinkGroupsStore = defineStore(
         },
         {
           name: t("linkGroups.0.links.2"),
-          to: localePath("/errors"),
           icon: "lucide:triangle-alert",
+          to: localePath("/errors"),
+        },
+        {
+          icon: "lucide:circle-question-mark",
+          name: t("linkGroups.0.links.3"),
+          to: localePath("/help"),
         },
       ],
     }));
@@ -39,25 +44,14 @@ export const useLinkGroupsStore = defineStore(
           name: "Kick",
         },
         {
-          icon: "lucide:gauge",
-          to: localePath("/system"),
           name: t("linkGroups.1.links.0"),
+          to: localePath("/system"),
+          icon: "lucide:gauge",
         },
       ],
     }));
 
-    const community = computed<LinkGroup>(() => ({
-      name: t("linkGroups.2.name"),
-      links: [
-        {
-          name: t("linkGroups.2.links.0"),
-          to: localePath("/help"),
-          icon: "lucide:info",
-        },
-      ],
-    }));
-
-    return { general, connectors, community };
+    return { general, connectors };
   },
   {
     tauri: {

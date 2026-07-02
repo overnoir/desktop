@@ -2,15 +2,11 @@ export default {
   linkGroups: [
     {
       name: "GENEL",
-      links: ["Ayarlar", "Kasa", "Hatalar"],
+      links: ["Ayarlar", "Kasa", "Hatalar", "Yardım"],
     },
     {
       name: "BAĞLANTILAR",
       links: ["Sistem"],
-    },
-    {
-      name: "TOPLULUK",
-      links: ["Yardım"],
     },
   ],
   tray: {
