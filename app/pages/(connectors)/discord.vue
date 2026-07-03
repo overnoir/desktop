@@ -46,7 +46,7 @@ async function toggleConnection() {
 </script>
 
 <template>
-  <section class="space-y-4 max-w-3xl mx-auto">
+  <section class="space-y-4">
     <Tabs
       class="flex-row gap-6 [&>div]:not-first:space-y-4"
       default-value="connection"

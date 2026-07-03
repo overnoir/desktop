@@ -59,9 +59,41 @@ async function updateIgnoreCursor(value: boolean) {
   }
 
   if (tauriOSType() === "macos") {
-    await tauriCoreInvoke("set_nspanel_ignore_cursor", { value });
+    await tauriCoreInvoke("set_nspanel_ignore_cursor", {
+      label: WebviewWindowLabel.Overlay,
+      value,
+    });
   } else {
     await overlayWebviewWindow.setIgnoreCursorEvents(value);
+  }
+}
+
+async function updateAlwaysOnTop(value: boolean) {
+  if (!overlayWebviewWindow) {
+    return;
+  }
+
+  const streamWebviewWindow = await TauriWebviewWindowWebviewWindow.getByLabel(
+    WebviewWindowLabel.Stream,
+  );
+
+  if (tauriOSType() === "macos") {
+    await tauriCoreInvoke("set_nspanel_always_on_top", {
+      label: WebviewWindowLabel.Overlay,
+      value: value,
+    });
+    if (streamWebviewWindow) {
+      await tauriCoreInvoke("set_nspanel_always_on_top", {
+        label: WebviewWindowLabel.Stream,
+        value: value,
+      });
+    }
+  } else {
+    await overlayWebviewWindow.setAlwaysOnTop(value);
+
+    if (streamWebviewWindow) {
+      streamWebviewWindow.setAlwaysOnTop(value);
+    }
   }
 }
 
@@ -70,6 +102,9 @@ async function reset() {
     return;
   }
 
+  const streamWebviewWindow = await TauriWebviewWindowWebviewWindow.getByLabel(
+    WebviewWindowLabel.Stream,
+  );
   settingsStore.reset();
 
   if (advanced.value.autoStart !== (await tauriAutoStartIsEnabled())) {
@@ -83,7 +118,13 @@ async function reset() {
   if (
     advanced.value.alwaysOnTop !== (await overlayWebviewWindow.isAlwaysOnTop())
   ) {
-    await overlayWebviewWindow.setAlwaysOnTop(advanced.value.alwaysOnTop);
+    await updateAlwaysOnTop(advanced.value.alwaysOnTop);
+  }
+
+  if (streamWebviewWindow) {
+    await streamWebviewWindow.setContentProtected(
+      advanced.value.preventCapture,
+    );
   }
 
   await overlayWebviewWindow.setContentProtected(advanced.value.preventCapture);
@@ -98,7 +139,7 @@ async function reset() {
 </script>
 
 <template>
-  <section class="space-y-4 max-w-3xl mx-auto">
+  <section class="space-y-4">
     <Tabs
       class="flex-row gap-6 [&>div]:not-first:space-y-4"
       default-value="general"
@@ -422,7 +463,7 @@ async function reset() {
         >
           <Switch
             v-model="advanced.alwaysOnTop"
-            @update:model-value="overlayWebviewWindow?.setAlwaysOnTop($event)"
+            @update:model-value="updateAlwaysOnTop"
           />
         </SettingField>
         <Separator />

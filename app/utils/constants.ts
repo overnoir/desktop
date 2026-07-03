@@ -54,25 +54,6 @@ export const defaultSystemSettings: SystemSettings = {
   showCpu: true,
 };
 
-export const mainWebviewWindowOptions: Omit<
-  WebviewOptions,
-  "x" | "y" | "width" | "height"
-> &
-  WindowOptions = {
-  acceptFirstMouse: true,
-  decorations: false,
-  hiddenTitle: true,
-  transparent: true,
-  url: "/settings",
-  visible: false,
-  minHeight: 600,
-  minWidth: 960,
-  center: true,
-  title: name,
-  height: 720,
-  width: 1280,
-};
-
 export const overlayWebviewWindowOptions: Omit<
   WebviewOptions,
   "x" | "y" | "width" | "height"
@@ -81,12 +62,32 @@ export const overlayWebviewWindowOptions: Omit<
   title: `${name} Overlay`,
   acceptFirstMouse: true,
   decorations: false,
+  hiddenTitle: true,
   transparent: true,
   skipTaskbar: true,
   resizable: false,
   url: "/overlay",
   visible: false,
   shadow: false,
+};
+
+export const mainWebviewWindowOptions: Omit<
+  WebviewOptions,
+  "x" | "y" | "width" | "height"
+> &
+  WindowOptions = {
+  parent: WebviewWindowLabel.Overlay,
+  acceptFirstMouse: true,
+  decorations: false,
+  hiddenTitle: true,
+  transparent: true,
+  url: "/settings",
+  skipTaskbar: true,
+  resizable: false,
+  visible: false,
+  title: name,
+  height: 600,
+  width: 1024,
 };
 
 export const streamWebviewWindowOptions: Omit<
@@ -98,9 +99,11 @@ export const streamWebviewWindowOptions: Omit<
   title: `${name} Stream`,
   acceptFirstMouse: true,
   decorations: false,
+  hiddenTitle: true,
   transparent: true,
   skipTaskbar: true,
   resizable: false,
   visible: false,
-  shadow: true,
+  height: 500,
+  width: 770,
 };

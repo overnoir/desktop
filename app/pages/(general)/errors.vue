@@ -4,7 +4,7 @@ const { errors } = storeToRefs(errorsStore);
 </script>
 
 <template>
-  <section class="space-y-4 max-w-3xl mx-auto">
+  <section class="space-y-4">
     <template v-if="errors.length">
       <SettingField
         :title="`${$t('errors.title')} (${errors.length})`"

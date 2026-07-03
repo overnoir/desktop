@@ -53,12 +53,17 @@ onMounted(async () => {
   }
 
   if (isMacOS) {
-    await tauriCoreInvoke("init_nspanel");
+    await tauriCoreInvoke("convert_webview_window_to_nspanel", {
+      label: WebviewWindowLabel.Overlay,
+      withEventHandler: true,
+    });
     await tauriCoreInvoke("set_nspanel_ignore_cursor", {
       value: advanced.value.ignoreCursor,
+      label: WebviewWindowLabel.Overlay,
     });
     await tauriCoreInvoke("set_nspanel_always_on_top", {
       value: advanced.value.alwaysOnTop,
+      label: WebviewWindowLabel.Overlay,
     });
     await tauriEventListen("nspanel-moved", async () => {
       if (!isDragging.value) {

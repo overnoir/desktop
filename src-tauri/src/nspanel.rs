@@ -4,26 +4,22 @@ use tauri_nspanel::{
     tauri_panel, CollectionBehavior, ManagerExt, PanelLevel, StyleMask, WebviewWindowExt,
 };
 
+tauri_panel! {
+    panel!(Panel {})
+
+    panel_event!(PanelEventHandler {
+        window_did_move(notification: &NSNotification) -> ()
+    })
+}
+
 #[tauri::command]
-pub fn init_nspanel(app_handle: AppHandle) {
-    app_handle.plugin(tauri_nspanel::init()).unwrap();
-
-    tauri_panel! {
-        panel!(HoverActivatePanel {})
-
-        panel_event!(MyPanelEventHandler {
-            window_did_move(notification: &NSNotification) -> ()
-        })
-    }
-
-    let window = app_handle.get_webview_window("overlay").unwrap();
-    let panel = window.to_panel::<HoverActivatePanel>().unwrap();
-    let handler = MyPanelEventHandler::new();
-    let handle_move = app_handle.clone();
-
-    handler.window_did_move(move |_| {
-        let _ = handle_move.emit_to("overlay", "nspanel-moved", ());
-    });
+pub fn convert_webview_window_to_nspanel(
+    app_handle: AppHandle,
+    label: String,
+    with_event_handler: Option<bool>,
+) {
+    let window = app_handle.get_webview_window(&label).unwrap();
+    let panel = window.to_panel::<Panel>().unwrap();
 
     panel.set_style_mask(StyleMask::empty().nonactivating_panel().into());
     panel.set_hides_on_deactivate(false);
@@ -35,19 +31,34 @@ pub fn init_nspanel(app_handle: AppHandle) {
             .into(),
     );
 
-    panel.set_event_handler(Some(handler.as_ref()));
+    if with_event_handler.unwrap_or(false) {
+        let handler = PanelEventHandler::new();
+        let handle_move = app_handle.clone();
+
+        handler.window_did_move(move |_| {
+            let _ = handle_move.emit_to(&label, "nspanel-moved", ());
+        });
+
+        panel.set_event_handler(Some(handler.as_ref()));
+    }
 }
 
 #[tauri::command]
-pub fn set_nspanel_ignore_cursor(app_handle: AppHandle, value: bool) {
-    if let Ok(panel) = app_handle.get_webview_panel("overlay") {
+pub fn convert_nspanel_to_webview_window(app_handle: AppHandle, label: String) {
+    let panel = app_handle.get_webview_panel(&label).unwrap();
+    panel.to_window().unwrap();
+}
+
+#[tauri::command]
+pub fn set_nspanel_ignore_cursor(app_handle: AppHandle, label: String, value: bool) {
+    if let Ok(panel) = app_handle.get_webview_panel(&label) {
         panel.set_ignores_mouse_events(value);
     }
 }
 
 #[tauri::command]
-pub fn set_nspanel_always_on_top(app_handle: AppHandle, value: bool) {
-    if let Ok(panel) = app_handle.get_webview_panel("overlay") {
+pub fn set_nspanel_always_on_top(app_handle: AppHandle, label: String, value: bool) {
+    if let Ok(panel) = app_handle.get_webview_panel(&label) {
         if value {
             panel.set_level(PanelLevel::ScreenSaver.value() + 1);
         } else {

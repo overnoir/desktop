@@ -21,7 +21,7 @@ async function clear() {
 </script>
 
 <template>
-  <section class="space-y-4 max-w-3xl mx-auto">
+  <section class="space-y-4">
     <template v-if="metadata.length">
       <Card class="p-0">
         <Table>

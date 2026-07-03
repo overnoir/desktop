@@ -8,26 +8,31 @@ mod vault;
 use api::{api_get_kick_streamers, init_api};
 use discord::{connect_discord, disconnect_discord, init_discord};
 #[cfg(target_os = "macos")]
-use nspanel::{init_nspanel, set_nspanel_always_on_top, set_nspanel_ignore_cursor};
+use nspanel::{
+    convert_nspanel_to_webview_window, convert_webview_window_to_nspanel,
+    set_nspanel_always_on_top, set_nspanel_ignore_cursor,
+};
 use system::{connect_system, disconnect_system, init_system};
 use vault::{clear_vault, get_vault_metadata, init_vault};
 
 pub fn run() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
-            api_get_kick_streamers,
-            get_vault_metadata,
-            disconnect_discord,
-            connect_discord,
-            clear_vault,
-            connect_system,
-            disconnect_system,
             #[cfg(target_os = "macos")]
-            init_nspanel,
+            convert_webview_window_to_nspanel,
+            #[cfg(target_os = "macos")]
+            convert_nspanel_to_webview_window,
             #[cfg(target_os = "macos")]
             set_nspanel_ignore_cursor,
             #[cfg(target_os = "macos")]
-            set_nspanel_always_on_top
+            set_nspanel_always_on_top,
+            api_get_kick_streamers,
+            get_vault_metadata,
+            disconnect_discord,
+            disconnect_system,
+            connect_discord,
+            connect_system,
+            clear_vault,
         ])
         .plugin(tauri_plugin_single_instance::init(|app, _, _| {
             if let Some(window) = app.get_webview_window("updater") {
@@ -42,10 +47,10 @@ pub fn run() {
         }))
         .plugin(tauri_plugin_autostart::Builder::new().build())
         .plugin(tauri_plugin_prevent_default::debug())
+        .plugin(tauri_plugin_system_info::init())
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_os::init())
-        .plugin(tauri_plugin_system_info::init())
         .setup(|app| {
             #[cfg(debug_assertions)]
             {
@@ -64,6 +69,7 @@ pub fn run() {
                 app.handle()
                     .set_activation_policy(tauri::ActivationPolicy::Accessory)
                     .unwrap();
+                app.handle().plugin(tauri_nspanel::init()).unwrap();
             }
 
             app.handle()

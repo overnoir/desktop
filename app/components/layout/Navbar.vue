@@ -3,7 +3,7 @@ const { general, connectors } = storeToRefs(useLinkGroupsStore());
 </script>
 
 <template>
-  <nav class="w-60 p-4 pt-0 shrink-0 flex flex-col gap-4">
+  <nav class="w-50 p-4 pt-0 shrink-0 flex flex-col gap-4">
     <ul
       v-for="({ links, name }, i) in [general, connectors]"
       :key="i"
