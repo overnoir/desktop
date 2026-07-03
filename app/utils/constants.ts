@@ -88,3 +88,19 @@ export const overlayWebviewWindowOptions: Omit<
   visible: false,
   shadow: false,
 };
+
+export const streamWebviewWindowOptions: Omit<
+  WebviewOptions,
+  "x" | "y" | "width" | "height"
+> &
+  WindowOptions = {
+  parent: WebviewWindowLabel.Overlay,
+  title: `${name} Stream`,
+  acceptFirstMouse: true,
+  decorations: false,
+  transparent: true,
+  skipTaskbar: true,
+  resizable: false,
+  visible: false,
+  shadow: true,
+};

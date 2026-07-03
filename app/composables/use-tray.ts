@@ -8,9 +8,10 @@ export default function () {
       items: [
         {
           action: async () => {
-            const mainWebviewWindow = (
-              await tauriWebviewWindowGetAllWebviewWindows()
-            ).find(({ label }) => label === WebviewWindowLabel.Main);
+            const mainWebviewWindow =
+              await TauriWebviewWindowWebviewWindow.getByLabel(
+                WebviewWindowLabel.Main,
+              );
 
             if (mainWebviewWindow) {
               await mainWebviewWindow.show();

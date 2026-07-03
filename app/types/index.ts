@@ -12,6 +12,7 @@ export enum Locale {
 export enum WebviewWindowLabel {
   Updater = "updater",
   Overlay = "overlay",
+  Stream = "stream",
   Main = "main",
 }
 

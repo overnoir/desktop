@@ -44,9 +44,9 @@ if (advanced.value.autoStart !== (await tauriAutoStartIsEnabled())) {
 }
 
 onMounted(async () => {
-  const updaterWebviewWindow = (
-    await tauriWebviewWindowGetAllWebviewWindows()
-  ).find(({ label }) => label === WebviewWindowLabel.Updater);
+  const updaterWebviewWindow = await TauriWebviewWindowWebviewWindow.getByLabel(
+    WebviewWindowLabel.Updater,
+  );
 
   if (updaterWebviewWindow) {
     await updaterWebviewWindow.destroy();

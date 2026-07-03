@@ -73,9 +73,9 @@ try {
 }
 
 async function openMainWebviewWindow() {
-  const mainWebviewWindow = (
-    await tauriWebviewWindowGetAllWebviewWindows()
-  ).find(({ label }) => label === WebviewWindowLabel.Main);
+  const mainWebviewWindow = await TauriWebviewWindowWebviewWindow.getByLabel(
+    WebviewWindowLabel.Main,
+  );
 
   if (mainWebviewWindow) {
     await mainWebviewWindow.show();
@@ -139,6 +139,82 @@ useEventListener(window, "mousemove", async (e) => {
     ),
   );
 });
+
+async function openStreamWebviewWindow(slug: string) {
+  const streamWebviewWindow = await TauriWebviewWindowWebviewWindow.getByLabel(
+    WebviewWindowLabel.Stream,
+  );
+
+  if (streamWebviewWindow) {
+    await streamWebviewWindow.emitTo(WebviewWindowLabel.Stream, "slug-update", {
+      slug,
+    });
+
+    return;
+  }
+
+  const position = await overlayWebviewWindow.outerPosition();
+  const size = await overlayWebviewWindow.outerSize();
+  const monitor = await tauriWindowCurrentMonitor();
+  const streamHeight = 500;
+  const streamWidth = 770;
+  const gap = 10;
+  let x = 0;
+  let y = 0;
+
+  if (general.value.orientation === Orientation.Vertical) {
+    if (monitor) {
+      const rightX = position.x + size.width + gap;
+      const leftX = position.x - streamWidth - gap;
+      const monitorRight = monitor.position.x + monitor.size.width;
+      const monitorLeft = monitor.position.x;
+
+      if (rightX + streamWidth <= monitorRight) {
+        x = rightX;
+      } else if (leftX >= monitorLeft) {
+        x = leftX;
+      } else {
+        x = rightX;
+      }
+    } else {
+      x = position.x + size.width + gap;
+    }
+
+    y = position.y;
+  }
+
+  if (general.value.orientation === Orientation.Horizontal) {
+    if (monitor) {
+      const bottomY = position.y + size.height + gap;
+      const topY = position.y - streamHeight - gap;
+      const monitorBottom = monitor.position.y + monitor.size.height;
+      const monitorTop = monitor.position.y;
+
+      if (bottomY + streamHeight <= monitorBottom) {
+        y = bottomY;
+      } else if (topY >= monitorTop) {
+        y = topY;
+      } else {
+        y = bottomY;
+      }
+    } else {
+      y = position.y + size.height + gap;
+    }
+
+    x = position.x;
+  }
+
+  new TauriWebviewWindowWebviewWindow(WebviewWindowLabel.Stream, {
+    ...streamWebviewWindowOptions,
+    url: `/stream?slug=${slug}`,
+    height: streamHeight,
+    width: streamWidth,
+    focus: false,
+    focusable: false,
+    x,
+    y,
+  });
+}
 </script>
 
 <template>
@@ -159,6 +235,7 @@ useEventListener(window, "mousemove", async (e) => {
         v-for="streamer in filtredStreamers"
         :key="streamer.user.id"
         :streamer
+        @click="openStreamWebviewWindow(streamer.channel.slug)"
       />
     </template>
     <OverlaySystemCpu v-if="systemSettings.showCpu && cpu" :cpu />

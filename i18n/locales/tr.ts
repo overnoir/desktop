@@ -335,4 +335,7 @@ export default {
       },
     },
   },
+  stream: {
+    watchOnKick: "Kickde İzle",
+  },
 };

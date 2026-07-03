@@ -1,4 +1,9 @@
 <script setup lang="ts">
+withDefaults(defineProps<{ maximize?: boolean; minimize?: boolean }>(), {
+  maximize: true,
+  minimize: true,
+});
+
 const currentWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const isMacOS = tauriOSType() === "macos";
 </script>
@@ -18,18 +23,34 @@ const isMacOS = tauriOSType() === "macos";
       }"
     >
       <template v-if="isMacOS">
-        <Button variant="ghost" @click="currentWebviewWindow.maximize()">
+        <Button
+          v-if="maximize"
+          variant="ghost"
+          @click="currentWebviewWindow.maximize()"
+        >
           <Icon name="lucide:chevrons-left-right" class="rotate-45" />
         </Button>
-        <Button variant="ghost" @click="currentWebviewWindow.minimize()">
+        <Button
+          v-if="minimize"
+          variant="ghost"
+          @click="currentWebviewWindow.minimize()"
+        >
           <Icon name="lucide:minus" />
         </Button>
       </template>
       <template v-else>
-        <Button variant="ghost" @click="currentWebviewWindow.minimize()">
+        <Button
+          v-if="minimize"
+          variant="ghost"
+          @click="currentWebviewWindow.minimize()"
+        >
           <Icon name="lucide:minus" />
         </Button>
-        <Button variant="ghost" @click="currentWebviewWindow.maximize()">
+        <Button
+          v-if="maximize"
+          variant="ghost"
+          @click="currentWebviewWindow.maximize()"
+        >
           <Icon name="lucide:square" class="scale-80" />
         </Button>
       </template>

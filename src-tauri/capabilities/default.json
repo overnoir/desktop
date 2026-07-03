@@ -2,7 +2,7 @@
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
   "description": "enables the default permissions",
-  "windows": ["main", "overlay", "updater"],
+  "windows": ["main", "overlay", "updater", "stream"],
   "platforms": ["macOS", "windows", "linux"],
   "permissions": [
     "core:window:allow-set-ignore-cursor-events",
@@ -31,7 +31,10 @@
           "url": "https://docs.overnoir.com"
         },
         {
-          "url": "https://discord.gg/"
+          "url": "https://discord.gg"
+        },
+        {
+          "url": "https://kick.com/*"
         }
       ]
     }
