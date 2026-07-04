@@ -24,9 +24,8 @@ await tauriEventListen<{ slug: string }>("slug-update", async ({ payload }) => {
       <Spinner class="size-8" />
     </div>
     <iframe
-      :src="`https://player.kick.com/${router.currentRoute.value.query.slug}?autoplay=true&muted=false&allowfullscreen=false`"
+      :src="`https://player.kick.com/${router.currentRoute.value.query.slug}?autoplay=true&muted=false`"
       class="w-full flex-1 min-h-0"
-      allowfullscreen="false"
       frameborder="0"
       loading="lazy"
       scrolling="no"

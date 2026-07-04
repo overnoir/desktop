@@ -18,6 +18,10 @@ pub fn convert_webview_window_to_nspanel(
     label: String,
     with_event_handler: Option<bool>,
 ) -> Result<(), String> {
+    if app_handle.get_webview_panel(&label).is_ok() {
+        return Ok(());
+    }
+
     let window = app_handle
         .get_webview_window(&label)
         .ok_or_else(|| format!("Window '{}' not found", label))?;
@@ -28,12 +32,7 @@ pub fn convert_webview_window_to_nspanel(
     panel.set_style_mask(StyleMask::empty().nonactivating_panel().into());
     panel.set_hides_on_deactivate(false);
     panel.set_works_when_modal(true);
-    panel.set_collection_behavior(
-        CollectionBehavior::new()
-            .full_screen_auxiliary()
-            .can_join_all_spaces()
-            .into(),
-    );
+    panel.set_collection_behavior(CollectionBehavior::new().can_join_all_spaces().into());
 
     if with_event_handler.unwrap_or(false) {
         let handler = PanelEventHandler::new();
