@@ -17,9 +17,13 @@ pub fn convert_webview_window_to_nspanel(
     app_handle: AppHandle,
     label: String,
     with_event_handler: Option<bool>,
-) {
-    let window = app_handle.get_webview_window(&label).unwrap();
-    let panel = window.to_panel::<Panel>().unwrap();
+) -> Result<(), String> {
+    let window = app_handle
+        .get_webview_window(&label)
+        .ok_or_else(|| format!("Window '{}' not found", label))?;
+    let panel = window
+        .to_panel::<Panel>()
+        .map_err(|e| format!("Failed to convert '{}' to panel: {}", label, e))?;
 
     panel.set_style_mask(StyleMask::empty().nonactivating_panel().into());
     panel.set_hides_on_deactivate(false);
@@ -41,28 +45,47 @@ pub fn convert_webview_window_to_nspanel(
 
         panel.set_event_handler(Some(handler.as_ref()));
     }
+
+    Ok(())
 }
 
 #[tauri::command]
-pub fn convert_nspanel_to_webview_window(app_handle: AppHandle, label: String) {
-    let panel = app_handle.get_webview_panel(&label).unwrap();
-    panel.to_window().unwrap();
+pub fn convert_nspanel_to_webview_window(app_handle: AppHandle, label: String) -> Result<(), String> {
+    let panel = app_handle
+        .get_webview_panel(&label)
+        .map_err(|e| format!("Panel '{}' not found: {:?}", label, e))?;
+    panel
+        .to_window()
+        .map(|_| ())
+        .ok_or_else(|| format!("Failed to convert panel '{}' back to window", label))
 }
 
 #[tauri::command]
-pub fn set_nspanel_ignore_cursor(app_handle: AppHandle, label: String, value: bool) {
-    if let Ok(panel) = app_handle.get_webview_panel(&label) {
-        panel.set_ignores_mouse_events(value);
+pub fn set_nspanel_ignore_cursor(
+    app_handle: AppHandle,
+    label: String,
+    value: bool,
+) -> Result<(), String> {
+    let panel = app_handle
+        .get_webview_panel(&label)
+        .map_err(|e| format!("Panel '{}' not found: {:?}", label, e))?;
+    panel.set_ignores_mouse_events(value);
+    Ok(())
+}
+
+#[tauri::command]
+pub fn set_nspanel_always_on_top(
+    app_handle: AppHandle,
+    label: String,
+    value: bool,
+) -> Result<(), String> {
+    let panel = app_handle
+        .get_webview_panel(&label)
+        .map_err(|e| format!("Panel '{}' not found: {:?}", label, e))?;
+    if value {
+        panel.set_level(PanelLevel::ScreenSaver.value() + 1);
+    } else {
+        panel.set_level(PanelLevel::Normal.value());
     }
-}
-
-#[tauri::command]
-pub fn set_nspanel_always_on_top(app_handle: AppHandle, label: String, value: bool) {
-    if let Ok(panel) = app_handle.get_webview_panel(&label) {
-        if value {
-            panel.set_level(PanelLevel::ScreenSaver.value() + 1);
-        } else {
-            panel.set_level(PanelLevel::Normal.value());
-        }
-    }
+    Ok(())
 }
