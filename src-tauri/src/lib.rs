@@ -5,8 +5,9 @@ mod connectors;
 mod nspanel;
 mod types;
 mod vault;
-use api::{api_get_kick_streamers, init_api};
+use api::init_api;
 use connectors::discord::{connect_discord, disconnect_discord, init_discord};
+use connectors::kick::get_kick_streamers;
 use connectors::system::{connect_system, disconnect_system, init_system};
 #[cfg(target_os = "macos")]
 use nspanel::{
@@ -26,7 +27,7 @@ pub fn run() {
             set_nspanel_ignore_cursor,
             #[cfg(target_os = "macos")]
             set_nspanel_always_on_top,
-            api_get_kick_streamers,
+            get_kick_streamers,
             get_vault_metadata,
             disconnect_discord,
             disconnect_system,

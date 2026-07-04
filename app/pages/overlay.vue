@@ -177,7 +177,7 @@ useIntervalFn(
     try {
       if (streamers.value.length) {
         const data = await tauriCoreInvoke<KickStreamer[]>(
-          "api_get_kick_streamers",
+          "get_kick_streamers",
           { slugs: streamers.value.map(({ channel }) => channel.slug) },
         );
         streamers.value = data;

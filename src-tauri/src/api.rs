@@ -43,14 +43,3 @@ pub fn init_api(app_handle: &AppHandle, base_url: &str) {
         client: reqwest::Client::new(),
     });
 }
-
-#[tauri::command]
-pub async fn api_get_kick_streamers(
-    app_handle: AppHandle,
-    slugs: Vec<String>,
-) -> Result<Vec<KickStreamer>, String> {
-    app_handle
-        .state::<ApiClient>()
-        .get_kick_streamers(slugs)
-        .await
-}

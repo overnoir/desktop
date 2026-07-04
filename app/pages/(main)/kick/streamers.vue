@@ -38,7 +38,7 @@ async function save() {
 
     if (newSlugs.length) {
       const streamersData = await tauriCoreInvoke<KickStreamer[]>(
-        "api_get_kick_streamers",
+        "get_kick_streamers",
         { slugs: newSlugs },
       );
 
