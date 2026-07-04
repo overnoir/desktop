@@ -1,9 +1,18 @@
 <script setup lang="ts">
 const { general, connectors } = storeToRefs(useLinkGroupsStore());
+const navbar = ref();
+const { arrivedState } = useScroll(navbar);
 </script>
 
 <template>
-  <nav class="w-50 p-4 pt-0 shrink-0 flex flex-col space-y-4">
+  <nav
+    ref="navbar"
+    class="w-50 p-4 pt-0 shrink-0 flex flex-col space-y-4 overflow-auto"
+    :class="{
+      'mask-b-from-90%': !arrivedState.bottom,
+      'mask-t-from-90%': !arrivedState.top,
+    }"
+  >
     <ul
       v-for="(group, i) in [general, connectors]"
       :key="i"

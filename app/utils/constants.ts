@@ -85,7 +85,7 @@ export const mainWebviewWindowOptions: Omit<
   resizable: false,
   visible: false,
   title: name,
-  height: 600,
+  height: 500,
   width: 900,
 };
 
