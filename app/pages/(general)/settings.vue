@@ -68,6 +68,23 @@ async function updateIgnoreCursor(value: boolean) {
   }
 }
 
+async function updatePreventCapture(value: boolean) {
+  if (!overlayWebviewWindow) {
+    return;
+  }
+
+  const streamWebviewWindow = await TauriWebviewWindowWebviewWindow.getByLabel(
+    WebviewWindowLabel.Stream,
+  );
+
+  if (streamWebviewWindow) {
+    await streamWebviewWindow.setContentProtected(value);
+  }
+
+  await overlayWebviewWindow.setContentProtected(value);
+  await mainWebviewWindow.setContentProtected(value);
+}
+
 async function updateAlwaysOnTop(value: boolean) {
   if (!overlayWebviewWindow) {
     return;
@@ -102,9 +119,6 @@ async function reset() {
     return;
   }
 
-  const streamWebviewWindow = await TauriWebviewWindowWebviewWindow.getByLabel(
-    WebviewWindowLabel.Stream,
-  );
   settingsStore.reset();
 
   if (advanced.value.autoStart !== (await tauriAutoStartIsEnabled())) {
@@ -121,17 +135,10 @@ async function reset() {
     await updateAlwaysOnTop(advanced.value.alwaysOnTop);
   }
 
-  if (streamWebviewWindow) {
-    await streamWebviewWindow.setContentProtected(
-      advanced.value.preventCapture,
-    );
-  }
-
-  await overlayWebviewWindow.setContentProtected(advanced.value.preventCapture);
-  await mainWebviewWindow.setContentProtected(advanced.value.preventCapture);
   await overlayWebviewWindow.setPosition(
     new TauriWindowLogicalPosition(general.value.x, general.value.y),
   );
+  await updatePreventCapture(advanced.value.preventCapture);
   await updateIgnoreCursor(advanced.value.ignoreCursor);
 
   $toast.success(t("settings.reset.success"));
@@ -449,11 +456,7 @@ async function reset() {
         >
           <Switch
             v-model="advanced.preventCapture"
-            @update:model-value="
-              overlayWebviewWindow &&
-                overlayWebviewWindow.setContentProtected($event);
-              mainWebviewWindow.setContentProtected($event);
-            "
+            @update:model-value="updatePreventCapture($event)"
           />
         </SettingField>
         <Separator />
