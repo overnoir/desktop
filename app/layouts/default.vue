@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const currentWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const { advanced } = storeToRefs(useSettingsStore());
 const isMacOS = tauriOSType() === "macos";
 
@@ -12,10 +13,9 @@ onMounted(async () => {
       label: WebviewWindowLabel.Main,
     });
   } else {
-    await tauriWindowGetCurrentWindow().setAlwaysOnTop(
-      advanced.value.alwaysOnTop,
-    );
+    currentWebviewWindow.setAlwaysOnTop(advanced.value.alwaysOnTop);
   }
+  await currentWebviewWindow.show();
 });
 </script>
 

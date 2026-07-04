@@ -1,5 +1,9 @@
 <script setup lang="ts">
 const isMacOS = tauriOSType() === "macos";
+
+onMounted(async () => {
+  await tauriWebviewWindowGetCurrentWebviewWindow().show();
+});
 </script>
 
 <template>

@@ -44,14 +44,6 @@ if (advanced.value.autoStart !== (await tauriAutoStartIsEnabled())) {
 }
 
 onMounted(async () => {
-  const updaterWebviewWindow = await TauriWebviewWindowWebviewWindow.getByLabel(
-    WebviewWindowLabel.Updater,
-  );
-
-  if (updaterWebviewWindow) {
-    await updaterWebviewWindow.destroy();
-  }
-
   if (isMacOS) {
     await tauriCoreInvoke("convert_webview_window_to_nspanel", {
       label: WebviewWindowLabel.Overlay,
@@ -92,8 +84,6 @@ onMounted(async () => {
     new TauriDpiLogicalPosition(general.value.x, general.value.y),
   );
 
-  await create();
-
   useResizeObserver(document.body, async (entries) => {
     const entry = entries[0];
 
@@ -133,6 +123,18 @@ onMounted(async () => {
       overlayWebviewWindow.setSize(new TauriDpiLogicalSize(width, height)),
     ]);
   });
+
+  const updaterWebviewWindow = await TauriWebviewWindowWebviewWindow.getByLabel(
+    WebviewWindowLabel.Updater,
+  );
+
+  if (updaterWebviewWindow) {
+    await updaterWebviewWindow.destroy();
+  }
+
+  await create();
+
+  await overlayWebviewWindow.show();
 });
 </script>
 
