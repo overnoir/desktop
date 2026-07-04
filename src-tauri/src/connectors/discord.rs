@@ -12,9 +12,8 @@ use std::{
     collections::HashMap,
     sync::{
         atomic::{AtomicBool, Ordering},
-        mpsc, Arc, Mutex,
+        Arc, Mutex,
     },
-    thread,
     time::{SystemTime, UNIX_EPOCH},
 };
 use tauri::{AppHandle, Emitter, Manager};
@@ -215,11 +214,12 @@ fn fetch_guild_info(
     })
 }
 
-fn start_channel_listener(
+async fn start_channel_listener(
     app_handle: &AppHandle,
     access_token: String,
     connected_client: Option<DiscordIpcClient>,
 ) -> Result<ConnectedUser, String> {
+    let (tx, rx) = tokio::sync::oneshot::channel::<Result<ConnectedUser, String>>();
     let discord_state = app_handle.state::<Discord>();
 
     {
@@ -233,13 +233,12 @@ fn start_channel_listener(
         *channel_guard = None;
     }
 
-    let (tx, rx) = mpsc::channel::<Result<ConnectedUser, String>>();
     let stop_flag = Arc::new(AtomicBool::new(false));
     let client_id = discord_state.client_id.clone();
     let listener_stop = stop_flag.clone();
     let app_handle_clone = app_handle.clone();
 
-    thread::spawn(move || {
+    tokio::task::spawn_blocking(move || {
         let mut client = if let Some(c) = connected_client {
             c
         } else {
@@ -463,10 +462,10 @@ fn start_channel_listener(
         *channel_guard = Some(stop_flag);
     }
 
-    match rx.recv() {
+    match rx.await {
         Ok(Ok(user)) => Ok(user),
         Ok(Err(e)) => Err(e),
-        Err(_) => Err("Channel listener thread failed".to_string()),
+        Err(_) => Err("Channel listener task failed".to_string()),
     }
 }
 
@@ -535,7 +534,7 @@ pub async fn connect_discord(app_handle: AppHandle) -> Result<ConnectedUser, Str
             .and_then(|e| e.parse::<u64>().ok())
             .map_or(false, |e| e > now)
         {
-            return start_channel_listener(&app_handle, token.clone(), None);
+            return start_channel_listener(&app_handle, token.clone(), None).await;
         }
     }
 
@@ -548,7 +547,12 @@ pub async fn connect_discord(app_handle: AppHandle) -> Result<ConnectedUser, Str
         .await?;
 
         save_tokens(&app_handle, &token_response)?;
-        return start_channel_listener(&app_handle, token_response.access_token.clone(), None);
+        return start_channel_listener(
+            &app_handle,
+            token_response.access_token.clone(),
+            None,
+        )
+        .await;
     }
 
     let verifier = generate_code_verifier()?;
@@ -615,7 +619,8 @@ pub async fn connect_discord(app_handle: AppHandle) -> Result<ConnectedUser, Str
         &app_handle,
         token_response.access_token.clone(),
         Some(client),
-    );
+    )
+    .await;
 
     {
         let mut client_guard = discord

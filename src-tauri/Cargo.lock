@@ -4238,6 +4238,7 @@ dependencies = [
  "tauri-plugin-single-instance",
  "tauri-plugin-stronghold",
  "tauri-plugin-system-info",
+ "tokio",
  "uuid 1.23.2",
  "whoami",
 ]

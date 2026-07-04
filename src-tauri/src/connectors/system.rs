@@ -5,7 +5,6 @@ use std::sync::{
     atomic::{AtomicBool, Ordering},
     Arc, Mutex,
 };
-use std::thread;
 use std::time::Duration;
 use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_system_info::SysInfoState;
@@ -19,7 +18,7 @@ pub fn init_system(app_handle: &AppHandle) {
 }
 
 #[tauri::command]
-pub fn connect_system(app_handle: AppHandle) -> Result<(), String> {
+pub async fn connect_system(app_handle: AppHandle) -> Result<(), String> {
     let app_handle_clone = app_handle.clone();
     let system = app_handle.state::<System>();
 
@@ -37,12 +36,12 @@ pub fn connect_system(app_handle: AppHandle) -> Result<(), String> {
     let stop_flag = Arc::new(AtomicBool::new(false));
     let listener_stop = stop_flag.clone();
 
-    thread::spawn(move || {
+    tokio::spawn(async move {
         let mut prev_net_rx: u64 = 0;
         let mut prev_net_tx: u64 = 0;
 
         loop {
-            thread::sleep(Duration::from_secs(1));
+            tokio::time::sleep(Duration::from_secs(1)).await;
 
             if listener_stop.load(Ordering::Relaxed) {
                 break;
