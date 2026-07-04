@@ -1,6 +1,9 @@
 <script setup lang="ts">
 const currentWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const isMacOS = tauriOSType() === "macos";
+const isDragging = ref(false);
+const offsetX = ref(0);
+const offsetY = ref(0);
 
 async function destroy() {
   if (isMacOS) {
@@ -10,13 +13,42 @@ async function destroy() {
   }
   await currentWebviewWindow.destroy();
 }
+
+async function onDragStart(e: MouseEvent) {
+  if (e.button !== 0) {
+    return;
+  }
+
+  e.preventDefault();
+
+  const pos = await currentWebviewWindow.outerPosition();
+
+  offsetX.value = e.screenX - pos.x;
+  offsetY.value = e.screenY - pos.y;
+  isDragging.value = true;
+}
+
+useEventListener(window, "mouseup", () => (isDragging.value = false));
+
+useEventListener(window, "mousemove", async (e) => {
+  if (!isDragging.value) {
+    return;
+  }
+
+  currentWebviewWindow.setPosition(
+    new TauriDpiLogicalPosition(
+      e.screenX - offsetX.value,
+      e.screenY - offsetY.value,
+    ),
+  );
+});
 </script>
 
 <template>
   <div
     class="fixed top-0 left-0 right-0 h-8.25 flex items-center z-99 **:select-none pointer-events-auto"
     :class="{ 'flex-row-reverse': !isMacOS }"
-    data-tauri-drag-region
+    @mousedown="onDragStart"
   >
     <div
       class="flex"

@@ -54,7 +54,8 @@ export enum KickDisplayName {
 
 //#region Types
 export type Link = {
-  icon: string;
+  links?: Link[];
+  icon?: string;
   name: string;
   to: string;
 };

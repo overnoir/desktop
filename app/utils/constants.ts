@@ -76,17 +76,17 @@ export const mainWebviewWindowOptions: Omit<
   "x" | "y" | "width" | "height"
 > &
   WindowOptions = {
+  url: "/settings/general",
   acceptFirstMouse: true,
   decorations: false,
   hiddenTitle: true,
   transparent: true,
-  url: "/settings",
   skipTaskbar: true,
   resizable: false,
   visible: false,
   title: name,
   height: 600,
-  width: 1024,
+  width: 900,
 };
 
 export const streamWebviewWindowOptions: Omit<

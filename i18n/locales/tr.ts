@@ -2,11 +2,30 @@ export default {
   linkGroups: [
     {
       name: "GENEL",
-      links: ["Ayarlar", "Kasa", "Hatalar", "Yardım"],
+      links: [
+        {
+          name: "Ayarlar",
+          links: ["Genel", "Gelişmiş"],
+        },
+        "Kasa",
+        "Hatalar",
+        "Yardım",
+      ],
     },
     {
       name: "BAĞLANTILAR",
-      links: ["Sistem"],
+      links: [
+        {
+          links: ["Bağlantı", "Ayarlar"],
+        },
+        {
+          links: ["Yayıncılar", "Ayarlar"],
+        },
+        {
+          name: "Sistem",
+          links: ["Bağlantı", "Ayarlar"],
+        },
+      ],
     },
   ],
   tray: {
@@ -22,7 +41,6 @@ export default {
     goHome: "Ana Sayfaya Git",
   },
   settings: {
-    tabs: ["Genel", "Gelişmiş"],
     locale: {
       title: "Dil",
       description: "Uygulama arayüz dilini seçin.",
@@ -148,7 +166,6 @@ export default {
     },
   },
   discord: {
-    tabs: ["Bağlantı", "Ayarlar"],
     connect: {
       success: "Bağlantı başarıyla yapıldı.",
       error: "Bağlantı yapılırken bir sorun oluştu.",
@@ -240,7 +257,6 @@ export default {
     },
   },
   kick: {
-    tabs: ["Yayıncılar", "Ayarlar"],
     addChannel: {
       placeholder: "Yayıncı kullanıcı adı",
       empty: "Kullanıcı adı giriniz.",
@@ -295,7 +311,6 @@ export default {
     },
   },
   system: {
-    tabs: ["Bağlantı", "Ayarlar"],
     connect: {
       success: "Bağlantı başarıyla yapıldı.",
       error: "Bağlantı yapılırken bir sorun oluştu.",

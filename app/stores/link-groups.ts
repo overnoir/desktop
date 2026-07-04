@@ -9,8 +9,18 @@ export const useLinkGroupsStore = defineStore(
       links: [
         {
           icon: "lucide:sliders-horizontal",
-          name: t("linkGroups.0.links.0"),
-          to: localePath("/settings"),
+          name: t("linkGroups.0.links.0.name"),
+          to: localePath("/settings/general"),
+          links: [
+            {
+              name: t("linkGroups.0.links.0.links.0"),
+              to: localePath("/settings/general"),
+            },
+            {
+              name: t("linkGroups.0.links.0.links.1"),
+              to: localePath("/settings/advanced"),
+            },
+          ],
         },
         {
           name: t("linkGroups.0.links.1"),
@@ -35,18 +45,48 @@ export const useLinkGroupsStore = defineStore(
       links: [
         {
           icon: "simple-icons:discord",
-          to: localePath("/discord"),
+          to: localePath("/discord/connection"),
           name: "Discord",
+          links: [
+            {
+              name: t("linkGroups.1.links.0.links.0"),
+              to: localePath("/discord/connection"),
+            },
+            {
+              name: t("linkGroups.1.links.0.links.1"),
+              to: localePath("/discord/settings"),
+            },
+          ],
         },
         {
           icon: "simple-icons:kick",
-          to: localePath("/kick"),
+          to: localePath("/kick/streamers"),
           name: "Kick",
+          links: [
+            {
+              name: t("linkGroups.1.links.1.links.0"),
+              to: localePath("/kick/streamers"),
+            },
+            {
+              name: t("linkGroups.1.links.1.links.1"),
+              to: localePath("/kick/settings"),
+            },
+          ],
         },
         {
-          name: t("linkGroups.1.links.0"),
-          to: localePath("/system"),
+          name: t("linkGroups.1.links.2.name"),
+          to: localePath("/system/connection"),
           icon: "lucide:gauge",
+          links: [
+            {
+              name: t("linkGroups.1.links.2.links.0"),
+              to: localePath("/system/connection"),
+            },
+            {
+              name: t("linkGroups.1.links.2.links.1"),
+              to: localePath("/system/settings"),
+            },
+          ],
         },
       ],
     }));

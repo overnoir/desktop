@@ -17,7 +17,7 @@ const { error } = defineProps<{ error: NuxtError }>();
           </EmptyHeader>
           <EmptyTitle>{{ error }}</EmptyTitle>
           <EmptyContent>
-            <Button @click="clearError({ redirect: $localePath('/') })">
+            <Button @click="clearError">
               {{ $t("error.goHome") }}
             </Button>
           </EmptyContent>
