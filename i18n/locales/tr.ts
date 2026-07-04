@@ -126,7 +126,6 @@ export default {
   },
   vault: {
     heads: ["Anahtar", "Oluşturulma Tarihi", "Güncellenme Tarihi"],
-    error: "Kasa verileri yüklenirken bir hata oluştu.",
     empty: {
       title: "Kasanız Boş",
       description: "Kasanızda herhangi bir veri yok.",
@@ -135,7 +134,6 @@ export default {
       title: "Verileri Sil",
       description: "Kasadaki tüm verileri silin.",
       success: "Kasadaki tüm veriler başarıyla silindi.",
-      error: "Kasa verileri silinirken bir hata oluştu.",
       dialog: {
         title: "Kasadaki tüm verileri sil",
         description:
@@ -168,13 +166,11 @@ export default {
   discord: {
     connect: {
       success: "Bağlantı başarıyla yapıldı.",
-      error: "Bağlantı yapılırken bir sorun oluştu.",
       description: "Bağlanmak için Discord sizden onay isteyecek.",
       button: "Bağlan",
     },
     disconnect: {
       success: "Bağlantı başarıyla kesildi.",
-      error: "Bağlantı kesilirken bir sorun oluştu.",
       description: "{username} olarak bağlanıldı.",
       button: "Bağlantıyı Kes",
       dialog: {
@@ -263,7 +259,6 @@ export default {
       invalid: "Geçerli bir kullanıcı adı giriniz.",
       alreadyAdded: "Bu kullanıcı adı zaten listede.",
       success: "Yayıncılar başarıyla kaydedildi.",
-      error: "Yayıncılar kaydedilirken bir hata oluştu.",
       save: "Kaydet",
     },
     empty: {
@@ -313,12 +308,10 @@ export default {
   system: {
     connect: {
       success: "Bağlantı başarıyla yapıldı.",
-      error: "Bağlantı yapılırken bir sorun oluştu.",
       button: "Bağlan",
     },
     disconnect: {
       success: "Bağlantı başarıyla kesildi.",
-      error: "Bağlantı kesilirken bir sorun oluştu.",
       button: "Bağlantıyı Kes",
     },
     showCpu: {

@@ -37,6 +37,7 @@ export enum Alignment {
 export enum ErrorSource {
   Discord = "discord",
   System = "system",
+  Vault = "vault",
   Kick = "kick",
 }
 

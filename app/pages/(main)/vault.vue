@@ -1,12 +1,17 @@
 <script setup lang="ts">
 const metadata = ref<VaultItemMetadata[]>([]);
+const errorsStore = useErrorsStore();
 const { $toast } = useNuxtApp();
 const { t } = useI18n();
 
 try {
   metadata.value = await tauriCoreInvoke("get_vault_metadata");
-} catch {
-  $toast.error(t("vault.get.error"));
+} catch (error) {
+  errorsStore.addError({
+    message: JSON.stringify(error),
+    source: ErrorSource.Vault,
+  });
+  $toast.error(JSON.stringify(error));
 }
 
 async function clear() {
@@ -14,8 +19,12 @@ async function clear() {
     await tauriCoreInvoke("clear_vault");
     metadata.value = [];
     $toast.success(t("vault.clear.success"));
-  } catch {
-    $toast.error(t("vault.clear.error"));
+  } catch (error) {
+    errorsStore.addError({
+      message: JSON.stringify(error),
+      source: ErrorSource.Vault,
+    });
+    $toast.error(JSON.stringify(error));
   }
 }
 </script>

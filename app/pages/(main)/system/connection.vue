@@ -22,7 +22,7 @@ async function toggleConnection() {
       message: JSON.stringify(error),
       source: ErrorSource.System,
     });
-    $toast.error(t(`system.${action}.error`));
+    $toast.error(JSON.stringify(error));
   }
   loading.value = false;
 }

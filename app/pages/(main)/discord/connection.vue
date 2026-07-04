@@ -40,7 +40,7 @@ async function toggleConnection() {
       message: JSON.stringify(error),
       source: ErrorSource.Discord,
     });
-    $toast.error(t(`discord.${action}.error`));
+    $toast.error(JSON.stringify(error));
   }
   loading.value = false;
 }
