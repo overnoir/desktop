@@ -7,7 +7,6 @@ definePageMeta({
 
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const { filtredStreamers, streamers } = storeToRefs(useKickStore());
-const isDragging = useState("is-dragging", () => false);
 const discordStore = useDiscordStore();
 const { filtredUsers, guild, settings, connectedUser } =
   storeToRefs(discordStore);
@@ -20,10 +19,9 @@ const {
   cpu,
 } = storeToRefs(useSystemStore());
 const { general } = storeToRefs(useSettingsStore());
+const { onDragStart } = useWebviewWindowDrag();
 const errorsStore = useErrorsStore();
 const isOnline = useOnline();
-const offsetX = ref(0);
-const offsetY = ref(0);
 
 const styles = computed<CSSProperties>(() => ({
   flexDirection:
@@ -174,20 +172,6 @@ async function openMainWebviewWindow() {
   }
 }
 
-async function onDragStart(e: MouseEvent) {
-  if (e.button !== 0) {
-    return;
-  }
-
-  e.preventDefault();
-
-  const pos = await overlayWebviewWindow.outerPosition();
-
-  offsetX.value = e.screenX - pos.x;
-  offsetY.value = e.screenY - pos.y;
-  isDragging.value = true;
-}
-
 useIntervalFn(
   async () => {
     try {
@@ -209,21 +193,6 @@ useIntervalFn(
   300000,
   { immediateCallback: true },
 );
-
-useEventListener(window, "mouseup", () => (isDragging.value = false));
-
-useEventListener(window, "mousemove", async (e) => {
-  if (!isDragging.value) {
-    return;
-  }
-
-  overlayWebviewWindow.setPosition(
-    new TauriDpiLogicalPosition(
-      e.screenX - offsetX.value,
-      e.screenY - offsetY.value,
-    ),
-  );
-});
 </script>
 
 <template>

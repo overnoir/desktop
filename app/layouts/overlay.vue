@@ -3,7 +3,7 @@ import type { CSSProperties } from "vue";
 
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const { general, advanced } = storeToRefs(useSettingsStore());
-const isDragging = useState("is-dragging", () => false);
+const { isDragging } = useWebviewWindowDrag();
 const isMacOS = tauriOSType() === "macos";
 const errorsStore = useErrorsStore();
 const { create } = useTray();
