@@ -4,6 +4,7 @@ mod api;
 mod discord;
 mod nspanel;
 mod system;
+mod types;
 mod vault;
 use api::{api_get_kick_streamers, init_api};
 use discord::{connect_discord, disconnect_discord, init_discord};

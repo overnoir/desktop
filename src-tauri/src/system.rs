@@ -1,4 +1,4 @@
-use serde::Serialize;
+use crate::types::{BatteryPayload, CpuPayload, MemoryPayload, NetworkPayload, System, SystemPayload};
 use std::sync::{
     atomic::{AtomicBool, Ordering},
     Arc, Mutex,
@@ -9,49 +9,6 @@ use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_system_info::SysInfoState;
 
 const GB: f64 = 1024.0 * 1024.0 * 1024.0;
-
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase")]
-struct MemoryPayload {
-    usage_percent: f64,
-    total_gb: f64,
-    used_gb: f64,
-}
-
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase")]
-struct CpuPayload {
-    usage_percent: f64,
-    active: usize,
-    total: usize,
-}
-
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase")]
-struct BatteryPayload {
-    percent: Option<u32>,
-    is_charging: bool,
-}
-
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase")]
-struct NetworkPayload {
-    download: f64,
-    upload: f64,
-}
-
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase")]
-struct SystemPayload {
-    battery: BatteryPayload,
-    network: NetworkPayload,
-    memory: MemoryPayload,
-    cpu: CpuPayload,
-}
-
-pub struct System {
-    stop_flag: Mutex<Option<Arc<AtomicBool>>>,
-}
 
 pub fn init_system(app_handle: &AppHandle) {
     app_handle.manage(System {

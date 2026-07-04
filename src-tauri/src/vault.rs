@@ -1,7 +1,7 @@
-use iota_stronghold::{Client, Store};
+use crate::types::{VaultItemMetadata, VaultState};
+use iota_stronghold::Client;
 use keyring::Entry;
 use rand::{rngs::OsRng, RngCore};
-use serde::Serialize;
 use std::{
     collections::HashMap,
     fs,
@@ -12,18 +12,6 @@ use std::{
 use tauri::{AppHandle, Manager};
 use tauri_plugin_stronghold::stronghold::Stronghold;
 use uuid::Uuid;
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct VaultItemMetadata {
-    created_at: u64,
-    updated_at: u64,
-    key: String,
-}
-
-pub struct VaultState {
-    stronghold: Mutex<Option<Stronghold>>,
-    store: Mutex<Option<Store>>,
-}
 
 pub fn init_vault(app_handle: &AppHandle) {
     let salt_path = app_handle

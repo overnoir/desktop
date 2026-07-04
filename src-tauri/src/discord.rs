@@ -1,3 +1,4 @@
+use crate::types::{Channel, ConnectedUser, Discord, Guild, TokenResponse, User};
 use crate::vault::{
     delete_vault_items as delete_vault_items_fn, get_vault_items, update_vault_items,
 };
@@ -5,7 +6,6 @@ use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine as _};
 use discord_rich_presence::{DiscordIpc, DiscordIpcClient};
 use rand::rngs::OsRng;
 use rand::RngCore;
-use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use std::{
@@ -19,61 +19,6 @@ use std::{
 };
 use tauri::{AppHandle, Emitter, Manager};
 use uuid::Uuid;
-
-#[derive(Debug, Deserialize, Serialize)]
-pub struct TokenResponse {
-    refresh_token: Option<String>,
-    access_token: String,
-    expires_in: u64,
-}
-
-#[derive(Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct User {
-    avatar: Option<String>,
-    nick: Option<String>,
-    global_name: Option<String>,
-    is_self_deafened: bool,
-    discriminator: String,
-    is_self_muted: bool,
-    is_deafened: bool,
-    is_speaking: bool,
-    username: String,
-    is_muted: bool,
-    is_bot: bool,
-    id: String,
-}
-
-#[derive(Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct Channel {
-    users: Vec<User>,
-    name: String,
-    id: String,
-}
-
-#[derive(Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct Guild {
-    icon_url: Option<String>,
-    channel: Channel,
-    name: String,
-    id: String,
-}
-
-#[derive(Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct ConnectedUser {
-    avatar: Option<String>,
-    username: String,
-    id: String,
-}
-
-pub struct Discord {
-    stop_flag: Mutex<Option<Arc<AtomicBool>>>,
-    client: Mutex<Option<DiscordIpcClient>>,
-    client_id: String,
-}
 
 const DISCORD_API_OAUTH2_TOKEN_URL: &str = "https://discord.com/api/v10/oauth2/token";
 

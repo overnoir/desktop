@@ -1,47 +1,6 @@
-use serde::{Deserialize, Serialize};
+use crate::types::{ApiClient, KickStreamer};
 use tauri::AppHandle;
 use tauri::Manager;
-
-#[derive(Debug, Deserialize, Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct KickUser {
-    pub profile_picture: String,
-    pub name: String,
-    pub id: u64,
-}
-
-#[derive(Debug, Deserialize, Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct KickChannelStream {
-    pub is_live: bool,
-}
-
-#[derive(Debug, Deserialize, Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct KickChannelCategory {
-    pub name: String,
-}
-
-#[derive(Debug, Deserialize, Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct KickChannel {
-    pub category: KickChannelCategory,
-    pub stream: KickChannelStream,
-    pub slug: String,
-    pub id: u64,
-}
-
-#[derive(Debug, Deserialize, Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct KickStreamer {
-    pub channel: KickChannel,
-    pub user: KickUser,
-}
-
-pub struct ApiClient {
-    client: reqwest::Client,
-    base_url: String,
-}
 
 impl ApiClient {
     fn join_query_values<T: std::fmt::Display>(key: &str, values: &[T]) -> String {
