@@ -22,20 +22,20 @@ async function quickPositionSelect(
     await overlayWebviewWindow.outerSize();
   const { width, height } = size;
   const { x, y } = position;
+  const offset = 10;
 
   const centerY = y + Math.round((height - overlayHeight) / 2);
   const centerX = x + Math.round((width - overlayWidth) / 2);
+  const bottomY = y + height - overlayHeight - offset;
+  const rightX = x + width - overlayWidth - offset;
 
-  const bottomY = y + height - overlayHeight;
-  const rightX = x + width - overlayWidth;
-
-  const positions: { x: number; y: number }[] = [
-    { x: x, y: y },
-    { x: centerX, y: y },
-    { x: rightX, y: y },
-    { x: x, y: centerY },
+  const positions = [
+    { x: x + offset, y: y + offset },
+    { x: centerX, y: y + offset },
+    { x: rightX, y: y + offset },
+    { x: x + offset, y: centerY },
     { x: rightX, y: centerY },
-    { x: x, y: bottomY },
+    { x: x + offset, y: bottomY },
     { x: centerX, y: bottomY },
     { x: rightX, y: bottomY },
   ];
@@ -152,26 +152,11 @@ async function quickPositionSelect(
             <h1 class="text-xs mb-1 text-secondary-foreground">
               {{ name }}
             </h1>
-            <Card class="grid grid-cols-3 p-0 gap-3">
+            <Card class="grid grid-cols-3 p-1.5 gap-3">
               <template v-for="(_, j) in 9" :key="j">
                 <Button
                   v-if="j !== 4"
-                  class="rounded-none"
                   variant="outline"
-                  :class="{
-                    'rounded-tl-lg rounded-br-lg border-l-0 border-t-0':
-                      j === 0,
-                    'rounded-b-lg border-t-0': j === 1,
-                    'rounded-tr-lg rounded-bl-lg border-t-0 border-r-0':
-                      j === 2,
-                    'rounded-r-lg border-l-0': j === 3,
-                    'rounded-l-lg border-r-0': j === 5,
-                    'rounded-tr-lg rounded-bl-lg border-l-0 border-b-0':
-                      j === 6,
-                    'rounded-t-lg border-b-0': j === 7,
-                    'rounded-tl-lg rounded-br-lg border-b-0 border-r-0':
-                      j === 8,
-                  }"
                   @click="quickPositionSelect({ position, size }, j)"
                 />
                 <div v-else />
