@@ -76,7 +76,6 @@ export const mainWebviewWindowOptions: Omit<
   "x" | "y" | "width" | "height"
 > &
   WindowOptions = {
-  parent: WebviewWindowLabel.Overlay,
   acceptFirstMouse: true,
   decorations: false,
   hiddenTitle: true,
@@ -95,7 +94,6 @@ export const streamWebviewWindowOptions: Omit<
   "x" | "y" | "width" | "height"
 > &
   WindowOptions = {
-  parent: WebviewWindowLabel.Overlay,
   title: `${name} Stream`,
   acceptFirstMouse: true,
   decorations: false,
