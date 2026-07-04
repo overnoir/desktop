@@ -21,14 +21,18 @@ export const useKickStore = defineStore(
       let items = [...streamers.value];
 
       if (settings.value.showOnlyLive) {
-        items = items.filter(({ channel }) => channel.stream.isLive);
+        items = items.filter(({ stream }) => stream.isLive);
       }
 
       items.sort((a, b) => {
-        const aLive = !!a.channel.stream.isLive;
-        const bLive = !!b.channel.stream.isLive;
-        if (aLive !== bLive) return Number(bLive) - Number(aLive);
-        return a.user.name.localeCompare(b.user.name);
+        const aLive = !!a.stream.isLive;
+        const bLive = !!b.stream.isLive;
+
+        if (aLive !== bLive) {
+          return Number(bLive) - Number(aLive);
+        }
+
+        return a.name.localeCompare(b.name);
       });
 
       items = items.slice(0, settings.value.streamerLimit);

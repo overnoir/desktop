@@ -53,38 +53,19 @@ pub struct DiscordConnectedUser {
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct KickUser {
-    pub profile_picture: String,
-    pub name: String,
-    pub id: u64,
-}
-
-#[derive(Debug, Deserialize, Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct KickChannelStream {
+pub struct KickStreamerStream {
+    pub category: String,
     pub is_live: bool,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct KickChannelCategory {
+pub struct KickStreamer {
+    pub stream: KickStreamerStream,
+    pub profile_picture: String,
     pub name: String,
-}
-
-#[derive(Debug, Deserialize, Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct KickChannel {
-    pub category: KickChannelCategory,
-    pub stream: KickChannelStream,
     pub slug: String,
     pub id: u64,
-}
-
-#[derive(Debug, Deserialize, Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct KickStreamer {
-    pub channel: KickChannel,
-    pub user: KickUser,
 }
 
 #[derive(Serialize)]

@@ -9,41 +9,41 @@ const showCategory = computed(
   () =>
     settings.value.showCategory !== KickShow.Never &&
     (settings.value.showCategory !== KickShow.WhileLive ||
-      streamer.channel.stream.isLive),
+      streamer.stream.isLive),
 );
 
 const showDisplayName = computed(
   () =>
     settings.value.showDisplayName !== KickShow.Never &&
     (settings.value.showDisplayName !== KickShow.WhileLive ||
-      streamer.channel.stream.isLive),
+      streamer.stream.isLive),
 );
 
 const displayName = computed(() =>
   settings.value.displayName === KickDisplayName.Name
-    ? streamer.user.name
-    : streamer.channel.slug,
+    ? streamer.name
+    : streamer.slug,
 );
 </script>
 
 <template>
   <OverlayItem
     :class="{
-      'grayscale-100': !streamer.channel.stream.isLive,
+      'grayscale-100': !streamer.stream.isLive,
     }"
   >
     <OverlayItemContent>
       <NuxtImg
-        :src="streamer.user.profilePicture"
+        :src="streamer.profilePicture"
         alt="Profile Picture"
         class="size-full"
       />
     </OverlayItemContent>
     <OverlayItemBadge
-      v-if="streamer.channel.stream.isLive && showCategory"
+      v-if="streamer.stream.isLive && showCategory"
       position="top"
     >
-      {{ streamer.channel.category.name }}
+      {{ streamer.stream.category }}
     </OverlayItemBadge>
     <OverlayItemBadge v-if="showDisplayName" position="bottom">
       {{ displayName }}

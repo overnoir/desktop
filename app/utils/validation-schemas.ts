@@ -141,26 +141,22 @@ export const kickSettingsSchema = z.preprocess(
     streamerLimit: z
       .number()
       .min(0)
-      .max(10)
+      .max(7)
       .catch(defaultKickSettings.streamerLimit),
   }),
 ) satisfies z.ZodType<KickSettings>;
 
+const kickStreamerStreamSchema = z.object({
+  category: z.string(),
+  isLive: z.boolean(),
+}) satisfies z.ZodType<KickStreamerStream>;
+
 const kickStreamerSchema = z.object({
-  user: z.object({
-    profilePicture: z.string(),
-    name: z.string(),
-    id: z.number(),
-  }),
-  channel: z.object({
-    stream: z.object({
-      isLive: z.boolean(),
-    }),
-    category: z.object({
-      name: z.string(),
-    }),
-    slug: z.string(),
-  }),
+  stream: kickStreamerStreamSchema,
+  profilePicture: z.string(),
+  name: z.string(),
+  slug: z.string(),
+  id: z.number(),
 }) satisfies z.ZodType<KickStreamer>;
 
 export const kickStreamersSchema = z.preprocess(
@@ -169,7 +165,7 @@ export const kickStreamersSchema = z.preprocess(
   },
   z
     .array(kickStreamerSchema)
-    .max(10)
+    .max(7)
     .transform((streamers) =>
       streamers.filter(
         (streamer) => kickStreamerSchema.safeParse(streamer).success,

@@ -87,7 +87,7 @@ const { settings } = storeToRefs(kickStore);
         <Slider
           class="*:data-[slot='slider-track']:rounded-t-none"
           :model-value="[settings.streamerLimit]"
-          :max="10"
+          :max="7"
           :min="0"
           @update:model-value="settings.streamerLimit = $event![0]!"
         />

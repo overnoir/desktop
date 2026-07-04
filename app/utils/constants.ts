@@ -44,7 +44,7 @@ export const defaultKickSettings: KickSettings = {
   showDisplayName: KickShow.Always,
   showCategory: KickShow.WhileLive,
   showOnlyLive: false,
-  streamerLimit: 10,
+  streamerLimit: 7,
 };
 
 export const defaultSystemSettings: SystemSettings = {

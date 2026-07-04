@@ -178,7 +178,7 @@ useIntervalFn(
       if (streamers.value.length) {
         const data = await tauriCoreInvoke<KickStreamer[]>(
           "get_kick_streamers",
-          { slugs: streamers.value.map(({ channel }) => channel.slug) },
+          { slugs: streamers.value.map(({ slug }) => slug) },
         );
         streamers.value = data;
       }
@@ -211,9 +211,9 @@ useIntervalFn(
       <OverlayDiscordUser v-for="user in filtredUsers" :key="user.id" :user />
       <OverlayKickStreamer
         v-for="streamer in filtredStreamers"
-        :key="streamer.user.id"
+        :key="streamer.id"
         :streamer
-        @click="openStreamWebviewWindow(streamer.channel.slug)"
+        @click="openStreamWebviewWindow(streamer.slug)"
       />
     </template>
     <OverlaySystemCpu v-if="systemSettings.showCpu && cpu" :cpu />

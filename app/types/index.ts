@@ -162,21 +162,17 @@ export type KickSettings = {
   showOnlyLive: boolean;
 };
 
+export type KickStreamerStream = {
+  category: string;
+  isLive: boolean;
+};
+
 export type KickStreamer = {
-  user: {
-    profilePicture: string;
-    name: string;
-    id: number;
-  };
-  channel: {
-    stream: {
-      isLive: boolean;
-    };
-    category: {
-      name: string;
-    };
-    slug: string;
-  };
+  stream: KickStreamerStream;
+  profilePicture: string;
+  name: string;
+  slug: string;
+  id: number;
 };
 
 export type SystemCpu = {

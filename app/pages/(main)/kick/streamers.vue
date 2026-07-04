@@ -13,15 +13,23 @@ const loading = ref(false);
 const { t } = useI18n();
 
 const onSubmit = handleSubmit(async ({ slug }) => {
-  if (draft.value.some(({ channel }) => channel.slug === slug)) {
+  if (draft.value.some((streamer) => streamer.slug === slug)) {
     $toast.error(t("kick.addChannel.alreadyAdded"));
     return;
   }
+
   draft.value.push({
-    channel: { stream: { isLive: false }, category: { name: "" }, slug },
-    user: { profilePicture: "", name: "", id: 0 },
+    profilePicture: "",
     status: "pending",
+    name: "",
+    id: 0,
+    slug,
+    stream: {
+      isLive: false,
+      category: "",
+    },
   });
+
   resetForm();
 });
 
@@ -34,7 +42,7 @@ async function save() {
 
     const newSlugs = newDraft
       .filter(({ status }) => status === "pending")
-      .map(({ channel }) => channel.slug);
+      .map(({ slug }) => slug);
 
     if (newSlugs.length) {
       const streamersData = await tauriCoreInvoke<KickStreamer[]>(
@@ -44,17 +52,11 @@ async function save() {
 
       for (const item of newDraft) {
         if (item.status === "pending") {
-          const streamer = streamersData.find(
-            ({ channel }) => channel.slug === item.channel.slug,
-          );
+          const streamer = streamersData.find(({ slug }) => slug === item.slug);
           if (streamer) {
-            item.channel = streamer.channel;
-            item.user = streamer.user;
-            item.status = "saved";
+            Object.assign(item, streamer, { status: "saved" });
           } else {
-            newDraft = newDraft.filter(
-              ({ channel }) => channel.slug !== item.channel.slug,
-            );
+            newDraft = newDraft.filter(({ slug }) => slug !== item.slug);
           }
         }
       }
@@ -90,22 +92,22 @@ onNuxtReady(() => {
       <FieldGroup>
         <VeeField
           v-slot="{ field, errors }"
-          name="slug"
           :validate-on-blur="false"
+          name="slug"
         >
           <Field :data-invalid="!!errors.length">
             <div class="flex items-center gap-2">
               <Input
                 :placeholder="$t('kick.addChannel.placeholder')"
                 :aria-invalid="!!errors.length"
-                :disabled="draft.length >= 10"
+                :disabled="draft.length >= 7"
                 autocapitalize="off"
                 autocorrect="off"
                 type="text"
                 v-bind="field"
               />
               <Button
-                :disabled="loading || draft.length >= 10"
+                :disabled="loading || draft.length >= 7"
                 type="submit"
                 size="icon"
               >
@@ -123,16 +125,16 @@ onNuxtReady(() => {
     <template v-if="draft.length">
       <div
         v-for="item in draft"
-        :key="item.channel.slug"
+        :key="item.slug"
         :class="{
           'opacity-40': item.status === 'removed',
         }"
         class="flex gap-2 items-center"
       >
         <NuxtImg
-          v-if="item.user.profilePicture"
+          v-if="item.profilePicture"
           class="shrink-0 size-9 bg-secondary rounded-lg border"
-          :src="item.user.profilePicture"
+          :src="item.profilePicture"
           alt="Profile Picture"
         />
         <div
@@ -141,14 +143,14 @@ onNuxtReady(() => {
         >
           <Icon name="lucide:user" />
         </div>
-        <Input disabled :model-value="item.channel.slug" class="opacity-100!" />
+        <Input disabled :model-value="item.slug" class="opacity-100!" />
         <Button
           variant="secondary"
           size="icon"
           @click="
             item.status =
               item.status === 'removed'
-                ? item.user.id
+                ? item.id
                   ? 'saved'
                   : 'pending'
                 : 'removed'
