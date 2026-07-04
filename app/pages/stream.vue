@@ -34,6 +34,11 @@ await tauriEventListen<{ slug: string }>("slug-update", async ({ payload }) => {
     />
     <Button
       class="shrink-0 rounded-none mt-auto bg-[#00e701] hover:bg-[#00e701]/90"
+      @click="
+        tauriOpenerOpenUrl(
+          `https://kick.com/${router.currentRoute.value.query.slug}`,
+        )
+      "
     >
       {{ $t("stream.watchOnKick") }}
       <Icon name="lucide:external-link" />
