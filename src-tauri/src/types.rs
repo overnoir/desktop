@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::sync::{atomic::AtomicBool, Arc, Mutex};
 
 #[derive(Debug, Deserialize, Serialize)]
-pub struct TokenResponse {
+pub struct OAuthTokenResponse {
     pub refresh_token: Option<String>,
     pub access_token: String,
     pub expires_in: u64,
@@ -10,7 +10,7 @@ pub struct TokenResponse {
 
 #[derive(Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct User {
+pub struct DiscordUser {
     pub global_name: Option<String>,
     pub avatar: Option<String>,
     pub is_self_deafened: bool,
@@ -28,24 +28,24 @@ pub struct User {
 
 #[derive(Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct Channel {
-    pub users: Vec<User>,
+pub struct DiscordChannel {
+    pub users: Vec<DiscordUser>,
     pub name: String,
     pub id: String,
 }
 
 #[derive(Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct Guild {
+pub struct DiscordGuild {
     pub icon_url: Option<String>,
-    pub channel: Channel,
+    pub channel: DiscordChannel,
     pub name: String,
     pub id: String,
 }
 
 #[derive(Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct ConnectedUser {
+pub struct DiscordConnectedUser {
     pub avatar: Option<String>,
     pub username: String,
     pub id: String,
@@ -89,7 +89,7 @@ pub struct KickStreamer {
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct MemoryPayload {
+pub struct SystemMemory {
     pub usage_percent: f64,
     pub total_gb: f64,
     pub used_gb: f64,
@@ -97,7 +97,7 @@ pub struct MemoryPayload {
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct CpuPayload {
+pub struct SystemCpu {
     pub usage_percent: f64,
     pub active: usize,
     pub total: usize,
@@ -105,25 +105,25 @@ pub struct CpuPayload {
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct BatteryPayload {
+pub struct SystemBattery {
     pub percent: Option<u32>,
     pub is_charging: bool,
 }
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct NetworkPayload {
+pub struct SystemNetwork {
     pub download: f64,
     pub upload: f64,
 }
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct SystemPayload {
-    pub battery: BatteryPayload,
-    pub network: NetworkPayload,
-    pub memory: MemoryPayload,
-    pub cpu: CpuPayload,
+pub struct System {
+    pub battery: SystemBattery,
+    pub network: SystemNetwork,
+    pub memory: SystemMemory,
+    pub cpu: SystemCpu,
 }
 
 #[derive(Serialize)]
@@ -134,22 +134,22 @@ pub struct VaultItemMetadata {
     pub key: String,
 }
 
-pub struct VaultState {
-    pub stronghold: std::sync::Mutex<Option<tauri_plugin_stronghold::stronghold::Stronghold>>,
-    pub store: std::sync::Mutex<Option<iota_stronghold::Store>>,
-}
-
-pub struct Discord {
-    pub stop_flag: Mutex<Option<Arc<AtomicBool>>>,
-    pub client: Mutex<Option<discord_rich_presence::DiscordIpcClient>>,
-    pub client_id: String,
-}
-
 pub struct ApiClient {
     pub client: reqwest::Client,
     pub base_url: String,
 }
 
-pub struct System {
+pub struct VaultState {
+    pub stronghold: std::sync::Mutex<Option<tauri_plugin_stronghold::stronghold::Stronghold>>,
+    pub store: std::sync::Mutex<Option<iota_stronghold::Store>>,
+}
+
+pub struct DiscordState {
+    pub stop_flag: Mutex<Option<Arc<AtomicBool>>>,
+    pub client: Mutex<Option<discord_rich_presence::DiscordIpcClient>>,
+    pub client_id: String,
+}
+
+pub struct SystemState {
     pub stop_flag: Mutex<Option<Arc<AtomicBool>>>,
 }

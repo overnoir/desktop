@@ -1,6 +1,4 @@
-use crate::types::{
-    BatteryPayload, CpuPayload, MemoryPayload, NetworkPayload, System, SystemPayload,
-};
+use crate::types::{System, SystemBattery, SystemCpu, SystemMemory, SystemNetwork, SystemState};
 use std::sync::{
     atomic::{AtomicBool, Ordering},
     Arc, Mutex,
@@ -12,7 +10,7 @@ use tauri_plugin_system_info::SysInfoState;
 const GB: f64 = 1024.0 * 1024.0 * 1024.0;
 
 pub fn init_system(app_handle: &AppHandle) {
-    app_handle.manage(System {
+    app_handle.manage(SystemState {
         stop_flag: Mutex::new(None),
     });
 }
@@ -20,7 +18,7 @@ pub fn init_system(app_handle: &AppHandle) {
 #[tauri::command]
 pub async fn connect_system(app_handle: AppHandle) -> Result<(), String> {
     let app_handle_clone = app_handle.clone();
-    let system = app_handle.state::<System>();
+    let system = app_handle.state::<SystemState>();
 
     {
         let mut flag_guard = system
@@ -96,7 +94,7 @@ pub async fn connect_system(app_handle: AppHandle) -> Result<(), String> {
             let bats = sysinfo.batteries().unwrap_or_default();
             let battery = if let Some(b) = bats.first() {
                 if let Ok(v) = serde_json::to_value(b) {
-                    BatteryPayload {
+                    SystemBattery {
                         percent: v
                             .get("state_of_charge")
                             .and_then(|x| x.as_f64())
@@ -104,13 +102,13 @@ pub async fn connect_system(app_handle: AppHandle) -> Result<(), String> {
                         is_charging: v.get("state").and_then(|x| x.as_str()) == Some("Charging"),
                     }
                 } else {
-                    BatteryPayload {
+                    SystemBattery {
                         is_charging: false,
                         percent: None,
                     }
                 }
             } else {
-                BatteryPayload {
+                SystemBattery {
                     is_charging: false,
                     percent: None,
                 }
@@ -119,9 +117,9 @@ pub async fn connect_system(app_handle: AppHandle) -> Result<(), String> {
             let _ = app_handle_clone.emit_to(
                 "overlay",
                 "system-update",
-                serde_json::to_value(SystemPayload {
-                    network: NetworkPayload { download, upload },
-                    memory: MemoryPayload {
+                serde_json::to_value(System {
+                    network: SystemNetwork { download, upload },
+                    memory: SystemMemory {
                         usage_percent: if mem_total > 0 {
                             mem_used as f64 / mem_total as f64 * 100.0
                         } else {
@@ -130,7 +128,7 @@ pub async fn connect_system(app_handle: AppHandle) -> Result<(), String> {
                         total_gb: mem_total as f64 / GB,
                         used_gb: mem_used as f64 / GB,
                     },
-                    cpu: CpuPayload {
+                    cpu: SystemCpu {
                         usage_percent: cpu_avg,
                         active: cpu_active,
                         total: cpu_count,
@@ -155,7 +153,7 @@ pub async fn connect_system(app_handle: AppHandle) -> Result<(), String> {
 
 #[tauri::command]
 pub fn disconnect_system(app_handle: AppHandle) -> Result<(), String> {
-    let system = app_handle.state::<System>();
+    let system = app_handle.state::<SystemState>();
 
     let mut flag_guard = system
         .stop_flag

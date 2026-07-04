@@ -1,4 +1,7 @@
-use crate::types::{Channel, ConnectedUser, Discord, Guild, TokenResponse, User};
+use crate::types::{
+    DiscordChannel, DiscordConnectedUser, DiscordGuild, DiscordState, DiscordUser,
+    OAuthTokenResponse,
+};
 use crate::vault::{
     delete_vault_items as delete_vault_items_fn, get_vault_items, update_vault_items,
 };
@@ -30,7 +33,7 @@ const CHANNEL_EVENTS: [&str; 5] = [
 ];
 
 pub fn init_discord(app_handle: &AppHandle, client_id: &String) {
-    app_handle.manage(Discord {
+    app_handle.manage(DiscordState {
         client: Mutex::new(Some(DiscordIpcClient::new(&client_id))),
         client_id: client_id.to_string(),
         stop_flag: Mutex::new(None),
@@ -52,11 +55,11 @@ fn derive_code_challenge(verifier: &str) -> String {
     URL_SAFE_NO_PAD.encode(hash)
 }
 
-fn parse_user(data: &Value) -> Option<User> {
+fn parse_user(data: &Value) -> Option<DiscordUser> {
     let voice_state = &data["voice_state"];
     let user = data["user"].as_object()?;
 
-    Some(User {
+    Some(DiscordUser {
         is_self_deafened: voice_state["self_deaf"].as_bool().unwrap_or(false),
         is_self_muted: voice_state["self_mute"].as_bool().unwrap_or(false),
         is_suppress: voice_state["suppress"].as_bool().unwrap_or(false),
@@ -79,7 +82,7 @@ fn parse_user(data: &Value) -> Option<User> {
     })
 }
 
-fn apply_voice_event(evt: &str, data: &Value, users: &mut HashMap<String, User>) {
+fn apply_voice_event(evt: &str, data: &Value, users: &mut HashMap<String, DiscordUser>) {
     match evt {
         "VOICE_STATE_CREATE" | "VOICE_STATE_UPDATE" => {
             if let Some(mut user) = parse_user(data) {
@@ -113,7 +116,7 @@ fn apply_voice_event(evt: &str, data: &Value, users: &mut HashMap<String, User>)
 fn send_and_wait(
     client: &mut DiscordIpcClient,
     command: Value,
-    users: &mut HashMap<String, User>,
+    users: &mut HashMap<String, DiscordUser>,
     stop: &AtomicBool,
 ) -> Result<Value, String> {
     let nonce = command["nonce"]
@@ -145,7 +148,7 @@ fn send_and_wait(
 fn subscribe_to_events(
     client: &mut DiscordIpcClient,
     channel_id: &str,
-    users: &mut HashMap<String, User>,
+    users: &mut HashMap<String, DiscordUser>,
     stop: &AtomicBool,
 ) {
     for evt in &CHANNEL_EVENTS {
@@ -166,8 +169,8 @@ fn subscribe_to_events(
 fn build_guild_from_channel(
     response: &Value,
     channel_id: &str,
-    users: &mut HashMap<String, User>,
-) -> Option<Guild> {
+    users: &mut HashMap<String, DiscordUser>,
+) -> Option<DiscordGuild> {
     let guild_id = response["guild_id"].as_str().unwrap_or("").to_string();
     let channel_name = response["name"].as_str().unwrap_or("").to_string();
 
@@ -179,11 +182,11 @@ fn build_guild_from_channel(
         }
     }
 
-    Some(Guild {
+    Some(DiscordGuild {
         id: guild_id.clone(),
         name: channel_name.clone(),
         icon_url: None,
-        channel: Channel {
+        channel: DiscordChannel {
             id: channel_id.to_string(),
             name: channel_name,
             users: vec![],
@@ -219,9 +222,9 @@ async fn start_channel_listener(
     app_handle: &AppHandle,
     access_token: String,
     connected_client: Option<DiscordIpcClient>,
-) -> Result<ConnectedUser, String> {
-    let (tx, rx) = tokio::sync::oneshot::channel::<Result<ConnectedUser, String>>();
-    let discord_state = app_handle.state::<Discord>();
+) -> Result<DiscordConnectedUser, String> {
+    let (tx, rx) = tokio::sync::oneshot::channel::<Result<DiscordConnectedUser, String>>();
+    let discord_state = app_handle.state::<DiscordState>();
 
     {
         let mut channel_guard = discord_state
@@ -250,9 +253,9 @@ async fn start_channel_listener(
             }
             c
         };
-        let mut users: HashMap<String, User> = HashMap::new();
+        let mut users: HashMap<String, DiscordUser> = HashMap::new();
 
-        let result = (|| -> Result<ConnectedUser, String> {
+        let result = (|| -> Result<DiscordConnectedUser, String> {
             let auth = send_and_wait(
                 &mut client,
                 json!({
@@ -265,7 +268,7 @@ async fn start_channel_listener(
             )?;
 
             let user = &auth["user"];
-            Ok(ConnectedUser {
+            Ok(DiscordConnectedUser {
                 id: user["id"]
                     .as_str()
                     .ok_or("Channel auth response missing user id")?
@@ -318,7 +321,7 @@ async fn start_channel_listener(
             &listener_stop,
         );
 
-        let mut current_guild: Option<Guild> = None;
+        let mut current_guild: Option<DiscordGuild> = None;
 
         if let Ok(ref response) = current_vc {
             if response.is_object() && response["id"].is_string() {
@@ -470,7 +473,7 @@ async fn start_channel_listener(
     }
 }
 
-fn save_tokens(app_handle: &AppHandle, token_response: &TokenResponse) -> Result<(), String> {
+fn save_tokens(app_handle: &AppHandle, token_response: &OAuthTokenResponse) -> Result<(), String> {
     let now = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map_err(|e| format!("System time error: {}", e))?
@@ -491,7 +494,7 @@ fn save_tokens(app_handle: &AppHandle, token_response: &TokenResponse) -> Result
     update_vault_items(app_handle, items)
 }
 
-async fn exchange_code(params: &[(&str, &str)]) -> Result<TokenResponse, String> {
+async fn exchange_code(params: &[(&str, &str)]) -> Result<OAuthTokenResponse, String> {
     let response = reqwest::Client::new()
         .post(DISCORD_API_OAUTH2_TOKEN_URL)
         .form(params)
@@ -506,8 +509,8 @@ async fn exchange_code(params: &[(&str, &str)]) -> Result<TokenResponse, String>
 }
 
 #[tauri::command]
-pub async fn connect_discord(app_handle: AppHandle) -> Result<ConnectedUser, String> {
-    let discord = app_handle.state::<Discord>();
+pub async fn connect_discord(app_handle: AppHandle) -> Result<DiscordConnectedUser, String> {
+    let discord = app_handle.state::<DiscordState>();
 
     let vault = get_vault_items(
         &app_handle,
@@ -632,7 +635,7 @@ pub async fn connect_discord(app_handle: AppHandle) -> Result<ConnectedUser, Str
 
 #[tauri::command]
 pub fn disconnect_discord(app_handle: AppHandle, delete_vault_items: bool) -> Result<(), String> {
-    let discord = app_handle.state::<Discord>();
+    let discord = app_handle.state::<DiscordState>();
 
     {
         let mut channel_guard = discord
