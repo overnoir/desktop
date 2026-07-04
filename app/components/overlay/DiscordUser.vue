@@ -57,14 +57,15 @@ const avatarUrl = computed(() =>
         user.isSelfDeafened ||
         user.isSelfMuted ||
         user.isDeafened ||
+        user.isSuppress ||
         user.isMuted ||
         user.isBot
       "
       position="top"
     >
       <Icon
-        v-if="user.isMuted || user.isSelfMuted"
-        :class="{ 'text-red-600': user.isMuted }"
+        v-if="user.isMuted || user.isSelfMuted || user.isSuppress"
+        :class="{ 'text-red-600': user.isMuted || user.isSuppress }"
         name="lucide:mic-off"
       />
       <Icon

@@ -59,22 +59,23 @@ fn parse_user(data: &Value) -> Option<User> {
     Some(User {
         is_self_deafened: voice_state["self_deaf"].as_bool().unwrap_or(false),
         is_self_muted: voice_state["self_mute"].as_bool().unwrap_or(false),
+        is_suppress: voice_state["suppress"].as_bool().unwrap_or(false),
         is_deafened: voice_state["deaf"].as_bool().unwrap_or(false),
         is_muted: voice_state["mute"].as_bool().unwrap_or(false),
         discriminator: user["discriminator"].as_str()?.to_string(),
         nick: data["nick"].as_str().map(|s| s.to_string()),
         is_bot: user["bot"].as_bool().unwrap_or(false),
         username: user["username"].as_str()?.to_string(),
+        avatar: user
+            .get("avatar")
+            .and_then(|a| a.as_str())
+            .map(|s| s.to_string()),
         global_name: user
             .get("global_name")
             .and_then(|g| g.as_str())
             .map(|s| s.to_string()),
         id: user["id"].as_str()?.to_string(),
         is_speaking: false,
-        avatar: user
-            .get("avatar")
-            .and_then(|a| a.as_str())
-            .map(|s| s.to_string()),
     })
 }
 
@@ -547,12 +548,8 @@ pub async fn connect_discord(app_handle: AppHandle) -> Result<ConnectedUser, Str
         .await?;
 
         save_tokens(&app_handle, &token_response)?;
-        return start_channel_listener(
-            &app_handle,
-            token_response.access_token.clone(),
-            None,
-        )
-        .await;
+        return start_channel_listener(&app_handle, token_response.access_token.clone(), None)
+            .await;
     }
 
     let verifier = generate_code_verifier()?;

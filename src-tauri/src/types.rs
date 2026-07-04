@@ -11,12 +11,13 @@ pub struct TokenResponse {
 #[derive(Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct User {
-    pub avatar: Option<String>,
-    pub nick: Option<String>,
     pub global_name: Option<String>,
+    pub avatar: Option<String>,
     pub is_self_deafened: bool,
     pub discriminator: String,
+    pub nick: Option<String>,
     pub is_self_muted: bool,
+    pub is_suppress: bool,
     pub is_deafened: bool,
     pub is_speaking: bool,
     pub username: String,

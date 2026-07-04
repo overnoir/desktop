@@ -31,7 +31,8 @@ export const useDiscordStore = defineStore(
 
       if (!settings.value.showMutedUsers) {
         users = users.filter(
-          ({ isMuted, isSelfMuted }) => !isMuted && !isSelfMuted,
+          ({ isMuted, isSelfMuted, isSuppress }) =>
+            !isMuted && !isSelfMuted && !isSuppress,
         );
       }
 

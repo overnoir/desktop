@@ -199,7 +199,7 @@ useIntervalFn(
   <section class="flex" :style="styles">
     <template v-if="isOnline">
       <OverlayDiscordGuild
-        v-if="guild && settings.showGuild"
+        v-if="guild?.id && settings.showGuild"
         :guild="{
           channel: {
             name: guild.channel.name,

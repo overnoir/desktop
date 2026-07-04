@@ -141,6 +141,7 @@ export type DiscordUser = {
   nick: string | null;
   isSpeaking: boolean;
   isDeafened: boolean;
+  isSuppress: boolean;
   username: string;
   isMuted: boolean;
   isBot: boolean;
