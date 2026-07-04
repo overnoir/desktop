@@ -1,4 +1,6 @@
-use crate::types::{BatteryPayload, CpuPayload, MemoryPayload, NetworkPayload, System, SystemPayload};
+use crate::types::{
+    BatteryPayload, CpuPayload, MemoryPayload, NetworkPayload, System, SystemPayload,
+};
 use std::sync::{
     atomic::{AtomicBool, Ordering},
     Arc, Mutex,

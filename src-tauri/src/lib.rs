@@ -1,19 +1,18 @@
 use std::env;
 use tauri::Manager;
 mod api;
-mod discord;
+mod connectors;
 mod nspanel;
-mod system;
 mod types;
 mod vault;
 use api::{api_get_kick_streamers, init_api};
-use discord::{connect_discord, disconnect_discord, init_discord};
+use connectors::discord::{connect_discord, disconnect_discord, init_discord};
+use connectors::system::{connect_system, disconnect_system, init_system};
 #[cfg(target_os = "macos")]
 use nspanel::{
     convert_nspanel_to_webview_window, convert_webview_window_to_nspanel,
     set_nspanel_always_on_top, set_nspanel_ignore_cursor,
 };
-use system::{connect_system, disconnect_system, init_system};
 use vault::{clear_vault, get_vault_metadata, init_vault};
 
 pub fn run() {

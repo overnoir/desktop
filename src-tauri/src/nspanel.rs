@@ -50,7 +50,10 @@ pub fn convert_webview_window_to_nspanel(
 }
 
 #[tauri::command]
-pub fn convert_nspanel_to_webview_window(app_handle: AppHandle, label: String) -> Result<(), String> {
+pub fn convert_nspanel_to_webview_window(
+    app_handle: AppHandle,
+    label: String,
+) -> Result<(), String> {
     let panel = app_handle
         .get_webview_panel(&label)
         .map_err(|e| format!("Panel '{}' not found: {:?}", label, e))?;
