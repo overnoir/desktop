@@ -28,11 +28,12 @@ async function toggleConnection() {
         deleteVaultItems: deleteVaultItemsOnDisconnect.value,
       });
       if (deleteVaultItemsOnDisconnect.value) {
-        deleteVaultItemsOnDisconnect.value = true;
         await discordStore.$tauri.saveAllNow();
       }
+      deleteVaultItemsOnDisconnect.value = true;
       connectedUser.value = null;
     }
+
     $toast.success(t(`discord.${action}.success`));
   } catch (error) {
     errorsStore.addError({
