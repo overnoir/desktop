@@ -1,5 +1,8 @@
 import type { WebviewOptions } from "@tauri-apps/api/webview";
-import type { WindowOptions } from "@tauri-apps/api/window";
+import type {
+  BackgroundThrottlingPolicy,
+  WindowOptions,
+} from "@tauri-apps/api/window";
 
 const name = await tauriAppGetName();
 
@@ -59,6 +62,7 @@ export const overlayWebviewWindowOptions: Omit<
   "x" | "y" | "width" | "height"
 > &
   WindowOptions = {
+  backgroundThrottling: "disabled" as BackgroundThrottlingPolicy,
   title: `${name} Overlay`,
   acceptFirstMouse: true,
   decorations: false,
@@ -76,6 +80,7 @@ export const mainWebviewWindowOptions: Omit<
   "x" | "y" | "width" | "height"
 > &
   WindowOptions = {
+  backgroundThrottling: "disabled" as BackgroundThrottlingPolicy,
   url: "/settings/general",
   acceptFirstMouse: true,
   decorations: false,
@@ -94,6 +99,7 @@ export const streamWebviewWindowOptions: Omit<
   "x" | "y" | "width" | "height"
 > &
   WindowOptions = {
+  backgroundThrottling: "disabled" as BackgroundThrottlingPolicy,
   title: `${name} Stream`,
   acceptFirstMouse: true,
   decorations: false,

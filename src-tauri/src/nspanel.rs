@@ -35,11 +35,13 @@ pub fn create_nspanel(
     let panel = PanelBuilder::<_, Panel>::new(&app_handle, &label)
         .collection_behavior(
             CollectionBehavior::new()
+                .full_screen_auxiliary()
                 .can_join_all_spaces()
-                .full_screen_auxiliary(),
+                .ignores_cycle()
+                .stationary(),
         )
         .position(Position::Logical(LogicalPosition::<f64> { x: x, y: y }))
-        .style_mask(StyleMask::empty().nonactivating_panel().hud_window())
+        .style_mask(StyleMask::empty().nonactivating_panel())
         .size(Size::Logical(LogicalSize::<f64> {
             height: height,
             width: width,
@@ -47,6 +49,7 @@ pub fn create_nspanel(
         .url(WebviewUrl::App((&url).into()))
         .with_window(|window| {
             window
+                .background_throttling(tauri::utils::config::BackgroundThrottlingPolicy::Disabled)
                 .accept_first_mouse(true)
                 .decorations(false)
                 .transparent(true)
