@@ -50,22 +50,26 @@ async function updateAlwaysOnTop(value: boolean) {
   );
 
   if (tauriOSType() === "macos") {
-    await tauriCoreInvoke("set_nspanel_always_on_top", {
-      label: WebviewWindowLabel.Overlay,
-      value: value,
-    });
     if (streamWebviewWindow) {
       await tauriCoreInvoke("set_nspanel_always_on_top", {
         label: WebviewWindowLabel.Stream,
         value: value,
       });
     }
+    await tauriCoreInvoke("set_nspanel_always_on_top", {
+      label: WebviewWindowLabel.Overlay,
+      value: value,
+    });
+    await tauriCoreInvoke("set_nspanel_always_on_top", {
+      label: WebviewWindowLabel.Main,
+      value: value,
+    });
   } else {
-    await overlayWebviewWindow.setAlwaysOnTop(value);
-
     if (streamWebviewWindow) {
       streamWebviewWindow.setAlwaysOnTop(value);
     }
+    await overlayWebviewWindow.setAlwaysOnTop(value);
+    await mainWebviewWindow.setAlwaysOnTop(value);
   }
 }
 

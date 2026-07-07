@@ -5,9 +5,6 @@ const isMacOS = tauriOSType() === "macos";
 
 onMounted(async () => {
   if (isMacOS) {
-    await tauriCoreInvoke("convert_webview_window_to_nspanel", {
-      label: WebviewWindowLabel.Stream,
-    });
     await tauriCoreInvoke("set_nspanel_always_on_top", {
       value: advanced.value.alwaysOnTop,
       label: WebviewWindowLabel.Stream,

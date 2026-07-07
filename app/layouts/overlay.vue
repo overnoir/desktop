@@ -45,10 +45,6 @@ if (advanced.value.autoStart !== (await tauriAutoStartIsEnabled())) {
 
 onMounted(async () => {
   if (isMacOS) {
-    await tauriCoreInvoke("convert_webview_window_to_nspanel", {
-      label: WebviewWindowLabel.Overlay,
-      withEventHandler: true,
-    });
     await tauriCoreInvoke("set_nspanel_ignore_cursor", {
       value: advanced.value.ignoreCursor,
       label: WebviewWindowLabel.Overlay,

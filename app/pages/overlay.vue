@@ -20,6 +20,7 @@ const {
 } = storeToRefs(useSystemStore());
 const { general } = storeToRefs(useSettingsStore());
 const { onDragStart } = useWebviewWindowDrag();
+const isMacOS = tauriOSType() === "macos";
 const errorsStore = useErrorsStore();
 const isOnline = useOnline();
 
@@ -141,12 +142,26 @@ async function openStreamWebviewWindow(slug: string) {
     streamWebviewWindowOptions.height!,
   );
 
-  new TauriWebviewWindowWebviewWindow(WebviewWindowLabel.Stream, {
-    ...streamWebviewWindowOptions,
-    url: `/stream?slug=${slug}`,
-    x,
-    y,
-  });
+  if (isMacOS) {
+    await tauriCoreInvoke("create_nspanel", {
+      height: streamWebviewWindowOptions.height,
+      width: streamWebviewWindowOptions.width,
+      label: WebviewWindowLabel.Stream,
+      url: `/stream?slug=${slug}`,
+      withEventHandler: false,
+      shadow: true,
+      radius: 16,
+      x,
+      y,
+    });
+  } else {
+    new TauriWebviewWindowWebviewWindow(WebviewWindowLabel.Stream, {
+      ...streamWebviewWindowOptions,
+      url: `/stream?slug=${slug}`,
+      x,
+      y,
+    });
+  }
 }
 
 async function openMainWebviewWindow() {
@@ -164,11 +179,25 @@ async function openMainWebviewWindow() {
       mainWebviewWindowOptions.height!,
     );
 
-    new TauriWebviewWindowWebviewWindow(WebviewWindowLabel.Main, {
-      ...mainWebviewWindowOptions,
-      x,
-      y,
-    });
+    if (isMacOS) {
+      await tauriCoreInvoke("create_nspanel", {
+        height: mainWebviewWindowOptions.height,
+        width: mainWebviewWindowOptions.width,
+        label: WebviewWindowLabel.Main,
+        url: mainWebviewWindowOptions.url,
+        withEventHandler: false,
+        shadow: true,
+        radius: 16,
+        x,
+        y,
+      });
+    } else {
+      new TauriWebviewWindowWebviewWindow(WebviewWindowLabel.Main, {
+        ...mainWebviewWindowOptions,
+        x,
+        y,
+      });
+    }
   }
 }
 

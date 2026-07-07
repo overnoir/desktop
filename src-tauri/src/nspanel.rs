@@ -1,11 +1,18 @@
 #![cfg(target_os = "macos")]
-use tauri::{AppHandle, Emitter, Manager};
+use tauri::{
+    AppHandle, Emitter, LogicalPosition, LogicalSize, Manager, Position, Size, WebviewUrl,
+};
 use tauri_nspanel::{
-    tauri_panel, CollectionBehavior, ManagerExt, PanelLevel, StyleMask, WebviewWindowExt,
+    tauri_panel, CollectionBehavior, ManagerExt, PanelBuilder, PanelLevel, StyleMask,
 };
 
 tauri_panel! {
-    panel!(Panel {})
+    panel!(Panel {
+         config: {
+            can_become_main_window: false,
+            can_become_key_window: false,
+            is_floating_panel: true
+        }})
 
     panel_event!(PanelEventHandler {
         window_did_move(notification: &NSNotification) -> ()
@@ -13,53 +20,56 @@ tauri_panel! {
 }
 
 #[tauri::command]
-pub fn convert_webview_window_to_nspanel(
+pub fn create_nspanel(
     app_handle: AppHandle,
     label: String,
-    with_event_handler: Option<bool>,
+    url: String,
+    x: f64,
+    y: f64,
+    width: f64,
+    height: f64,
+    shadow: bool,
+    radius: f64,
+    with_event_handler: bool,
 ) -> Result<(), String> {
-    if app_handle.get_webview_panel(&label).is_ok() {
-        return Ok(());
-    }
+    let panel = PanelBuilder::<_, Panel>::new(&app_handle, &label)
+        .collection_behavior(CollectionBehavior::new().can_join_all_spaces())
+        .position(Position::Logical(LogicalPosition::<f64> { x: x, y: y }))
+        .style_mask(StyleMask::empty().nonactivating_panel().hud_window())
+        .size(Size::Logical(LogicalSize::<f64> {
+            height: height,
+            width: width,
+        }))
+        .url(WebviewUrl::App((&url).into()))
+        .with_window(|window| {
+            window
+                .decorations(false)
+                .transparent(true)
+                .focusable(false)
+                .focused(false)
+        })
+        .hides_on_deactivate(false)
+        .level(PanelLevel::Normal)
+        .works_when_modal(true)
+        .corner_radius(radius)
+        .has_shadow(shadow)
+        .transparent(true)
+        .no_activate(true)
+        .build()
+        .map_err(|e| format!("Failed to create '{}' nspanel: {}", label, e))?;
 
-    let window = app_handle
-        .get_webview_window(&label)
-        .ok_or_else(|| format!("Window '{}' not found", label))?;
-    let panel = window
-        .to_panel::<Panel>()
-        .map_err(|e| format!("Failed to convert '{}' to panel: {}", label, e))?;
-
-    panel.set_style_mask(StyleMask::empty().nonactivating_panel().into());
-    panel.set_hides_on_deactivate(false);
-    panel.set_works_when_modal(true);
-    panel.set_collection_behavior(CollectionBehavior::new().can_join_all_spaces().into());
-
-    if with_event_handler.unwrap_or(false) {
+    if with_event_handler {
         let handler = PanelEventHandler::new();
-        let handle_move = app_handle.clone();
+        let handle = app_handle.to_owned();
 
         handler.window_did_move(move |_| {
-            let _ = handle_move.emit_to(&label, "nspanel-moved", ());
+            let _ = handle.emit_to(&label, "nspanel-moved", ());
         });
 
         panel.set_event_handler(Some(handler.as_ref()));
     }
 
     Ok(())
-}
-
-#[tauri::command]
-pub fn convert_nspanel_to_webview_window(
-    app_handle: AppHandle,
-    label: String,
-) -> Result<(), String> {
-    let panel = app_handle
-        .get_webview_panel(&label)
-        .map_err(|e| format!("Panel '{}' not found: {:?}", label, e))?;
-    panel
-        .to_window()
-        .map(|_| ())
-        .ok_or_else(|| format!("Failed to convert panel '{}' back to window", label))
 }
 
 #[tauri::command]
@@ -89,5 +99,22 @@ pub fn set_nspanel_always_on_top(
     } else {
         panel.set_level(PanelLevel::Normal.value());
     }
+    Ok(())
+}
+
+#[tauri::command]
+pub fn destroy_nspanel(app_handle: AppHandle, label: String) -> Result<(), String> {
+    let panel = app_handle
+        .get_webview_panel(&label)
+        .map_err(|e| format!("Panel '{}' not found: {:?}", label, e))?;
+
+    let window = panel
+        .to_window()
+        .ok_or_else(|| format!("Failed to convert panel '{}' to window", label))?;
+
+    window
+        .destroy()
+        .map_err(|e| format!("Failed to destroy window '{}': {:?}", label, e))?;
+
     Ok(())
 }

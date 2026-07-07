@@ -11,8 +11,7 @@ use connectors::kick::get_kick_streamers;
 use connectors::system::{connect_system, disconnect_system, init_system};
 #[cfg(target_os = "macos")]
 use nspanel::{
-    convert_nspanel_to_webview_window, convert_webview_window_to_nspanel,
-    set_nspanel_always_on_top, set_nspanel_ignore_cursor,
+    create_nspanel, destroy_nspanel, set_nspanel_always_on_top, set_nspanel_ignore_cursor,
 };
 use vault::{clear_vault, get_vault_metadata, init_vault};
 
@@ -20,13 +19,13 @@ pub fn run() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             #[cfg(target_os = "macos")]
-            convert_webview_window_to_nspanel,
-            #[cfg(target_os = "macos")]
-            convert_nspanel_to_webview_window,
-            #[cfg(target_os = "macos")]
             set_nspanel_ignore_cursor,
             #[cfg(target_os = "macos")]
             set_nspanel_always_on_top,
+            #[cfg(target_os = "macos")]
+            destroy_nspanel,
+            #[cfg(target_os = "macos")]
+            create_nspanel,
             get_kick_streamers,
             get_vault_metadata,
             disconnect_discord,

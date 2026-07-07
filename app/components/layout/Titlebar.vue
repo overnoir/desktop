@@ -5,11 +5,12 @@ const isMacOS = tauriOSType() === "macos";
 
 async function destroy() {
   if (isMacOS) {
-    await tauriCoreInvoke("convert_nspanel_to_webview_window", {
+    await tauriCoreInvoke("destroy_nspanel", {
       label: currentWebviewWindow.label,
     });
+  } else {
+    await currentWebviewWindow.destroy();
   }
-  await currentWebviewWindow.destroy();
 }
 </script>
 

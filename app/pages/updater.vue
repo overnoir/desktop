@@ -8,11 +8,25 @@ const status = ref<"checking" | "downloading" | "loading">("checking");
 setTimeout(() => {
   status.value = "downloading";
 
-  setTimeout(() => {
-    new TauriWebviewWindowWebviewWindow(
-      WebviewWindowLabel.Overlay,
-      overlayWebviewWindowOptions,
-    );
+  setTimeout(async () => {
+    if (tauriOSType() === "macos") {
+      await tauriCoreInvoke("create_nspanel", {
+        url: overlayWebviewWindowOptions.url,
+        label: WebviewWindowLabel.Overlay,
+        withEventHandler: true,
+        shadow: false,
+        height: 0,
+        radius: 0,
+        width: 0,
+        x: 0,
+        y: 0,
+      });
+    } else {
+      new TauriWebviewWindowWebviewWindow(
+        WebviewWindowLabel.Overlay,
+        overlayWebviewWindowOptions,
+      );
+    }
     status.value = "loading";
   }, 1000);
 }, 1000);
