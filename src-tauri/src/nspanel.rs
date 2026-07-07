@@ -47,6 +47,7 @@ pub fn create_nspanel(
         .url(WebviewUrl::App((&url).into()))
         .with_window(|window| {
             window
+                .accept_first_mouse(true)
                 .decorations(false)
                 .transparent(true)
                 .focusable(false)
