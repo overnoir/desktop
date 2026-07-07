@@ -13,6 +13,7 @@ setTimeout(() => {
       await tauriCoreInvoke("create_nspanel", {
         url: overlayWebviewWindowOptions.url,
         label: WebviewWindowLabel.Overlay,
+        canBecomeKeyWindow: false,
         withEventHandler: true,
         shadow: false,
         height: 0,

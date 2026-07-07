@@ -1,9 +1,10 @@
 #![cfg(target_os = "macos")]
 use tauri::{
-    AppHandle, Emitter, LogicalPosition, LogicalSize, Manager, Position, Size, WebviewUrl,
+    AppHandle, Emitter, LogicalPosition, LogicalSize, Manager, Position, Runtime, Size, WebviewUrl,
 };
 use tauri_nspanel::{
-    tauri_panel, CollectionBehavior, ManagerExt, PanelBuilder, PanelLevel, StyleMask,
+    tauri_panel, CollectionBehavior, FromWindow, ManagerExt, Panel as PanelTrait, PanelBuilder,
+    PanelLevel, StyleMask,
 };
 
 tauri_panel! {
@@ -12,27 +13,34 @@ tauri_panel! {
             can_become_main_window: false,
             can_become_key_window: true,
             is_floating_panel: true
-        }})
+        }
+    })
+
+    panel!(NonKeyPanel {
+         config: {
+            can_become_main_window: false,
+            can_become_key_window: false,
+            is_floating_panel: true
+        }
+    })
 
     panel_event!(PanelEventHandler {
         window_did_move(notification: &NSNotification) -> ()
     })
 }
 
-#[tauri::command]
-pub fn create_nspanel(
-    app_handle: AppHandle,
-    label: String,
-    url: String,
+fn build_nspanel<R: Runtime, T: PanelTrait<R> + FromWindow<R> + 'static>(
+    app_handle: &AppHandle<R>,
+    label: &str,
+    url: &str,
     x: f64,
     y: f64,
     width: f64,
     height: f64,
     shadow: bool,
     radius: f64,
-    with_event_handler: bool,
-) -> Result<(), String> {
-    let panel = PanelBuilder::<_, Panel>::new(&app_handle, &label)
+) -> Result<std::sync::Arc<dyn PanelTrait<R>>, String> {
+    PanelBuilder::<R, T>::new(app_handle, label)
         .collection_behavior(
             CollectionBehavior::new()
                 .full_screen_auxiliary()
@@ -40,16 +48,18 @@ pub fn create_nspanel(
                 .ignores_cycle()
                 .stationary(),
         )
-        .position(Position::Logical(LogicalPosition::<f64> { x: x, y: y }))
+        .position(Position::Logical(LogicalPosition::<f64> { x, y }))
         .style_mask(StyleMask::empty().nonactivating_panel())
         .size(Size::Logical(LogicalSize::<f64> {
-            height: height,
-            width: width,
+            height,
+            width,
         }))
         .url(WebviewUrl::App((&url).into()))
         .with_window(|window| {
             window
-                .background_throttling(tauri::utils::config::BackgroundThrottlingPolicy::Disabled)
+                .background_throttling(
+                    tauri::utils::config::BackgroundThrottlingPolicy::Disabled,
+                )
                 .accept_first_mouse(true)
                 .decorations(false)
                 .transparent(true)
@@ -64,7 +74,32 @@ pub fn create_nspanel(
         .transparent(true)
         .no_activate(true)
         .build()
-        .map_err(|e| format!("Failed to create '{}' nspanel: {}", label, e))?;
+        .map_err(|e| format!("Failed to create '{}' nspanel: {}", label, e))
+}
+
+#[tauri::command]
+pub fn create_nspanel(
+    app_handle: AppHandle,
+    label: String,
+    url: String,
+    x: f64,
+    y: f64,
+    width: f64,
+    height: f64,
+    shadow: bool,
+    radius: f64,
+    can_become_key_window: Option<bool>,
+    with_event_handler: bool,
+) -> Result<(), String> {
+    let panel = if can_become_key_window.unwrap_or(true) {
+        build_nspanel::<_, Panel>(
+            &app_handle, &label, &url, x, y, width, height, shadow, radius,
+        )?
+    } else {
+        build_nspanel::<_, NonKeyPanel>(
+            &app_handle, &label, &url, x, y, width, height, shadow, radius,
+        )?
+    };
 
     if with_event_handler {
         let handler = PanelEventHandler::new();

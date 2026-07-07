@@ -148,6 +148,7 @@ async function openStreamWebviewWindow(slug: string) {
       width: streamWebviewWindowOptions.width,
       label: WebviewWindowLabel.Stream,
       url: `/stream?slug=${slug}`,
+      canBecomeKeyWindow: false,
       withEventHandler: false,
       shadow: true,
       radius: 16,
@@ -183,8 +184,9 @@ async function openMainWebviewWindow() {
       await tauriCoreInvoke("create_nspanel", {
         height: mainWebviewWindowOptions.height,
         width: mainWebviewWindowOptions.width,
-        label: WebviewWindowLabel.Main,
         url: mainWebviewWindowOptions.url,
+        label: WebviewWindowLabel.Main,
+        canBecomeKeyWindow: true,
         withEventHandler: false,
         shadow: true,
         radius: 16,
