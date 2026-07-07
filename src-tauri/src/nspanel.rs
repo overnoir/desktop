@@ -10,7 +10,7 @@ tauri_panel! {
     panel!(Panel {
          config: {
             can_become_main_window: false,
-            can_become_key_window: false,
+            can_become_key_window: true,
             is_floating_panel: true
         }})
 
@@ -33,7 +33,11 @@ pub fn create_nspanel(
     with_event_handler: bool,
 ) -> Result<(), String> {
     let panel = PanelBuilder::<_, Panel>::new(&app_handle, &label)
-        .collection_behavior(CollectionBehavior::new().can_join_all_spaces())
+        .collection_behavior(
+            CollectionBehavior::new()
+                .can_join_all_spaces()
+                .full_screen_auxiliary(),
+        )
         .position(Position::Logical(LogicalPosition::<f64> { x: x, y: y }))
         .style_mask(StyleMask::empty().nonactivating_panel().hud_window())
         .size(Size::Logical(LogicalSize::<f64> {
