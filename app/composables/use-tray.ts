@@ -1,6 +1,8 @@
 import type { Image } from "@tauri-apps/api/image";
 
 export default function () {
+  const { general } = storeToRefs(useSettingsStore());
+  const isMacOS = tauriOSType() === "macos";
   const { t } = useI18n();
 
   async function generateMenu() {
@@ -8,6 +10,15 @@ export default function () {
       items: [
         {
           action: async () => {
+            const overlayWebviewWindow =
+              await TauriWebviewWindowWebviewWindow.getByLabel(
+                WebviewWindowLabel.Overlay,
+              );
+
+            if (!overlayWebviewWindow) {
+              return;
+            }
+
             const mainWebviewWindow =
               await TauriWebviewWindowWebviewWindow.getByLabel(
                 WebviewWindowLabel.Main,
@@ -18,10 +29,37 @@ export default function () {
               await mainWebviewWindow.unminimize();
               await mainWebviewWindow.setFocus();
             } else {
-              new TauriWebviewWindowWebviewWindow(
-                WebviewWindowLabel.Main,
-                mainWebviewWindowOptions,
-              );
+              const position = await overlayWebviewWindow.outerPosition();
+              const size = await overlayWebviewWindow.outerSize();
+              const monitor = await tauriWindowCurrentMonitor();
+
+              const { x, y } = generateOverlaySidePosition({
+                size: {
+                  width: mainWebviewWindowOptions.width!,
+                  height: mainWebviewWindowOptions.height!,
+                },
+                overlay: { position, size },
+                monitor,
+                orientation: general.value.orientation,
+              });
+
+              if (isMacOS) {
+                await tauriCoreInvoke("create_nspanel", {
+                  height: mainWebviewWindowOptions.height,
+                  width: mainWebviewWindowOptions.width,
+                  url: mainWebviewWindowOptions.url,
+                  label: WebviewWindowLabel.Main,
+                  canBecomeKeyWindow: true,
+                  x,
+                  y,
+                });
+              } else {
+                new TauriWebviewWindowWebviewWindow(WebviewWindowLabel.Main, {
+                  ...mainWebviewWindowOptions,
+                  x,
+                  y,
+                });
+              }
             }
           },
           text: t("tray.settings"),

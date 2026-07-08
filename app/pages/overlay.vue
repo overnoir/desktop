@@ -71,59 +71,6 @@ try {
   isConnected.value = false;
 }
 
-async function generateWebviewWindowPosition(width: number, height: number) {
-  const position = await overlayWebviewWindow.outerPosition();
-  const size = await overlayWebviewWindow.outerSize();
-  const monitor = await tauriWindowCurrentMonitor();
-  const gap = 10;
-  let x = 0;
-  let y = 0;
-
-  if (general.value.orientation === Orientation.Vertical) {
-    if (monitor) {
-      const rightX = position.x + size.width + gap;
-      const leftX = position.x - width - gap;
-      const monitorRight = monitor.position.x + monitor.size.width;
-      const monitorLeft = monitor.position.x;
-
-      if (rightX + width <= monitorRight) {
-        x = rightX;
-      } else if (leftX >= monitorLeft) {
-        x = leftX;
-      } else {
-        x = rightX;
-      }
-    } else {
-      x = position.x + size.width + gap;
-    }
-
-    y = position.y;
-  }
-
-  if (general.value.orientation === Orientation.Horizontal) {
-    if (monitor) {
-      const monitorBottom = monitor.position.y + monitor.size.height;
-      const bottomY = position.y + size.height + gap;
-      const topY = position.y - height - gap;
-      const monitorTop = monitor.position.y;
-
-      if (bottomY + height <= monitorBottom) {
-        y = bottomY;
-      } else if (topY >= monitorTop) {
-        y = topY;
-      } else {
-        y = bottomY;
-      }
-    } else {
-      y = position.y + size.height + gap;
-    }
-
-    x = position.x;
-  }
-
-  return { x, y };
-}
-
 async function openStreamWebviewWindow(slug: string) {
   const streamWebviewWindow = await TauriWebviewWindowWebviewWindow.getByLabel(
     WebviewWindowLabel.Stream,
@@ -137,10 +84,19 @@ async function openStreamWebviewWindow(slug: string) {
     return;
   }
 
-  const { x, y } = await generateWebviewWindowPosition(
-    streamWebviewWindowOptions.width!,
-    streamWebviewWindowOptions.height!,
-  );
+  const position = await overlayWebviewWindow.outerPosition();
+  const size = await overlayWebviewWindow.outerSize();
+  const monitor = await tauriWindowCurrentMonitor();
+
+  const { x, y } = generateOverlaySidePosition({
+    size: {
+      height: streamWebviewWindowOptions.height!,
+      width: streamWebviewWindowOptions.width!,
+    },
+    orientation: general.value.orientation,
+    overlay: { position, size },
+    monitor,
+  });
 
   if (isMacOS) {
     await tauriCoreInvoke("create_nspanel", {
@@ -171,10 +127,19 @@ async function openMainWebviewWindow() {
     await mainWebviewWindow.unminimize();
     await mainWebviewWindow.setFocus();
   } else {
-    const { x, y } = await generateWebviewWindowPosition(
-      mainWebviewWindowOptions.width!,
-      mainWebviewWindowOptions.height!,
-    );
+    const position = await overlayWebviewWindow.outerPosition();
+    const size = await overlayWebviewWindow.outerSize();
+    const monitor = await tauriWindowCurrentMonitor();
+
+    const { x, y } = generateOverlaySidePosition({
+      size: {
+        width: mainWebviewWindowOptions.width!,
+        height: mainWebviewWindowOptions.height!,
+      },
+      overlay: { position, size },
+      monitor,
+      orientation: general.value.orientation,
+    });
 
     if (isMacOS) {
       await tauriCoreInvoke("create_nspanel", {
