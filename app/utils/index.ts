@@ -49,7 +49,6 @@ export function generateOverlaySidePosition({
   overlay: { position, size },
   size: { width, height },
   orientation,
-  gap = 10,
   monitor,
 }: {
   size: Pick<PhysicalSize, "width" | "height">;
@@ -59,16 +58,16 @@ export function generateOverlaySidePosition({
   };
   orientation: Orientation;
   monitor: Monitor | null;
-  gap?: number;
 }): { x: number; y: number } {
+  const offset = 10;
   let x = 0;
   let y = 0;
 
   if (orientation === Orientation.Vertical) {
     if (monitor) {
       const monitorRight = monitor.position.x + monitor.size.width;
-      const rightX = position.x + size.width + gap;
-      const leftX = position.x - width - gap;
+      const rightX = position.x + size.width + offset;
+      const leftX = position.x - width - offset;
       const monitorLeft = monitor.position.x;
 
       if (rightX + width <= monitorRight) {
@@ -79,7 +78,7 @@ export function generateOverlaySidePosition({
         x = rightX;
       }
     } else {
-      x = position.x + size.width + gap;
+      x = position.x + size.width + offset;
     }
 
     y = position.y;
@@ -88,8 +87,8 @@ export function generateOverlaySidePosition({
   if (orientation === Orientation.Horizontal) {
     if (monitor) {
       const monitorBottom = monitor.position.y + monitor.size.height;
-      const bottomY = position.y + size.height + gap;
-      const topY = position.y - height - gap;
+      const bottomY = position.y + size.height + offset;
+      const topY = position.y - height - offset;
       const monitorTop = monitor.position.y;
 
       if (bottomY + height <= monitorBottom) {
@@ -100,10 +99,21 @@ export function generateOverlaySidePosition({
         y = bottomY;
       }
     } else {
-      y = position.y + size.height + gap;
+      y = position.y + size.height + offset;
     }
 
     x = position.x;
+  }
+
+  if (monitor) {
+    x = Math.max(
+      monitor.position.x + offset,
+      Math.min(x, monitor.position.x + monitor.size.width - width - offset),
+    );
+    y = Math.max(
+      monitor.position.y + offset,
+      Math.min(y, monitor.position.y + monitor.size.height - height - offset),
+    );
   }
 
   return { x, y };

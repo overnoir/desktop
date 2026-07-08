@@ -216,7 +216,6 @@ useIntervalFn(
       v-if="systemSettings.showNetwork && network"
       :network
     />
-
     <OverlayOffline v-if="!isOnline" />
     <OverlaySettings
       v-if="general.showSettings"
