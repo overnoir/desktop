@@ -114,10 +114,13 @@ onMounted(async () => {
       }
     }
 
-    await Promise.all([
-      overlayWebviewWindow.setPosition(new TauriDpiLogicalPosition(newX, newY)),
-      overlayWebviewWindow.setSize(new TauriDpiLogicalSize(width, height)),
-    ]);
+    if (!isDragging.value) {
+      await overlayWebviewWindow.setPosition(
+        new TauriDpiLogicalPosition(newX, newY),
+      );
+    }
+
+    await overlayWebviewWindow.setSize(new TauriDpiLogicalSize(width, height));
   });
 
   const updaterWebviewWindow = await TauriWebviewWindowWebviewWindow.getByLabel(
