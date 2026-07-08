@@ -11,16 +11,11 @@ setTimeout(() => {
   setTimeout(async () => {
     if (tauriOSType() === "macos") {
       await tauriCoreInvoke("create_nspanel", {
-        url: overlayWebviewWindowOptions.url,
+        ...overlayWebviewWindowOptions,
         label: WebviewWindowLabel.Overlay,
-        canBecomeKeyWindow: false,
         withEventHandler: true,
         shadow: false,
-        height: 0,
         radius: 0,
-        width: 0,
-        x: 0,
-        y: 0,
       });
     } else {
       new TauriWebviewWindowWebviewWindow(

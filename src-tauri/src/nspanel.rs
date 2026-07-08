@@ -50,16 +50,11 @@ fn build_nspanel<R: Runtime, T: PanelTrait<R> + FromWindow<R> + 'static>(
         )
         .position(Position::Logical(LogicalPosition::<f64> { x, y }))
         .style_mask(StyleMask::empty().nonactivating_panel())
-        .size(Size::Logical(LogicalSize::<f64> {
-            height,
-            width,
-        }))
+        .size(Size::Logical(LogicalSize::<f64> { height, width }))
         .url(WebviewUrl::App((&url).into()))
         .with_window(|window| {
             window
-                .background_throttling(
-                    tauri::utils::config::BackgroundThrottlingPolicy::Disabled,
-                )
+                .background_throttling(tauri::utils::config::BackgroundThrottlingPolicy::Disabled)
                 .accept_first_mouse(true)
                 .decorations(false)
                 .transparent(true)
@@ -86,18 +81,39 @@ pub fn create_nspanel(
     y: f64,
     width: f64,
     height: f64,
-    shadow: bool,
-    radius: f64,
+    shadow: Option<bool>,
+    radius: Option<f64>,
     can_become_key_window: Option<bool>,
-    with_event_handler: bool,
+    with_event_handler: Option<bool>,
 ) -> Result<(), String> {
-    let panel = if can_become_key_window.unwrap_or(true) {
+    let can_become_key_window = can_become_key_window.unwrap_or(false);
+    let with_event_handler = with_event_handler.unwrap_or(false);
+    let shadow = shadow.unwrap_or(true);
+    let radius = radius.unwrap_or(16.0);
+
+    let panel = if can_become_key_window {
         build_nspanel::<_, Panel>(
-            &app_handle, &label, &url, x, y, width, height, shadow, radius,
+            &app_handle,
+            &label,
+            &url,
+            x,
+            y,
+            width,
+            height,
+            shadow,
+            radius,
         )?
     } else {
         build_nspanel::<_, NonKeyPanel>(
-            &app_handle, &label, &url, x, y, width, height, shadow, radius,
+            &app_handle,
+            &label,
+            &url,
+            x,
+            y,
+            width,
+            height,
+            shadow,
+            radius,
         )?
     };
 

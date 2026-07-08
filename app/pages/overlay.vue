@@ -148,10 +148,6 @@ async function openStreamWebviewWindow(slug: string) {
       width: streamWebviewWindowOptions.width,
       label: WebviewWindowLabel.Stream,
       url: `/stream?slug=${slug}`,
-      canBecomeKeyWindow: false,
-      withEventHandler: false,
-      shadow: true,
-      radius: 16,
       x,
       y,
     });
@@ -187,9 +183,6 @@ async function openMainWebviewWindow() {
         url: mainWebviewWindowOptions.url,
         label: WebviewWindowLabel.Main,
         canBecomeKeyWindow: true,
-        withEventHandler: false,
-        shadow: true,
-        radius: 16,
         x,
         y,
       });
