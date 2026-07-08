@@ -5,13 +5,15 @@ defineProps<{ network: SystemNetwork }>();
 <template>
   <OverlayItem>
     <OverlayItemContent>
-      <Icon name="lucide:wifi" class="size-[35%]" />
+      <Icon name="lucide:wifi" class="size-[33%]" />
     </OverlayItemContent>
     <OverlayItemBadge position="top">
-      {{ network.upload.toFixed(2) }}MB
+      <Icon name="lucide:arrow-up" />
+      <span> {{ network.upload.toFixed(1) }}MB </span>
     </OverlayItemBadge>
     <OverlayItemBadge position="bottom">
-      {{ network.download.toFixed(2) }}MB
+      <Icon name="lucide:arrow-down" />
+      <span> {{ network.download.toFixed(1) }}MB </span>
     </OverlayItemBadge>
   </OverlayItem>
 </template>

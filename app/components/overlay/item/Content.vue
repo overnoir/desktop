@@ -12,7 +12,7 @@ const styles = computed<CSSProperties>(() => ({
 
 <template>
   <div
-    class="relative bg-background grid place-items-center border overflow-hidden"
+    class="bg-background flex flex-col justify-center items-center border overflow-hidden"
     :style="styles"
   >
     <slot />

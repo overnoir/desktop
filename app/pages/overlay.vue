@@ -40,6 +40,7 @@ await tauriEventListen<{
   memory: SystemMemory;
   cpu: SystemCpu;
 } | null>("system-update", ({ payload }) => {
+  console.log({ payload });
   network.value = payload?.network;
   battery.value = payload?.battery;
   memory.value = payload?.memory;
@@ -207,14 +208,15 @@ useIntervalFn(
     </template>
     <OverlaySystemCpu v-if="systemSettings.showCpu && cpu" :cpu />
     <OverlaySystemMemory v-if="systemSettings.showMemory && memory" :memory />
-    <OverlaySystemNetwork
-      v-if="systemSettings.showNetwork && network"
-      :network
-    />
     <OverlaySystemBattery
       v-if="systemSettings.showBattery && battery"
       :battery
     />
+    <OverlaySystemNetwork
+      v-if="systemSettings.showNetwork && network"
+      :network
+    />
+
     <OverlayOffline v-if="!isOnline" />
     <OverlaySettings
       v-if="general.showSettings"
