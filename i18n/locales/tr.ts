@@ -40,6 +40,21 @@ export default {
   error: {
     clear: "Temizle",
   },
+  connect: {
+    success: "Bağlantı başarıyla yapıldı.",
+    button: "Bağlan",
+  },
+  disconnect: {
+    success: "Bağlantı başarıyla kesildi.",
+    button: "Bağlantıyı Kes",
+    dialog: {
+      title: "Onay",
+      description: "Bağlantınızı kesmek istediğinize emin misiniz?",
+      deleteVaultItems: "Token verilerini kasadan sil",
+      confirm: "Evet, kes",
+      cancel: "Vazgeç",
+    },
+  },
   reset: {
     title: "Sıfırla",
     description: "Tüm ayarları varsayılan ayarlarına döndürün.",
@@ -164,23 +179,7 @@ export default {
     },
   },
   discord: {
-    connect: {
-      success: "Bağlantı başarıyla yapıldı.",
-      description: "Bağlanmak için Discord sizden onay isteyecek.",
-      button: "Bağlan",
-    },
-    disconnect: {
-      success: "Bağlantı başarıyla kesildi.",
-      description: "{username} olarak bağlanıldı.",
-      button: "Bağlantıyı Kes",
-      dialog: {
-        title: "Discord RPC Bağlantısını Kes",
-        description: "Discord bağlantınızı kesmek istediğinize emin misiniz?",
-        deleteVaultItems: "Token verilerini kasadan sil",
-        confirm: "Evet, kes",
-        cancel: "Vazgeç",
-      },
-    },
+    connectedUser: "{username} olarak bağlanıldı.",
     show: {
       always: "Her Zaman",
       whileSpeaking: "Konuşurken",
@@ -282,14 +281,6 @@ export default {
     },
   },
   system: {
-    connect: {
-      success: "Bağlantı başarıyla yapıldı.",
-      button: "Bağlan",
-    },
-    disconnect: {
-      success: "Bağlantı başarıyla kesildi.",
-      button: "Bağlantıyı Kes",
-    },
     showCpu: {
       title: "CPU Kullanımını Göster",
       description: "CPU kullanımının gözükmesini sağlayın.",

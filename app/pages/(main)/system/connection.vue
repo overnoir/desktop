@@ -16,7 +16,7 @@ async function toggleConnection() {
       await tauriCoreInvoke("disconnect_system");
     }
     isConnected.value = !isConnected.value;
-    $toast.success(t(`system.${action}.success`));
+    $toast.success(t(`${action}.success`));
   } catch (error) {
     errorsStore.addError({
       message: JSON.stringify(error),
@@ -43,7 +43,7 @@ async function toggleConnection() {
           size="lg"
           @click="toggleConnection"
         >
-          {{ $t(`system.${isConnected ? "disconnect" : "connect"}.button`) }}
+          {{ $t(`${isConnected ? "disconnect" : "connect"}.button`) }}
         </Button>
       </CardContent>
     </Card>
