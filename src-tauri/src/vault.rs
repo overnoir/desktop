@@ -175,7 +175,11 @@ pub fn update_vault_items(
             };
 
             store
-                .insert(key.as_bytes().to_vec(), item.to_string().into_bytes(), None)
+                .insert(
+                    key.as_bytes().to_vec(),
+                    serde_json::to_vec(&item).map_err(|e| e.to_string())?,
+                    None,
+                )
                 .map_err(|e| format!("Failed to update vault: {}", e))?;
         }
     }
