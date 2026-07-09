@@ -5,11 +5,11 @@ onMounted(async () => {
 </script>
 
 <template>
-  <html>
+  <Html>
     <Body class="**:select-none">
       <main class="h-screen border rounded-2xl">
         <slot />
       </main>
     </Body>
-  </html>
+  </Html>
 </template>
