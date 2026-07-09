@@ -32,16 +32,16 @@ setTimeout(() => {
     data-tauri-drag-region
   >
     <NuxtImg src="/logo.png" class="size-17" alt="Logo" />
-    <div class="flex flex-col items-center gap-1.5">
+    <div class="flex flex-col items-center gap-3">
+      <p class="text-sm text-secondary-foreground">
+        {{ $t(`updater.${status}`) }}
+      </p>
       <Progress
         v-if="status === 'downloading'"
         :model-value="70"
         class="my-1.5"
       />
       <Spinner v-else class="size-5 text-primary" />
-      <p class="text-sm text-secondary-foreground">
-        {{ $t(`updater.${status}`) }}
-      </p>
     </div>
   </section>
 </template>
