@@ -45,9 +45,7 @@ export default function () {
 
               if (isMacOS) {
                 await tauriCoreInvoke("create_nspanel", {
-                  height: mainWebviewWindowOptions.height,
-                  width: mainWebviewWindowOptions.width,
-                  url: mainWebviewWindowOptions.url,
+                  ...mainWebviewWindowOptions,
                   label: WebviewWindowLabel.Main,
                   canBecomeKeyWindow: true,
                   x,

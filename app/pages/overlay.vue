@@ -101,8 +101,7 @@ async function openStreamWebviewWindow(slug: string) {
 
   if (isMacOS) {
     await tauriCoreInvoke("create_nspanel", {
-      height: streamWebviewWindowOptions.height,
-      width: streamWebviewWindowOptions.width,
+      ...streamWebviewWindowOptions,
       label: WebviewWindowLabel.Stream,
       url: `/stream?slug=${slug}`,
       x,
@@ -144,9 +143,7 @@ async function openMainWebviewWindow() {
 
     if (isMacOS) {
       await tauriCoreInvoke("create_nspanel", {
-        height: mainWebviewWindowOptions.height,
-        width: mainWebviewWindowOptions.width,
-        url: mainWebviewWindowOptions.url,
+        ...mainWebviewWindowOptions,
         label: WebviewWindowLabel.Main,
         canBecomeKeyWindow: true,
         x,
