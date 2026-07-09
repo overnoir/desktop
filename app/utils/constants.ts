@@ -93,6 +93,7 @@ export const mainWebviewWindowOptions: Omit<
   skipTaskbar: true,
   resizable: false,
   visible: false,
+  shadow: false,
   title: name,
   height: 500,
   width: 900,
@@ -112,6 +113,7 @@ export const streamWebviewWindowOptions: Omit<
   skipTaskbar: true,
   resizable: false,
   visible: false,
+  shadow: false,
   height: 500,
   width: 770,
 };

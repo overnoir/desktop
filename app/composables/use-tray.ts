@@ -84,7 +84,7 @@ export default function () {
 
     let icon: string | Image | undefined;
 
-    if (tauriOSType() === "macos") {
+    if (isMacOS) {
       const bytes = new Uint8Array(
         await $fetch("/macos-tray-icon.png", { responseType: "arrayBuffer" }),
       );

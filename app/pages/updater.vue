@@ -14,8 +14,6 @@ setTimeout(() => {
         ...overlayWebviewWindowOptions,
         label: WebviewWindowLabel.Overlay,
         withEventHandler: true,
-        shadow: false,
-        radius: 0,
       });
     } else {
       new TauriWebviewWindowWebviewWindow(

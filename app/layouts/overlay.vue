@@ -138,8 +138,10 @@ onMounted(async () => {
 </script>
 
 <template>
-  <Html :style="htmlStyles">
-    <Body class="size-max **:select-none **:transition-none bg-transparent">
+  <Html :style="htmlStyles" class="rounded-none">
+    <Body
+      class="size-max **:select-none **:transition-none bg-transparent rounded-none"
+    >
       <main :style="backgroundStyles">
         <slot />
       </main>

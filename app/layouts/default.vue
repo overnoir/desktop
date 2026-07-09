@@ -17,12 +17,12 @@ onMounted(async () => {
 </script>
 
 <template>
-  <Html :class="{ 'rounded-2xl': isMacOS }">
-    <Body :class="{ 'rounded-2xl': isMacOS }">
+  <Html>
+    <Body>
       <NuxtLoadingIndicator color="var(--primary)" />
       <LayoutTitlebar />
       <SonnerToaster />
-      <div class="flex h-screen pt-8.25">
+      <div class="flex h-screen pt-8.25 border rounded-2xl">
         <LayoutNavbar />
         <main
           class="p-5.5 w-full overflow-auto border-l border-t rounded-tl-2xl"

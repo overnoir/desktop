@@ -5,6 +5,7 @@ const overlayWebviewWindow = await TauriWebviewWindowWebviewWindow.getByLabel(
 const mainWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const settingsStore = useSettingsStore();
 const { general, advanced } = storeToRefs(settingsStore);
+const isMacOS = tauriOSType() === "macos";
 const { $toast } = useNuxtApp();
 const { t } = useI18n();
 
@@ -13,7 +14,7 @@ async function updateIgnoreCursor(value: boolean) {
     return;
   }
 
-  if (tauriOSType() === "macos") {
+  if (isMacOS) {
     await tauriCoreInvoke("set_nspanel_ignore_cursor", {
       label: WebviewWindowLabel.Overlay,
       value,
@@ -49,7 +50,7 @@ async function updateAlwaysOnTop(value: boolean) {
     WebviewWindowLabel.Stream,
   );
 
-  if (tauriOSType() === "macos") {
+  if (isMacOS) {
     if (streamWebviewWindow) {
       await tauriCoreInvoke("set_nspanel_always_on_top", {
         label: WebviewWindowLabel.Stream,

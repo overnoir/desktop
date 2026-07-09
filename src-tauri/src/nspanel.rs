@@ -37,8 +37,6 @@ fn build_nspanel<R: Runtime, T: PanelTrait<R> + FromWindow<R> + 'static>(
     y: f64,
     width: f64,
     height: f64,
-    shadow: bool,
-    radius: f64,
 ) -> Result<std::sync::Arc<dyn PanelTrait<R>>, String> {
     PanelBuilder::<R, T>::new(app_handle, label)
         .collection_behavior(
@@ -64,8 +62,8 @@ fn build_nspanel<R: Runtime, T: PanelTrait<R> + FromWindow<R> + 'static>(
         .hides_on_deactivate(false)
         .level(PanelLevel::Normal)
         .works_when_modal(true)
-        .corner_radius(radius)
-        .has_shadow(shadow)
+        //.corner_radius(radius)
+        .has_shadow(false)
         .transparent(true)
         .no_activate(true)
         .build()
@@ -81,40 +79,16 @@ pub fn create_nspanel(
     y: f64,
     width: f64,
     height: f64,
-    shadow: Option<bool>,
-    radius: Option<f64>,
     can_become_key_window: Option<bool>,
     with_event_handler: Option<bool>,
 ) -> Result<(), String> {
     let can_become_key_window = can_become_key_window.unwrap_or(false);
     let with_event_handler = with_event_handler.unwrap_or(false);
-    let shadow = shadow.unwrap_or(true);
-    let radius = radius.unwrap_or(16.0);
 
     let panel = if can_become_key_window {
-        build_nspanel::<_, Panel>(
-            &app_handle,
-            &label,
-            &url,
-            x,
-            y,
-            width,
-            height,
-            shadow,
-            radius,
-        )?
+        build_nspanel::<_, Panel>(&app_handle, &label, &url, x, y, width, height)?
     } else {
-        build_nspanel::<_, NonKeyPanel>(
-            &app_handle,
-            &label,
-            &url,
-            x,
-            y,
-            width,
-            height,
-            shadow,
-            radius,
-        )?
+        build_nspanel::<_, NonKeyPanel>(&app_handle, &label, &url, x, y, width, height)?
     };
 
     if with_event_handler {

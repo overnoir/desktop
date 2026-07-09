@@ -31,7 +31,7 @@
 
 @layer base {
   body {
-    @apply bg-background text-foreground contain-paint selection:bg-primary/50 selection:text-foreground font-[Inter];
+    @apply bg-background text-foreground contain-paint selection:bg-primary/50 selection:text-foreground font-[Inter] rounded-2xl;
   }
   * {
     @apply border-border outline-border/50 scrollbar-thumb-secondary/50 scrollbar-thin;
@@ -40,6 +40,6 @@
     @apply select-none pointer-events-none;
   }
   html {
-    @apply overflow-hidden;
+    @apply overflow-hidden rounded-2xl;
   }
 }

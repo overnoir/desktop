@@ -19,6 +19,7 @@
         "label": "updater",
         "url": "/updater",
         "visible": false,
+        "shadow": false,
         "center": true,
         "height": 300,
         "width": 400

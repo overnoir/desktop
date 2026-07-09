@@ -17,12 +17,14 @@ onMounted(async () => {
 </script>
 
 <template>
-  <Html :class="{ 'rounded-2xl': isMacOS }">
-    <Body :class="{ 'rounded-2xl': isMacOS }">
-      <LayoutTitlebar />
-      <main class="h-screen pt-8.25">
-        <slot />
-      </main>
+  <Html>
+    <Body>
+      <div class="border rounded-2xl">
+        <LayoutTitlebar />
+        <main class="h-screen pt-8.25">
+          <slot />
+        </main>
+      </div>
     </Body>
   </Html>
 </template>
