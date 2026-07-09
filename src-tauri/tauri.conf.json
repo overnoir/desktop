@@ -12,6 +12,7 @@
   "app": {
     "windows": [
       {
+        "generalAutofillEnabled": false,
         "title": "Overnoir Updater",
         "decorations": false,
         "transparent": true,

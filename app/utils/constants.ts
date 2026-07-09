@@ -63,6 +63,7 @@ export const overlayWebviewWindowOptions: Omit<
 > &
   WindowOptions = {
   backgroundThrottling: "disabled" as BackgroundThrottlingPolicy,
+  generalAutofillEnabled: false,
   title: `${name} Overlay`,
   acceptFirstMouse: true,
   decorations: false,
@@ -85,6 +86,7 @@ export const mainWebviewWindowOptions: Omit<
 > &
   WindowOptions = {
   backgroundThrottling: "disabled" as BackgroundThrottlingPolicy,
+  generalAutofillEnabled: false,
   url: "/settings/general",
   acceptFirstMouse: true,
   decorations: false,
@@ -105,6 +107,7 @@ export const streamWebviewWindowOptions: Omit<
 > &
   WindowOptions = {
   backgroundThrottling: "disabled" as BackgroundThrottlingPolicy,
+  generalAutofillEnabled: false,
   title: `${name} Stream`,
   acceptFirstMouse: true,
   decorations: false,

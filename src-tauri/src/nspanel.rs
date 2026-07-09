@@ -53,6 +53,7 @@ fn build_nspanel<R: Runtime, T: PanelTrait<R> + FromWindow<R> + 'static>(
         .with_window(|window| {
             window
                 .background_throttling(tauri::utils::config::BackgroundThrottlingPolicy::Disabled)
+                .general_autofill_enabled(false)
                 .accept_first_mouse(true)
                 .decorations(false)
                 .transparent(true)
@@ -62,7 +63,6 @@ fn build_nspanel<R: Runtime, T: PanelTrait<R> + FromWindow<R> + 'static>(
         .hides_on_deactivate(false)
         .level(PanelLevel::Normal)
         .works_when_modal(true)
-        //.corner_radius(radius)
         .has_shadow(false)
         .transparent(true)
         .no_activate(true)
