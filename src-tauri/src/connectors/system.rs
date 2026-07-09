@@ -1,35 +1,40 @@
-use crate::types::{System, SystemBattery, SystemCpu, SystemMemory, SystemNetwork, SystemState};
+use crate::types::{
+    NetworkPrev, System, SystemBattery, SystemCpu, SystemMemory, SystemNetwork, SystemState,
+};
 use std::sync::Mutex;
+use sysinfo::{Networks, System as SysInfoSys};
 use tauri::{AppHandle, Manager, State};
-use tauri_plugin_system_info::SysInfoState;
 
 const GB: f64 = 1024.0 * 1024.0 * 1024.0;
+const MB: f64 = 1_048_576.0;
 
 pub fn init_system(app_handle: &AppHandle) {
     app_handle.manage(SystemState {
-        last_network_download: Mutex::new(0),
-        last_network_upload: Mutex::new(0),
+        sysinfo: Mutex::new(SysInfoSys::new_all()),
+        prev_network: Mutex::new(NetworkPrev {
+            download: 0,
+            upload: 0,
+        }),
     });
 }
 
 #[tauri::command]
 pub fn get_system(
-    system_state: State<'_, SystemState>,
-    sys_state: State<'_, SysInfoState>,
+    state: State<'_, SystemState>,
     network: bool,
     battery: bool,
     memory: bool,
     cpu: bool,
 ) -> Result<System, String> {
-    let mut sysinfo = sys_state
+    let mut sysinfo = state
         .sysinfo
         .lock()
         .map_err(|e| format!("Failed to lock sysinfo: {}", e))?;
 
     let memory_data = if memory {
         sysinfo.refresh_memory();
-        let total_memory = sysinfo.sys.total_memory();
-        let used_memory = sysinfo.sys.used_memory();
+        let total_memory = sysinfo.total_memory();
+        let used_memory = sysinfo.used_memory();
         Some(SystemMemory {
             usage_percent: if total_memory > 0 {
                 used_memory as f64 / total_memory as f64 * 100.0
@@ -45,7 +50,7 @@ pub fn get_system(
 
     let cpu_data = if cpu {
         sysinfo.refresh_cpu();
-        let cpus = sysinfo.sys.cpus();
+        let cpus = sysinfo.cpus();
         let cpu_count = cpus.len();
         let cpu_sum: f64 = cpus.iter().map(|c| c.cpu_usage() as f64).sum();
         let cpu_avg = if cpu_count > 0 {
@@ -65,64 +70,50 @@ pub fn get_system(
 
     let mut total_download: u64 = 0;
     let mut total_upload: u64 = 0;
-    for network in sysinfo.networks().iter() {
-        if let Ok(value) = serde_json::to_value(network) {
-            total_download += value
-                .get("total_received")
-                .and_then(|x| x.as_u64())
-                .unwrap_or(0);
-            total_upload += value
-                .get("total_transmitted")
-                .and_then(|x| x.as_u64())
-                .unwrap_or(0);
-        }
+    let networks = Networks::new_with_refreshed_list();
+    for (_name, network_data) in &networks {
+        total_download += network_data.total_received();
+        total_upload += network_data.total_transmitted();
     }
 
-    let mut last_download = system_state
-        .last_network_download
-        .lock()
-        .map_err(|e| format!("Failed to lock: {}", e))?;
-    let mut last_upload = system_state
-        .last_network_upload
+    let mut prev = state
+        .prev_network
         .lock()
         .map_err(|e| format!("Failed to lock: {}", e))?;
 
     let network_data = if network {
-        let download = if *last_download == 0 {
+        let download = if prev.download == 0 {
             0.0
         } else {
-            total_download.saturating_sub(*last_download) as f64 / 1_048_576.0
+            total_download.saturating_sub(prev.download) as f64 / MB
         };
-        let upload = if *last_upload == 0 {
+        let upload = if prev.upload == 0 {
             0.0
         } else {
-            total_upload.saturating_sub(*last_upload) as f64 / 1_048_576.0
+            total_upload.saturating_sub(prev.upload) as f64 / MB
         };
         Some(SystemNetwork { download, upload })
     } else {
         None
     };
 
-    *last_download = total_download;
-    *last_upload = total_upload;
+    prev.download = total_download;
+    prev.upload = total_upload;
 
     let battery_data = if battery {
-        let batteries = sysinfo.batteries().unwrap_or_default();
-        if let Some(battery) = batteries.first() {
-            if let Ok(value) = serde_json::to_value(battery) {
-                Some(SystemBattery {
-                    is_charging: value.get("state").and_then(|x| x.as_str()) == Some("Charging"),
-                    percent: value
-                        .get("state_of_charge")
-                        .and_then(|x| x.as_f64())
-                        .map(|c| (c * 100.0) as u32),
-                })
-            } else {
-                Some(SystemBattery {
-                    is_charging: false,
-                    percent: None,
-                })
-            }
+        let manager = starship_battery::Manager::new()
+            .map_err(|e| format!("Failed to probe battery: {}", e))?;
+        let batteries: Vec<_> = manager
+            .batteries()
+            .map_err(|e| format!("Failed to access battery: {}", e))?
+            .filter_map(|b| b.ok())
+            .collect();
+
+        if let Some(bat) = batteries.first() {
+            Some(SystemBattery {
+                is_charging: matches!(bat.state(), starship_battery::State::Charging),
+                percent: Some((bat.state_of_charge().value * 100.0) as u32),
+            })
         } else {
             Some(SystemBattery {
                 is_charging: false,

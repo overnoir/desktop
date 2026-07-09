@@ -3738,6 +3738,8 @@ dependencies = [
  "serde",
  "serde_json",
  "sha2",
+ "starship-battery",
+ "sysinfo",
  "tauri",
  "tauri-build",
  "tauri-nspanel",
@@ -3750,7 +3752,6 @@ dependencies = [
  "tauri-plugin-process",
  "tauri-plugin-single-instance",
  "tauri-plugin-stronghold",
- "tauri-plugin-system-info",
  "tokio",
  "uuid 1.23.4",
  "whoami",
@@ -5271,7 +5272,7 @@ dependencies = [
  "mach2",
  "nix 0.28.0",
  "num-traits",
- "uom 0.36.0",
+ "uom",
  "winapi",
 ]
 
@@ -5869,21 +5870,6 @@ dependencies = [
  "tauri-plugin",
  "thiserror 2.0.18",
  "zeroize",
-]
-
-[[package]]
-name = "tauri-plugin-system-info"
-version = "2.0.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1aea0f3227b3b739079d0c5751d2f19eca9e08ff09d378ad92412b966a0e3ad1"
-dependencies = [
- "serde",
- "starship-battery",
- "sysinfo",
- "tauri",
- "tauri-plugin",
- "thiserror 1.0.69",
- "uom 0.35.0",
 ]
 
 [[package]]
@@ -6536,17 +6522,6 @@ name = "untrusted"
 version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8ecb6da28b8a351d773b68d5825ac39017e680750f980f3a1a85cd8dd28a47c1"
-
-[[package]]
-name = "uom"
-version = "0.35.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8362194c7a9845a7a7f3562173d6e1da3f24f7132018cb78fe77a5b4474187b2"
-dependencies = [
- "num-traits",
- "serde",
- "typenum",
-]
 
 [[package]]
 name = "uom"

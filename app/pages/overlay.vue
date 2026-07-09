@@ -172,21 +172,28 @@ useIntervalFn(
 useIntervalFn(
   async () => {
     try {
-      const data = await tauriCoreInvoke<{
-        network: SystemNetwork | null;
-        battery: SystemBattery | null;
-        memory: SystemMemory | null;
-        cpu: SystemCpu | null;
-      }>("get_system", {
-        network: systemSettings.value.showNetwork,
-        battery: systemSettings.value.showBattery,
-        memory: systemSettings.value.showMemory,
-        cpu: systemSettings.value.showCpu,
-      });
-      network.value = data.network ?? undefined;
-      battery.value = data.battery ?? undefined;
-      memory.value = data.memory ?? undefined;
-      cpu.value = data.cpu ?? undefined;
+      if (
+        systemSettings.value.showNetwork ||
+        systemSettings.value.showBattery ||
+        systemSettings.value.showMemory ||
+        systemSettings.value.showCpu
+      ) {
+        const data = await tauriCoreInvoke<{
+          network: SystemNetwork | null;
+          battery: SystemBattery | null;
+          memory: SystemMemory | null;
+          cpu: SystemCpu | null;
+        }>("get_system", {
+          network: systemSettings.value.showNetwork,
+          battery: systemSettings.value.showBattery,
+          memory: systemSettings.value.showMemory,
+          cpu: systemSettings.value.showCpu,
+        });
+        network.value = data.network ?? undefined;
+        battery.value = data.battery ?? undefined;
+        memory.value = data.memory ?? undefined;
+        cpu.value = data.cpu ?? undefined;
+      }
     } catch (error) {
       errorsStore.addError({
         message: JSON.stringify(error),

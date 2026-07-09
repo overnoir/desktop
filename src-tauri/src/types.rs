@@ -126,12 +126,17 @@ pub struct VaultState {
 }
 
 pub struct DiscordState {
-    pub stop_flag: Mutex<Option<Arc<AtomicBool>>>,
     pub client: Mutex<Option<discord_rich_presence::DiscordIpcClient>>,
+    pub stop_flag: Mutex<Option<Arc<AtomicBool>>>,
     pub client_id: String,
 }
 
+pub struct NetworkPrev {
+    pub download: u64,
+    pub upload: u64,
+}
+
 pub struct SystemState {
-    pub last_network_download: Mutex<u64>,
-    pub last_network_upload: Mutex<u64>,
+    pub prev_network: Mutex<NetworkPrev>,
+    pub sysinfo: Mutex<sysinfo::System>,
 }
