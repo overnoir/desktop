@@ -75,18 +75,8 @@ export const useLinkGroupsStore = defineStore(
         },
         {
           name: t("linkGroups.1.links.2.name"),
-          to: localePath("/system/connection"),
+          to: localePath("/system"),
           icon: "lucide:gauge",
-          links: [
-            {
-              name: t("linkGroups.1.links.2.links.0"),
-              to: localePath("/system/connection"),
-            },
-            {
-              name: t("linkGroups.1.links.2.links.1"),
-              to: localePath("/system/settings"),
-            },
-          ],
         },
       ],
     }));

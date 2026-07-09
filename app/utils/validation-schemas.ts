@@ -173,8 +173,6 @@ export const kickStreamersSchema = z.preprocess(
     ),
 ) satisfies z.ZodType<KickStreamer[]>;
 
-export const systemIsConnectedSchema = z.boolean().catch(false);
-
 export const systemSettingsSchema = z.preprocess(
   (value) => {
     if (!isObject(value)) {

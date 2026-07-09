@@ -331,7 +331,7 @@ async fn start_channel_listener(
                 if let Some(ref guild) = current_guild {
                     let mut guild_clone = guild.clone();
                     guild_clone.channel.users = users.values().cloned().collect();
-                    let _ = app_handle_clone.emit_to("overlay", "guild-update", &guild_clone);
+                    let _ = app_handle_clone.emit_to("overlay", "discord-update", &guild_clone);
 
                     subscribe_to_events(&mut client, &channel_id, &mut users, &listener_stop);
 
@@ -342,7 +342,7 @@ async fn start_channel_listener(
                             g.name = name;
                             g.icon_url = icon_url;
                             g.channel.users = users.values().cloned().collect();
-                            let _ = app_handle_clone.emit_to("overlay", "guild-update", &g);
+                            let _ = app_handle_clone.emit_to("overlay", "discord-update", &g);
                         }
                     }
                 }
@@ -381,7 +381,7 @@ async fn start_channel_listener(
 
                         let _ = app_handle_clone.emit_to(
                             "overlay",
-                            "guild-update",
+                            "discord-update",
                             serde_json::Value::Null,
                         );
 
@@ -412,7 +412,7 @@ async fn start_channel_listener(
                                 guild_clone.channel.users = users.values().cloned().collect();
                                 let _ = app_handle_clone.emit_to(
                                     "overlay",
-                                    "guild-update",
+                                    "discord-update",
                                     &guild_clone,
                                 );
 
@@ -423,8 +423,11 @@ async fn start_channel_listener(
                                         g.name = name;
                                         g.icon_url = icon_url;
                                         g.channel.users = users.values().cloned().collect();
-                                        let _ =
-                                            app_handle_clone.emit_to("overlay", "guild-update", &g);
+                                        let _ = app_handle_clone.emit_to(
+                                            "overlay",
+                                            "discord-update",
+                                            &g,
+                                        );
                                     }
                                 }
                             }
@@ -433,7 +436,7 @@ async fn start_channel_listener(
                         apply_voice_event(evt, &data["data"], &mut users);
                         let mut guild_clone = guild.clone();
                         guild_clone.channel.users = users.values().cloned().collect();
-                        let _ = app_handle_clone.emit_to("overlay", "guild-update", &guild_clone);
+                        let _ = app_handle_clone.emit_to("overlay", "discord-update", &guild_clone);
                     }
                 }
                 Err(_) => {
@@ -447,7 +450,7 @@ async fn start_channel_listener(
                     );
                     let _ = app_handle_clone.emit_to(
                         "overlay",
-                        "guild-update",
+                        "discord-update",
                         serde_json::Value::Null,
                     );
                     break;
@@ -651,7 +654,7 @@ pub fn disconnect_discord(app_handle: AppHandle, delete_vault_items: bool) -> Re
     }
 
     app_handle
-        .emit_to("overlay", "guild-update", serde_json::Value::Null)
+        .emit_to("overlay", "discord-update", serde_json::Value::Null)
         .map_err(|e| format!("Failed to emit disconnect event: {}", e))?;
 
     if delete_vault_items {

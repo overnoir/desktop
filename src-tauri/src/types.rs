@@ -101,10 +101,10 @@ pub struct SystemNetwork {
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct System {
-    pub battery: SystemBattery,
-    pub network: SystemNetwork,
-    pub memory: SystemMemory,
-    pub cpu: SystemCpu,
+    pub battery: Option<SystemBattery>,
+    pub network: Option<SystemNetwork>,
+    pub memory: Option<SystemMemory>,
+    pub cpu: Option<SystemCpu>,
 }
 
 #[derive(Serialize)]
@@ -132,5 +132,6 @@ pub struct DiscordState {
 }
 
 pub struct SystemState {
-    pub stop_flag: Mutex<Option<Arc<AtomicBool>>>,
+    pub last_network_download: Mutex<u64>,
+    pub last_network_upload: Mutex<u64>,
 }

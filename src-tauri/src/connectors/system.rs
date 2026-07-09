@@ -1,172 +1,142 @@
 use crate::types::{System, SystemBattery, SystemCpu, SystemMemory, SystemNetwork, SystemState};
-use std::sync::{
-    atomic::{AtomicBool, Ordering},
-    Arc, Mutex,
-};
-use std::time::Duration;
-use tauri::{AppHandle, Emitter, Manager};
+use std::sync::Mutex;
+use tauri::{AppHandle, Manager, State};
 use tauri_plugin_system_info::SysInfoState;
 
 const GB: f64 = 1024.0 * 1024.0 * 1024.0;
 
 pub fn init_system(app_handle: &AppHandle) {
     app_handle.manage(SystemState {
-        stop_flag: Mutex::new(None),
+        last_network_download: Mutex::new(0),
+        last_network_upload: Mutex::new(0),
     });
 }
 
 #[tauri::command]
-pub async fn connect_system(app_handle: AppHandle) -> Result<(), String> {
-    let app_handle_clone = app_handle.clone();
-    let system = app_handle.state::<SystemState>();
+pub fn get_system(
+    system_state: State<'_, SystemState>,
+    sys_state: State<'_, SysInfoState>,
+    network: bool,
+    battery: bool,
+    memory: bool,
+    cpu: bool,
+) -> Result<System, String> {
+    let mut sysinfo = sys_state
+        .sysinfo
+        .lock()
+        .map_err(|e| format!("Failed to lock sysinfo: {}", e))?;
 
-    {
-        let mut flag_guard = system
-            .stop_flag
-            .lock()
-            .map_err(|e| format!("Failed to acquire lock: {}", e))?;
-        if let Some(flag) = flag_guard.as_ref() {
-            flag.store(true, Ordering::Relaxed);
+    let memory_data = if memory {
+        sysinfo.refresh_memory();
+        let total_memory = sysinfo.sys.total_memory();
+        let used_memory = sysinfo.sys.used_memory();
+        Some(SystemMemory {
+            usage_percent: if total_memory > 0 {
+                used_memory as f64 / total_memory as f64 * 100.0
+            } else {
+                0.0
+            },
+            total_gb: total_memory as f64 / GB,
+            used_gb: used_memory as f64 / GB,
+        })
+    } else {
+        None
+    };
+
+    let cpu_data = if cpu {
+        sysinfo.refresh_cpu();
+        let cpus = sysinfo.sys.cpus();
+        let cpu_count = cpus.len();
+        let cpu_sum: f64 = cpus.iter().map(|c| c.cpu_usage() as f64).sum();
+        let cpu_avg = if cpu_count > 0 {
+            cpu_sum / cpu_count as f64
+        } else {
+            0.0
+        };
+        let cpu_active = cpus.iter().filter(|c| c.cpu_usage() > 0.5).count();
+        Some(SystemCpu {
+            usage_percent: cpu_avg,
+            active: cpu_active,
+            total: cpu_count,
+        })
+    } else {
+        None
+    };
+
+    let mut total_download: u64 = 0;
+    let mut total_upload: u64 = 0;
+    for network in sysinfo.networks().iter() {
+        if let Ok(value) = serde_json::to_value(network) {
+            total_download += value
+                .get("total_received")
+                .and_then(|x| x.as_u64())
+                .unwrap_or(0);
+            total_upload += value
+                .get("total_transmitted")
+                .and_then(|x| x.as_u64())
+                .unwrap_or(0);
         }
-        *flag_guard = None;
     }
 
-    let stop_flag = Arc::new(AtomicBool::new(false));
-    let listener_stop = stop_flag.clone();
+    let mut last_download = system_state
+        .last_network_download
+        .lock()
+        .map_err(|e| format!("Failed to lock: {}", e))?;
+    let mut last_upload = system_state
+        .last_network_upload
+        .lock()
+        .map_err(|e| format!("Failed to lock: {}", e))?;
 
-    tokio::spawn(async move {
-        let mut prev_net_rx: u64 = 0;
-        let mut prev_net_tx: u64 = 0;
+    let network_data = if network {
+        let download = if *last_download == 0 {
+            0.0
+        } else {
+            total_download.saturating_sub(*last_download) as f64 / 1_048_576.0
+        };
+        let upload = if *last_upload == 0 {
+            0.0
+        } else {
+            total_upload.saturating_sub(*last_upload) as f64 / 1_048_576.0
+        };
+        Some(SystemNetwork { download, upload })
+    } else {
+        None
+    };
 
-        loop {
-            tokio::time::sleep(Duration::from_secs(1)).await;
+    *last_download = total_download;
+    *last_upload = total_upload;
 
-            if listener_stop.load(Ordering::Relaxed) {
-                break;
-            }
-
-            let sys_state = app_handle_clone.state::<SysInfoState>();
-            let mut sysinfo = sys_state.sysinfo.lock().unwrap_or_else(|e| e.into_inner());
-
-            sysinfo.refresh_cpu();
-            sysinfo.refresh_memory();
-
-            let mem_total = sysinfo.sys.total_memory();
-            let mem_used = sysinfo.sys.used_memory();
-
-            let cpus = sysinfo.sys.cpus();
-            let cpu_count = cpus.len();
-            let cpu_sum: f64 = cpus.iter().map(|c| c.cpu_usage() as f64).sum();
-            let cpu_avg = if cpu_count > 0 {
-                cpu_sum / cpu_count as f64
+    let battery_data = if battery {
+        let batteries = sysinfo.batteries().unwrap_or_default();
+        if let Some(battery) = batteries.first() {
+            if let Ok(value) = serde_json::to_value(battery) {
+                Some(SystemBattery {
+                    is_charging: value.get("state").and_then(|x| x.as_str()) == Some("Charging"),
+                    percent: value
+                        .get("state_of_charge")
+                        .and_then(|x| x.as_f64())
+                        .map(|c| (c * 100.0) as u32),
+                })
             } else {
-                0.0
-            };
-            let cpu_active = cpus.iter().filter(|c| c.cpu_usage() > 0.5).count();
-
-            let mut total_rx: u64 = 0;
-            let mut total_tx: u64 = 0;
-            for n in sysinfo.networks().iter() {
-                if let Ok(v) = serde_json::to_value(n) {
-                    total_rx += v
-                        .get("total_received")
-                        .and_then(|x| x.as_u64())
-                        .unwrap_or(0);
-                    total_tx += v
-                        .get("total_transmitted")
-                        .and_then(|x| x.as_u64())
-                        .unwrap_or(0);
-                }
-            }
-            let download = if prev_net_rx == 0 {
-                0.0
-            } else {
-                total_rx.saturating_sub(prev_net_rx) as f64 / 1_048_576.0
-            };
-            let upload = if prev_net_tx == 0 {
-                0.0
-            } else {
-                total_tx.saturating_sub(prev_net_tx) as f64 / 1_048_576.0
-            };
-            prev_net_rx = total_rx;
-            prev_net_tx = total_tx;
-
-            let bats = sysinfo.batteries().unwrap_or_default();
-            let battery = if let Some(b) = bats.first() {
-                if let Ok(v) = serde_json::to_value(b) {
-                    SystemBattery {
-                        percent: v
-                            .get("state_of_charge")
-                            .and_then(|x| x.as_f64())
-                            .map(|c| (c * 100.0) as u32),
-                        is_charging: v.get("state").and_then(|x| x.as_str()) == Some("Charging"),
-                    }
-                } else {
-                    SystemBattery {
-                        is_charging: false,
-                        percent: None,
-                    }
-                }
-            } else {
-                SystemBattery {
+                Some(SystemBattery {
                     is_charging: false,
                     percent: None,
-                }
-            };
-
-            let _ = app_handle_clone.emit_to(
-                "overlay",
-                "system-update",
-                serde_json::to_value(System {
-                    network: SystemNetwork { download, upload },
-                    memory: SystemMemory {
-                        usage_percent: if mem_total > 0 {
-                            mem_used as f64 / mem_total as f64 * 100.0
-                        } else {
-                            0.0
-                        },
-                        total_gb: mem_total as f64 / GB,
-                        used_gb: mem_used as f64 / GB,
-                    },
-                    cpu: SystemCpu {
-                        usage_percent: cpu_avg,
-                        active: cpu_active,
-                        total: cpu_count,
-                    },
-                    battery,
                 })
-                .unwrap_or_default(),
-            );
+            }
+        } else {
+            Some(SystemBattery {
+                is_charging: false,
+                percent: None,
+            })
         }
-    });
+    } else {
+        None
+    };
 
-    {
-        let mut flag_guard = system
-            .stop_flag
-            .lock()
-            .map_err(|e| format!("Failed to acquire lock: {}", e))?;
-        *flag_guard = Some(stop_flag);
-    }
-
-    Ok(())
-}
-
-#[tauri::command]
-pub fn disconnect_system(app_handle: AppHandle) -> Result<(), String> {
-    let system = app_handle.state::<SystemState>();
-
-    let mut flag_guard = system
-        .stop_flag
-        .lock()
-        .map_err(|e| format!("Failed to acquire lock: {}", e))?;
-
-    if let Some(flag) = flag_guard.as_ref() {
-        flag.store(true, Ordering::Relaxed);
-    }
-
-    *flag_guard = None;
-
-    let _ = app_handle.emit_to("overlay", "system-update", serde_json::Value::Null);
-
-    Ok(())
+    Ok(System {
+        network: network_data,
+        battery: battery_data,
+        memory: memory_data,
+        cpu: cpu_data,
+    })
 }

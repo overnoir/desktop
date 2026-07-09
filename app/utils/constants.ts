@@ -51,10 +51,10 @@ export const defaultKickSettings: KickSettings = {
 };
 
 export const defaultSystemSettings: SystemSettings = {
-  showBattery: true,
-  showNetwork: true,
-  showMemory: true,
-  showCpu: true,
+  showBattery: false,
+  showNetwork: false,
+  showMemory: false,
+  showCpu: false,
 };
 
 export const overlayWebviewWindowOptions: Omit<

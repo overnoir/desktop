@@ -12,7 +12,6 @@ const { filtredUsers, guild, settings, connectedUser } =
   storeToRefs(discordStore);
 const {
   settings: systemSettings,
-  isConnected,
   battery,
   network,
   memory,
@@ -30,21 +29,8 @@ const styles = computed<CSSProperties>(() => ({
   gap: `${Math.round((general.value.size * general.value.gap) / 100)}px`,
 }));
 
-await tauriEventListen<DiscordGuild | null>("guild-update", ({ payload }) => {
+await tauriEventListen<DiscordGuild | null>("discord-update", ({ payload }) => {
   guild.value = payload || undefined;
-});
-
-await tauriEventListen<{
-  network: SystemNetwork;
-  battery: SystemBattery;
-  memory: SystemMemory;
-  cpu: SystemCpu;
-} | null>("system-update", ({ payload }) => {
-  console.log({ payload });
-  network.value = payload?.network;
-  battery.value = payload?.battery;
-  memory.value = payload?.memory;
-  cpu.value = payload?.cpu;
 });
 
 try {
@@ -58,18 +44,6 @@ try {
     source: ErrorSource.Discord,
   });
   connectedUser.value = null;
-}
-
-try {
-  if (isConnected.value) {
-    await tauriCoreInvoke("connect_system");
-  }
-} catch (error) {
-  errorsStore.addError({
-    message: JSON.stringify(error),
-    source: ErrorSource.System,
-  });
-  isConnected.value = false;
 }
 
 async function openStreamWebviewWindow(slug: string) {
@@ -180,6 +154,39 @@ useIntervalFn(
   300000,
   { immediateCallback: true },
 );
+
+useIntervalFn(
+  async () => {
+    try {
+      const data = await tauriCoreInvoke<{
+        network: SystemNetwork | null;
+        battery: SystemBattery | null;
+        memory: SystemMemory | null;
+        cpu: SystemCpu | null;
+      }>("get_system", {
+        network: systemSettings.value.showNetwork,
+        battery: systemSettings.value.showBattery,
+        memory: systemSettings.value.showMemory,
+        cpu: systemSettings.value.showCpu,
+      });
+      network.value = data.network ?? undefined;
+      battery.value = data.battery ?? undefined;
+      memory.value = data.memory ?? undefined;
+      cpu.value = data.cpu ?? undefined;
+    } catch (error) {
+      errorsStore.addError({
+        message: JSON.stringify(error),
+        source: ErrorSource.System,
+      });
+      network.value = undefined;
+      battery.value = undefined;
+      memory.value = undefined;
+      cpu.value = undefined;
+    }
+  },
+  1000,
+  { immediateCallback: true },
+);
 </script>
 
 <template>
@@ -203,16 +210,10 @@ useIntervalFn(
         @click="openStreamWebviewWindow(streamer.slug)"
       />
     </template>
-    <OverlaySystemCpu v-if="systemSettings.showCpu && cpu" :cpu />
-    <OverlaySystemMemory v-if="systemSettings.showMemory && memory" :memory />
-    <OverlaySystemBattery
-      v-if="systemSettings.showBattery && battery"
-      :battery
-    />
-    <OverlaySystemNetwork
-      v-if="systemSettings.showNetwork && network"
-      :network
-    />
+    <OverlaySystemCpu v-if="cpu" :cpu />
+    <OverlaySystemMemory v-if="memory" :memory />
+    <OverlaySystemBattery v-if="battery" :battery />
+    <OverlaySystemNetwork v-if="network" :network />
     <OverlayOffline v-if="!isOnline" />
     <OverlaySettings
       v-if="general.showSettings"

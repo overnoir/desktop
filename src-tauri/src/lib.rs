@@ -8,7 +8,7 @@ mod vault;
 use api::init_api;
 use connectors::discord::{connect_discord, disconnect_discord, init_discord};
 use connectors::kick::get_kick_streamers;
-use connectors::system::{connect_system, disconnect_system, init_system};
+use connectors::system::{get_system, init_system};
 #[cfg(target_os = "macos")]
 use nspanel::{
     create_nspanel, destroy_nspanel, set_nspanel_always_on_top, set_nspanel_ignore_cursor,
@@ -29,9 +29,8 @@ pub fn run() {
             get_kick_streamers,
             get_vault_metadata,
             disconnect_discord,
-            disconnect_system,
             connect_discord,
-            connect_system,
+            get_system,
             clear_vault,
         ])
         .plugin(tauri_plugin_single_instance::init(|app, _, _| {
