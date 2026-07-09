@@ -78,9 +78,6 @@ const avatarUrl = computed(() =>
     <OverlayItemBadge v-if="showDisplayName" position="bottom">
       {{ displayName }}
     </OverlayItemBadge>
-    <OverlayItemBadge v-if="showDisplayName" position="bottom">
-      {{ displayName }}
-    </OverlayItemBadge>
     <div
       v-if="user.isSpeaking"
       class="absolute left-0 top-0 ring ring-inset ring-green-600"
