@@ -40,21 +40,6 @@ export default {
   error: {
     clear: "Temizle",
   },
-  connect: {
-    success: "Bağlantı başarıyla yapıldı.",
-    button: "Bağlan",
-  },
-  disconnect: {
-    success: "Bağlantı başarıyla kesildi.",
-    button: "Bağlantıyı Kes",
-    dialog: {
-      title: "Onay",
-      description: "Bağlantınızı kesmek istediğinize emin misiniz?",
-      deleteVaultItems: "Token verilerini kasadan sil",
-      confirm: "Evet, kes",
-      cancel: "Vazgeç",
-    },
-  },
   reset: {
     title: "Sıfırla",
     description: "Tüm ayarları varsayılan ayarlarına döndürün.",
@@ -179,7 +164,23 @@ export default {
     },
   },
   discord: {
-    connectedUser: "{username} olarak bağlanıldı.",
+    connect: {
+      success: "Bağlantı başarıyla yapıldı.",
+      button: "Bağlan",
+    },
+    disconnect: {
+      description: "{username} olarak bağlanıldı.",
+      success: "Bağlantı başarıyla kesildi.",
+      button: "Bağlantıyı Kes",
+      dialog: {
+        title: "Onay",
+        description: "Bağlantınızı kesmek istediğinize emin misiniz?",
+        deleteVaultItems: "Token verilerini kasadan sil",
+        confirm: "Evet, kes",
+        cancel: "Vazgeç",
+      },
+    },
+
     show: {
       always: "Her Zaman",
       whileSpeaking: "Konuşurken",

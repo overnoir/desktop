@@ -34,7 +34,7 @@ async function toggleConnection() {
       connectedUser.value = null;
     }
 
-    $toast.success(t(`${action}.success`));
+    $toast.success(t(`discord.${action}.success`));
   } catch (error) {
     errorsStore.addError({
       message: JSON.stringify(error),
@@ -59,7 +59,7 @@ async function toggleConnection() {
         />
         <CardDescription v-if="connectedUser">
           {{
-            $t("discord.connectedUser", {
+            $t("discord.disconnect.description", {
               username: connectedUser.username,
             })
           }}
@@ -70,16 +70,16 @@ async function toggleConnection() {
           <AlertDialog>
             <AlertDialogTrigger as-child>
               <Button variant="secondary" :loading size="lg">
-                {{ $t("disconnect.button") }}
+                {{ $t("discord.disconnect.button") }}
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>
-                  {{ $t("disconnect.dialog.title") }}
+                  {{ $t("discord.disconnect.dialog.title") }}
                 </AlertDialogTitle>
                 <AlertDialogDescription>
-                  {{ $t("disconnect.dialog.description") }}
+                  {{ $t("discord.disconnect.dialog.description") }}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <div class="flex items-center gap-2">
@@ -88,18 +88,18 @@ async function toggleConnection() {
                   v-model="deleteVaultItemsOnDisconnect"
                 />
                 <Label for="delete-vault-items">{{
-                  $t("disconnect.dialog.deleteVaultItems")
+                  $t("discord.disconnect.dialog.deleteVaultItems")
                 }}</Label>
               </div>
               <AlertDialogFooter>
                 <AlertDialogCancel>
-                  {{ $t("disconnect.dialog.cancel") }}
+                  {{ $t("discord.disconnect.dialog.cancel") }}
                 </AlertDialogCancel>
                 <AlertDialogAction
                   variant="destructive"
                   @click="toggleConnection"
                 >
-                  {{ $t("disconnect.dialog.confirm") }}
+                  {{ $t("discord.disconnect.dialog.confirm") }}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -113,7 +113,7 @@ async function toggleConnection() {
           size="lg"
           @click="toggleConnection"
         >
-          {{ $t("connect.button") }}
+          {{ $t("discord.connect.button") }}
         </Button>
       </CardContent>
     </Card>
