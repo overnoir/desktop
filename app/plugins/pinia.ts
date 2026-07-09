@@ -5,7 +5,7 @@ export default defineNuxtPlugin(async ({ $pinia }) => {
     TauriPiniaTauriPluginPinia({
       saveStrategy: "debounce",
       saveOnChange: true,
-      saveInterval: 500,
+      saveInterval: 1000,
       autoStart: true,
     }),
   );
