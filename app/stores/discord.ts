@@ -86,12 +86,38 @@ export const useDiscordStore = defineStore(
       settings.value = { ...defaultDiscordSettings };
     }
 
+    function updateUser(user: DiscordUser) {
+      if (!guild.value) {
+        return;
+      }
+      const users = guild.value.channel.users;
+      const index = users.findIndex(({ id }) => id === user.id);
+      if (index !== -1) {
+        users.splice(index, 1, user);
+      } else {
+        users.push(user);
+      }
+    }
+
+    function removeUser(userId: string) {
+      if (!guild.value) {
+        return;
+      }
+      const users = guild.value.channel.users;
+      const index = users.findIndex(({ id }) => id === userId);
+      if (index !== -1) {
+        users.splice(index, 1);
+      }
+    }
+
     return {
       connectedUser,
       resetSettings,
       filtredUsers,
       settings,
       guild,
+      updateUser,
+      removeUser,
     };
   },
   {

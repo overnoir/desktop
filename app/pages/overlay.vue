@@ -29,9 +29,23 @@ const styles = computed<CSSProperties>(() => ({
   gap: `${Math.round((general.value.size * general.value.gap) / 100)}px`,
 }));
 
-await tauriEventListen<DiscordGuild | null>("discord-update", ({ payload }) => {
-  guild.value = payload || undefined;
+await tauriEventListen<DiscordGuild | null>(
+  "discord-guild-update",
+  ({ payload }) => {
+    guild.value = payload || undefined;
+  },
+);
+
+await tauriEventListen<DiscordUser>("discord-user-update", ({ payload }) => {
+  discordStore.updateUser(payload);
 });
+
+await tauriEventListen<Pick<DiscordUser, "id">>(
+  "discord-user-remove",
+  ({ payload }) => {
+    discordStore.removeUser(payload.id);
+  },
+);
 
 try {
   if (connectedUser.value) {

@@ -278,9 +278,11 @@ async fn start_channel_listener(
             })
         })();
 
-        match result {
+        let connected_user_id = match result {
             Ok(user) => {
+                let id = user.id.clone();
                 let _ = tx.send(Ok(user));
+                id
             }
             Err(e) => {
                 let _ = tx.send(Err(e));
@@ -331,7 +333,8 @@ async fn start_channel_listener(
                 if let Some(ref guild) = current_guild {
                     let mut guild_clone = guild.clone();
                     guild_clone.channel.users = users.values().cloned().collect();
-                    let _ = app_handle_clone.emit_to("overlay", "discord-update", &guild_clone);
+                    let _ =
+                        app_handle_clone.emit_to("overlay", "discord-guild-update", &guild_clone);
 
                     subscribe_to_events(&mut client, &channel_id, &mut users, &listener_stop);
 
@@ -342,7 +345,7 @@ async fn start_channel_listener(
                             g.name = name;
                             g.icon_url = icon_url;
                             g.channel.users = users.values().cloned().collect();
-                            let _ = app_handle_clone.emit_to("overlay", "discord-update", &g);
+                            let _ = app_handle_clone.emit_to("overlay", "discord-guild-update", &g);
                         }
                     }
                 }
@@ -361,6 +364,8 @@ async fn start_channel_listener(
                     if evt == "VOICE_CHANNEL_SELECT" {
                         let new_id = data["data"]["channel_id"].as_str().map(|s| s.to_string());
 
+                        users.clear();
+
                         if let Some(old) = current_guild.take() {
                             for evt in &CHANNEL_EVENTS {
                                 let _ = send_and_wait(
@@ -377,18 +382,16 @@ async fn start_channel_listener(
                             }
                         }
 
-                        users.clear();
-
                         let _ = app_handle_clone.emit_to(
                             "overlay",
-                            "discord-update",
+                            "discord-guild-update",
                             serde_json::Value::Null,
                         );
 
-                        if let Some(ref new_channel_id) = new_id {
+                        if let Some(ref channel_id) = new_id {
                             subscribe_to_events(
                                 &mut client,
-                                new_channel_id,
+                                channel_id,
                                 &mut users,
                                 &listener_stop,
                             );
@@ -396,7 +399,7 @@ async fn start_channel_listener(
                             if let Ok(response) = send_and_wait(
                                 &mut client,
                                 json!({
-                                    "args": { "channel_id": new_channel_id },
+                                    "args": { "channel_id": channel_id },
                                     "nonce": Uuid::new_v4().to_string(),
                                     "cmd": "GET_CHANNEL",
                                 }),
@@ -404,7 +407,7 @@ async fn start_channel_listener(
                                 &listener_stop,
                             ) {
                                 current_guild =
-                                    build_guild_from_channel(&response, new_channel_id, &mut users);
+                                    build_guild_from_channel(&response, channel_id, &mut users);
                             }
 
                             if let Some(ref guild) = current_guild {
@@ -412,7 +415,7 @@ async fn start_channel_listener(
                                 guild_clone.channel.users = users.values().cloned().collect();
                                 let _ = app_handle_clone.emit_to(
                                     "overlay",
-                                    "discord-update",
+                                    "discord-guild-update",
                                     &guild_clone,
                                 );
 
@@ -425,18 +428,140 @@ async fn start_channel_listener(
                                         g.channel.users = users.values().cloned().collect();
                                         let _ = app_handle_clone.emit_to(
                                             "overlay",
-                                            "discord-update",
+                                            "discord-guild-update",
                                             &g,
                                         );
                                     }
                                 }
                             }
                         }
-                    } else if let Some(guild) = &current_guild {
+                    } else if evt == "VOICE_STATE_DELETE"
+                        && data["data"]["user"]["id"].as_str() == Some(connected_user_id.as_str())
+                        && current_guild.is_some()
+                    {
+                        if let Some(old) = current_guild.take() {
+                            for evt in &CHANNEL_EVENTS {
+                                let _ = send_and_wait(
+                                    &mut client,
+                                    json!({
+                                        "args": { "channel_id": &old.channel.id },
+                                        "nonce": Uuid::new_v4().to_string(),
+                                        "cmd": "UNSUBSCRIBE",
+                                        "evt": evt,
+                                    }),
+                                    &mut users,
+                                    &listener_stop,
+                                );
+                            }
+                        }
+
+                        users.clear();
+
+                        let _ = app_handle_clone.emit_to(
+                            "overlay",
+                            "discord-guild-update",
+                            serde_json::Value::Null,
+                        );
+
+                        if let Ok(response) = send_and_wait(
+                            &mut client,
+                            json!({
+                                "cmd": "GET_SELECTED_VOICE_CHANNEL",
+                                "nonce": Uuid::new_v4().to_string()
+                            }),
+                            &mut users,
+                            &listener_stop,
+                        ) {
+                            if let Some(channel_id) = response["id"].as_str() {
+                                let channel_id = channel_id.to_string();
+
+                                subscribe_to_events(
+                                    &mut client,
+                                    &channel_id,
+                                    &mut users,
+                                    &listener_stop,
+                                );
+
+                                if let Ok(response) = send_and_wait(
+                                    &mut client,
+                                    json!({
+                                        "args": { "channel_id": &channel_id },
+                                        "nonce": Uuid::new_v4().to_string(),
+                                        "cmd": "GET_CHANNEL",
+                                    }),
+                                    &mut users,
+                                    &listener_stop,
+                                ) {
+                                    current_guild = build_guild_from_channel(
+                                        &response,
+                                        &channel_id,
+                                        &mut users,
+                                    );
+                                }
+
+                                if let Some(ref guild) = current_guild {
+                                    let mut guild_clone = guild.clone();
+                                    guild_clone.channel.users = users.values().cloned().collect();
+                                    let _ = app_handle_clone.emit_to(
+                                        "overlay",
+                                        "discord-guild-update",
+                                        &guild_clone,
+                                    );
+
+                                    if let Some((name, icon_url)) =
+                                        fetch_guild_info(&mut client, &guild.id, &listener_stop)
+                                    {
+                                        if let Some(ref mut g) = current_guild {
+                                            g.name = name;
+                                            g.icon_url = icon_url;
+                                            g.channel.users = users.values().cloned().collect();
+                                            let _ = app_handle_clone.emit_to(
+                                                "overlay",
+                                                "discord-guild-update",
+                                                &g,
+                                            );
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } else if let Some(_guild) = &current_guild {
                         apply_voice_event(evt, &data["data"], &mut users);
-                        let mut guild_clone = guild.clone();
-                        guild_clone.channel.users = users.values().cloned().collect();
-                        let _ = app_handle_clone.emit_to("overlay", "discord-update", &guild_clone);
+
+                        match evt {
+                            "SPEAKING_START" | "SPEAKING_STOP" => {
+                                if let Some(user_id) = data["data"]["user_id"].as_str() {
+                                    if let Some(user) = users.get(user_id) {
+                                        let _ = app_handle_clone.emit_to(
+                                            "overlay",
+                                            "discord-user-update",
+                                            user,
+                                        );
+                                    }
+                                }
+                            }
+                            "VOICE_STATE_CREATE" | "VOICE_STATE_UPDATE" => {
+                                if let Some(user_id) = data["data"]["user"]["id"].as_str() {
+                                    if let Some(user) = users.get(user_id) {
+                                        let _ = app_handle_clone.emit_to(
+                                            "overlay",
+                                            "discord-user-update",
+                                            user,
+                                        );
+                                    }
+                                }
+                            }
+                            "VOICE_STATE_DELETE" => {
+                                if let Some(user_id) = data["data"]["user"]["id"].as_str() {
+                                    let _ = app_handle_clone.emit_to(
+                                        "overlay",
+                                        "discord-user-remove",
+                                        &serde_json::json!({ "id": user_id }),
+                                    );
+                                }
+                            }
+                            _ => {}
+                        }
                     }
                 }
                 Err(_) => {
@@ -450,7 +575,7 @@ async fn start_channel_listener(
                     );
                     let _ = app_handle_clone.emit_to(
                         "overlay",
-                        "discord-update",
+                        "discord-guild-update",
                         serde_json::Value::Null,
                     );
                     break;
@@ -654,7 +779,7 @@ pub fn disconnect_discord(app_handle: AppHandle, delete_vault_items: bool) -> Re
     }
 
     app_handle
-        .emit_to("overlay", "discord-update", serde_json::Value::Null)
+        .emit_to("overlay", "discord-guild-update", serde_json::Value::Null)
         .map_err(|e| format!("Failed to emit disconnect event: {}", e))?;
 
     if delete_vault_items {
