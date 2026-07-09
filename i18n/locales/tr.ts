@@ -38,7 +38,19 @@ export default {
     loading: "Lütfen bekleyin...",
   },
   error: {
-    goHome: "Ana Sayfaya Git",
+    clear: "Temizle",
+  },
+  reset: {
+    title: "Sıfırla",
+    description: "Tüm ayarları varsayılan ayarlarına döndürün.",
+    success: "Tüm ayarları başarıyla sıfırlandı.",
+    dialog: {
+      title: "Tüm ayarları sıfırla",
+      description:
+        "Tüm ayarlarınızı sıfırlamak istediğinize emin misiniz? Bu işlem geri alınamaz.",
+      confirm: "Evet, sıfırla",
+      cancel: "Vazgeç",
+    },
   },
   settings: {
     locale: {
@@ -110,18 +122,6 @@ export default {
     alwaysOnTop: {
       title: "Her Zaman Üstte",
       description: "Overlayın her zaman üstte olup olmayacağını ayarlayın.",
-    },
-    reset: {
-      title: "Sıfırla",
-      description: "Tüm uygulama ayarlarını varsayılan ayarlarına döndürün.",
-      success: "Tüm uygulama ayarları başarıyla sıfırlandı.",
-      dialog: {
-        title: "Tüm uygulama ayarlarını sıfırla",
-        description:
-          "Tüm uygulama ayarlarınızı sıfırlamak istediğinize emin misiniz? Bu işlem geri alınamaz.",
-        confirm: "Evet, sıfırla",
-        cancel: "Vazgeç",
-      },
     },
   },
   vault: {
@@ -239,18 +239,6 @@ export default {
       nick: "Sunucu Takma Adı",
       globalName: "Görünen Ad",
     },
-    reset: {
-      title: "Sıfırla",
-      description: "Tüm Discord ayarlarını varsayılan ayarlarına döndürün.",
-      success: "Tüm Discord ayarları başarıyla sıfırlandı.",
-      dialog: {
-        title: "Tüm Discord ayarlarını sıfırla",
-        description:
-          "Tüm Discord ayarlarınızı sıfırlamak istediğinize emin misiniz? Bu işlem geri alınamaz.",
-        confirm: "Evet, sıfırla",
-        cancel: "Vazgeç",
-      },
-    },
   },
   kick: {
     addChannel: {
@@ -292,18 +280,6 @@ export default {
       title: "Yayıncı Limiti",
       description: "En fazla kaç tane yayıncı gözükeceğini seçin.",
     },
-    reset: {
-      title: "Sıfırla",
-      description: "Tüm Kick ayarlarını varsayılan ayarlarına döndürün.",
-      success: "Tüm Kick ayarları başarıyla sıfırlandı.",
-      dialog: {
-        title: "Tüm Kick ayarlarını sıfırla",
-        description:
-          "Tüm Kick ayarlarınızı sıfırlamak istediğinize emin misiniz? Bu işlem geri alınamaz.",
-        confirm: "Evet, sıfırla",
-        cancel: "Vazgeç",
-      },
-    },
   },
   system: {
     connect: {
@@ -329,18 +305,6 @@ export default {
     showBattery: {
       title: "Batarya Durumunu Göster",
       description: "Batarya durumunun gözükmesini sağlayın.",
-    },
-    reset: {
-      title: "Sıfırla",
-      description: "Tüm Sistem ayarlarını varsayılan ayarlarına döndürün.",
-      success: "Tüm Sistem ayarları başarıyla sıfırlandı.",
-      dialog: {
-        title: "Tüm Sistem ayarlarını sıfırla",
-        description:
-          "Tüm Sistem ayarlarınızı sıfırlamak istediğinize emin misiniz? Bu işlem geri alınamaz.",
-        confirm: "Evet, sıfırla",
-        cancel: "Vazgeç",
-      },
     },
   },
   stream: {

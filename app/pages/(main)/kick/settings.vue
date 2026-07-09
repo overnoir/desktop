@@ -95,36 +95,36 @@ const { settings } = storeToRefs(kickStore);
     </SettingField>
     <Separator />
     <SettingField
-      :description="$t('kick.reset.description')"
-      :title="$t('kick.reset.title')"
+      :description="$t('reset.description')"
+      :title="$t('reset.title')"
     >
       <AlertDialog>
         <AlertDialogTrigger as-child>
           <Button variant="destructive">
-            {{ $t("kick.reset.title") }}
+            {{ $t("reset.title") }}
           </Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {{ $t("kick.reset.dialog.title") }}
+              {{ $t("reset.dialog.title") }}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              {{ $t("kick.reset.dialog.description") }}
+              {{ $t("reset.dialog.description") }}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>
-              {{ $t("kick.reset.dialog.cancel") }}
+              {{ $t("reset.dialog.cancel") }}
             </AlertDialogCancel>
             <AlertDialogAction
               variant="destructive"
               @click="
                 kickStore.resetSettings();
-                $toast.success($t('kick.reset.success'));
+                $toast.success($t('reset.success'));
               "
             >
-              {{ $t("kick.reset.dialog.confirm") }}
+              {{ $t("reset.dialog.confirm") }}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

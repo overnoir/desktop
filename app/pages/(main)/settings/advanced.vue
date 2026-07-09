@@ -101,7 +101,7 @@ async function reset() {
   await updatePreventCapture(advanced.value.preventCapture);
   await updateIgnoreCursor(advanced.value.ignoreCursor);
 
-  $toast.success(t("settings.reset.success"));
+  $toast.success(t("reset.success"));
 }
 </script>
 
@@ -150,30 +150,30 @@ async function reset() {
     </SettingField>
     <Separator />
     <SettingField
-      :description="$t('settings.reset.description')"
-      :title="$t('settings.reset.title')"
+      :description="$t('reset.description')"
+      :title="$t('reset.title')"
     >
       <AlertDialog>
         <AlertDialogTrigger as-child>
           <Button variant="destructive">
-            {{ $t("settings.reset.title") }}
+            {{ $t("reset.title") }}
           </Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {{ $t("settings.reset.dialog.title") }}
+              {{ $t("reset.dialog.title") }}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              {{ $t("settings.reset.dialog.description") }}
+              {{ $t("reset.dialog.description") }}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>
-              {{ $t("settings.reset.dialog.cancel") }}
+              {{ $t("reset.dialog.cancel") }}
             </AlertDialogCancel>
             <AlertDialogAction variant="destructive" @click="reset">
-              {{ $t("settings.reset.dialog.confirm") }}
+              {{ $t("reset.dialog.confirm") }}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

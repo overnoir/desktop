@@ -19,7 +19,7 @@ const { error } = defineProps<{ error: NuxtError }>();
             <EmptyTitle>{{ error }}</EmptyTitle>
             <EmptyContent>
               <Button @click="clearError">
-                {{ $t("error.goHome") }}
+                {{ $t("error.clear") }}
               </Button>
             </EmptyContent>
           </Empty>

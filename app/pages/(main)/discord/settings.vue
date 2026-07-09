@@ -137,36 +137,36 @@ const { settings } = storeToRefs(discordStore);
     </SettingField>
     <Separator />
     <SettingField
-      :description="$t('discord.reset.description')"
-      :title="$t('discord.reset.title')"
+      :description="$t('reset.description')"
+      :title="$t('reset.title')"
     >
       <AlertDialog>
         <AlertDialogTrigger as-child>
           <Button variant="destructive">
-            {{ $t("discord.reset.title") }}
+            {{ $t("reset.title") }}
           </Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {{ $t("discord.reset.dialog.title") }}
+              {{ $t("reset.dialog.title") }}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              {{ $t("discord.reset.dialog.description") }}
+              {{ $t("reset.dialog.description") }}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>
-              {{ $t("discord.reset.dialog.cancel") }}
+              {{ $t("reset.dialog.cancel") }}
             </AlertDialogCancel>
             <AlertDialogAction
               variant="destructive"
               @click="
                 discordStore.resetSettings();
-                $toast.success($t('discord.reset.success'));
+                $toast.success($t('reset.success'));
               "
             >
-              {{ $t("discord.reset.dialog.confirm") }}
+              {{ $t("reset.dialog.confirm") }}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

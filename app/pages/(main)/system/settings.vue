@@ -34,36 +34,36 @@ const { settings } = storeToRefs(systemStore);
     </SettingField>
     <Separator />
     <SettingField
-      :description="$t('system.reset.description')"
-      :title="$t('system.reset.title')"
+      :description="$t('reset.description')"
+      :title="$t('reset.title')"
     >
       <AlertDialog>
         <AlertDialogTrigger as-child>
           <Button variant="destructive">
-            {{ $t("system.reset.title") }}
+            {{ $t("reset.title") }}
           </Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {{ $t("system.reset.dialog.title") }}
+              {{ $t("reset.dialog.title") }}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              {{ $t("system.reset.dialog.description") }}
+              {{ $t("reset.dialog.description") }}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>
-              {{ $t("system.reset.dialog.cancel") }}
+              {{ $t("reset.dialog.cancel") }}
             </AlertDialogCancel>
             <AlertDialogAction
               variant="destructive"
               @click="
                 systemStore.resetSettings();
-                $toast.success($t('system.reset.success'));
+                $toast.success($t('reset.success'));
               "
             >
-              {{ $t("system.reset.dialog.confirm") }}
+              {{ $t("reset.dialog.confirm") }}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
