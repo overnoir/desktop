@@ -243,16 +243,16 @@ export default function () {
     await tauriCoreInvoke("discord_unsubscribe", { event, args });
   }
 
-  async function getSelectedVoiceChannel() {
-    await tauriCoreInvoke("discord_get_selected_voice_channel");
+  function getSelectedVoiceChannel() {
+    return tauriCoreInvoke("discord_get_selected_voice_channel");
   }
 
-  async function getChannel(channelId: string) {
-    await tauriCoreInvoke("discord_get_channel", { channelId });
+  function getChannel(channelId: string) {
+    return tauriCoreInvoke("discord_get_channel", { channelId });
   }
 
-  async function getGuild(guildId: string) {
-    await tauriCoreInvoke("discord_get_guild", { guildId });
+  function getGuild(guildId: string) {
+    return tauriCoreInvoke("discord_get_guild", { guildId });
   }
 
   function parseUser(data: any): DiscordUser {
