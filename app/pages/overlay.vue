@@ -22,6 +22,7 @@ const { onDragStart } = useWebviewWindowDrag();
 const isMacOS = tauriOSType() === "macos";
 const errorsStore = useErrorsStore();
 const { connect, listen } = useDiscord();
+const { getStreamers } = useKick();
 const isOnline = useOnline();
 
 const styles = computed<CSSProperties>(() => ({
@@ -136,10 +137,9 @@ useIntervalFn(
   async () => {
     try {
       if (streamers.value.length) {
-        const data = await tauriCoreInvoke<KickStreamer[]>(
-          "get_kick_streamers",
-          { slugs: streamers.value.map(({ slug }) => slug) },
-        );
+        const data = await getStreamers({
+          slugs: streamers.value.map(({ slug }) => slug),
+        });
         streamers.value = data;
       }
     } catch (error) {

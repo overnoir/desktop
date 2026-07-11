@@ -8,6 +8,7 @@ const { handleSubmit, resetForm } = useForm({
   validationSchema: kickAddChannelSchema,
 });
 const errorsStore = useErrorsStore();
+const { getStreamers } = useKick();
 const { $toast } = useNuxtApp();
 const loading = ref(false);
 const { t } = useI18n();
@@ -45,10 +46,7 @@ async function save() {
       .map(({ slug }) => slug);
 
     if (newSlugs.length) {
-      const streamersData = await tauriCoreInvoke<KickStreamer[]>(
-        "get_kick_streamers",
-        { slugs: newSlugs },
-      );
+      const streamersData = await getStreamers({ slugs: newSlugs });
 
       for (const item of newDraft) {
         if (item.status === "pending") {
