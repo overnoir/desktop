@@ -51,6 +51,23 @@ export enum KickDisplayName {
   Name = "name",
   Slug = "slug",
 }
+
+export enum DiscordEventCommand {
+  GetSelectedVoiceChannel = "GET_SELECTED_VOICE_CHANNEL",
+  GetChannel = "GET_CHANNEL",
+  GetGuild = "GET_GUILD",
+  Dispatch = "DISPATCH",
+}
+
+export enum DiscordEventEvent {
+  VoiceChannelSelect = "VOICE_CHANNEL_SELECT",
+  VoiceStateCreate = "VOICE_STATE_CREATE",
+  VoiceStateUpdate = "VOICE_STATE_UPDATE",
+  VoiceStateDelete = "VOICE_STATE_DELETE",
+  SpeakingStart = "SPEAKING_START",
+  SpeakingStop = "SPEAKING_STOP",
+}
+
 //#endregion
 
 //#region Types
@@ -153,6 +170,13 @@ export type DiscordConnectedUser = {
   avatar: string | null;
   username: string;
   id: string;
+};
+
+export type DiscordEvent = {
+  data: Record<string, unknown>;
+  evt: DiscordEventEvent | null;
+  cmd: DiscordEventCommand;
+  nonce: string;
 };
 
 export type KickSettings = {

@@ -8,7 +8,7 @@ definePageMeta({
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const { filtredStreamers, streamers } = storeToRefs(useKickStore());
 const discordStore = useDiscordStore();
-const { filtredUsers, guild, settings, connectedUser } =
+const { filtredUsers, guild, settings, connectedUser, isConnected } =
   storeToRefs(discordStore);
 const {
   settings: systemSettings,
@@ -21,6 +21,7 @@ const { general } = storeToRefs(useSettingsStore());
 const { onDragStart } = useWebviewWindowDrag();
 const isMacOS = tauriOSType() === "macos";
 const errorsStore = useErrorsStore();
+const { connect, listen } = useDiscord();
 const isOnline = useOnline();
 
 const styles = computed<CSSProperties>(() => ({
@@ -29,28 +30,11 @@ const styles = computed<CSSProperties>(() => ({
   gap: `${Math.round((general.value.size * general.value.gap) / 100)}px`,
 }));
 
-await tauriEventListen<DiscordGuild | null>(
-  "discord-guild-update",
-  ({ payload }) => {
-    guild.value = payload || undefined;
-  },
-);
-
-await tauriEventListen<DiscordUser>("discord-user-update", ({ payload }) => {
-  discordStore.updateUser(payload);
-});
-
-await tauriEventListen<Pick<DiscordUser, "id">>(
-  "discord-user-remove",
-  ({ payload }) => {
-    discordStore.removeUser(payload.id);
-  },
-);
+await listen();
 
 try {
-  if (connectedUser.value) {
-    connectedUser.value =
-      await tauriCoreInvoke<DiscordConnectedUser>("connect_discord");
+  if (isConnected.value) {
+    connectedUser.value = await connect();
   }
 } catch (error) {
   errorsStore.addError({
@@ -58,6 +42,7 @@ try {
     source: ErrorSource.Discord,
   });
   connectedUser.value = null;
+  isConnected.value = false;
 }
 
 async function openStreamWebviewWindow(slug: string) {

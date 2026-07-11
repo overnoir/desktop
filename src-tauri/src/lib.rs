@@ -6,7 +6,10 @@ mod nspanel;
 mod types;
 mod vault;
 use api::init_api;
-use connectors::discord::{connect_discord, disconnect_discord, init_discord};
+use connectors::discord::{
+    connect_discord, disconnect_discord, discord_get_channel, discord_get_guild,
+    discord_get_selected_voice_channel, discord_subscribe, discord_unsubscribe, init_discord,
+};
 use connectors::kick::get_kick_streamers;
 use connectors::system::{get_system, init_system};
 #[cfg(target_os = "macos")]
@@ -28,8 +31,13 @@ pub fn run() {
             create_nspanel,
             get_kick_streamers,
             get_vault_metadata,
+            discord_get_selected_voice_channel,
+            discord_get_channel,
+            discord_get_guild,
             disconnect_discord,
             connect_discord,
+            discord_subscribe,
+            discord_unsubscribe,
             get_system,
             clear_vault,
         ])

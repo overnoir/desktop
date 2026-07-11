@@ -187,3 +187,5 @@ export const systemSettingsSchema = z.preprocess(
     showCpu: z.boolean().catch(defaultSystemSettings.showCpu),
   }),
 ) satisfies z.ZodType<SystemSettings>;
+
+export const isConnectedSchema = z.boolean().catch(false);

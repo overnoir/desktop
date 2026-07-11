@@ -3,6 +3,7 @@ import type { State } from "@tauri-store/pinia";
 function sync(state: State) {
   return {
     connectedUser: discordConnectedUserSchema.parse(state.connectedUser),
+    isConnected: isConnectedSchema.parse(state.isConnected),
     settings: discordSettingsSchema.parse(state.settings),
   };
 }
@@ -13,6 +14,7 @@ export const useDiscordStore = defineStore(
     const settings = ref<DiscordSettings>({ ...defaultDiscordSettings });
     const connectedUser = ref<DiscordConnectedUser | null>(null);
     const guild = ref<DiscordGuild | undefined>(undefined);
+    const isConnected = ref<boolean>(false);
 
     const filtredUsers = computed(() => {
       if (!guild.value || !connectedUser.value) {
@@ -86,38 +88,13 @@ export const useDiscordStore = defineStore(
       settings.value = { ...defaultDiscordSettings };
     }
 
-    function updateUser(user: DiscordUser) {
-      if (!guild.value) {
-        return;
-      }
-      const users = guild.value.channel.users;
-      const index = users.findIndex(({ id }) => id === user.id);
-      if (index !== -1) {
-        users.splice(index, 1, user);
-      } else {
-        users.push(user);
-      }
-    }
-
-    function removeUser(userId: string) {
-      if (!guild.value) {
-        return;
-      }
-      const users = guild.value.channel.users;
-      const index = users.findIndex(({ id }) => id === userId);
-      if (index !== -1) {
-        users.splice(index, 1);
-      }
-    }
-
     return {
       connectedUser,
       resetSettings,
       filtredUsers,
+      isConnected,
       settings,
       guild,
-      updateUser,
-      removeUser,
     };
   },
   {

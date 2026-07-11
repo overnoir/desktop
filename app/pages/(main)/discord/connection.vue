@@ -1,7 +1,8 @@
 <script setup lang="ts">
 const discordStore = useDiscordStore();
-const { connectedUser } = storeToRefs(discordStore);
+const { connectedUser, isConnected } = storeToRefs(discordStore);
 const deleteVaultItemsOnDisconnect = ref(true);
+const { connect, disconnect } = useDiscord();
 const errorsStore = useErrorsStore();
 const { $toast } = useNuxtApp();
 const loading = ref(false);
@@ -18,20 +19,18 @@ const avatarUrl = computed(
 
 async function toggleConnection() {
   loading.value = true;
-  const action = connectedUser.value ? "disconnect" : "connect";
+  const action = isConnected.value ? "disconnect" : "connect";
   try {
     if (action === "connect") {
-      connectedUser.value =
-        await tauriCoreInvoke<DiscordConnectedUser>("connect_discord");
+      connectedUser.value = await connect();
+      isConnected.value = true;
     } else {
-      await tauriCoreInvoke("disconnect_discord", {
+      await disconnect({
         deleteVaultItems: deleteVaultItemsOnDisconnect.value,
       });
-      if (deleteVaultItemsOnDisconnect.value) {
-        await discordStore.$tauri.saveAllNow();
-      }
       deleteVaultItemsOnDisconnect.value = true;
       connectedUser.value = null;
+      isConnected.value = false;
     }
 
     $toast.success(t(`discord.${action}.success`));
@@ -57,16 +56,16 @@ async function toggleConnection() {
           alt="Avatar"
           class="size-20 rounded-lg border mx-auto mt-4 mb-2"
         />
-        <CardDescription v-if="connectedUser">
+        <CardDescription v-if="isConnected">
           {{
             $t("discord.disconnect.description", {
-              username: connectedUser.username,
+              username: connectedUser?.username,
             })
           }}
         </CardDescription>
       </CardHeader>
       <CardContent class="space-y-8 text-sm">
-        <template v-if="connectedUser">
+        <template v-if="isConnected">
           <AlertDialog>
             <AlertDialogTrigger as-child>
               <Button variant="secondary" :loading size="lg">

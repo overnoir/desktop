@@ -1,46 +1,12 @@
+use interprocess::local_socket::prelude::LocalSocketStream;
 use serde::{Deserialize, Serialize};
-use std::sync::{atomic::AtomicBool, Arc, Mutex};
+use std::sync::Mutex;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct OAuthTokenResponse {
     pub refresh_token: Option<String>,
     pub access_token: String,
     pub expires_in: u64,
-}
-
-#[derive(Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct DiscordUser {
-    pub global_name: Option<String>,
-    pub avatar: Option<String>,
-    pub is_self_deafened: bool,
-    pub discriminator: String,
-    pub nick: Option<String>,
-    pub is_self_muted: bool,
-    pub is_suppress: bool,
-    pub is_deafened: bool,
-    pub is_speaking: bool,
-    pub username: String,
-    pub is_muted: bool,
-    pub is_bot: bool,
-    pub id: String,
-}
-
-#[derive(Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct DiscordChannel {
-    pub users: Vec<DiscordUser>,
-    pub name: String,
-    pub id: String,
-}
-
-#[derive(Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct DiscordGuild {
-    pub icon_url: Option<String>,
-    pub channel: DiscordChannel,
-    pub name: String,
-    pub id: String,
 }
 
 #[derive(Serialize, Clone)]
@@ -125,10 +91,14 @@ pub struct VaultState {
     pub store: std::sync::Mutex<Option<iota_stronghold::Store>>,
 }
 
-pub struct DiscordState {
-    pub client: Mutex<Option<discord_rich_presence::DiscordIpcClient>>,
-    pub stop_flag: Mutex<Option<Arc<AtomicBool>>>,
+pub struct DiscordClient {
+    pub stream: Option<LocalSocketStream>,
+    pub http: reqwest::Client,
     pub client_id: String,
+}
+
+pub struct DiscordState {
+    pub client: tokio::sync::Mutex<DiscordClient>,
 }
 
 pub struct NetworkPrev {
