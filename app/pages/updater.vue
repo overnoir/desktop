@@ -23,7 +23,6 @@ setTimeout(() => {
 <template>
   <section
     class="flex items-center justify-center flex-col gap-6 h-full **:pointer-events-none"
-    data-tauri-drag-region
   >
     <NuxtImg src="/logo.png" class="size-17" alt="Logo" />
     <div class="flex flex-col items-center gap-3">

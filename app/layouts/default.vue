@@ -1,6 +1,9 @@
 <script setup lang="ts">
-const currentWebviewWindow = useWebviewWindow().getCurrent();
+const { currentWebviewWindow, listenDrag, onDragStart } =
+  useWebviewWindow().getCurrent();
 const { advanced } = storeToRefs(useSettingsStore());
+
+listenDrag();
 
 onMounted(async () => {
   currentWebviewWindow.setAlwaysOnTop(advanced.value.alwaysOnTop);
@@ -12,7 +15,10 @@ onMounted(async () => {
   <Html>
     <Body>
       <NuxtLoadingIndicator color="var(--primary)" />
-      <LayoutTitlebar />
+      <LayoutTitlebar
+        @destroy="currentWebviewWindow.destroy"
+        @mousedown="onDragStart"
+      />
       <SonnerToaster />
       <div class="flex h-screen pt-8.25 border rounded-2xl">
         <LayoutNavbar />

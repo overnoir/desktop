@@ -70,13 +70,53 @@ export default function () {
   function getCurrent(
     { isNSPanel }: { isNSPanel?: boolean } = { isNSPanel: true },
   ) {
-    const webviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
+    const currentWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
+    const isDragging = useState("is-dragging", () => false);
+    const offset = ref({ x: 0, y: 0 });
 
-    if (!isMacOS || !isNSPanel) {
-      return webviewWindow;
+    async function onDragStart(e: MouseEvent) {
+      if (e.button !== 0) {
+        return;
+      }
+
+      e.preventDefault();
+
+      const { x, y } = await currentWebviewWindow.outerPosition();
+
+      offset.value = { x: e.screenX - x, y: e.screenY - y };
+      document.body.style.pointerEvents = "none";
+      isDragging.value = true;
     }
 
-    return proxy(webviewWindow);
+    function listenDrag() {
+      useEventListener(window, "mouseup", () => {
+        document.body.style.pointerEvents = "auto";
+        isDragging.value = false;
+      });
+
+      useEventListener(window, "mousemove", async (e) => {
+        if (!isDragging.value) {
+          return;
+        }
+
+        currentWebviewWindow.setPosition(
+          new TauriDpiLogicalPosition(
+            e.screenX - offset.value.x,
+            e.screenY - offset.value.y,
+          ),
+        );
+      });
+    }
+
+    return {
+      currentWebviewWindow:
+        !isMacOS || !isNSPanel
+          ? currentWebviewWindow
+          : proxy(currentWebviewWindow),
+      onDragStart,
+      isDragging,
+      listenDrag,
+    };
   }
 
   async function create(

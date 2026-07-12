@@ -3,8 +3,7 @@ import type { CSSProperties } from "vue";
 
 const { general, advanced } = storeToRefs(useSettingsStore());
 const { getCurrent, getByLabel } = useWebviewWindow();
-const { isDragging } = useWebviewWindowDrag();
-const overlayWebviewWindow = getCurrent();
+const { currentWebviewWindow, isDragging } = getCurrent();
 const errorsStore = useErrorsStore();
 const { create } = useTray();
 
@@ -44,9 +43,9 @@ if (advanced.value.autoStart !== (await tauriAutoStartIsEnabled())) {
 }
 
 onMounted(async () => {
-  await overlayWebviewWindow.setAlwaysOnTop(advanced.value.alwaysOnTop);
-  await overlayWebviewWindow.setIgnoreCursorEvents(advanced.value.ignoreCursor);
-  await overlayWebviewWindow.onMoved(({ payload }) => {
+  await currentWebviewWindow.setAlwaysOnTop(advanced.value.alwaysOnTop);
+  await currentWebviewWindow.setIgnoreCursorEvents(advanced.value.ignoreCursor);
+  await currentWebviewWindow.onMoved(({ payload }) => {
     if (!isDragging.value) {
       return;
     }
@@ -54,7 +53,7 @@ onMounted(async () => {
     general.value.y = payload.y;
   });
 
-  await overlayWebviewWindow.setPosition(
+  await currentWebviewWindow.setPosition(
     new TauriDpiLogicalPosition(general.value.x, general.value.y),
   );
 
@@ -68,8 +67,8 @@ onMounted(async () => {
     const { width, height } = entry.contentRect;
 
     const [currentPosition, currentSize] = await Promise.all([
-      overlayWebviewWindow.outerPosition(),
-      overlayWebviewWindow.outerSize(),
+      currentWebviewWindow.outerPosition(),
+      currentWebviewWindow.outerSize(),
     ]);
 
     const deltaX = width - currentSize.width;
@@ -93,12 +92,12 @@ onMounted(async () => {
     }
 
     if (!isDragging.value) {
-      await overlayWebviewWindow.setPosition(
+      await currentWebviewWindow.setPosition(
         new TauriDpiLogicalPosition(newX, newY),
       );
     }
 
-    await overlayWebviewWindow.setSize(new TauriDpiLogicalSize(width, height));
+    await currentWebviewWindow.setSize(new TauriDpiLogicalSize(width, height));
   });
 
   const updaterWebviewWindow = await getByLabel({
@@ -112,7 +111,7 @@ onMounted(async () => {
 
   await create();
 
-  await overlayWebviewWindow.show();
+  await currentWebviewWindow.show();
 });
 </script>
 

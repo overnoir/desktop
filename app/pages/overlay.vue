@@ -5,9 +5,9 @@ definePageMeta({
   layout: "overlay",
 });
 
-const { filtredStreamers, streamers } = storeToRefs(useKickStore());
 const { getByLabel, getCurrent, create } = useWebviewWindow();
-const overlayWebviewWindow = getCurrent();
+const { filtredStreamers, streamers } = storeToRefs(useKickStore());
+const { currentWebviewWindow, onDragStart, listenDrag } = getCurrent();
 const discordStore = useDiscordStore();
 const { filtredUsers, guild, settings, connectedUser, isConnected } =
   storeToRefs(discordStore);
@@ -19,9 +19,8 @@ const {
   cpu,
 } = storeToRefs(useSystemStore());
 const { general } = storeToRefs(useSettingsStore());
-const { onDragStart, listenDrag } = useWebviewWindowDrag();
-const errorsStore = useErrorsStore();
 const { connect, listen } = useDiscord();
+const errorsStore = useErrorsStore();
 const { getStreamers } = useKick();
 const isOnline = useOnline();
 
@@ -60,8 +59,8 @@ async function openStreamWebviewWindow(slug: string) {
     return;
   }
 
-  const position = await overlayWebviewWindow.outerPosition();
-  const size = await overlayWebviewWindow.outerSize();
+  const position = await currentWebviewWindow.outerPosition();
+  const size = await currentWebviewWindow.outerSize();
   const monitor = await tauriWindowCurrentMonitor();
 
   const { x, y } = generateOverlaySidePosition({
@@ -93,8 +92,8 @@ async function openMainWebviewWindow() {
     await mainWebviewWindow.unminimize();
     await mainWebviewWindow.setFocus();
   } else {
-    const position = await overlayWebviewWindow.outerPosition();
-    const size = await overlayWebviewWindow.outerSize();
+    const position = await currentWebviewWindow.outerPosition();
+    const size = await currentWebviewWindow.outerSize();
     const monitor = await tauriWindowCurrentMonitor();
 
     const { x, y } = generateOverlaySidePosition({

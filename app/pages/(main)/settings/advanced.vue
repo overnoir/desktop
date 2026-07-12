@@ -1,11 +1,11 @@
 <script setup lang="ts">
+const settingsStore = useSettingsStore();
+const { general, advanced } = storeToRefs(settingsStore);
 const { getByLabel, getCurrent } = useWebviewWindow();
 const overlayWebviewWindow = await getByLabel({
   label: WebviewWindowLabel.Overlay,
 });
-const mainWebviewWindow = getCurrent();
-const settingsStore = useSettingsStore();
-const { general, advanced } = storeToRefs(settingsStore);
+const { currentWebviewWindow } = getCurrent();
 const { $toast } = useNuxtApp();
 const { t } = useI18n();
 
@@ -23,7 +23,7 @@ async function updatePreventCapture(value: boolean) {
   }
 
   await overlayWebviewWindow.setContentProtected(value);
-  await mainWebviewWindow.setContentProtected(value);
+  await currentWebviewWindow.setContentProtected(value);
 }
 
 async function updateAlwaysOnTop(value: boolean) {
@@ -40,7 +40,7 @@ async function updateAlwaysOnTop(value: boolean) {
   }
 
   await overlayWebviewWindow.setAlwaysOnTop(value);
-  await mainWebviewWindow.setAlwaysOnTop(value);
+  await currentWebviewWindow.setAlwaysOnTop(value);
 }
 
 async function reset() {

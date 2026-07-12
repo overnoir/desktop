@@ -1,16 +1,15 @@
 <script setup lang="ts">
-const currentWebviewWindow = useWebviewWindow().getCurrent();
-const { onDragStart, listenDrag } = useWebviewWindowDrag();
-const isMacOS = tauriOSType() === "macos";
+defineEmits<{
+  (e: "destroy"): void;
+}>();
 
-listenDrag();
+const isMacOS = tauriOSType() === "macos";
 </script>
 
 <template>
   <div
     class="fixed top-0 left-0 right-0 h-8.25 flex items-center z-99 **:select-none pointer-events-auto"
     :class="{ 'flex-row-reverse': !isMacOS }"
-    @mousedown="onDragStart"
   >
     <div
       class="flex"
@@ -23,7 +22,8 @@ listenDrag();
       <Button
         :class="{ 'hover:bg-red-600': !isMacOS }"
         variant="ghost"
-        @click="currentWebviewWindow.destroy"
+        @click="$emit('destroy')"
+        @mousedown.stop
       >
         <Icon name="lucide:x" />
       </Button>
