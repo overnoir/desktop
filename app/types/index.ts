@@ -68,6 +68,10 @@ export enum DiscordEventEvent {
   SpeakingStop = "SPEAKING_STOP",
 }
 
+export enum StreamPlatform {
+  Kick = "kick",
+}
+
 //#endregion
 
 //#region Types
@@ -227,5 +231,10 @@ export type SystemSettings = {
   showNetwork: boolean;
   showMemory: boolean;
   showCpu: boolean;
+};
+
+export type Stream = {
+  platform: StreamPlatform;
+  slug: string;
 };
 //#endregion

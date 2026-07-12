@@ -23,6 +23,7 @@ const { connect, listen } = useDiscord();
 const errorsStore = useErrorsStore();
 const { getStreamers } = useKick();
 const isOnline = useOnline();
+const { open } = useStream();
 
 const styles = computed<CSSProperties>(() => ({
   flexDirection:
@@ -44,42 +45,6 @@ try {
   });
   connectedUser.value = null;
   isConnected.value = false;
-}
-
-async function openStreamWebviewWindow(slug: string) {
-  const streamWebviewWindow = await getByLabel({
-    label: WebviewWindowLabel.Stream,
-  });
-
-  if (streamWebviewWindow) {
-    await streamWebviewWindow.emitTo(WebviewWindowLabel.Stream, "slug-update", {
-      slug,
-    });
-
-    return;
-  }
-
-  const position = await currentWebviewWindow.outerPosition();
-  const size = await currentWebviewWindow.outerSize();
-  const monitor = await tauriWindowCurrentMonitor();
-
-  const { x, y } = generateOverlaySidePosition({
-    size: {
-      height: streamWebviewWindowOptions.height!,
-      width: streamWebviewWindowOptions.width!,
-    },
-    orientation: general.value.orientation,
-    overlay: { position, size },
-    monitor,
-  });
-
-  await create({
-    ...streamWebviewWindowOptions,
-    label: WebviewWindowLabel.Stream,
-    url: `/stream?slug=${slug}`,
-    x,
-    y,
-  });
 }
 
 async function openMainWebviewWindow() {
@@ -196,7 +161,7 @@ useIntervalFn(
         v-for="streamer in filtredStreamers"
         :key="streamer.id"
         :streamer
-        @click="openStreamWebviewWindow(streamer.slug)"
+        @click="open({ platform: StreamPlatform.Kick, slug: streamer.slug })"
       />
     </template>
     <OverlaySystemCpu v-if="cpu" :cpu />

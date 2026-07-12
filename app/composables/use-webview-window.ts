@@ -124,7 +124,7 @@ export default function () {
       WindowOptions & {
         canBecomeKeyWindow?: boolean;
         withEventHandler?: boolean;
-        label: string;
+        label: WebviewWindowLabel;
       },
   ) {
     if (isMacOS) {
