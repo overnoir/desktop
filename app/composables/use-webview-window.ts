@@ -1,9 +1,11 @@
 import type { WebviewWindow } from "@tauri-apps/api/webviewWindow";
+import type { WebviewOptions } from "@tauri-apps/api/webview";
 import type { PhysicalPosition } from "@tauri-apps/api/dpi";
 import type { WindowOptions } from "@tauri-apps/api/window";
-import type { WebviewOptions } from "@tauri-apps/api/webview";
+import { clamp } from "@vueuse/core";
 
 export default function () {
+  const { general } = storeToRefs(useSettingsStore());
   const isMacOS = tauriOSType() === "macos";
 
   function proxy(webviewWindow: WebviewWindow) {
@@ -60,11 +62,9 @@ export default function () {
     const webviewWindow =
       await TauriWebviewWindowWebviewWindow.getByLabel(label);
 
-    if (!webviewWindow || !isMacOS || !(isNSPanel ?? true)) {
-      return webviewWindow;
-    }
-
-    return proxy(webviewWindow);
+    return !webviewWindow || !isMacOS || !(isNSPanel ?? true)
+      ? webviewWindow
+      : proxy(webviewWindow);
   }
 
   function getCurrent(
@@ -127,10 +127,70 @@ export default function () {
         label: WebviewWindowLabel;
       },
   ) {
+    const overlayWebviewWindow = await getByLabel({
+      label: WebviewWindowLabel.Overlay,
+    });
+    const height = options.height!;
+    const width = options.width!;
+    const gap = 10;
+    let x = 0;
+    let y = 0;
+
+    if (overlayWebviewWindow) {
+      const position = await overlayWebviewWindow.outerPosition();
+      const size = await overlayWebviewWindow.outerSize();
+      const monitor = await tauriWindowCurrentMonitor();
+
+      if (general.value.orientation === Orientation.Vertical) {
+        const after = position.x + size.width + gap;
+        const before = position.x - width - gap;
+        x = monitor
+          ? after + width <= monitor.position.x + monitor.size.width
+            ? after
+            : before >= monitor.position.x
+              ? before
+              : after
+          : after;
+        y = position.y;
+      } else {
+        const after = position.y + size.height + gap;
+        const before = position.y - height - gap;
+        y = monitor
+          ? after + height <= monitor.position.y + monitor.size.height
+            ? after
+            : before >= monitor.position.y
+              ? before
+              : after
+          : after;
+        x = position.x;
+      }
+
+      if (monitor) {
+        x = clamp(
+          x,
+          monitor.position.x + gap,
+          monitor.position.x + monitor.size.width - width - gap,
+        );
+        y = clamp(
+          y,
+          monitor.position.y + gap,
+          monitor.position.y + monitor.size.height - height - gap,
+        );
+      }
+    }
+
     if (isMacOS) {
-      await tauriCoreInvoke("create_nspanel", { ...options });
+      await tauriCoreInvoke("create_nspanel", {
+        ...options,
+        x,
+        y,
+      });
     } else {
-      new TauriWebviewWindowWebviewWindow(options.label, options);
+      new TauriWebviewWindowWebviewWindow(options.label, {
+        ...options,
+        x,
+        y,
+      });
     }
   }
 

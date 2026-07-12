@@ -1,5 +1,4 @@
 export default function () {
-  const { general } = storeToRefs(useSettingsStore());
   const { create, getByLabel } = useWebviewWindow();
 
   async function open(stream: Stream) {
@@ -25,26 +24,10 @@ export default function () {
       return;
     }
 
-    const position = await overlayWebviewWindow.outerPosition();
-    const size = await overlayWebviewWindow.outerSize();
-    const monitor = await tauriWindowCurrentMonitor();
-
-    const { x, y } = generateOverlaySidePosition({
-      size: {
-        height: streamWebviewWindowOptions.height!,
-        width: streamWebviewWindowOptions.width!,
-      },
-      orientation: general.value.orientation,
-      overlay: { position, size },
-      monitor,
-    });
-
     await create({
       ...streamWebviewWindowOptions,
       url: `/stream?${new URLSearchParams(stream)}`,
       label: WebviewWindowLabel.Stream,
-      x,
-      y,
     });
   }
 

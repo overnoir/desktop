@@ -7,7 +7,7 @@ definePageMeta({
 
 const { getByLabel, getCurrent, create } = useWebviewWindow();
 const { filtredStreamers, streamers } = storeToRefs(useKickStore());
-const { currentWebviewWindow, onDragStart, listenDrag } = getCurrent();
+const { onDragStart, listenDrag } = getCurrent();
 const discordStore = useDiscordStore();
 const { filtredUsers, guild, settings, connectedUser, isConnected } =
   storeToRefs(discordStore);
@@ -57,26 +57,10 @@ async function openMainWebviewWindow() {
     await mainWebviewWindow.unminimize();
     await mainWebviewWindow.setFocus();
   } else {
-    const position = await currentWebviewWindow.outerPosition();
-    const size = await currentWebviewWindow.outerSize();
-    const monitor = await tauriWindowCurrentMonitor();
-
-    const { x, y } = generateOverlaySidePosition({
-      size: {
-        width: mainWebviewWindowOptions.width!,
-        height: mainWebviewWindowOptions.height!,
-      },
-      overlay: { position, size },
-      monitor,
-      orientation: general.value.orientation,
-    });
-
     await create({
       ...mainWebviewWindowOptions,
       label: WebviewWindowLabel.Main,
       canBecomeKeyWindow: true,
-      x,
-      y,
     });
   }
 }

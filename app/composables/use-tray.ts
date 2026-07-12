@@ -2,7 +2,6 @@ import type { Image } from "@tauri-apps/api/image";
 
 export default function () {
   const { getByLabel, create: createWebviewWindow } = useWebviewWindow();
-  const { general } = storeToRefs(useSettingsStore());
   const isMacOS = tauriOSType() === "macos";
   const { t } = useI18n();
 
@@ -28,26 +27,10 @@ export default function () {
               await mainWebviewWindow.unminimize();
               await mainWebviewWindow.setFocus();
             } else {
-              const position = await overlayWebviewWindow.outerPosition();
-              const size = await overlayWebviewWindow.outerSize();
-              const monitor = await tauriWindowCurrentMonitor();
-
-              const { x, y } = generateOverlaySidePosition({
-                size: {
-                  width: mainWebviewWindowOptions.width!,
-                  height: mainWebviewWindowOptions.height!,
-                },
-                overlay: { position, size },
-                monitor,
-                orientation: general.value.orientation,
-              });
-
               await createWebviewWindow({
                 ...mainWebviewWindowOptions,
                 label: WebviewWindowLabel.Main,
                 canBecomeKeyWindow: true,
-                x,
-                y,
               });
             }
           },
