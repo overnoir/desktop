@@ -19,7 +19,7 @@ const {
   cpu,
 } = storeToRefs(useSystemStore());
 const { general } = storeToRefs(useSettingsStore());
-const { onDragStart } = useWebviewWindowDrag();
+const { onDragStart, listenDrag } = useWebviewWindowDrag();
 const errorsStore = useErrorsStore();
 const { connect, listen } = useDiscord();
 const { getStreamers } = useKick();
@@ -32,6 +32,7 @@ const styles = computed<CSSProperties>(() => ({
 }));
 
 await listen();
+listenDrag();
 
 try {
   if (isConnected.value) {

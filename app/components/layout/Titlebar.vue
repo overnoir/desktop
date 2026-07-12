@@ -1,7 +1,9 @@
 <script setup lang="ts">
 const currentWebviewWindow = useWebviewWindow().getCurrent();
-const { onDragStart } = useWebviewWindowDrag();
+const { onDragStart, listenDrag } = useWebviewWindowDrag();
 const isMacOS = tauriOSType() === "macos";
+
+listenDrag();
 </script>
 
 <template>

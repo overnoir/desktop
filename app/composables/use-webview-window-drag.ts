@@ -1,7 +1,6 @@
 export default function () {
   const currentWebviewWindow = useWebviewWindow().getCurrent();
   const isDragging = useState("is-dragging", () => false);
-  const isInitialized = ref(false);
   const offsetX = ref(0);
   const offsetY = ref(0);
 
@@ -19,7 +18,7 @@ export default function () {
     isDragging.value = true;
   }
 
-  if (!isInitialized.value) {
+  function listenDrag() {
     useEventListener(window, "mouseup", () => (isDragging.value = false));
 
     useEventListener(window, "mousemove", async (e) => {
@@ -34,9 +33,7 @@ export default function () {
         ),
       );
     });
-
-    isInitialized.value = true;
   }
 
-  return { isDragging, onDragStart };
+  return { isDragging, onDragStart, listenDrag };
 }
