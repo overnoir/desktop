@@ -4,23 +4,17 @@ definePageMeta({
 });
 
 const status = ref<"checking" | "downloading" | "loading">("checking");
+const { create } = useWebviewWindow();
 
 setTimeout(() => {
   status.value = "downloading";
 
   setTimeout(async () => {
-    if (tauriOSType() === "macos") {
-      await tauriCoreInvoke("create_nspanel", {
-        ...overlayWebviewWindowOptions,
-        label: WebviewWindowLabel.Overlay,
-        withEventHandler: true,
-      });
-    } else {
-      new TauriWebviewWindowWebviewWindow(
-        WebviewWindowLabel.Overlay,
-        overlayWebviewWindowOptions,
-      );
-    }
+    await create({
+      ...overlayWebviewWindowOptions,
+      label: WebviewWindowLabel.Overlay,
+      withEventHandler: true,
+    });
     status.value = "loading";
   }, 1000);
 }, 1000);

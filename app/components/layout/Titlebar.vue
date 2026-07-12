@@ -1,17 +1,7 @@
 <script setup lang="ts">
-const currentWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
+const currentWebviewWindow = useWebviewWindow().getCurrent();
 const { onDragStart } = useWebviewWindowDrag();
 const isMacOS = tauriOSType() === "macos";
-
-async function destroy() {
-  if (isMacOS) {
-    await tauriCoreInvoke("destroy_nspanel", {
-      label: currentWebviewWindow.label,
-    });
-  } else {
-    await currentWebviewWindow.destroy();
-  }
-}
 </script>
 
 <template>
@@ -31,7 +21,7 @@ async function destroy() {
       <Button
         :class="{ 'hover:bg-red-600': !isMacOS }"
         variant="ghost"
-        @click="destroy"
+        @click="currentWebviewWindow.destroy"
       >
         <Icon name="lucide:x" />
       </Button>

@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import type { PhysicalPosition } from "@tauri-apps/api/dpi";
 import type { CSSProperties } from "vue";
 
-const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const { general, advanced } = storeToRefs(useSettingsStore());
+const { getCurrent, getByLabel } = useWebviewWindow();
 const { isDragging } = useWebviewWindowDrag();
-const isMacOS = tauriOSType() === "macos";
+const overlayWebviewWindow = getCurrent();
 const errorsStore = useErrorsStore();
 const { create } = useTray();
 
@@ -45,39 +44,15 @@ if (advanced.value.autoStart !== (await tauriAutoStartIsEnabled())) {
 }
 
 onMounted(async () => {
-  if (isMacOS) {
-    await tauriCoreInvoke("set_nspanel_ignore_cursor", {
-      value: advanced.value.ignoreCursor,
-      label: WebviewWindowLabel.Overlay,
-    });
-    await tauriCoreInvoke("set_nspanel_always_on_top", {
-      value: advanced.value.alwaysOnTop,
-      label: WebviewWindowLabel.Overlay,
-    });
-    await tauriEventListen<PhysicalPosition>(
-      "nspanel-moved",
-      async ({ payload }) => {
-        console.log(payload);
-        if (!isDragging.value) {
-          return;
-        }
-        general.value.x = payload.x;
-        general.value.y = payload.y;
-      },
-    );
-  } else {
-    await overlayWebviewWindow.setAlwaysOnTop(advanced.value.alwaysOnTop);
-    await overlayWebviewWindow.setIgnoreCursorEvents(
-      advanced.value.ignoreCursor,
-    );
-    await overlayWebviewWindow.onMoved(({ payload }) => {
-      if (!isDragging.value) {
-        return;
-      }
-      general.value.x = payload.x;
-      general.value.y = payload.y;
-    });
-  }
+  await overlayWebviewWindow.setAlwaysOnTop(advanced.value.alwaysOnTop);
+  await overlayWebviewWindow.setIgnoreCursorEvents(advanced.value.ignoreCursor);
+  await overlayWebviewWindow.onMoved(({ payload }) => {
+    if (!isDragging.value) {
+      return;
+    }
+    general.value.x = payload.x;
+    general.value.y = payload.y;
+  });
 
   await overlayWebviewWindow.setPosition(
     new TauriDpiLogicalPosition(general.value.x, general.value.y),
@@ -126,9 +101,10 @@ onMounted(async () => {
     await overlayWebviewWindow.setSize(new TauriDpiLogicalSize(width, height));
   });
 
-  const updaterWebviewWindow = await TauriWebviewWindowWebviewWindow.getByLabel(
-    WebviewWindowLabel.Updater,
-  );
+  const updaterWebviewWindow = await getByLabel({
+    label: WebviewWindowLabel.Updater,
+    isNSPanel: false,
+  });
 
   if (updaterWebviewWindow) {
     await updaterWebviewWindow.destroy();

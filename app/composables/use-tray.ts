@@ -1,6 +1,7 @@
 import type { Image } from "@tauri-apps/api/image";
 
 export default function () {
+  const { getByLabel, create: createWebviewWindow } = useWebviewWindow();
   const { general } = storeToRefs(useSettingsStore());
   const isMacOS = tauriOSType() === "macos";
   const { t } = useI18n();
@@ -10,19 +11,17 @@ export default function () {
       items: [
         {
           action: async () => {
-            const overlayWebviewWindow =
-              await TauriWebviewWindowWebviewWindow.getByLabel(
-                WebviewWindowLabel.Overlay,
-              );
+            const overlayWebviewWindow = await getByLabel({
+              label: WebviewWindowLabel.Overlay,
+            });
 
             if (!overlayWebviewWindow) {
               return;
             }
 
-            const mainWebviewWindow =
-              await TauriWebviewWindowWebviewWindow.getByLabel(
-                WebviewWindowLabel.Main,
-              );
+            const mainWebviewWindow = await getByLabel({
+              label: WebviewWindowLabel.Main,
+            });
 
             if (mainWebviewWindow) {
               await mainWebviewWindow.show();
@@ -43,21 +42,13 @@ export default function () {
                 orientation: general.value.orientation,
               });
 
-              if (isMacOS) {
-                await tauriCoreInvoke("create_nspanel", {
-                  ...mainWebviewWindowOptions,
-                  label: WebviewWindowLabel.Main,
-                  canBecomeKeyWindow: true,
-                  x,
-                  y,
-                });
-              } else {
-                new TauriWebviewWindowWebviewWindow(WebviewWindowLabel.Main, {
-                  ...mainWebviewWindowOptions,
-                  x,
-                  y,
-                });
-              }
+              await createWebviewWindow({
+                ...mainWebviewWindowOptions,
+                label: WebviewWindowLabel.Main,
+                canBecomeKeyWindow: true,
+                x,
+                y,
+              });
             }
           },
           text: t("tray.settings"),

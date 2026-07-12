@@ -5,8 +5,9 @@ definePageMeta({
   layout: "overlay",
 });
 
-const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
 const { filtredStreamers, streamers } = storeToRefs(useKickStore());
+const { getByLabel, getCurrent, create } = useWebviewWindow();
+const overlayWebviewWindow = getCurrent();
 const discordStore = useDiscordStore();
 const { filtredUsers, guild, settings, connectedUser, isConnected } =
   storeToRefs(discordStore);
@@ -19,7 +20,6 @@ const {
 } = storeToRefs(useSystemStore());
 const { general } = storeToRefs(useSettingsStore());
 const { onDragStart } = useWebviewWindowDrag();
-const isMacOS = tauriOSType() === "macos";
 const errorsStore = useErrorsStore();
 const { connect, listen } = useDiscord();
 const { getStreamers } = useKick();
@@ -47,9 +47,9 @@ try {
 }
 
 async function openStreamWebviewWindow(slug: string) {
-  const streamWebviewWindow = await TauriWebviewWindowWebviewWindow.getByLabel(
-    WebviewWindowLabel.Stream,
-  );
+  const streamWebviewWindow = await getByLabel({
+    label: WebviewWindowLabel.Stream,
+  });
 
   if (streamWebviewWindow) {
     await streamWebviewWindow.emitTo(WebviewWindowLabel.Stream, "slug-update", {
@@ -73,28 +73,19 @@ async function openStreamWebviewWindow(slug: string) {
     monitor,
   });
 
-  if (isMacOS) {
-    await tauriCoreInvoke("create_nspanel", {
-      ...streamWebviewWindowOptions,
-      label: WebviewWindowLabel.Stream,
-      url: `/stream?slug=${slug}`,
-      x,
-      y,
-    });
-  } else {
-    new TauriWebviewWindowWebviewWindow(WebviewWindowLabel.Stream, {
-      ...streamWebviewWindowOptions,
-      url: `/stream?slug=${slug}`,
-      x,
-      y,
-    });
-  }
+  await create({
+    ...streamWebviewWindowOptions,
+    label: WebviewWindowLabel.Stream,
+    url: `/stream?slug=${slug}`,
+    x,
+    y,
+  });
 }
 
 async function openMainWebviewWindow() {
-  const mainWebviewWindow = await TauriWebviewWindowWebviewWindow.getByLabel(
-    WebviewWindowLabel.Main,
-  );
+  const mainWebviewWindow = await getByLabel({
+    label: WebviewWindowLabel.Main,
+  });
 
   if (mainWebviewWindow) {
     await mainWebviewWindow.show();
@@ -115,21 +106,13 @@ async function openMainWebviewWindow() {
       orientation: general.value.orientation,
     });
 
-    if (isMacOS) {
-      await tauriCoreInvoke("create_nspanel", {
-        ...mainWebviewWindowOptions,
-        label: WebviewWindowLabel.Main,
-        canBecomeKeyWindow: true,
-        x,
-        y,
-      });
-    } else {
-      new TauriWebviewWindowWebviewWindow(WebviewWindowLabel.Main, {
-        ...mainWebviewWindowOptions,
-        x,
-        y,
-      });
-    }
+    await create({
+      ...mainWebviewWindowOptions,
+      label: WebviewWindowLabel.Main,
+      canBecomeKeyWindow: true,
+      x,
+      y,
+    });
   }
 }
 

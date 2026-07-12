@@ -1,5 +1,5 @@
 export default function () {
-  const currentWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
+  const currentWebviewWindow = useWebviewWindow().getCurrent();
   const isDragging = useState("is-dragging", () => false);
   const isInitialized = ref(false);
   const offsetX = ref(0);

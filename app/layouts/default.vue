@@ -1,17 +1,9 @@
 <script setup lang="ts">
-const currentWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
+const currentWebviewWindow = useWebviewWindow().getCurrent();
 const { advanced } = storeToRefs(useSettingsStore());
-const isMacOS = tauriOSType() === "macos";
 
 onMounted(async () => {
-  if (isMacOS) {
-    await tauriCoreInvoke("set_nspanel_always_on_top", {
-      value: advanced.value.alwaysOnTop,
-      label: WebviewWindowLabel.Main,
-    });
-  } else {
-    currentWebviewWindow.setAlwaysOnTop(advanced.value.alwaysOnTop);
-  }
+  currentWebviewWindow.setAlwaysOnTop(advanced.value.alwaysOnTop);
   await currentWebviewWindow.show();
 });
 </script>

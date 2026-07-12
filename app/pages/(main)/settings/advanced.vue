@@ -1,37 +1,22 @@
 <script setup lang="ts">
-const overlayWebviewWindow = await TauriWebviewWindowWebviewWindow.getByLabel(
-  WebviewWindowLabel.Overlay,
-);
-const mainWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
+const { getByLabel, getCurrent } = useWebviewWindow();
+const overlayWebviewWindow = await getByLabel({
+  label: WebviewWindowLabel.Overlay,
+});
+const mainWebviewWindow = getCurrent();
 const settingsStore = useSettingsStore();
 const { general, advanced } = storeToRefs(settingsStore);
-const isMacOS = tauriOSType() === "macos";
 const { $toast } = useNuxtApp();
 const { t } = useI18n();
-
-async function updateIgnoreCursor(value: boolean) {
-  if (!overlayWebviewWindow) {
-    return;
-  }
-
-  if (isMacOS) {
-    await tauriCoreInvoke("set_nspanel_ignore_cursor", {
-      label: WebviewWindowLabel.Overlay,
-      value,
-    });
-  } else {
-    await overlayWebviewWindow.setIgnoreCursorEvents(value);
-  }
-}
 
 async function updatePreventCapture(value: boolean) {
   if (!overlayWebviewWindow) {
     return;
   }
 
-  const streamWebviewWindow = await TauriWebviewWindowWebviewWindow.getByLabel(
-    WebviewWindowLabel.Stream,
-  );
+  const streamWebviewWindow = await getByLabel({
+    label: WebviewWindowLabel.Stream,
+  });
 
   if (streamWebviewWindow) {
     await streamWebviewWindow.setContentProtected(value);
@@ -46,32 +31,16 @@ async function updateAlwaysOnTop(value: boolean) {
     return;
   }
 
-  const streamWebviewWindow = await TauriWebviewWindowWebviewWindow.getByLabel(
-    WebviewWindowLabel.Stream,
-  );
+  const streamWebviewWindow = await getByLabel({
+    label: WebviewWindowLabel.Stream,
+  });
 
-  if (isMacOS) {
-    if (streamWebviewWindow) {
-      await tauriCoreInvoke("set_nspanel_always_on_top", {
-        label: WebviewWindowLabel.Stream,
-        value: value,
-      });
-    }
-    await tauriCoreInvoke("set_nspanel_always_on_top", {
-      label: WebviewWindowLabel.Overlay,
-      value: value,
-    });
-    await tauriCoreInvoke("set_nspanel_always_on_top", {
-      label: WebviewWindowLabel.Main,
-      value: value,
-    });
-  } else {
-    if (streamWebviewWindow) {
-      streamWebviewWindow.setAlwaysOnTop(value);
-    }
-    await overlayWebviewWindow.setAlwaysOnTop(value);
-    await mainWebviewWindow.setAlwaysOnTop(value);
+  if (streamWebviewWindow) {
+    await streamWebviewWindow.setAlwaysOnTop(value);
   }
+
+  await overlayWebviewWindow.setAlwaysOnTop(value);
+  await mainWebviewWindow.setAlwaysOnTop(value);
 }
 
 async function reset() {
@@ -95,11 +64,11 @@ async function reset() {
     await updateAlwaysOnTop(advanced.value.alwaysOnTop);
   }
 
+  await overlayWebviewWindow.setIgnoreCursorEvents(advanced.value.ignoreCursor);
   await overlayWebviewWindow.setPosition(
     new TauriWindowLogicalPosition(general.value.x, general.value.y),
   );
   await updatePreventCapture(advanced.value.preventCapture);
-  await updateIgnoreCursor(advanced.value.ignoreCursor);
 
   $toast.success(t("reset.success"));
 }
@@ -113,7 +82,9 @@ async function reset() {
     >
       <Switch
         v-model="advanced.ignoreCursor"
-        @update:model-value="updateIgnoreCursor($event)"
+        @update:model-value="
+          overlayWebviewWindow?.setIgnoreCursorEvents($event)
+        "
       />
     </SettingField>
     <Separator />

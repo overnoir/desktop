@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { Monitor } from "@tauri-apps/api/window";
 
-const overlayWebviewWindow = await TauriWebviewWindowWebviewWindow.getByLabel(
-  WebviewWindowLabel.Overlay,
-);
+const overlayWebviewWindow = await useWebviewWindow().getByLabel({
+  label: WebviewWindowLabel.Overlay,
+});
 const monitors = await tauriWindowAvailableMonitors();
 const settingsStore = useSettingsStore();
 const { general } = storeToRefs(settingsStore);

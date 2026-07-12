@@ -1,13 +1,13 @@
 <script setup lang="ts">
 onMounted(async () => {
-  await tauriWebviewWindowGetCurrentWebviewWindow().show();
+  await useWebviewWindow().getCurrent().show();
 });
 </script>
 
 <template>
   <Html>
     <Body class="**:select-none">
-      <main class="h-screen border rounded-2xl">
+      <main class="h-screen">
         <slot />
       </main>
     </Body>
