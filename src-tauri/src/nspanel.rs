@@ -1,6 +1,7 @@
 #![cfg(target_os = "macos")]
 use tauri::{
-    AppHandle, Emitter, LogicalPosition, LogicalSize, Manager, Position, Runtime, Size, WebviewUrl,
+    AppHandle, Emitter, LogicalPosition, LogicalSize, Manager, PhysicalPosition, Position, Runtime,
+    Size, WebviewUrl,
 };
 use tauri_nspanel::{
     tauri_panel, CollectionBehavior, FromWindow, ManagerExt, Panel as PanelTrait, PanelBuilder,
@@ -94,9 +95,16 @@ pub fn create_nspanel(
     if with_event_handler {
         let handler = PanelEventHandler::new();
         let handle = app_handle.to_owned();
+        let panel_clone = panel.clone();
 
         handler.window_did_move(move |_| {
-            let _ = handle.emit_to(&label, "nspanel-moved", ());
+            let frame: tauri_nspanel::NSRect =
+                unsafe { tauri_nspanel::objc2::msg_send![panel_clone.as_panel(), frame] };
+            let _ = handle.emit_to(
+                &label,
+                "nspanel-moved",
+                PhysicalPosition::new(frame.origin.x, frame.origin.y),
+            );
         });
 
         panel.set_event_handler(Some(handler.as_ref()));

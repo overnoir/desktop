@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { PhysicalPosition } from "@tauri-apps/api/dpi";
 import type { CSSProperties } from "vue";
 
 const overlayWebviewWindow = tauriWebviewWindowGetCurrentWebviewWindow();
@@ -53,14 +54,17 @@ onMounted(async () => {
       value: advanced.value.alwaysOnTop,
       label: WebviewWindowLabel.Overlay,
     });
-    await tauriEventListen("nspanel-moved", async () => {
-      if (!isDragging.value) {
-        return;
-      }
-      const { x, y } = await overlayWebviewWindow.outerPosition();
-      general.value.x = x;
-      general.value.y = y;
-    });
+    await tauriEventListen<PhysicalPosition>(
+      "nspanel-moved",
+      async ({ payload }) => {
+        console.log(payload);
+        if (!isDragging.value) {
+          return;
+        }
+        general.value.x = payload.x;
+        general.value.y = payload.y;
+      },
+    );
   } else {
     await overlayWebviewWindow.setAlwaysOnTop(advanced.value.alwaysOnTop);
     await overlayWebviewWindow.setIgnoreCursorEvents(
@@ -70,9 +74,8 @@ onMounted(async () => {
       if (!isDragging.value) {
         return;
       }
-      const { x, y } = payload;
-      general.value.x = x;
-      general.value.y = y;
+      general.value.x = payload.x;
+      general.value.y = payload.y;
     });
   }
 
