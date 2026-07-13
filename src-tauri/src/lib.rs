@@ -118,7 +118,7 @@ pub fn run() {
             app.handle()
                 .plugin(
                     tauri_plugin_pinia::Builder::new()
-                        .path(app.path().app_data_dir().unwrap())
+                        .path(app.path().app_data_dir().unwrap().join("stores"))
                         .build(),
                 )
                 .unwrap();

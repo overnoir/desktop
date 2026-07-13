@@ -16,9 +16,9 @@ use uuid::Uuid;
 pub fn init_vault(app_handle: &AppHandle) {
     let salt_path = app_handle
         .path()
-        .app_local_data_dir()
+        .app_data_dir()
         .unwrap()
-        .join("vault-salt.txt");
+        .join("vault/salt.txt");
 
     if let Some(parent_dir) = salt_path.parent() {
         fs::create_dir_all(parent_dir).unwrap();
@@ -35,7 +35,7 @@ pub fn init_vault(app_handle: &AppHandle) {
         .plugin(tauri_plugin_stronghold::Builder::with_argon2(&salt_path).build())
         .unwrap();
 
-    let vault_path = app_handle.path().app_data_dir().unwrap().join("vault.hold");
+    let vault_path = app_handle.path().app_data_dir().unwrap().join("vault/vault.hold");
     let name = &app_handle.package_info().name;
     let entry = Entry::new(&name, &whoami::username()).expect("failed to create keyring entry");
     let password = entry.get_password().unwrap_or_else(|_| {
