@@ -29,8 +29,8 @@ export const useLinkGroupsStore = defineStore(
         },
         {
           name: t("linkGroups.0.links.2"),
-          icon: "lucide:triangle-alert",
-          to: localePath("/errors"),
+          icon: "lucide:scroll-text",
+          to: localePath("/logs"),
         },
         {
           icon: "lucide:circle-question-mark",

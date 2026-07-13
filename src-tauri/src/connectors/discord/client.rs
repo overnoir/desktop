@@ -99,18 +99,29 @@ impl DiscordClient {
         frame.extend_from_slice(&opcode.to_le_bytes());
         frame.extend_from_slice(&(data.len() as u32).to_le_bytes());
         frame.extend_from_slice(data);
-        self.stream.as_mut().unwrap().write_all(&frame)
+        self.stream
+            .as_mut()
+            .ok_or_else(|| {
+                std::io::Error::new(std::io::ErrorKind::NotConnected, "stream closed")
+            })?
+            .write_all(&frame)
     }
 
     pub fn read_frame(&mut self) -> std::io::Result<(u32, String)> {
+        let stream = self
+            .stream
+            .as_mut()
+            .ok_or_else(|| {
+                std::io::Error::new(std::io::ErrorKind::NotConnected, "stream closed")
+            })?;
         let mut header = [0u8; 8];
-        self.stream.as_mut().unwrap().read_exact(&mut header)?;
+        stream.read_exact(&mut header)?;
 
         let opcode = u32::from_le_bytes([header[0], header[1], header[2], header[3]]);
         let len = u32::from_le_bytes([header[4], header[5], header[6], header[7]]) as usize;
 
         let mut body = vec![0; len];
-        self.stream.as_mut().unwrap().read_exact(&mut body)?;
+        stream.read_exact(&mut body)?;
         String::from_utf8(body)
             .map(|s| (opcode, s))
             .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))
@@ -216,8 +227,8 @@ impl DiscordClient {
         self.send("GET_GUILD", json!({ "args": { "guild_id": guild_id } }))
     }
 
-    pub fn close(&mut self) {
-        let _ = self.write_frame(2, "{}");
+    pub fn close(&mut self) -> Result<(), String> {
+        self.write_frame(2, "{}").map_err(|e| e.to_string())
     }
 
     pub async fn exchange_code(

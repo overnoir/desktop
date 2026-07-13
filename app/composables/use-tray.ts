@@ -3,42 +3,53 @@ import type { Image } from "@tauri-apps/api/image";
 export default function () {
   const { getByLabel, create: createWebviewWindow } = useWebviewWindow();
   const isMacOS = tauriOSType() === "macos";
+  const { logError } = useLogs();
   const { t } = useI18n();
 
-  async function generateMenu() {
-    return await TauriMenuMenu.new({
+  function generateMenu() {
+    return TauriMenuMenu.new({
       items: [
         {
           action: async () => {
-            const overlayWebviewWindow = await getByLabel({
-              label: WebviewWindowLabel.Overlay,
-            });
-
-            if (!overlayWebviewWindow) {
-              return;
-            }
-
-            const mainWebviewWindow = await getByLabel({
-              label: WebviewWindowLabel.Main,
-            });
-
-            if (mainWebviewWindow) {
-              await mainWebviewWindow.show();
-              await mainWebviewWindow.unminimize();
-              await mainWebviewWindow.setFocus();
-            } else {
-              await createWebviewWindow({
-                ...mainWebviewWindowOptions,
-                label: WebviewWindowLabel.Main,
-                canBecomeKeyWindow: true,
+            try {
+              const overlayWebviewWindow = await getByLabel({
+                label: WebviewWindowLabel.Overlay,
               });
+
+              if (!overlayWebviewWindow) {
+                return;
+              }
+
+              const mainWebviewWindow = await getByLabel({
+                label: WebviewWindowLabel.Main,
+              });
+
+              if (mainWebviewWindow) {
+                await mainWebviewWindow.show();
+                await mainWebviewWindow.unminimize();
+                await mainWebviewWindow.setFocus();
+              } else {
+                await createWebviewWindow({
+                  ...mainWebviewWindowOptions,
+                  label: WebviewWindowLabel.Main,
+                  canBecomeKeyWindow: true,
+                });
+              }
+            } catch (error) {
+              await logError({ error, source: LogSource.Tray });
             }
           },
           text: t("tray.settings"),
           id: "settings",
         },
         {
-          action: () => tauriProcessExit(),
+          action: async () => {
+            try {
+              await tauriProcessExit();
+            } catch (error) {
+              await logError({ error, source: LogSource.Tray });
+            }
+          },
           text: t("tray.quit"),
           id: "quit",
         },

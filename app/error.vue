@@ -7,20 +7,26 @@ const { currentWebviewWindow, listenDrag, onDragStart } =
   useWebviewWindow().getCurrent();
 const { general } = storeToRefs(useSettingsStore());
 const { setLocale } = useI18n();
+const { logError } = useLogs();
 
+await logError({ error, source: LogSource.Unknow });
 await setLocale(general.value.locale);
-
 listenDrag();
+
+async function destroy() {
+  try {
+    await currentWebviewWindow.destroy();
+  } catch (error) {
+    await logError({ error, source: LogSource.WebviewWindow });
+  }
+}
 </script>
 
 <template>
   <Html>
     <Body>
       <div class="border rounded-2xl">
-        <LayoutTitlebar
-          @destroy="currentWebviewWindow.destroy"
-          @mousedown="onDragStart"
-        />
+        <LayoutTitlebar @destroy="destroy" @mousedown="onDragStart" />
         <main class="h-screen overflow-auto grid place-items-center">
           <Empty>
             <EmptyHeader>

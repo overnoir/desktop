@@ -7,70 +7,97 @@ const overlayWebviewWindow = await getByLabel({
 });
 const { currentWebviewWindow } = getCurrent();
 const { $toast } = useNuxtApp();
+const { logError } = useLogs();
 const { t } = useI18n();
 
-async function updatePreventCapture(value: boolean) {
-  if (!overlayWebviewWindow) {
-    return;
+async function updateIgnoreCursor(value: boolean) {
+  try {
+    if (!overlayWebviewWindow) {
+      return;
+    }
+    await overlayWebviewWindow.setIgnoreCursorEvents(value);
+  } catch (error) {
+    await logError({ error, source: LogSource.WebviewWindow });
   }
-
-  const streamWebviewWindow = await getByLabel({
-    label: WebviewWindowLabel.Stream,
-  });
-
-  if (streamWebviewWindow) {
-    await streamWebviewWindow.setContentProtected(value);
-  }
-
-  await overlayWebviewWindow.setContentProtected(value);
-  await currentWebviewWindow.setContentProtected(value);
 }
 
-async function updateAlwaysOnTop(value: boolean) {
-  if (!overlayWebviewWindow) {
-    return;
-  }
-
-  const streamWebviewWindow = await getByLabel({
-    label: WebviewWindowLabel.Stream,
-  });
-
-  if (streamWebviewWindow) {
-    await streamWebviewWindow.setAlwaysOnTop(value);
-  }
-
-  await overlayWebviewWindow.setAlwaysOnTop(value);
-  await currentWebviewWindow.setAlwaysOnTop(value);
-}
-
-async function reset() {
-  if (!overlayWebviewWindow) {
-    return;
-  }
-
-  settingsStore.reset();
-
-  if (advanced.value.autoStart !== (await tauriAutoStartIsEnabled())) {
-    if (advanced.value.autoStart) {
+async function updateAutoStart(value: boolean) {
+  try {
+    if (value) {
       await tauriAutoStartEnable();
     } else {
       await tauriAutoStartDisable();
     }
+  } catch (error) {
+    await logError({ error, source: LogSource.App });
   }
+}
 
-  if (
-    advanced.value.alwaysOnTop !== (await overlayWebviewWindow.isAlwaysOnTop())
-  ) {
+async function updatePreventCapture(value: boolean) {
+  try {
+    if (!overlayWebviewWindow) {
+      return;
+    }
+
+    const streamWebviewWindow = await getByLabel({
+      label: WebviewWindowLabel.Stream,
+    });
+
+    if (streamWebviewWindow) {
+      await streamWebviewWindow.setContentProtected(value);
+    }
+
+    await overlayWebviewWindow.setContentProtected(value);
+    await currentWebviewWindow.setContentProtected(value);
+  } catch (error) {
+    await logError({ error, source: LogSource.WebviewWindow });
+  }
+}
+
+async function updateAlwaysOnTop(value: boolean) {
+  try {
+    if (!overlayWebviewWindow) {
+      return;
+    }
+
+    const streamWebviewWindow = await getByLabel({
+      label: WebviewWindowLabel.Stream,
+    });
+
+    if (streamWebviewWindow) {
+      await streamWebviewWindow.setAlwaysOnTop(value);
+    }
+
+    await overlayWebviewWindow.setAlwaysOnTop(value);
+    await currentWebviewWindow.setAlwaysOnTop(value);
+  } catch (error) {
+    await logError({ error, source: LogSource.WebviewWindow });
+  }
+}
+
+async function reset() {
+  try {
+    if (!overlayWebviewWindow) {
+      return;
+    }
+
+    settingsStore.reset();
+
+    await updateAutoStart(advanced.value.autoStart);
+
+    await updatePreventCapture(advanced.value.preventCapture);
+    await updateIgnoreCursor(advanced.value.ignoreCursor);
     await updateAlwaysOnTop(advanced.value.alwaysOnTop);
+
+    await overlayWebviewWindow.setPosition(
+      new TauriWindowLogicalPosition(general.value.x, general.value.y),
+    );
+
+    $toast.success(t("reset.success"));
+  } catch (error) {
+    $toast.error(JSON.stringify(error));
+    await logError({ error, source: LogSource.WebviewWindow });
   }
-
-  await overlayWebviewWindow.setIgnoreCursorEvents(advanced.value.ignoreCursor);
-  await overlayWebviewWindow.setPosition(
-    new TauriWindowLogicalPosition(general.value.x, general.value.y),
-  );
-  await updatePreventCapture(advanced.value.preventCapture);
-
-  $toast.success(t("reset.success"));
 }
 </script>
 
@@ -82,9 +109,7 @@ async function reset() {
     >
       <Switch
         v-model="advanced.ignoreCursor"
-        @update:model-value="
-          overlayWebviewWindow?.setIgnoreCursorEvents($event)
-        "
+        @update:model-value="updateIgnoreCursor($event)"
       />
     </SettingField>
     <Separator />
@@ -114,9 +139,7 @@ async function reset() {
     >
       <Switch
         v-model="advanced.autoStart"
-        @update:model-value="
-          $event ? tauriAutoStartEnable() : tauriAutoStartDisable()
-        "
+        @update:model-value="updateAutoStart($event)"
       />
     </SettingField>
     <Separator />

@@ -1,9 +1,13 @@
 <script setup lang="ts">
-const { general, advanced } = storeToRefs(useSettingsStore());
 const { currentWebviewWindow } = useWebviewWindow().getCurrent();
+const { general, advanced } = storeToRefs(useSettingsStore());
 const { setLocale } = useI18n();
 
-await currentWebviewWindow.setContentProtected(advanced.value.preventCapture);
+try {
+  await currentWebviewWindow.setContentProtected(advanced.value.preventCapture);
+} catch (error) {
+  await useLogs().logError({ error, source: LogSource.WebviewWindow });
+}
 
 watch(() => general.value.locale, setLocale, { immediate: true });
 </script>

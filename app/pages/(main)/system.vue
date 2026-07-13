@@ -1,6 +1,13 @@
 <script setup lang="ts">
 const systemStore = useSystemStore();
 const { settings } = storeToRefs(systemStore);
+const { $toast } = useNuxtApp();
+const { t } = useI18n();
+
+function resetSettings() {
+  systemStore.resetSettings();
+  $toast.success(t("reset.success"));
+}
 </script>
 
 <template>
@@ -56,13 +63,7 @@ const { settings } = storeToRefs(systemStore);
             <AlertDialogCancel>
               {{ $t("reset.dialog.cancel") }}
             </AlertDialogCancel>
-            <AlertDialogAction
-              variant="destructive"
-              @click="
-                systemStore.resetSettings();
-                $toast.success($t('reset.success'));
-              "
-            >
+            <AlertDialogAction variant="destructive" @click="resetSettings">
               {{ $t("reset.dialog.confirm") }}
             </AlertDialogAction>
           </AlertDialogFooter>

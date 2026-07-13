@@ -76,24 +76,6 @@ export const discordSettingsSchema = z.preprocess(
   }),
 ) satisfies z.ZodType<DiscordSettings>;
 
-const errorSchema = z.object({
-  source: z.enum(ErrorSource),
-  createdAt: z.number(),
-  message: z.string(),
-  id: z.string(),
-});
-
-export const errorsSchema = z.preprocess(
-  (value) => {
-    return Array.isArray(value) ? value : [];
-  },
-  z
-    .array(errorSchema)
-    .transform((errors) =>
-      errors.filter((error) => errorSchema.safeParse(error).success),
-    ),
-) satisfies z.ZodType<AppError[]>;
-
 export const discordConnectedUserSchema = z
   .object({
     avatar: z

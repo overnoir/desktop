@@ -132,9 +132,9 @@ export default function () {
     });
     const height = options.height!;
     const width = options.width!;
+    let x = options.x;
+    let y = options.y;
     const gap = 10;
-    let x = 0;
-    let y = 0;
 
     if (overlayWebviewWindow) {
       const position = await overlayWebviewWindow.outerPosition();

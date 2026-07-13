@@ -34,13 +34,6 @@ export enum Alignment {
   Right = "right",
 }
 
-export enum ErrorSource {
-  Discord = "discord",
-  System = "system",
-  Vault = "vault",
-  Kick = "kick",
-}
-
 export enum KickShow {
   Always = "always",
   WhileLive = "whileLive",
@@ -72,6 +65,18 @@ export enum StreamPlatform {
   Kick = "kick",
 }
 
+export enum LogSource {
+  WebviewWindow = "WEBVIEW_WINDOW",
+  Discord = "DISCORD",
+  System = "SYSTEM",
+  Stream = "STREAM",
+  Unknow = "UNKNOW",
+  Vault = "VAULT",
+  Kick = "KICK",
+  Logs = "LOGS",
+  Tray = "TRAY",
+  App = "APP",
+}
 //#endregion
 
 //#region Types
@@ -132,13 +137,6 @@ export type DiscordSettings = {
   userLimit: number;
   showBots: boolean;
   showMe: boolean;
-};
-
-export type AppError = {
-  source: ErrorSource;
-  createdAt: number;
-  message: string;
-  id: string;
 };
 
 export type DiscordChannel = {

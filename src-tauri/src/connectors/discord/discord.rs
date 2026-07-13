@@ -137,11 +137,20 @@ pub async fn connect_discord(app_handle: AppHandle) -> Result<DiscordConnectedUs
     std::thread::spawn(move || loop {
         match event_client.read_frame() {
             Ok((1, payload)) => {
-                if let Ok(value) = serde_json::from_str::<Value>(&payload) {
-                    let _ = event_app_handle.emit("discord-event", &value);
+                match serde_json::from_str::<Value>(&payload) {
+                    Ok(value) => {
+                        if let Err(e) = event_app_handle.emit("discord-event", &value) {
+                            log::error!("Discord event emit failed: {}", e);
+                        }
+                    }
+                    Err(e) => log::error!("Discord event parse failed: {}", e),
                 }
             }
-            _ => return,
+            Ok(_) => {}
+            Err(e) => {
+                log::error!("Discord event thread error: {}", e);
+                return;
+            }
         }
     });
 
@@ -156,7 +165,7 @@ pub async fn disconnect_discord(
     let discord = app_handle.state::<DiscordState>();
     let mut client = discord.client.lock().await;
 
-    client.close();
+    client.close()?;
 
     if delete_vault_items {
         delete_vault_items_fn(

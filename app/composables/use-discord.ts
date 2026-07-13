@@ -32,35 +32,41 @@ export default function () {
   }
 
   async function listen() {
+    const { logError } = useLogs();
+
     await tauriEventListen<DiscordEvent>(
       "discord-event",
       async ({ payload }) => {
-        const { cmd, data, evt } = payload;
+        try {
+          const { cmd, data, evt } = payload;
 
-        switch (cmd) {
-          case DiscordEventCommand.GetSelectedVoiceChannel:
-            await handleGetSelectedVoiceChannel(data);
-            break;
-          case DiscordEventCommand.GetChannel:
-            handleGetChannel(data);
-            break;
-          case DiscordEventCommand.GetGuild:
-            handleGetGuild(data);
-            break;
-          case DiscordEventCommand.Dispatch: {
-            if (evt === DiscordEventEvent.VoiceChannelSelect) {
-              await handleVoiceChannelSelect(data);
-            } else if (
-              evt === DiscordEventEvent.VoiceStateDelete &&
-              (data as any).user?.id === connectedUser.value?.id &&
-              guild.value?.channel.id
-            ) {
-              await handleForceMoved();
-            } else if (evt && VOICE_EVENTS.includes(evt)) {
-              applyVoiceEvent(evt, data);
+          switch (cmd) {
+            case DiscordEventCommand.GetSelectedVoiceChannel:
+              await handleGetSelectedVoiceChannel(data);
+              break;
+            case DiscordEventCommand.GetChannel:
+              handleGetChannel(data);
+              break;
+            case DiscordEventCommand.GetGuild:
+              handleGetGuild(data);
+              break;
+            case DiscordEventCommand.Dispatch: {
+              if (evt === DiscordEventEvent.VoiceChannelSelect) {
+                await handleVoiceChannelSelect(data);
+              } else if (
+                evt === DiscordEventEvent.VoiceStateDelete &&
+                (data as any).user?.id === connectedUser.value?.id &&
+                guild.value?.channel.id
+              ) {
+                await handleForceMoved();
+              } else if (evt && VOICE_EVENTS.includes(evt)) {
+                applyVoiceEvent(evt, data);
+              }
+              break;
             }
-            break;
           }
+        } catch (error) {
+          await logError({ error, source: LogSource.Discord });
         }
       },
     );

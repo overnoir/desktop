@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Monitor } from "@tauri-apps/api/window";
+import { LogicalPosition, type Monitor } from "@tauri-apps/api/window";
 
 const overlayWebviewWindow = await useWebviewWindow().getByLabel({
   label: WebviewWindowLabel.Overlay,
@@ -8,46 +8,68 @@ const monitors = await tauriWindowAvailableMonitors();
 const settingsStore = useSettingsStore();
 const { general } = storeToRefs(settingsStore);
 const { updateMenu } = useTray();
+const { logError } = useLogs();
 const { locales } = useI18n();
+
+async function updatePosition({ x, y }: { x: number; y: number }) {
+  try {
+    if (!overlayWebviewWindow) {
+      return;
+    }
+    await overlayWebviewWindow.setPosition(new LogicalPosition(x, y));
+  } catch (error) {
+    await logError({ error, source: LogSource.WebviewWindow });
+  }
+}
 
 async function quickPositionSelect(
   { position, size }: { position: Monitor["position"]; size: Monitor["size"] },
   index: number,
 ) {
-  if (!overlayWebviewWindow) {
-    return;
+  try {
+    if (!overlayWebviewWindow) {
+      return;
+    }
+
+    const { width: overlayWidth, height: overlayHeight } =
+      await overlayWebviewWindow.outerSize();
+    const { width, height } = size;
+    const { x, y } = position;
+    const offset = 10;
+
+    const centerY = y + Math.round((height - overlayHeight) / 2);
+    const centerX = x + Math.round((width - overlayWidth) / 2);
+    const bottomY = y + height - overlayHeight - offset;
+    const rightX = x + width - overlayWidth - offset;
+
+    const positions = [
+      { x: x + offset, y: y + offset },
+      { x: centerX, y: y + offset },
+      { x: rightX, y: y + offset },
+      { x: x + offset, y: centerY },
+      { x: rightX, y: centerY },
+      { x: x + offset, y: bottomY },
+      { x: centerX, y: bottomY },
+      { x: rightX, y: bottomY },
+    ];
+
+    const pos = positions[index - (index > 4 ? 1 : 0)];
+
+    if (pos) {
+      await updatePosition({ x: pos.x, y: pos.y });
+      general.value.x = pos.x;
+      general.value.y = pos.y;
+    }
+  } catch (error) {
+    await logError({ error, source: LogSource.WebviewWindow });
   }
+}
 
-  const { width: overlayWidth, height: overlayHeight } =
-    await overlayWebviewWindow.outerSize();
-  const { width, height } = size;
-  const { x, y } = position;
-  const offset = 10;
-
-  const centerY = y + Math.round((height - overlayHeight) / 2);
-  const centerX = x + Math.round((width - overlayWidth) / 2);
-  const bottomY = y + height - overlayHeight - offset;
-  const rightX = x + width - overlayWidth - offset;
-
-  const positions = [
-    { x: x + offset, y: y + offset },
-    { x: centerX, y: y + offset },
-    { x: rightX, y: y + offset },
-    { x: x + offset, y: centerY },
-    { x: rightX, y: centerY },
-    { x: x + offset, y: bottomY },
-    { x: centerX, y: bottomY },
-    { x: rightX, y: bottomY },
-  ];
-
-  const pos = positions[index - (index > 4 ? 1 : 0)];
-
-  if (pos) {
-    await overlayWebviewWindow.setPosition(
-      new TauriDpiLogicalPosition(pos.x, pos.y),
-    );
-    general.value.x = pos.x;
-    general.value.y = pos.y;
+async function updateTray() {
+  try {
+    await updateMenu();
+  } catch (error) {
+    await logError({ error, source: LogSource.Tray });
   }
 }
 </script>
@@ -111,11 +133,7 @@ async function quickPositionSelect(
           :format-options="{ useGrouping: false }"
           :min="-9999"
           :max="9999"
-          @update:model-value="
-            overlayWebviewWindow?.setPosition(
-              new TauriDpiLogicalPosition(general.x, general.y),
-            )
-          "
+          @update:model-value="updatePosition({ x: $event, y: general.y })"
         >
           <NumberFieldContent>
             <NumberFieldDecrement />
@@ -128,11 +146,7 @@ async function quickPositionSelect(
           :format-options="{ useGrouping: false }"
           :min="-9999"
           :max="9999"
-          @update:model-value="
-            overlayWebviewWindow?.setPosition(
-              new TauriDpiLogicalPosition(general.x, general.y),
-            )
-          "
+          @update:model-value="updatePosition({ x: general.x, y: $event })"
         >
           <NumberFieldContent>
             <NumberFieldDecrement />
@@ -298,7 +312,7 @@ async function quickPositionSelect(
       :description="$t('settings.locale.description')"
       :title="$t('settings.locale.title')"
     >
-      <Select v-model="general.locale" @update:model-value="updateMenu">
+      <Select v-model="general.locale" @update:model-value="updateTray">
         <SelectTrigger>
           <SelectValue />
         </SelectTrigger>

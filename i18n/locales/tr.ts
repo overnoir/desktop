@@ -8,7 +8,7 @@ export default {
           links: ["Genel", "Gelişmiş"],
         },
         "Kasa",
-        "Hatalar",
+        "Kayıtlar",
         "Yardım",
       ],
     },
@@ -143,13 +143,12 @@ export default {
       },
     },
   },
-  errors: {
-    title: "Hata Kayıtları",
-    description: "Uygulamada oluşan hatalar.",
-    clear: "Hepsini Sil",
+  logs: {
+    title: "Kayıtlar",
+    description: "Uygulama kayıtları.",
     empty: {
-      title: "Her Şey Yolunda",
-      description: "Herhangi bir hata yok.",
+      title: "Kayıt Yok",
+      description: "Herhangi bir kayıt yok.",
     },
   },
   help: {

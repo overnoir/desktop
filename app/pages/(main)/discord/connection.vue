@@ -3,8 +3,8 @@ const discordStore = useDiscordStore();
 const { connectedUser, isConnected } = storeToRefs(discordStore);
 const deleteVaultItemsOnDisconnect = ref(true);
 const { connect, disconnect } = useDiscord();
-const errorsStore = useErrorsStore();
 const { $toast } = useNuxtApp();
+const { logError } = useLogs();
 const loading = ref(false);
 const { t } = useI18n();
 
@@ -35,11 +35,8 @@ async function toggleConnection() {
 
     $toast.success(t(`discord.${action}.success`));
   } catch (error) {
-    errorsStore.addError({
-      message: JSON.stringify(error),
-      source: ErrorSource.Discord,
-    });
     $toast.error(JSON.stringify(error));
+    await logError({ error, source: LogSource.Discord });
   }
   loading.value = false;
 }

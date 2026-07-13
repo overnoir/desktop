@@ -2,12 +2,25 @@
 const { currentWebviewWindow, listenDrag, onDragStart } =
   useWebviewWindow().getCurrent();
 const { advanced } = storeToRefs(useSettingsStore());
+const { logError } = useLogs();
 
 listenDrag();
 
+async function destroy() {
+  try {
+    await currentWebviewWindow.destroy();
+  } catch (error) {
+    await logError({ error, source: LogSource.WebviewWindow });
+  }
+}
+
 onMounted(async () => {
-  await currentWebviewWindow.setAlwaysOnTop(advanced.value.alwaysOnTop);
-  await currentWebviewWindow.show();
+  try {
+    await currentWebviewWindow.setAlwaysOnTop(advanced.value.alwaysOnTop);
+    await currentWebviewWindow.show();
+  } catch (error) {
+    await logError({ error, source: LogSource.WebviewWindow });
+  }
 });
 </script>
 
@@ -15,10 +28,7 @@ onMounted(async () => {
   <Html>
     <Body>
       <div class="border rounded-2xl">
-        <LayoutTitlebar
-          @destroy="currentWebviewWindow.destroy"
-          @mousedown="onDragStart"
-        />
+        <LayoutTitlebar @destroy="destroy" @mousedown="onDragStart" />
         <main class="h-screen pt-8.25">
           <slot />
         </main>

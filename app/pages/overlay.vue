@@ -20,8 +20,8 @@ const {
 } = storeToRefs(useSystemStore());
 const { general } = storeToRefs(useSettingsStore());
 const { connect, listen } = useDiscord();
-const errorsStore = useErrorsStore();
 const { getStreamers } = useKick();
+const { logError } = useLogs();
 const isOnline = useOnline();
 const { open } = useStream();
 
@@ -39,29 +39,38 @@ try {
     connectedUser.value = await connect();
   }
 } catch (error) {
-  errorsStore.addError({
-    message: JSON.stringify(error),
-    source: ErrorSource.Discord,
-  });
+  await logError({ error, source: LogSource.Discord });
   connectedUser.value = null;
   isConnected.value = false;
 }
 
 async function openMainWebviewWindow() {
-  const mainWebviewWindow = await getByLabel({
-    label: WebviewWindowLabel.Main,
-  });
-
-  if (mainWebviewWindow) {
-    await mainWebviewWindow.show();
-    await mainWebviewWindow.unminimize();
-    await mainWebviewWindow.setFocus();
-  } else {
-    await create({
-      ...mainWebviewWindowOptions,
+  try {
+    const mainWebviewWindow = await getByLabel({
       label: WebviewWindowLabel.Main,
-      canBecomeKeyWindow: true,
     });
+
+    if (mainWebviewWindow) {
+      await mainWebviewWindow.show();
+      await mainWebviewWindow.unminimize();
+      await mainWebviewWindow.setFocus();
+    } else {
+      await create({
+        ...mainWebviewWindowOptions,
+        label: WebviewWindowLabel.Main,
+        canBecomeKeyWindow: true,
+      });
+    }
+  } catch (error) {
+    await logError({ error, source: LogSource.WebviewWindow });
+  }
+}
+
+async function openStreamWebviewWindow(stream: Stream) {
+  try {
+    await open(stream);
+  } catch (error) {
+    await logError({ error, source: LogSource.Stream });
   }
 }
 
@@ -75,10 +84,7 @@ useIntervalFn(
         streamers.value = data;
       }
     } catch (error) {
-      errorsStore.addError({
-        message: JSON.stringify(error),
-        source: ErrorSource.Kick,
-      });
+      await logError({ error, source: LogSource.Kick });
       streamers.value = [];
     }
   },
@@ -112,10 +118,7 @@ useIntervalFn(
         cpu.value = data.cpu ?? undefined;
       }
     } catch (error) {
-      errorsStore.addError({
-        message: JSON.stringify(error),
-        source: ErrorSource.System,
-      });
+      await logError({ error, source: LogSource.System });
       network.value = undefined;
       battery.value = undefined;
       memory.value = undefined;
@@ -145,7 +148,12 @@ useIntervalFn(
         v-for="streamer in filtredStreamers"
         :key="streamer.id"
         :streamer
-        @click="open({ platform: StreamPlatform.Kick, slug: streamer.slug })"
+        @click="
+          openStreamWebviewWindow({
+            slug: streamer.slug,
+            platform: StreamPlatform.Kick,
+          })
+        "
       />
     </template>
     <OverlaySystemCpu v-if="cpu" :cpu />

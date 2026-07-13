@@ -4,18 +4,21 @@ definePageMeta({
 });
 
 const status = ref<"checking" | "downloading" | "loading">("checking");
-const { create } = useWebviewWindow();
 
 setTimeout(() => {
   status.value = "downloading";
 
   setTimeout(async () => {
-    await create({
-      ...overlayWebviewWindowOptions,
-      label: WebviewWindowLabel.Overlay,
-      withEventHandler: true,
-    });
-    status.value = "loading";
+    try {
+      await useWebviewWindow().create({
+        ...overlayWebviewWindowOptions,
+        label: WebviewWindowLabel.Overlay,
+        withEventHandler: true,
+      });
+      status.value = "loading";
+    } catch (error) {
+      await useLogs().logError({ error, source: LogSource.WebviewWindow });
+    }
   }, 1000);
 }, 1000);
 </script>

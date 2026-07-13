@@ -7,9 +7,9 @@ const { streamers } = storeToRefs(kickStore);
 const { handleSubmit, resetForm } = useForm({
   validationSchema: kickAddChannelSchema,
 });
-const errorsStore = useErrorsStore();
 const { getStreamers } = useKick();
 const { $toast } = useNuxtApp();
+const { logError } = useLogs();
 const loading = ref(false);
 const { t } = useI18n();
 
@@ -67,11 +67,8 @@ async function save() {
 
     $toast.success(t("kick.addChannel.success"));
   } catch (error) {
-    errorsStore.addError({
-      message: JSON.stringify(error),
-      source: ErrorSource.Kick,
-    });
     $toast.error(JSON.stringify(error));
+    await logError({ error, source: LogSource.Kick });
   }
   loading.value = false;
 }

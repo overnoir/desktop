@@ -1,6 +1,13 @@
 <script setup lang="ts">
 const discordStore = useDiscordStore();
 const { settings } = storeToRefs(discordStore);
+const { $toast } = useNuxtApp();
+const { t } = useI18n();
+
+function resetSettings() {
+  discordStore.resetSettings();
+  $toast.success(t("reset.success"));
+}
 </script>
 
 <template>
@@ -159,13 +166,7 @@ const { settings } = storeToRefs(discordStore);
             <AlertDialogCancel>
               {{ $t("reset.dialog.cancel") }}
             </AlertDialogCancel>
-            <AlertDialogAction
-              variant="destructive"
-              @click="
-                discordStore.resetSettings();
-                $toast.success($t('reset.success'));
-              "
-            >
+            <AlertDialogAction variant="destructive" @click="resetSettings">
               {{ $t("reset.dialog.confirm") }}
             </AlertDialogAction>
           </AlertDialogFooter>

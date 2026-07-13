@@ -1,6 +1,10 @@
 <script setup lang="ts">
 onMounted(async () => {
-  await useWebviewWindow().getCurrent().currentWebviewWindow.show();
+  try {
+    await useWebviewWindow().getCurrent().currentWebviewWindow.show();
+  } catch (error) {
+    await useLogs().logError({ error, source: LogSource.WebviewWindow });
+  }
 });
 </script>
 

@@ -1,6 +1,13 @@
 <script setup lang="ts">
 const kickStore = useKickStore();
 const { settings } = storeToRefs(kickStore);
+const { $toast } = useNuxtApp();
+const { t } = useI18n();
+
+function resetSettings() {
+  kickStore.resetSettings();
+  $toast.success(t("reset.success"));
+}
 </script>
 
 <template>
@@ -117,13 +124,7 @@ const { settings } = storeToRefs(kickStore);
             <AlertDialogCancel>
               {{ $t("reset.dialog.cancel") }}
             </AlertDialogCancel>
-            <AlertDialogAction
-              variant="destructive"
-              @click="
-                kickStore.resetSettings();
-                $toast.success($t('reset.success'));
-              "
-            >
+            <AlertDialogAction variant="destructive" @click="resetSettings">
               {{ $t("reset.dialog.confirm") }}
             </AlertDialogAction>
           </AlertDialogFooter>
