@@ -6,6 +6,12 @@ const { getCurrent, getByLabel } = useWebviewWindow();
 const { currentWebviewWindow, isDragging } = getCurrent();
 const { logError } = useLogs();
 const { create } = useTray();
+const anchor = shallowRef<{
+  centerX: number;
+  centerY: number;
+  bottom: number;
+  right: number;
+} | null>(null);
 
 const backgroundStyles = computed<CSSProperties>(() => {
   if (!general.value.showBackground) {
@@ -51,6 +57,7 @@ onMounted(async () => {
           }
           general.value.x = payload.x;
           general.value.y = payload.y;
+          anchor.value = null;
         }),
         currentWebviewWindow.setPosition(
           new TauriDpiLogicalPosition(general.value.x, general.value.y),
@@ -92,23 +99,29 @@ onMounted(async () => {
         currentWebviewWindow.outerSize(),
       ]);
 
-      const deltaX = width - currentSize.width;
-      const deltaY = height - currentSize.height;
+      if (anchor.value === null) {
+        anchor.value = {
+          centerY: currentPosition.y + currentSize.height / 2,
+          centerX: currentPosition.x + currentSize.width / 2,
+          bottom: currentPosition.y + currentSize.height,
+          right: currentPosition.x + currentSize.width,
+        };
+      }
 
-      let newX = currentPosition.x;
-      let newY = currentPosition.y;
+      let newX = general.value.x;
+      let newY = general.value.y;
 
       if (general.value.orientation === Orientation.Vertical) {
-        if (general.value.alignment === "center") {
-          newY = currentPosition.y - deltaY / 2;
-        } else if (general.value.alignment === "right") {
-          newY = currentPosition.y - deltaY;
+        if (general.value.alignment === Alignment.Center) {
+          newY = Math.round(anchor.value.centerY - height / 2);
+        } else if (general.value.alignment === Alignment.Right) {
+          newY = Math.round(anchor.value.bottom - height);
         }
       } else {
-        if (general.value.alignment === "center") {
-          newX = currentPosition.x - deltaX / 2;
-        } else if (general.value.alignment === "right") {
-          newX = currentPosition.x - deltaX;
+        if (general.value.alignment === Alignment.Center) {
+          newX = Math.round(anchor.value.centerX - width / 2);
+        } else if (general.value.alignment === Alignment.Right) {
+          newX = Math.round(anchor.value.right - width);
         }
       }
 
