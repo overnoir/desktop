@@ -27,6 +27,12 @@ export default {
         },
       ],
     },
+    {
+      links: ["Dokümantasyon"],
+    },
+    {
+      links: ["Kullanım Şartları", "Gizlilik Sözleşmesi"],
+    },
   ],
   tray: {
     settings: "Ayarlar",
@@ -150,17 +156,6 @@ export default {
     empty: {
       title: "Kayıt Yok",
       description: "Herhangi bir kayıt yok.",
-    },
-  },
-  help: {
-    docs: {
-      title: "Dokümantasyon",
-      description:
-        "Uygulama hakkında çoğu bilgiyi dokümantasyonda bulabilirsiniz.",
-    },
-    discord: {
-      description:
-        "Discord sunucumuza katılarak yardım alabilir, önerilerde bulunabilir, hata bildirebilir ve yeniliklerden haberdar olabilirsiniz.",
     },
   },
   discord: {

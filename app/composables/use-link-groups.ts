@@ -79,5 +79,48 @@ export default function () {
     ],
   }));
 
-  return { general, connectors };
+  const social = computed<LinkGroup>(() => ({
+    links: [
+      {
+        name: "Website",
+        to: "https://overnoir.com",
+        icon: "lucide:globe",
+      },
+      {
+        name: t("linkGroups.2.links.0"),
+        to: "https://docs.overnoir.com",
+        icon: "lucide:book",
+      },
+      {
+        name: "Discord",
+        to: "https://discord.gg/xxx",
+        icon: "simple-icons:discord",
+      },
+      {
+        name: "GitHub",
+        to: "https://github.com/overnoir/desktop",
+        icon: "simple-icons:github",
+      },
+      {
+        name: "X",
+        to: "https://x.com/overnoirapp",
+        icon: "simple-icons:x",
+      },
+    ],
+  }));
+
+  const legal = computed<LinkGroup>(() => ({
+    links: [
+      {
+        name: t("linkGroups.3.links.0"),
+        to: "https://overnoir.com/terms-of-service",
+      },
+      {
+        name: t("linkGroups.3.links.1"),
+        to: "https://overnoir.com/privacy-policy",
+      },
+    ],
+  }));
+
+  return { general, connectors, social, legal };
 }

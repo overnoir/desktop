@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const { social, legal } = useLinkGroups();
 const appInfo = ref("");
 
 try {
@@ -14,37 +15,34 @@ try {
 </script>
 
 <template>
-  <section class="grid grid-cols-2 gap-4">
-    <Card
-      class="cursor-pointer p-0"
-      @click="tauriOpenerOpenUrl('https://docs.overnoir.com')"
-    >
-      <CardHeader class="p-4">
-        <CardTitle class="flex gap-2 mb-1">
-          <Icon name="lucide:book" size="18" />
-          {{ $t("help.docs.title") }}
-        </CardTitle>
-        <CardDescription>
-          {{ $t("help.docs.description") }}
-        </CardDescription>
-      </CardHeader>
-    </Card>
-    <Card
-      class="cursor-pointer p-0 bg-[#5865F2]"
-      @click="tauriOpenerOpenUrl('https://discord.gg/')"
-    >
-      <CardHeader class="p-4">
-        <CardTitle class="text-white flex gap-2 mb-1">
-          <Icon name="simple-icons:discord" size="18" />
-          Discord
-        </CardTitle>
-        <CardDescription class="text-white">
-          {{ $t("help.discord.description") }}
-        </CardDescription>
-      </CardHeader>
-    </Card>
-    <span class="col-span-2 text-xs text-secondary-foreground">
-      {{ appInfo }}
-    </span>
+  <section class="space-y-4">
+    <div class="grid grid-cols-3 gap-4">
+      <Button
+        v-for="(link, i) in social.links"
+        :key="i"
+        variant="outline"
+        class="justify-start"
+        @click="tauriOpenerOpenUrl(link.to)"
+      >
+        <Icon v-if="link.icon" :name="link.icon" />
+        {{ link.name }}
+      </Button>
+    </div>
+    <Separator />
+    <div class="flex items-center gap-4">
+      <span class="text-xs text-secondary-foreground font-medium mr-auto">
+        {{ appInfo }}
+      </span>
+      <Button
+        v-for="(link, i) in legal.links"
+        :key="i"
+        variant="link"
+        class="text-secondary-foreground text-xs p-0 h-auto"
+        size="sm"
+        @click="tauriOpenerOpenUrl(link.to)"
+      >
+        {{ link.name }}
+      </Button>
+    </div>
   </section>
 </template>

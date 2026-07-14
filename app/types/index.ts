@@ -89,7 +89,7 @@ export type Link = {
 
 export type LinkGroup = {
   links: Link[];
-  name: string;
+  name?: string;
 };
 
 export type OverlayItemIcon = {

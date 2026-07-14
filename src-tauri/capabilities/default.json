@@ -23,19 +23,13 @@
     "autostart:default",
     "pinia:default",
     "core:default",
-    "os:default",
     "log:default",
+    "os:default",
     {
       "identifier": "opener:allow-open-url",
       "allow": [
         {
-          "url": "https://docs.overnoir.com"
-        },
-        {
-          "url": "https://discord.gg"
-        },
-        {
-          "url": "https://kick.com/*"
+          "url": "https://*"
         }
       ]
     }
