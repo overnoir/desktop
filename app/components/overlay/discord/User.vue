@@ -25,7 +25,7 @@ const showAvatarAnimated = computed(
 const speakingStyles = computed<CSSProperties>(() => ({
   borderRadius: `${Math.round((general.value.size * general.value.radius) / 200)}px`,
   "--tw-ring-shadow": `var(--tw-ring-inset) 0 0 0 ${Math.round(
-    general.value.size / 17,
+    general.value.size / 15,
   )}px var(--tw-ring-color)`,
   height: `${general.value.size}px`,
   width: `${general.value.size}px`,
