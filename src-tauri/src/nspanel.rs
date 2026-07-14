@@ -53,7 +53,6 @@ fn build_nspanel<R: Runtime, T: PanelTrait<R> + FromWindow<R> + 'static>(
         .url(WebviewUrl::App((&url).into()))
         .with_window(|window| {
             window
-                .background_throttling(tauri::utils::config::BackgroundThrottlingPolicy::Disabled)
                 .general_autofill_enabled(false)
                 .accept_first_mouse(true)
                 .decorations(false)
