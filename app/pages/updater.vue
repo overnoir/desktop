@@ -4,18 +4,27 @@ definePageMeta({
 });
 
 const status = ref<"checking" | "downloading" | "loading">("checking");
-
+const { create, getByLabel } = useWebviewWindow();
 setTimeout(() => {
   status.value = "downloading";
 
   setTimeout(async () => {
     try {
-      await useWebviewWindow().create({
+      status.value = "loading";
+
+      const overlayWebviewWindow = await getByLabel({
+        label: WebviewWindowLabel.Overlay,
+      });
+
+      if (overlayWebviewWindow) {
+        return;
+      }
+
+      await create({
         ...overlayWebviewWindowOptions,
         label: WebviewWindowLabel.Overlay,
         withEventHandler: true,
       });
-      status.value = "loading";
     } catch (error) {
       await useLogs().logError({ error, source: LogSource.WebviewWindow });
     }

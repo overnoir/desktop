@@ -1,6 +1,6 @@
 use interprocess::local_socket::prelude::LocalSocketStream;
 use serde::{Deserialize, Serialize};
-use std::sync::Mutex;
+use std::sync::{atomic::AtomicBool, Arc, Mutex};
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct OAuthTokenResponse {
@@ -81,6 +81,12 @@ pub struct VaultItemMetadata {
     pub key: String,
 }
 
+#[derive(Deserialize)]
+pub struct DiscordSubscribe {
+    pub args: Option<serde_json::Value>,
+    pub event: String,
+}
+
 pub struct ApiClient {
     pub client: reqwest::Client,
     pub base_url: String,
@@ -99,6 +105,7 @@ pub struct DiscordClient {
 
 pub struct DiscordState {
     pub client: tokio::sync::Mutex<DiscordClient>,
+    pub expected_closed: Arc<AtomicBool>,
 }
 
 pub struct NetworkPrev {

@@ -35,7 +35,7 @@ async function toggleConnection() {
 
     $toast.success(t(`discord.${action}.success`));
   } catch (error) {
-    $toast.error(JSON.stringify(error));
+    $toast.error(error instanceof Error ? error.message : String(error));
     await logError({ error, source: LogSource.Discord });
   }
   loading.value = false;

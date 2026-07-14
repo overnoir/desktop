@@ -6,7 +6,7 @@ export default function () {
   const { logError } = useLogs();
   const { t } = useI18n();
 
-  function generateMenu() {
+  function createMenu() {
     return TauriMenuMenu.new({
       items: [
         {
@@ -78,7 +78,7 @@ export default function () {
 
     await TauriTrayTrayIcon.new({
       tooltip: id.charAt(0).toUpperCase() + id.slice(1),
-      menu: await generateMenu(),
+      menu: await createMenu(),
       iconAsTemplate: true,
       icon,
       id,
@@ -91,7 +91,7 @@ export default function () {
     );
 
     if (tray) {
-      await tray.setMenu(await generateMenu());
+      await tray.setMenu(await createMenu());
     }
   }
 

@@ -98,7 +98,6 @@ export default function () {
         if (!isDragging.value) {
           return;
         }
-
         currentWebviewWindow.setPosition(
           new TauriDpiLogicalPosition(
             e.screenX - offset.value.x,

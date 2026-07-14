@@ -9,7 +9,6 @@ defineProps<{ battery: SystemBattery }>();
         :percent="battery.percent || 0"
         :critical="{ min: 0, max: 14 }"
         :warning="{ min: 15, max: 29 }"
-        :normal="{ min: 30, max: 100 }"
       >
         {{ (battery.percent || 0).toFixed(1) }}%
       </OverlaySystemProgress>

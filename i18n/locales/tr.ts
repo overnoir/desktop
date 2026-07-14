@@ -146,6 +146,7 @@ export default {
   logs: {
     title: "Kayıtlar",
     description: "Uygulama kayıtları.",
+    clear: "Temizle",
     empty: {
       title: "Kayıt Yok",
       description: "Herhangi bir kayıt yok.",

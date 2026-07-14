@@ -1,4 +1,6 @@
-use crate::types::{DiscordClient, DiscordConnectedUser, DiscordState, OAuthTokenResponse};
+use crate::types::{
+    DiscordClient, DiscordConnectedUser, DiscordState, DiscordSubscribe, OAuthTokenResponse,
+};
 use crate::vault::{
     delete_vault_items as delete_vault_items_fn, get_vault_items, update_vault_items,
 };
@@ -7,12 +9,14 @@ use rand::rngs::OsRng;
 use rand::RngCore;
 use serde_json::Value;
 use sha2::{Digest, Sha256};
+use std::sync::{atomic::AtomicBool, Arc};
 use std::time::{SystemTime, UNIX_EPOCH};
 use tauri::{AppHandle, Emitter, Manager};
 
 pub fn init_discord(app_handle: &AppHandle, client_id: &String) {
     app_handle.manage(DiscordState {
         client: tokio::sync::Mutex::new(DiscordClient::new(client_id)),
+        expected_closed: Arc::new(AtomicBool::new(false)),
     });
 }
 
@@ -58,6 +62,9 @@ pub async fn connect_discord(app_handle: AppHandle) -> Result<DiscordConnectedUs
     let mut client = discord.client.lock().await;
 
     client.connect()?;
+    discord
+        .expected_closed
+        .store(false, std::sync::atomic::Ordering::SeqCst);
 
     let vault = get_vault_items(
         &app_handle,
@@ -133,22 +140,31 @@ pub async fn connect_discord(app_handle: AppHandle) -> Result<DiscordConnectedUs
         .clone_stream()
         .map_err(|e| format!("Failed to clone stream: {}", e))?;
     let event_app_handle = app_handle.clone();
+    let expected_closed = Arc::clone(&discord.expected_closed);
 
     std::thread::spawn(move || loop {
         match event_client.read_frame() {
-            Ok((1, payload)) => {
-                match serde_json::from_str::<Value>(&payload) {
-                    Ok(value) => {
-                        if let Err(e) = event_app_handle.emit("discord-event", &value) {
-                            log::error!("Discord event emit failed: {}", e);
-                        }
+            Ok((1, payload)) => match serde_json::from_str::<Value>(&payload) {
+                Ok(value) => {
+                    if let Err(e) = event_app_handle.emit("discord-event", &value) {
+                        log::error!("[DISCORD] Discord event emit failed: {}", e);
                     }
-                    Err(e) => log::error!("Discord event parse failed: {}", e),
                 }
+                Err(e) => log::error!("[DISCORD] Discord event parse failed: {}", e),
+            },
+            Ok((2, _)) => {
+                if !expected_closed.load(std::sync::atomic::Ordering::SeqCst) {
+                    log::error!("[DISCORD] Discord closed the connection");
+                }
+                let _ = event_app_handle.emit("discord-disconnected", ());
+                return;
             }
             Ok(_) => {}
             Err(e) => {
-                log::error!("Discord event thread error: {}", e);
+                if !expected_closed.load(std::sync::atomic::Ordering::SeqCst) {
+                    log::error!("[DISCORD] Discord event thread error: {}", e);
+                }
+                let _ = event_app_handle.emit("discord-disconnected", ());
                 return;
             }
         }
@@ -165,7 +181,12 @@ pub async fn disconnect_discord(
     let discord = app_handle.state::<DiscordState>();
     let mut client = discord.client.lock().await;
 
-    client.close()?;
+    discord
+        .expected_closed
+        .store(true, std::sync::atomic::Ordering::SeqCst);
+    if let Err(e) = client.close() {
+        log::error!("[DISCORD] Failed to send close frame: {}", e);
+    }
 
     if delete_vault_items {
         delete_vault_items_fn(
@@ -184,25 +205,31 @@ pub async fn disconnect_discord(
 #[tauri::command]
 pub async fn discord_subscribe(
     app_handle: AppHandle,
-    event: String,
-    args: Option<serde_json::Value>,
+    events: Vec<DiscordSubscribe>,
 ) -> Result<(), String> {
     let discord = app_handle.state::<DiscordState>();
     let mut client = discord.client.lock().await;
 
-    client.subscribe(&event, args)
+    for item in &events {
+        client.subscribe(&item.event, item.args.clone())?;
+    }
+
+    Ok(())
 }
 
 #[tauri::command]
 pub async fn discord_unsubscribe(
     app_handle: AppHandle,
-    event: &str,
-    args: Option<serde_json::Value>,
+    events: Vec<DiscordSubscribe>,
 ) -> Result<(), String> {
     let discord = app_handle.state::<DiscordState>();
     let mut client = discord.client.lock().await;
 
-    client.unsubscribe(&event, args)
+    for item in &events {
+        client.unsubscribe(&item.event, item.args.clone())?;
+    }
+
+    Ok(())
 }
 
 #[tauri::command]

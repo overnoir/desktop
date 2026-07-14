@@ -45,14 +45,14 @@ export enum KickDisplayName {
   Slug = "slug",
 }
 
-export enum DiscordEventCommand {
+export enum DiscordRPCEventCommand {
   GetSelectedVoiceChannel = "GET_SELECTED_VOICE_CHANNEL",
   GetChannel = "GET_CHANNEL",
   GetGuild = "GET_GUILD",
   Dispatch = "DISPATCH",
 }
 
-export enum DiscordEventEvent {
+export enum DiscordRPCEventName {
   VoiceChannelSelect = "VOICE_CHANNEL_SELECT",
   VoiceStateCreate = "VOICE_STATE_CREATE",
   VoiceStateUpdate = "VOICE_STATE_UPDATE",
@@ -174,11 +174,69 @@ export type DiscordConnectedUser = {
   id: string;
 };
 
-export type DiscordEvent = {
+export type DiscordRPCEvent = {
+  evt: DiscordRPCEventName | null;
   data: Record<string, unknown>;
-  evt: DiscordEventEvent | null;
-  cmd: DiscordEventCommand;
+  cmd: DiscordRPCEventCommand;
   nonce: string;
+};
+
+export type DiscordRPCVoiceState = {
+  self_deaf: boolean;
+  self_mute: boolean;
+  suppress: boolean;
+  deaf: boolean;
+  mute: boolean;
+};
+
+export type DiscordRPCUser = {
+  global_name: string | null;
+  discriminator: string;
+  avatar: string | null;
+  username: string;
+  bot: boolean;
+  id: string;
+};
+
+export type DiscordRPCVoiceStateData = {
+  voice_state: DiscordRPCVoiceState;
+  user: DiscordRPCUser;
+  nick: string | null;
+};
+
+export type DiscordRPCSelectedVoiceChannel = {
+  voice_states?: DiscordRPCVoiceStateData[];
+  id?: string | null;
+  guild_id?: string;
+};
+
+export type DiscordRPCChannel = {
+  voice_states?: DiscordRPCVoiceStateData[];
+  id?: string | null;
+  name?: string;
+};
+
+export type DiscordRPCGuild = {
+  id?: string | null;
+  icon_url?: string;
+  name?: string;
+};
+
+export type DiscordRPCVoiceChannelSelect = {
+  channel_id?: string | null;
+  guild_id?: string;
+};
+
+export type DiscordRPCVoiceEvent = {
+  voice_state?: DiscordRPCVoiceState;
+  user?: DiscordRPCUser;
+  nick?: string | null;
+  user_id?: string;
+};
+
+export type DiscordRPCSubscribe = {
+  event: DiscordRPCEventName;
+  args?: object;
 };
 
 export type KickSettings = {

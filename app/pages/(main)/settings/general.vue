@@ -13,10 +13,7 @@ const { locales } = useI18n();
 
 async function updatePosition({ x, y }: { x: number; y: number }) {
   try {
-    if (!overlayWebviewWindow) {
-      return;
-    }
-    await overlayWebviewWindow.setPosition(new LogicalPosition(x, y));
+    await overlayWebviewWindow?.setPosition(new LogicalPosition(x, y));
   } catch (error) {
     await logError({ error, source: LogSource.WebviewWindow });
   }

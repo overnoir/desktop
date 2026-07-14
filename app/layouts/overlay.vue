@@ -49,6 +49,7 @@ onMounted(async () => {
       if (!isDragging.value) {
         return;
       }
+      console.log(payload);
       general.value.x = payload.x;
       general.value.y = payload.y;
     });

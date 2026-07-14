@@ -1,6 +1,16 @@
 <script setup lang="ts">
-const version = await tauriAppGetVersion();
-const name = await tauriAppGetName();
+const appInfo = ref("");
+
+try {
+  const [version, name] = await Promise.all([
+    tauriAppGetVersion(),
+    tauriAppGetName(),
+  ]);
+
+  appInfo.value = `${name} v${version}`;
+} catch (error) {
+  await useLogs().logError({ error, source: LogSource.App });
+}
 </script>
 
 <template>
@@ -34,7 +44,7 @@ const name = await tauriAppGetName();
       </CardHeader>
     </Card>
     <span class="col-span-2 text-xs text-secondary-foreground">
-      {{ name }} v{{ version }}
+      {{ appInfo }}
     </span>
   </section>
 </template>

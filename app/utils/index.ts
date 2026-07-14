@@ -5,6 +5,14 @@ export function isObject(value: unknown): boolean {
   return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
+export function getErrorMessage(error: unknown): string {
+  return error instanceof Error
+    ? error.message
+    : isObject(error)
+      ? JSON.stringify(error)
+      : String(error);
+}
+
 export function cn(...inputs: ClassValue[]): string {
   return twMerge(clsx(inputs));
 }

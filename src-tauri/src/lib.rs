@@ -16,7 +16,7 @@ use connectors::discord::{
 };
 use connectors::kick::get_kick_streamers;
 use connectors::system::{get_system, init_system};
-use logs::get_logs;
+use logs::{clear_logs, get_logs};
 
 #[cfg(target_os = "macos")]
 use nspanel::{
@@ -57,17 +57,18 @@ pub fn run() {
             #[cfg(target_os = "macos")]
             create_nspanel,
             discord_get_selected_voice_channel,
-            discord_unsubscribe,
             discord_get_channel,
             get_kick_streamers,
             get_vault_metadata,
             disconnect_discord,
             discord_get_guild,
             discord_subscribe,
+            discord_unsubscribe,
             connect_discord,
             clear_vault,
             get_system,
             get_logs,
+            clear_logs,
         ])
         .plugin(tauri_plugin_single_instance::init(|app, _, _| {
             if let Some(window) = app.get_webview_window("updater") {

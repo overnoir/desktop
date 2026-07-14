@@ -1,11 +1,20 @@
 <script setup lang="ts">
-const { getLogs, logError } = useLogs();
+const { get, logError, clear } = useLogs();
 const logs = ref<string[]>([]);
 
 try {
-  logs.value = await getLogs();
+  logs.value = (await get()).reverse();
 } catch (error) {
   await logError({ error, source: LogSource.Logs });
+}
+
+async function clearLogs() {
+  try {
+    await clear();
+    logs.value = [];
+  } catch (error) {
+    await logError({ error, source: LogSource.Logs });
+  }
 }
 </script>
 
@@ -15,7 +24,11 @@ try {
       <SettingField
         :title="`${$t('logs.title')} (${logs.length})`"
         :description="$t('logs.description')"
-      />
+      >
+        <Button variant="secondary" @click="clearLogs">{{
+          $t("logs.clear")
+        }}</Button>
+      </SettingField>
       <Separator />
       <Card class="p-0">
         <Table>

@@ -95,7 +95,7 @@ async function reset() {
 
     $toast.success(t("reset.success"));
   } catch (error) {
-    $toast.error(JSON.stringify(error));
+    $toast.error(getErrorMessage(error));
     await logError({ error, source: LogSource.WebviewWindow });
   }
 }

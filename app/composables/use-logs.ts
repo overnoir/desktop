@@ -6,14 +6,16 @@ export default function () {
     source: LogSource;
     error: unknown;
   }) {
-    return tauriLogError(
-      `[${source}] ${isObject(error) ? JSON.stringify(error) : String(error)}`,
-    );
+    return tauriLogError(`[${source}] ${getErrorMessage(error)}`);
   }
 
-  async function getLogs() {
+  async function get() {
     return tauriCoreInvoke<string[]>("get_logs");
   }
 
-  return { logError, getLogs };
+  async function clear() {
+    return tauriCoreInvoke("clear_logs");
+  }
+
+  return { logError, get, clear };
 }

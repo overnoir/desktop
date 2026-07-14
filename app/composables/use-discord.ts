@@ -1,22 +1,19 @@
-import { DiscordEventCommand, DiscordEventEvent } from "~/types";
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
 const VOICE_EVENTS = [
-  DiscordEventEvent.VoiceStateCreate,
-  DiscordEventEvent.VoiceStateUpdate,
-  DiscordEventEvent.VoiceStateDelete,
-  DiscordEventEvent.SpeakingStart,
-  DiscordEventEvent.SpeakingStop,
+  DiscordRPCEventName.VoiceStateCreate,
+  DiscordRPCEventName.VoiceStateUpdate,
+  DiscordRPCEventName.VoiceStateDelete,
+  DiscordRPCEventName.SpeakingStart,
+  DiscordRPCEventName.SpeakingStop,
 ];
 
 export default function () {
-  const { connectedUser, guild } = storeToRefs(useDiscordStore());
+  const { connectedUser, guild, isConnected } = storeToRefs(useDiscordStore());
 
   async function connect() {
     const connectedUser =
       await tauriCoreInvoke<DiscordConnectedUser>("connect_discord");
 
-    await subscribe({ event: DiscordEventEvent.VoiceChannelSelect });
+    await subscribe([{ event: DiscordRPCEventName.VoiceChannelSelect }]);
     await getSelectedVoiceChannel();
 
     return connectedUser;
@@ -27,6 +24,7 @@ export default function () {
   }: {
     deleteVaultItems: boolean;
   }) {
+    await unsubscribe([{ event: DiscordRPCEventName.VoiceChannelSelect }]);
     await leaveChannel();
     await tauriCoreInvoke("disconnect_discord", { deleteVaultItems });
   }
@@ -34,31 +32,32 @@ export default function () {
   async function listen() {
     const { logError } = useLogs();
 
-    await tauriEventListen<DiscordEvent>(
+    await tauriEventListen<DiscordRPCEvent>(
       "discord-event",
       async ({ payload }) => {
         try {
           const { cmd, data, evt } = payload;
 
           switch (cmd) {
-            case DiscordEventCommand.GetSelectedVoiceChannel:
+            case DiscordRPCEventCommand.GetSelectedVoiceChannel:
               await handleGetSelectedVoiceChannel(data);
               break;
-            case DiscordEventCommand.GetChannel:
+            case DiscordRPCEventCommand.GetChannel:
               handleGetChannel(data);
               break;
-            case DiscordEventCommand.GetGuild:
+            case DiscordRPCEventCommand.GetGuild:
               handleGetGuild(data);
               break;
-            case DiscordEventCommand.Dispatch: {
-              if (evt === DiscordEventEvent.VoiceChannelSelect) {
+            case DiscordRPCEventCommand.Dispatch: {
+              if (evt === DiscordRPCEventName.VoiceChannelSelect) {
                 await handleVoiceChannelSelect(data);
               } else if (
-                evt === DiscordEventEvent.VoiceStateDelete &&
-                (data as any).user?.id === connectedUser.value?.id &&
+                evt === DiscordRPCEventName.VoiceStateDelete &&
+                (data as { user?: { id?: string } }).user?.id ===
+                  connectedUser.value?.id &&
                 guild.value?.channel.id
               ) {
-                await handleForceMoved();
+                await handleMoved();
               } else if (evt && VOICE_EVENTS.includes(evt)) {
                 applyVoiceEvent(evt, data);
               }
@@ -70,17 +69,12 @@ export default function () {
         }
       },
     );
-  }
 
-  async function enterChannel(channelId: string, guildId?: string) {
-    guild.value = buildGuild(channelId, guildId ?? null);
-
-    await subscribeChannel(channelId);
-    await getChannel(channelId);
-
-    if (guildId) {
-      await getGuild(guildId);
-    }
+    await tauriEventListen("discord-disconnected", () => {
+      connectedUser.value = null;
+      isConnected.value = false;
+      guild.value = undefined;
+    });
   }
 
   async function leaveChannel() {
@@ -91,8 +85,10 @@ export default function () {
     guild.value = undefined;
   }
 
-  async function handleGetSelectedVoiceChannel(data: any) {
-    if (!data.id) {
+  async function handleGetSelectedVoiceChannel(
+    data: DiscordRPCSelectedVoiceChannel,
+  ) {
+    if (!data?.id) {
       return;
     }
 
@@ -110,8 +106,8 @@ export default function () {
     }
   }
 
-  function handleGetChannel(data: any) {
-    if (!guild.value || !data.id) {
+  function handleGetChannel(data: DiscordRPCChannel) {
+    if (!guild.value || !data?.id) {
       return;
     }
 
@@ -119,41 +115,48 @@ export default function () {
       guild.value.channel.users = data.voice_states.map(parseUser);
     }
 
-    syncGuild({
-      channel: {
-        ...guild.value.channel,
-        name: (data.name as string) ?? guild.value.channel.name,
-      },
-    });
+    if (data.name) {
+      guild.value.channel.name = data.name;
+    }
   }
 
-  function handleGetGuild(data: any) {
-    if (!guild.value || !data.id) {
+  function handleGetGuild(data: DiscordRPCGuild) {
+    if (!guild.value || !data?.id) {
       return;
     }
 
-    syncGuild({
-      iconUrl: data.icon_url ?? guild.value.iconUrl,
-      name: data.name ?? guild.value.name,
-    });
+    if (data.icon_url) {
+      guild.value.iconUrl = data.icon_url;
+    }
+
+    if (data.name) {
+      guild.value.name = data.name;
+    }
   }
 
-  async function handleVoiceChannelSelect(data: any) {
+  async function handleVoiceChannelSelect(data: DiscordRPCVoiceChannelSelect) {
     await leaveChannel();
 
     if (!data.channel_id) {
       return;
     }
 
-    await enterChannel(data.channel_id, data.guild_id || undefined);
+    guild.value = buildGuild(data.channel_id, data.guild_id ?? null);
+
+    await subscribeChannel(data.channel_id);
+    await getChannel(data.channel_id);
+
+    if (data.guild_id) {
+      await getGuild(data.guild_id);
+    }
   }
 
-  async function handleForceMoved() {
+  async function handleMoved() {
     await leaveChannel();
     await getSelectedVoiceChannel();
   }
 
-  function applyVoiceEvent(evt: string, data: any) {
+  function applyVoiceEvent(evt: string, data: DiscordRPCVoiceEvent) {
     if (!guild.value?.channel.id) {
       return;
     }
@@ -161,9 +164,9 @@ export default function () {
     const users = guild.value.channel.users;
 
     switch (evt) {
-      case DiscordEventEvent.VoiceStateCreate:
-      case DiscordEventEvent.VoiceStateUpdate: {
-        const user = parseUser(data);
+      case DiscordRPCEventName.VoiceStateCreate:
+      case DiscordRPCEventName.VoiceStateUpdate: {
+        const user = parseUser(data as DiscordRPCVoiceStateData);
         const idx = users.findIndex((u) => u.id === user.id);
         if (idx !== -1) {
           user.isSpeaking = users[idx]?.isSpeaking || false;
@@ -173,15 +176,13 @@ export default function () {
         }
         break;
       }
-      case DiscordEventEvent.VoiceStateDelete: {
-        const userId = (data as any).user?.id as string | undefined;
+      case DiscordRPCEventName.VoiceStateDelete: {
+        const userId = data.user?.id;
         guild.value.channel.users = users.filter((u) => u.id !== userId);
         break;
       }
-      case DiscordEventEvent.SpeakingStart: {
-        const idx = users.findIndex(
-          (u) => u.id === (data as { user_id?: string }).user_id,
-        );
+      case DiscordRPCEventName.SpeakingStart: {
+        const idx = users.findIndex((u) => u.id === data.user_id);
         if (idx !== -1) {
           users.splice(idx, 1, {
             ...users[idx],
@@ -190,10 +191,8 @@ export default function () {
         }
         break;
       }
-      case DiscordEventEvent.SpeakingStop: {
-        const idx = users.findIndex(
-          (u) => u.id === (data as { user_id?: string }).user_id,
-        );
+      case DiscordRPCEventName.SpeakingStop: {
+        const idx = users.findIndex((u) => u.id === data.user_id);
         if (idx !== -1) {
           users.splice(idx, 1, {
             ...users[idx],
@@ -204,49 +203,33 @@ export default function () {
       }
     }
 
-    syncGuild({ channel: { ...guild.value.channel } });
-  }
-
-  function syncGuild(patch: Partial<DiscordGuild>) {
-    if (!guild.value) {
-      return;
-    }
-
-    guild.value = {
-      ...guild.value,
-      ...patch,
-      channel: {
-        ...guild.value.channel,
-        ...patch.channel,
-        users: [...(patch.channel?.users ?? guild.value.channel.users)],
-      },
-    };
+    guild.value.channel.users = [...guild.value.channel.users];
   }
 
   async function subscribeChannel(channelId: string) {
-    for (const evt of VOICE_EVENTS) {
-      await subscribe({ event: evt, args: { channel_id: channelId } });
-    }
+    await subscribe(
+      VOICE_EVENTS.map((event) => ({
+        args: { channel_id: channelId },
+        event,
+      })),
+    );
   }
 
   async function unsubscribeChannel(channelId: string) {
-    for (const evt of VOICE_EVENTS) {
-      await unsubscribe({ event: evt, args: { channel_id: channelId } });
-    }
+    await unsubscribe(
+      VOICE_EVENTS.map((event) => ({
+        args: { channel_id: channelId },
+        event,
+      })),
+    );
   }
 
-  async function subscribe({ event, args }: { event: string; args?: object }) {
-    await tauriCoreInvoke("discord_subscribe", { event, args });
+  function subscribe(events: DiscordRPCSubscribe[]) {
+    return tauriCoreInvoke("discord_subscribe", { events });
   }
 
-  async function unsubscribe({
-    event,
-    args,
-  }: {
-    event: string;
-    args?: object;
-  }) {
-    await tauriCoreInvoke("discord_unsubscribe", { event, args });
+  function unsubscribe(events: DiscordRPCSubscribe[]) {
+    return tauriCoreInvoke("discord_unsubscribe", { events });
   }
 
   function getSelectedVoiceChannel() {
@@ -261,24 +244,23 @@ export default function () {
     return tauriCoreInvoke("discord_get_guild", { guildId });
   }
 
-  function parseUser(data: any): DiscordUser {
-    const voiceState = data.voice_state;
-    const user = data.user;
+  function parseUser(data: DiscordRPCVoiceStateData): DiscordUser {
+    const { voice_state, nick, user } = data;
 
     return {
-      isSelfDeafened: voiceState.self_deaf ?? false,
-      isSelfMuted: voiceState.self_mute ?? false,
-      isSuppress: voiceState.suppress ?? false,
-      discriminator: user.discriminator ?? "",
-      globalName: user.global_name ?? null,
-      isDeafened: voiceState.deaf ?? false,
-      isMuted: voiceState.mute ?? false,
-      avatar: user.avatar ?? null,
-      isBot: user.bot ?? false,
+      isSelfDeafened: voice_state.self_deaf,
+      isSelfMuted: voice_state.self_mute,
+      discriminator: user.discriminator,
+      isSuppress: voice_state.suppress,
+      globalName: user.global_name,
+      isDeafened: voice_state.deaf,
+      isMuted: voice_state.mute,
       username: user.username,
-      nick: data.nick ?? null,
+      avatar: user.avatar,
       isSpeaking: false,
+      isBot: user.bot,
       id: user.id,
+      nick,
     };
   }
 

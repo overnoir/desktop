@@ -228,7 +228,12 @@ impl DiscordClient {
     }
 
     pub fn close(&mut self) -> Result<(), String> {
-        self.write_frame(2, "{}").map_err(|e| e.to_string())
+        match self.write_frame(2, "{}") {
+            Ok(()) => Ok(()),
+            Err(e) if e.kind() == std::io::ErrorKind::NotConnected
+                    || e.kind() == std::io::ErrorKind::BrokenPipe => Ok(()),
+            Err(e) => Err(e.to_string()),
+        }
     }
 
     pub async fn exchange_code(

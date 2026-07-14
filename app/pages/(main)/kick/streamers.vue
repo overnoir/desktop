@@ -67,7 +67,7 @@ async function save() {
 
     $toast.success(t("kick.addChannel.success"));
   } catch (error) {
-    $toast.error(JSON.stringify(error));
+    $toast.error(getErrorMessage(error));
     await logError({ error, source: LogSource.Kick });
   }
   loading.value = false;

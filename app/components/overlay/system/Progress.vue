@@ -1,17 +1,13 @@
 <script setup lang="ts">
 import type { CSSProperties } from "vue";
 
-const { percent, critical, normal, warning } = defineProps<{
+const { percent, critical, warning } = defineProps<{
   percent: number;
   critical: {
     max: number;
     min: number;
   };
   warning: {
-    max: number;
-    min: number;
-  };
-  normal: {
     max: number;
     min: number;
   };
@@ -29,19 +25,13 @@ const strokeWidth = computed(() => size.value / 15);
 const center = computed(() => size.value / 2);
 
 const color = computed(() => {
-  if (percent >= critical.min && percent <= critical.max) {
-    return "var(--color-red-500)";
-  }
-
-  if (percent >= warning.min && percent <= warning.max) {
+  if (percent >= warning.min) {
     return "var(--color-yellow-500)";
   }
-
-  if (percent >= normal.min && percent <= normal.max) {
-    return "var(--color-green-500)";
+  if (percent >= critical.min) {
+    return "var(--color-red-500)";
   }
-
-  return "";
+  return "var(--color-green-500)";
 });
 
 const styles = computed<CSSProperties>(() => ({

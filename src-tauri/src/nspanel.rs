@@ -98,12 +98,21 @@ pub fn create_nspanel(
         let panel_clone = panel.clone();
 
         handler.window_did_move(move |_| {
-            let frame: tauri_nspanel::NSRect =
-                unsafe { tauri_nspanel::objc2::msg_send![panel_clone.as_panel(), frame] };
+            let panel_clone = panel_clone.as_panel();
+
+            let Some(screen) = panel_clone.screen() else {
+                return;
+            };
+            let screen_frame = screen.frame();
+            let frame = panel_clone.frame();
+
             let _ = handle.emit_to(
                 &label,
                 "nspanel-moved",
-                PhysicalPosition::new(frame.origin.x, frame.origin.y),
+                PhysicalPosition::new(
+                    frame.origin.x,
+                    screen_frame.size.height - frame.origin.y - frame.size.height,
+                ),
             );
         });
 

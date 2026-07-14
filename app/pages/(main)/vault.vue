@@ -16,7 +16,7 @@ async function clear() {
     metadata.value = [];
     $toast.success(t("vault.clear.success"));
   } catch (error) {
-    $toast.error(JSON.stringify(error));
+    $toast.error(getErrorMessage(error));
     await logError({ error, source: LogSource.Vault });
   }
 }

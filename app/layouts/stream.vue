@@ -16,8 +16,10 @@ async function destroy() {
 
 onMounted(async () => {
   try {
-    await currentWebviewWindow.setAlwaysOnTop(advanced.value.alwaysOnTop);
-    await currentWebviewWindow.show();
+    await Promise.all([
+      currentWebviewWindow.setAlwaysOnTop(advanced.value.alwaysOnTop),
+      currentWebviewWindow.show(),
+    ]);
   } catch (error) {
     await logError({ error, source: LogSource.WebviewWindow });
   }
