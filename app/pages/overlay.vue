@@ -24,6 +24,7 @@ const { getStreamers } = useKick();
 const { logError } = useLogs();
 const isOnline = useOnline();
 const { open } = useStream();
+const { get } = useSystem();
 
 const styles = computed<CSSProperties>(() => ({
   flexDirection:
@@ -101,12 +102,7 @@ useIntervalFn(
         systemSettings.value.showMemory ||
         systemSettings.value.showCpu
       ) {
-        const data = await tauriCoreInvoke<{
-          network: SystemNetwork | null;
-          battery: SystemBattery | null;
-          memory: SystemMemory | null;
-          cpu: SystemCpu | null;
-        }>("get_system", {
+        const data = await get({
           network: systemSettings.value.showNetwork,
           battery: systemSettings.value.showBattery,
           memory: systemSettings.value.showMemory,
