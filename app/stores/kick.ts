@@ -11,7 +11,7 @@ export const useKickStore = defineStore(
   "kick",
   () => {
     const settings = ref<KickSettings>({ ...defaultKickSettings });
-    const streamers = ref<KickStreamer[]>([]);
+    const streamers = shallowRef<KickStreamer[]>([]);
 
     function resetSettings() {
       settings.value = { ...defaultKickSettings };

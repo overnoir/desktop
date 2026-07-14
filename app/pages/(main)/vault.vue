@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const metadata = ref<VaultItemMetadata[]>([]);
+const metadata = shallowRef<VaultItemMetadata[]>([]);
 const { clear, getMetadata } = useVault();
 const { $toast } = useNuxtApp();
 const { logError } = useLogs();

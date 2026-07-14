@@ -1,11 +1,11 @@
 <script setup lang="ts">
 const discordStore = useDiscordStore();
 const { connectedUser, isConnected } = storeToRefs(discordStore);
-const deleteVaultItemsOnDisconnect = ref(true);
+const deleteVaultItemsOnDisconnect = shallowRef(true);
 const { connect, disconnect } = useDiscord();
 const { $toast } = useNuxtApp();
 const { logError } = useLogs();
-const loading = ref(false);
+const loading = shallowRef(false);
 const { t } = useI18n();
 
 const avatarUrl = computed(

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const { get, logError, clear } = useLogs();
-const logs = ref<string[]>([]);
+const logs = shallowRef<string[]>([]);
 
 try {
   logs.value = (await get()).reverse();

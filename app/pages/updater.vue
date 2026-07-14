@@ -3,7 +3,7 @@ definePageMeta({
   layout: "updater",
 });
 
-const status = ref<"checking" | "downloading" | "loading">("checking");
+const status = shallowRef<"checking" | "downloading" | "loading">("checking");
 const { create, getByLabel } = useWebviewWindow();
 setTimeout(() => {
   status.value = "downloading";

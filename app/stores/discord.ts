@@ -12,8 +12,8 @@ export const useDiscordStore = defineStore(
   "discord",
   () => {
     const settings = ref<DiscordSettings>({ ...defaultDiscordSettings });
-    const connectedUser = ref<DiscordConnectedUser | null>(null);
-    const isConnected = ref<boolean>(false);
+    const connectedUser = shallowRef<DiscordConnectedUser | null>(null);
+    const isConnected = shallowRef<boolean>(false);
 
     function resetSettings() {
       settings.value = { ...defaultDiscordSettings };

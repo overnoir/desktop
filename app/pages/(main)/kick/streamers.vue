@@ -10,7 +10,7 @@ const { handleSubmit, resetForm } = useForm({
 const { getStreamers } = useKick();
 const { $toast } = useNuxtApp();
 const { logError } = useLogs();
-const loading = ref(false);
+const loading = shallowRef(false);
 const { t } = useI18n();
 
 const onSubmit = handleSubmit(async ({ slug }) => {

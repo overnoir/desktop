@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const { social, legal } = useLinkGroups();
-const appInfo = ref("");
+const appInfo = shallowRef("");
 
 try {
   const [version, name] = await Promise.all([

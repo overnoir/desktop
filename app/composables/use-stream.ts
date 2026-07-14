@@ -32,7 +32,7 @@ export default function () {
   }
 
   async function listenEvents() {
-    const loading = ref(false);
+    const loading = shallowRef(false);
     const router = useRouter();
 
     const stream = computed<Stream>(
