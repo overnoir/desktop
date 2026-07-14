@@ -68,9 +68,9 @@ export enum StreamPlatform {
 export enum LogSource {
   WebviewWindow = "WEBVIEW_WINDOW",
   Discord = "DISCORD",
+  Unknown = "UNKNOWN",
   System = "SYSTEM",
   Stream = "STREAM",
-  Unknow = "UNKNOW",
   Vault = "VAULT",
   Kick = "KICK",
   Logs = "LOGS",

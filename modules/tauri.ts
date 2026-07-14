@@ -80,7 +80,7 @@ const plugins = [
   },
   {
     from: "@tauri-apps/api/webview",
-    prefix: "WebWiew",
+    prefix: "Webview",
     plugin: webview,
   },
   {
