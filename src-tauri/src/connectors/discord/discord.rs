@@ -142,7 +142,7 @@ pub async fn connect_discord(app_handle: AppHandle) -> Result<DiscordConnectedUs
     let event_app_handle = app_handle.clone();
     let expected_closed = Arc::clone(&discord.expected_closed);
 
-    std::thread::spawn(move || loop {
+    tokio::task::spawn_blocking(move || loop {
         match event_client.read_frame() {
             Ok((1, payload)) => match serde_json::from_str::<Value>(&payload) {
                 Ok(value) => {
