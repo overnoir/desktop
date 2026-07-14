@@ -13,76 +13,7 @@ export const useDiscordStore = defineStore(
   () => {
     const settings = ref<DiscordSettings>({ ...defaultDiscordSettings });
     const connectedUser = ref<DiscordConnectedUser | null>(null);
-    const guild = ref<DiscordGuild | undefined>(undefined);
     const isConnected = ref<boolean>(false);
-
-    const filtredUsers = computed(() => {
-      if (!guild.value || !connectedUser.value) {
-        return [];
-      }
-
-      let users = guild.value.channel.users;
-
-      if (!settings.value.showMe) {
-        users = users.filter(({ id }) => id !== connectedUser.value!.id);
-      }
-
-      if (settings.value.showSpeakersOnly) {
-        users = users.filter(({ isSpeaking }) => isSpeaking);
-      }
-
-      if (!settings.value.showMutedUsers) {
-        users = users.filter(
-          ({ isMuted, isSelfMuted, isSuppress }) =>
-            !isMuted && !isSelfMuted && !isSuppress,
-        );
-      }
-
-      if (!settings.value.showDeafenedUsers) {
-        users = users.filter(
-          ({ isDeafened, isSelfDeafened }) => !isDeafened && !isSelfDeafened,
-        );
-      }
-
-      if (!settings.value.showBots) {
-        users = users.filter(({ isBot }) => !isBot);
-      }
-
-      users.sort((a, b) => {
-        if (a.isSpeaking !== b.isSpeaking) {
-          return a.isSpeaking ? -1 : 1;
-        }
-
-        const aMuted = a.isMuted || a.isSelfMuted;
-        const bMuted = b.isMuted || b.isSelfMuted;
-
-        if (aMuted !== bMuted) {
-          return aMuted ? 1 : -1;
-        }
-
-        if (a.isBot !== b.isBot) {
-          return a.isBot ? 1 : -1;
-        }
-
-        const aName = generateDiscordUserDisplayName({
-          user: a,
-          displayName: settings.value.displayName,
-        }).toLowerCase();
-
-        const bName = generateDiscordUserDisplayName({
-          user: b,
-          displayName: settings.value.displayName,
-        }).toLowerCase();
-
-        return aName.localeCompare(bName);
-      });
-
-      if (settings.value.userLimit > 0) {
-        users = users.slice(0, settings.value.userLimit);
-      }
-
-      return users;
-    });
 
     function resetSettings() {
       settings.value = { ...defaultDiscordSettings };
@@ -91,10 +22,8 @@ export const useDiscordStore = defineStore(
     return {
       connectedUser,
       resetSettings,
-      filtredUsers,
       isConnected,
       settings,
-      guild,
     };
   },
   {
@@ -103,7 +32,6 @@ export const useDiscordStore = defineStore(
         beforeFrontendSync: sync,
         beforeBackendSync: sync,
       },
-      filterKeys: ["guild"],
     },
   },
 );

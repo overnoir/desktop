@@ -6,13 +6,12 @@ definePageMeta({
 });
 
 const discordStore = useDiscordStore();
-const { filtredUsers, guild, settings, connectedUser, isConnected } =
-  storeToRefs(discordStore);
+const { settings, connectedUser, isConnected } = storeToRefs(discordStore);
 const { filtredStreamers, streamers } = storeToRefs(useKickStore());
 const { getByLabel, getCurrent, create } = useWebviewWindow();
+const { connect, listen, filtredUsers, guild } = useDiscord();
 const { general } = storeToRefs(useSettingsStore());
 const { onDragStart, listenDrag } = getCurrent();
-const { connect, listen } = useDiscord();
 const { resume, system } = useSystem();
 const { getStreamers } = useKick();
 const { logError } = useLogs();
