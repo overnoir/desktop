@@ -10,10 +10,6 @@ export const useSystemStore = defineStore(
   "system",
   () => {
     const settings = ref<SystemSettings>({ ...defaultSystemSettings });
-    const battery = ref<SystemBattery | null>(null);
-    const network = ref<SystemNetwork | null>(null);
-    const memory = ref<SystemMemory | null>(null);
-    const cpu = ref<SystemCpu | null>(null);
 
     function resetSettings() {
       settings.value = { ...defaultSystemSettings };
@@ -22,10 +18,6 @@ export const useSystemStore = defineStore(
     return {
       resetSettings,
       settings,
-      battery,
-      network,
-      memory,
-      cpu,
     };
   },
   {
@@ -34,8 +26,6 @@ export const useSystemStore = defineStore(
         beforeFrontendSync: sync,
         beforeBackendSync: sync,
       },
-      filterKeysStrategy: "pick",
-      filterKeys: ["settings"],
     },
   },
 );

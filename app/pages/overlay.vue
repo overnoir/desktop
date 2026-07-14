@@ -10,21 +10,14 @@ const { filtredUsers, guild, settings, connectedUser, isConnected } =
   storeToRefs(discordStore);
 const { filtredStreamers, streamers } = storeToRefs(useKickStore());
 const { getByLabel, getCurrent, create } = useWebviewWindow();
-const { onDragStart, listenDrag } = getCurrent();
 const { general } = storeToRefs(useSettingsStore());
+const { onDragStart, listenDrag } = getCurrent();
 const { connect, listen } = useDiscord();
+const { resume, system } = useSystem();
 const { getStreamers } = useKick();
 const { logError } = useLogs();
 const isOnline = useOnline();
 const { open } = useStream();
-const { get } = useSystem();
-const {
-  settings: systemSettings,
-  battery,
-  network,
-  memory,
-  cpu,
-} = storeToRefs(useSystemStore());
 
 const styles = computed<CSSProperties>(() => ({
   flexDirection:
@@ -33,8 +26,8 @@ const styles = computed<CSSProperties>(() => ({
 }));
 
 await listen();
-
 listenDrag();
+resume();
 
 try {
   if (isConnected.value) {
@@ -93,38 +86,6 @@ useIntervalFn(
   300000,
   { immediateCallback: true },
 );
-
-useIntervalFn(
-  async () => {
-    try {
-      if (
-        systemSettings.value.showNetwork ||
-        systemSettings.value.showBattery ||
-        systemSettings.value.showMemory ||
-        systemSettings.value.showCpu
-      ) {
-        const data = await get({
-          network: systemSettings.value.showNetwork,
-          battery: systemSettings.value.showBattery,
-          memory: systemSettings.value.showMemory,
-          cpu: systemSettings.value.showCpu,
-        });
-        network.value = data.network;
-        battery.value = data.battery;
-        memory.value = data.memory;
-        cpu.value = data.cpu;
-      }
-    } catch (error) {
-      await logError({ error, source: LogSource.System });
-      network.value = null;
-      battery.value = null;
-      memory.value = null;
-      cpu.value = null;
-    }
-  },
-  1000,
-  { immediateCallback: true },
-);
 </script>
 
 <template>
@@ -153,10 +114,10 @@ useIntervalFn(
         "
       />
     </template>
-    <OverlaySystemCpu v-if="cpu" :cpu />
-    <OverlaySystemMemory v-if="memory" :memory />
-    <OverlaySystemBattery v-if="battery" :battery />
-    <OverlaySystemNetwork v-if="network" :network />
+    <OverlaySystemCpu v-if="system?.cpu" :cpu="system.cpu" />
+    <OverlaySystemMemory v-if="system?.memory" :memory="system.memory" />
+    <OverlaySystemBattery v-if="system?.battery" :battery="system.battery" />
+    <OverlaySystemNetwork v-if="system?.network" :network="system.network" />
     <OverlayOffline v-if="!isOnline" />
     <OverlaySettings
       v-if="general.showSettings"

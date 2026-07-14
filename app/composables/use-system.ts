@@ -1,27 +1,49 @@
 export default function () {
-  function get({
-    network,
-    battery,
-    memory,
-    cpu,
-  }: {
-    network: boolean;
-    battery: boolean;
-    memory: boolean;
-    cpu: boolean;
-  }) {
-    return tauriCoreInvoke<{
-      network: SystemNetwork | null;
-      battery: SystemBattery | null;
-      memory: SystemMemory | null;
-      cpu: SystemCpu | null;
-    }>("get_system", {
-      network,
-      battery,
-      memory,
-      cpu,
-    });
-  }
+  const { settings } = storeToRefs(useSystemStore());
+  const { logError } = useLogs();
+  const system = shallowRef<{
+    battery: SystemBattery | null;
+    network: SystemNetwork | null;
+    memory: SystemMemory | null;
+    cpu: SystemCpu | null;
+  } | null>(null);
 
-  return { get };
+  const { resume } = useIntervalFn(
+    async () => {
+      const { showNetwork, showBattery, showMemory, showCpu } = settings.value;
+
+      if (!showNetwork && !showBattery && !showMemory && !showCpu) {
+        system.value = null;
+        return;
+      }
+
+      try {
+        const { battery, cpu, memory, network } = await tauriCoreInvoke<{
+          network: SystemNetwork | null;
+          battery: SystemBattery | null;
+          memory: SystemMemory | null;
+          cpu: SystemCpu | null;
+        }>("get_system", {
+          network: showNetwork,
+          battery: showBattery,
+          memory: showMemory,
+          cpu: showCpu,
+        });
+
+        system.value = {
+          network,
+          battery,
+          memory,
+          cpu,
+        };
+      } catch (error) {
+        await logError({ error, source: LogSource.System });
+        system.value = null;
+      }
+    },
+    1000,
+    { immediate: false, immediateCallback: true },
+  );
+
+  return { resume, system };
 }
