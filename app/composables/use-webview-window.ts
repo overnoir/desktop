@@ -89,21 +89,27 @@ export default function () {
     }
 
     function listenDrag() {
+      let rafId: number | null = null;
+
       useEventListener(window, "mouseup", () => {
         document.body.style.pointerEvents = "auto";
         isDragging.value = false;
       });
 
-      useEventListener(window, "mousemove", async (e) => {
-        if (!isDragging.value) {
+      useEventListener(window, "mousemove", (e) => {
+        if (!isDragging.value || rafId !== null) {
           return;
         }
-        currentWebviewWindow.setPosition(
-          new TauriDpiLogicalPosition(
-            e.screenX - offset.value.x,
-            e.screenY - offset.value.y,
-          ),
-        );
+
+        rafId = requestAnimationFrame(() => {
+          rafId = null;
+          currentWebviewWindow.setPosition(
+            new TauriDpiLogicalPosition(
+              e.screenX - offset.value.x,
+              e.screenY - offset.value.y,
+            ),
+          );
+        });
       });
     }
 
