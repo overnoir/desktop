@@ -26,7 +26,7 @@ export default function () {
     { immediate: false, immediateCallback: true },
   );
 
-  const filtredStreamers = computed(() => {
+  const filteredStreamers = computed(() => {
     let items = [...streamers.value];
 
     if (settings.value.showOnlyLive) {
@@ -49,5 +49,5 @@ export default function () {
     return items;
   });
 
-  return { startPooling, getStreamers, filtredStreamers };
+  return { startPooling, getStreamers, filteredStreamers };
 }

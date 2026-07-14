@@ -12,7 +12,7 @@ export default function () {
     storeToRefs(useDiscordStore());
   const { logError } = useLogs();
 
-  const filtredUsers = computed(() => {
+  const filteredUsers = computed(() => {
     if (!guild.value || !connectedUser.value) {
       return [];
     }
@@ -346,5 +346,5 @@ export default function () {
     };
   }
 
-  return { connect, disconnect, listenEvents, guild, filtredUsers };
+  return { connect, disconnect, listenEvents, guild, filteredUsers };
 }

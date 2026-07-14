@@ -7,10 +7,10 @@ definePageMeta({
 
 const discordStore = useDiscordStore();
 const { settings, connectedUser, isConnected } = storeToRefs(discordStore);
-const { connect, listenEvents, filtredUsers, guild } = useDiscord();
+const { connect, listenEvents, filteredUsers, guild } = useDiscord();
 const { startPooling: startSystemPooling, system } = useSystem();
 const { getByLabel, getCurrent, create } = useWebviewWindow();
-const { filtredStreamers, startPooling } = useKick();
+const { filteredStreamers, startPooling } = useKick();
 const { general } = storeToRefs(useSettingsStore());
 const { onDragStart, listenDrag } = getCurrent();
 const { logError } = useLogs();
@@ -82,9 +82,9 @@ async function openStreamWebviewWindow(stream: Stream) {
           name: guild.name,
         }"
       />
-      <OverlayDiscordUser v-for="user in filtredUsers" :key="user.id" :user />
+      <OverlayDiscordUser v-for="user in filteredUsers" :key="user.id" :user />
       <OverlayKickStreamer
-        v-for="streamer in filtredStreamers"
+        v-for="streamer in filteredStreamers"
         :key="streamer.id"
         :streamer
         @click="
