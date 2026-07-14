@@ -7,13 +7,12 @@ definePageMeta({
 
 const discordStore = useDiscordStore();
 const { settings, connectedUser, isConnected } = storeToRefs(discordStore);
-const { filtredStreamers, streamers } = storeToRefs(useKickStore());
+const { connect, listenEvents, filtredUsers, guild } = useDiscord();
+const { startPooling: startSystemPooling, system } = useSystem();
 const { getByLabel, getCurrent, create } = useWebviewWindow();
-const { connect, listen, filtredUsers, guild } = useDiscord();
+const { filtredStreamers, startPooling } = useKick();
 const { general } = storeToRefs(useSettingsStore());
 const { onDragStart, listenDrag } = getCurrent();
-const { resume, system } = useSystem();
-const { getStreamers } = useKick();
 const { logError } = useLogs();
 const isOnline = useOnline();
 const { open } = useStream();
@@ -24,9 +23,10 @@ const styles = computed<CSSProperties>(() => ({
   gap: `${Math.round((general.value.size * general.value.gap) / 100)}px`,
 }));
 
-await listen();
+await listenEvents();
+startSystemPooling();
+startPooling();
 listenDrag();
-resume();
 
 try {
   if (isConnected.value) {
@@ -67,24 +67,6 @@ async function openStreamWebviewWindow(stream: Stream) {
     await logError({ error, source: LogSource.Stream });
   }
 }
-
-useIntervalFn(
-  async () => {
-    try {
-      if (streamers.value.length) {
-        const data = await getStreamers({
-          slugs: streamers.value.map(({ slug }) => slug),
-        });
-        streamers.value = data;
-      }
-    } catch (error) {
-      await logError({ error, source: LogSource.Kick });
-      streamers.value = [];
-    }
-  },
-  300000,
-  { immediateCallback: true },
-);
 </script>
 
 <template>

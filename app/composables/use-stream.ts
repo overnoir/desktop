@@ -31,7 +31,7 @@ export default function () {
     });
   }
 
-  async function listen() {
+  async function listenEvents() {
     const loading = ref(false);
     const router = useRouter();
 
@@ -47,5 +47,5 @@ export default function () {
     return { stream, loading };
   }
 
-  return { open, listen };
+  return { open, listenEvents };
 }

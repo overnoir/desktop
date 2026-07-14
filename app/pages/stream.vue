@@ -3,7 +3,7 @@ definePageMeta({
   layout: "stream",
 });
 
-const { loading, stream } = await useStream().listen();
+const { loading, stream } = await useStream().listenEvents();
 </script>
 
 <template>

@@ -7,9 +7,9 @@ const VOICE_EVENTS = [
 ];
 
 export default function () {
+  const guild = ref<DiscordGuild | undefined>(undefined);
   const { connectedUser, isConnected, settings } =
     storeToRefs(useDiscordStore());
-  const guild = ref<DiscordGuild | undefined>(undefined);
   const { logError } = useLogs();
 
   const filtredUsers = computed(() => {
@@ -100,7 +100,7 @@ export default function () {
     await tauriCoreInvoke("disconnect_discord", { deleteVaultItems });
   }
 
-  async function listen() {
+  async function listenEvents() {
     await tauriEventListen<DiscordRPCEvent>(
       "discord-event",
       async ({ payload }) => {
@@ -346,5 +346,5 @@ export default function () {
     };
   }
 
-  return { connect, disconnect, listen, guild, filtredUsers };
+  return { connect, disconnect, listenEvents, guild, filtredUsers };
 }

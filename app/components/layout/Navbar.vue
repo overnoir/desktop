@@ -1,6 +1,6 @@
 <script setup lang="ts">
-const { general, connectors } = storeToRefs(useLinkGroupsStore());
 const navbar = ref();
+const { general, connectors } = useLinkGroups();
 const { arrivedState } = useScroll(navbar);
 </script>
 

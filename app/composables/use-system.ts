@@ -8,7 +8,7 @@ export default function () {
     cpu: SystemCpu | null;
   } | null>(null);
 
-  const { resume } = useIntervalFn(
+  const { resume: startPooling } = useIntervalFn(
     async () => {
       const { showNetwork, showBattery, showMemory, showCpu } = settings.value;
 
@@ -45,5 +45,5 @@ export default function () {
     { immediate: false, immediateCallback: true },
   );
 
-  return { resume, system };
+  return { startPooling, system };
 }

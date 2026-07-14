@@ -17,31 +17,7 @@ export const useKickStore = defineStore(
       settings.value = { ...defaultKickSettings };
     }
 
-    const filtredStreamers = computed(() => {
-      let items = [...streamers.value];
-
-      if (settings.value.showOnlyLive) {
-        items = items.filter(({ stream }) => stream.isLive);
-      }
-
-      items.sort((a, b) => {
-        const aLive = !!a.stream.isLive;
-        const bLive = !!b.stream.isLive;
-
-        if (aLive !== bLive) {
-          return Number(bLive) - Number(aLive);
-        }
-
-        return a.name.localeCompare(b.name);
-      });
-
-      items = items.slice(0, settings.value.streamerLimit);
-
-      return items;
-    });
-
     return {
-      filtredStreamers,
       resetSettings,
       streamers,
       settings,
