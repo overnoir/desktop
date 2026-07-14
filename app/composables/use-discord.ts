@@ -45,10 +45,6 @@ export default function () {
     }
 
     users.sort((a, b) => {
-      if (a.isSpeaking !== b.isSpeaking) {
-        return a.isSpeaking ? -1 : 1;
-      }
-
       const aMuted = a.isMuted || a.isSelfMuted;
       const bMuted = b.isMuted || b.isSelfMuted;
 
