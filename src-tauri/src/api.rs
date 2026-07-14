@@ -1,4 +1,5 @@
 use crate::types::{ApiClient, KickStreamer};
+use std::time::Duration;
 use tauri::AppHandle;
 use tauri::Manager;
 
@@ -40,6 +41,9 @@ impl ApiClient {
 pub fn init_api(app_handle: &AppHandle, base_url: &str) {
     app_handle.manage(ApiClient {
         base_url: base_url.to_string(),
-        client: reqwest::Client::new(),
+        client: reqwest::Client::builder()
+            .timeout(Duration::from_secs(15))
+            .build()
+            .expect("failed to create HTTP client"),
     });
 }

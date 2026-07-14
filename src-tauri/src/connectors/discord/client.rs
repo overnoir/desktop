@@ -4,6 +4,7 @@ use interprocess::local_socket::traits::Stream;
 use interprocess::TryClone;
 use serde_json::json;
 use std::io::{Read, Write};
+use std::time::Duration;
 use uuid::Uuid;
 
 #[cfg(unix)]
@@ -16,7 +17,10 @@ impl DiscordClient {
     pub fn new(client_id: &str) -> Self {
         Self {
             client_id: client_id.to_string(),
-            http: reqwest::Client::new(),
+            http: reqwest::Client::builder()
+                .timeout(Duration::from_secs(15))
+                .build()
+                .expect("failed to create HTTP client"),
             stream: None,
         }
     }
@@ -88,7 +92,10 @@ impl DiscordClient {
             .map_err(|e| format!("clone stream failed: {e}"))?;
         Ok(Self {
             client_id: self.client_id.clone(),
-            http: reqwest::Client::new(),
+            http: reqwest::Client::builder()
+                .timeout(Duration::from_secs(15))
+                .build()
+                .expect("failed to create HTTP client"),
             stream: Some(stream),
         })
     }
