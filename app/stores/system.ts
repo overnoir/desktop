@@ -10,10 +10,10 @@ export const useSystemStore = defineStore(
   "system",
   () => {
     const settings = ref<SystemSettings>({ ...defaultSystemSettings });
-    const battery = ref<SystemBattery | undefined>(undefined);
-    const network = ref<SystemNetwork | undefined>(undefined);
-    const memory = ref<SystemMemory | undefined>(undefined);
-    const cpu = ref<SystemCpu | undefined>(undefined);
+    const battery = ref<SystemBattery | null>(null);
+    const network = ref<SystemNetwork | null>(null);
+    const memory = ref<SystemMemory | null>(null);
+    const cpu = ref<SystemCpu | null>(null);
 
     function resetSettings() {
       settings.value = { ...defaultSystemSettings };

@@ -5,19 +5,12 @@ definePageMeta({
   layout: "overlay",
 });
 
-const { getByLabel, getCurrent, create } = useWebviewWindow();
-const { filtredStreamers, streamers } = storeToRefs(useKickStore());
-const { onDragStart, listenDrag } = getCurrent();
 const discordStore = useDiscordStore();
 const { filtredUsers, guild, settings, connectedUser, isConnected } =
   storeToRefs(discordStore);
-const {
-  settings: systemSettings,
-  battery,
-  network,
-  memory,
-  cpu,
-} = storeToRefs(useSystemStore());
+const { filtredStreamers, streamers } = storeToRefs(useKickStore());
+const { getByLabel, getCurrent, create } = useWebviewWindow();
+const { onDragStart, listenDrag } = getCurrent();
 const { general } = storeToRefs(useSettingsStore());
 const { connect, listen } = useDiscord();
 const { getStreamers } = useKick();
@@ -25,6 +18,13 @@ const { logError } = useLogs();
 const isOnline = useOnline();
 const { open } = useStream();
 const { get } = useSystem();
+const {
+  settings: systemSettings,
+  battery,
+  network,
+  memory,
+  cpu,
+} = storeToRefs(useSystemStore());
 
 const styles = computed<CSSProperties>(() => ({
   flexDirection:
@@ -33,6 +33,7 @@ const styles = computed<CSSProperties>(() => ({
 }));
 
 await listen();
+
 listenDrag();
 
 try {
@@ -108,17 +109,17 @@ useIntervalFn(
           memory: systemSettings.value.showMemory,
           cpu: systemSettings.value.showCpu,
         });
-        network.value = data.network ?? undefined;
-        battery.value = data.battery ?? undefined;
-        memory.value = data.memory ?? undefined;
-        cpu.value = data.cpu ?? undefined;
+        network.value = data.network;
+        battery.value = data.battery;
+        memory.value = data.memory;
+        cpu.value = data.cpu;
       }
     } catch (error) {
       await logError({ error, source: LogSource.System });
-      network.value = undefined;
-      battery.value = undefined;
-      memory.value = undefined;
-      cpu.value = undefined;
+      network.value = null;
+      battery.value = null;
+      memory.value = null;
+      cpu.value = null;
     }
   },
   1000,
@@ -146,8 +147,8 @@ useIntervalFn(
         :streamer
         @click="
           openStreamWebviewWindow({
-            slug: streamer.slug,
             platform: StreamPlatform.Kick,
+            slug: streamer.slug,
           })
         "
       />
