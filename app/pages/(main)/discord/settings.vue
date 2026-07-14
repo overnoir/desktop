@@ -66,7 +66,11 @@ function resetSettings() {
       :title="$t('discord.userLimit.title')"
     >
       <div class="flex flex-col">
-        <NumberField v-model="settings.userLimit" :max="50" :min="0">
+        <NumberField
+          v-model="settings.userLimit"
+          :max="MAX_DISCORD_USER_LIMIT"
+          :min="0"
+        >
           <NumberFieldContent>
             <NumberFieldDecrement />
             <NumberFieldInput class="rounded-b-none border-b-0" />
@@ -76,7 +80,7 @@ function resetSettings() {
         <Slider
           class="*:data-[slot='slider-track']:rounded-t-none"
           :model-value="[settings.userLimit]"
-          :max="50"
+          :max="MAX_DISCORD_USER_LIMIT"
           :min="0"
           @update:model-value="settings.userLimit = $event![0]!"
         />

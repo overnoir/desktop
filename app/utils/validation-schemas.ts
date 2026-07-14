@@ -71,7 +71,7 @@ export const discordSettingsSchema = z.preprocess(
     userLimit: z
       .number()
       .min(0)
-      .max(50)
+      .max(MAX_DISCORD_USER_LIMIT)
       .catch(defaultDiscordSettings.userLimit),
   }),
 ) satisfies z.ZodType<DiscordSettings>;
@@ -123,7 +123,7 @@ export const kickSettingsSchema = z.preprocess(
     streamerLimit: z
       .number()
       .min(0)
-      .max(7)
+      .max(MAX_KICK_STREAMER_COUNT)
       .catch(defaultKickSettings.streamerLimit),
   }),
 ) satisfies z.ZodType<KickSettings>;
@@ -147,7 +147,7 @@ export const kickStreamersSchema = z.preprocess(
   },
   z
     .array(kickStreamerSchema)
-    .max(7)
+    .max(MAX_KICK_STREAMER_COUNT)
     .transform((streamers) =>
       streamers.filter(
         (streamer) => kickStreamerSchema.safeParse(streamer).success,

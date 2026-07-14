@@ -30,9 +30,9 @@ async function quickPositionSelect(
 
     const { width: overlayWidth, height: overlayHeight } =
       await overlayWebviewWindow.outerSize();
+    const offset = WEBVIEW_WINDOW_OFFSET;
     const { width, height } = size;
     const { x, y } = position;
-    const offset = 10;
 
     const centerY = y + Math.round((height - overlayHeight) / 2);
     const centerX = x + Math.round((width - overlayWidth) / 2);

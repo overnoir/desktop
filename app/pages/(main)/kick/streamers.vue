@@ -95,14 +95,14 @@ onNuxtReady(() => {
               <Input
                 :placeholder="$t('kick.addChannel.placeholder')"
                 :aria-invalid="!!errors.length"
-                :disabled="draft.length >= 7"
+                :disabled="draft.length >= MAX_KICK_STREAMER_COUNT"
                 autocapitalize="off"
                 autocorrect="off"
                 type="text"
                 v-bind="field"
               />
               <Button
-                :disabled="loading || draft.length >= 7"
+                :disabled="loading || draft.length >= MAX_KICK_STREAMER_COUNT"
                 type="submit"
                 size="icon"
               >

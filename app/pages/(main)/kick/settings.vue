@@ -94,7 +94,7 @@ function resetSettings() {
         <Slider
           class="*:data-[slot='slider-track']:rounded-t-none"
           :model-value="[settings.streamerLimit]"
-          :max="7"
+          :max="MAX_KICK_STREAMER_COUNT"
           :min="0"
           @update:model-value="settings.streamerLimit = $event![0]!"
         />

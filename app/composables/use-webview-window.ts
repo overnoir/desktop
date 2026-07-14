@@ -135,11 +135,11 @@ export default function () {
     const overlayWebviewWindow = await getByLabel({
       label: WebviewWindowLabel.Overlay,
     });
+    const offset = WEBVIEW_WINDOW_OFFSET;
     const height = options.height!;
     const width = options.width!;
     let x = options.x;
     let y = options.y;
-    const gap = 10;
 
     if (overlayWebviewWindow) {
       const position = await overlayWebviewWindow.outerPosition();
@@ -147,8 +147,8 @@ export default function () {
       const monitor = await tauriWindowCurrentMonitor();
 
       if (general.value.orientation === Orientation.Vertical) {
-        const after = position.x + size.width + gap;
-        const before = position.x - width - gap;
+        const after = position.x + size.width + offset;
+        const before = position.x - width - offset;
         x = monitor
           ? after + width <= monitor.position.x + monitor.size.width
             ? after
@@ -158,8 +158,8 @@ export default function () {
           : after;
         y = position.y;
       } else {
-        const after = position.y + size.height + gap;
-        const before = position.y - height - gap;
+        const after = position.y + size.height + offset;
+        const before = position.y - height - offset;
         y = monitor
           ? after + height <= monitor.position.y + monitor.size.height
             ? after
@@ -173,13 +173,13 @@ export default function () {
       if (monitor) {
         x = clamp(
           x,
-          monitor.position.x + gap,
-          monitor.position.x + monitor.size.width - width - gap,
+          monitor.position.x + offset,
+          monitor.position.x + monitor.size.width - width - offset,
         );
         y = clamp(
           y,
-          monitor.position.y + gap,
-          monitor.position.y + monitor.size.height - height - gap,
+          monitor.position.y + offset,
+          monitor.position.y + monitor.size.height - height - offset,
         );
       }
     }

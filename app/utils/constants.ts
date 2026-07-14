@@ -3,6 +3,10 @@ import type { WindowOptions } from "@tauri-apps/api/window";
 
 const name = await tauriAppGetName();
 
+export const MAX_KICK_STREAMER_COUNT = 7;
+export const MAX_DISCORD_USER_LIMIT = 50;
+export const WEBVIEW_WINDOW_OFFSET = 10;
+
 export const defaultSettingsGeneral: SettingsGeneral = {
   orientation: Orientation.Horizontal,
   alignment: Alignment.Left,
