@@ -25,9 +25,11 @@ export default function () {
               });
 
               if (mainWebviewWindow) {
-                await mainWebviewWindow.show();
-                await mainWebviewWindow.unminimize();
-                await mainWebviewWindow.setFocus();
+                await Promise.all([
+                  mainWebviewWindow.show(),
+                  mainWebviewWindow.unminimize(),
+                  mainWebviewWindow.setFocus(),
+                ]);
               } else {
                 await createWebviewWindow({
                   ...mainWebviewWindowOptions,

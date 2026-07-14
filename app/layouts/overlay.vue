@@ -41,26 +41,26 @@ try {
 
 onMounted(async () => {
   try {
-    await currentWebviewWindow.setAlwaysOnTop(advanced.value.alwaysOnTop);
-    await currentWebviewWindow.setIgnoreCursorEvents(
-      advanced.value.ignoreCursor,
-    );
-    await currentWebviewWindow.onMoved(({ payload }) => {
-      if (!isDragging.value) {
-        return;
-      }
-      general.value.x = payload.x;
-      general.value.y = payload.y;
-    });
-
-    await currentWebviewWindow.setPosition(
-      new TauriDpiLogicalPosition(general.value.x, general.value.y),
-    );
-
-    const updaterWebviewWindow = await getByLabel({
-      label: WebviewWindowLabel.Updater,
-      isNSPanel: false,
-    });
+    const [, updaterWebviewWindow] = await Promise.all([
+      Promise.all([
+        currentWebviewWindow.setAlwaysOnTop(advanced.value.alwaysOnTop),
+        currentWebviewWindow.setIgnoreCursorEvents(advanced.value.ignoreCursor),
+        currentWebviewWindow.onMoved(({ payload }) => {
+          if (!isDragging.value) {
+            return;
+          }
+          general.value.x = payload.x;
+          general.value.y = payload.y;
+        }),
+        currentWebviewWindow.setPosition(
+          new TauriDpiLogicalPosition(general.value.x, general.value.y),
+        ),
+      ]),
+      getByLabel({
+        label: WebviewWindowLabel.Updater,
+        isNSPanel: false,
+      }),
+    ]);
 
     if (updaterWebviewWindow) {
       await updaterWebviewWindow.destroy();

@@ -142,9 +142,11 @@ export default function () {
     let y = options.y;
 
     if (overlayWebviewWindow) {
-      const position = await overlayWebviewWindow.outerPosition();
-      const size = await overlayWebviewWindow.outerSize();
-      const monitor = await tauriWindowCurrentMonitor();
+      const [position, size, monitor] = await Promise.all([
+        overlayWebviewWindow.outerPosition(),
+        overlayWebviewWindow.outerSize(),
+        tauriWindowCurrentMonitor(),
+      ]);
 
       if (general.value.orientation === Orientation.Vertical) {
         const after = position.x + size.width + offset;

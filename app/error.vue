@@ -9,8 +9,10 @@ const { general } = storeToRefs(useSettingsStore());
 const { setLocale } = useI18n();
 const { logError } = useLogs();
 
-await logError({ error, source: LogSource.Unknown });
-await setLocale(general.value.locale);
+await Promise.all([
+  logError({ error, source: LogSource.Unknown }),
+  setLocale(general.value.locale),
+]);
 listenDrag();
 
 async function destroy() {

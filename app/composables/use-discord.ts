@@ -84,8 +84,10 @@ export default function () {
     const connectedUser =
       await tauriCoreInvoke<DiscordConnectedUser>("connect_discord");
 
-    await subscribe([{ event: DiscordRPCEventName.VoiceChannelSelect }]);
-    await getSelectedVoiceChannel();
+    await Promise.all([
+      subscribe([{ event: DiscordRPCEventName.VoiceChannelSelect }]),
+      getSelectedVoiceChannel(),
+    ]);
 
     return connectedUser;
   }
@@ -167,12 +169,11 @@ export default function () {
     guild.value = buildGuild(data.id, guildId ?? null);
     guild.value.channel.users = users;
 
-    await subscribeChannel(data.id);
-    await getChannel(data.id);
-
+    const promises = [subscribeChannel(data.id), getChannel(data.id)];
     if (guildId) {
-      await getGuild(guildId);
+      promises.push(getGuild(guildId));
     }
+    await Promise.all(promises);
   }
 
   function handleGetChannel(data: DiscordRPCChannel) {
@@ -212,12 +213,14 @@ export default function () {
 
     guild.value = buildGuild(data.channel_id, data.guild_id ?? null);
 
-    await subscribeChannel(data.channel_id);
-    await getChannel(data.channel_id);
-
+    const promises = [
+      subscribeChannel(data.channel_id),
+      getChannel(data.channel_id),
+    ];
     if (data.guild_id) {
-      await getGuild(data.guild_id);
+      promises.push(getGuild(data.guild_id));
     }
+    await Promise.all(promises);
   }
 
   async function handleMoved() {
