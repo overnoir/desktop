@@ -25,6 +25,8 @@ const backgroundStyles = computed<CSSProperties>(() => {
     borderRadius: `${Math.round(((general.value.size * general.value.radius) / 200) * 1.15)}px`,
     padding: `${Math.round(general.value.size / 25)}px`,
     backgroundColor: "var(--background)",
+    minHeight: `${general.value.size}px`,
+    minWidth: `${general.value.size}px`,
     border: "1px solid var(--border)",
   };
 });
