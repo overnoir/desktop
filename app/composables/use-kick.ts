@@ -19,7 +19,6 @@ export default function () {
         }
       } catch (error) {
         await logError({ error, source: LogSource.Kick });
-        streamers.value = [];
       }
     },
     300000,
