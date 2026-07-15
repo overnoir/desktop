@@ -10,7 +10,7 @@ export const WEBVIEW_WINDOW_OFFSET = 10;
 export const defaultSettingsGeneral: SettingsGeneral = {
   orientation: Orientation.Horizontal,
   alignment: Alignment.Left,
-  locale: Locale.Turkish,
+  locale: Locale.English,
   showBackground: true,
   showSettings: true,
   showDrag: true,
