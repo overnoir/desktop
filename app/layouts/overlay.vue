@@ -52,7 +52,9 @@ onMounted(async () => {
     const [, updaterWebviewWindow] = await Promise.all([
       Promise.all([
         currentWebviewWindow.setAlwaysOnTop(advanced.value.alwaysOnTop),
-        currentWebviewWindow.setIgnoreCursorEvents(advanced.value.ignoreCursor),
+        currentWebviewWindow.setIgnoreCursorEvents(
+          advanced.value.ignoreCursorEvents,
+        ),
         currentWebviewWindow.onMoved(({ payload }) => {
           if (!isDragging.value) {
             return;

@@ -23,8 +23,8 @@ export const defaultSettingsGeneral: SettingsGeneral = {
 };
 
 export const defaultSettingsAdvanced: SettingsAdvanced = {
-  preventCapture: false,
-  ignoreCursor: false,
+  ignoreCursorEvents: false,
+  contentProtected: false,
   alwaysOnTop: true,
   autoStart: false,
 };
@@ -96,8 +96,8 @@ export const mainWebviewWindowOptions: Omit<
   visible: false,
   shadow: false,
   title: name,
-  height: 500,
-  width: 900,
+  height: 505,
+  width: 775,
 };
 
 export const streamWebviewWindowOptions: Omit<
@@ -115,6 +115,6 @@ export const streamWebviewWindowOptions: Omit<
   resizable: false,
   visible: false,
   shadow: false,
-  height: 500,
-  width: 770,
+  height: 505,
+  width: 775,
 };

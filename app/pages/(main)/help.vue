@@ -18,7 +18,7 @@ try {
   <section class="space-y-4">
     <div class="grid grid-cols-3 gap-4">
       <Button
-        v-for="(link, i) in social.links"
+        v-for="(link, i) in social"
         :key="i"
         variant="outline"
         class="justify-start"
@@ -34,7 +34,7 @@ try {
         {{ appInfo }}
       </span>
       <Button
-        v-for="(link, i) in legal.links"
+        v-for="(link, i) in legal"
         :key="i"
         variant="link"
         class="text-secondary-foreground text-xs p-0 h-auto"

@@ -29,7 +29,6 @@ async function clearLogs() {
           $t("logs.clear")
         }}</Button>
       </SettingField>
-      <Separator />
       <Card class="p-0">
         <Table>
           <TableBody class="text-secondary-foreground">

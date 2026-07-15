@@ -1,38 +1,24 @@
 export default {
   linkGroups: [
-    {
-      name: "GENEL",
-      links: [
-        {
-          name: "Ayarlar",
-          links: ["Genel", "Gelişmiş"],
-        },
-        "Kasa",
-        "Kayıtlar",
-        "Yardım",
-      ],
-    },
-    {
-      name: "BAĞLANTILAR",
-      links: [
-        {
-          links: ["Bağlantı", "Ayarlar"],
-        },
-        {
-          links: ["Yayıncılar", "Ayarlar"],
-        },
-        {
-          name: "Sistem",
-          links: ["Bağlantı", "Ayarlar"],
-        },
-      ],
-    },
-    {
-      links: ["Dokümantasyon"],
-    },
-    {
-      links: ["Kullanım Şartları", "Gizlilik Sözleşmesi"],
-    },
+    [
+      {
+        links: ["Genel", "Gelişmiş"],
+        name: "Ayarlar",
+      },
+      "Kasa",
+      "Kayıtlar",
+      "Yardım",
+    ],
+    [
+      ["Bağlantı", "Ayarlar"],
+      ["Yayıncılar", "Ayarlar"],
+      {
+        links: ["Bağlantı", "Ayarlar"],
+        name: "Sistem",
+      },
+    ],
+    ["Dokümantasyon"],
+    ["Kullanım Şartları", "Gizlilik Sözleşmesi"],
   ],
   tray: {
     settings: "Ayarlar",
@@ -47,115 +33,115 @@ export default {
     clear: "Temizle",
   },
   reset: {
+    description: "Tüm ayarları varsayılan değerlerine döndürün.",
+    success: "Tüm ayarlar başarıyla sıfırlandı.",
     title: "Sıfırla",
-    description: "Tüm ayarları varsayılan ayarlarına döndürün.",
-    success: "Tüm ayarları başarıyla sıfırlandı.",
     dialog: {
-      title: "Tüm ayarları sıfırla",
       description:
         "Tüm ayarlarınızı sıfırlamak istediğinize emin misiniz? Bu işlem geri alınamaz.",
+      title: "Tüm ayarları sıfırla",
       confirm: "Evet, sıfırla",
       cancel: "Vazgeç",
     },
   },
   settings: {
     locale: {
+      description: "Uygulamanın dilini seçin.",
       title: "Dil",
-      description: "Uygulama arayüz dilini seçin.",
     },
     size: {
+      description: "Overlay boyutunu ayarlayın.",
       title: "Boyut",
-      description: "Uygulama boyutunu ayarlayın.",
     },
     orientation: {
+      description: "Overlay yönünü belirleyin.",
       title: "Yerleşim Yönü",
-      description: "Uygulama düzeninin yönünü belirleyin.",
       horizontal: "Yatay",
       vertical: "Dikey",
     },
     alignment: {
-      title: "Hizalama",
       description: "Overlayın hangi yönde hizalanacağını seçin.",
+      title: "Hizalama",
+      right: "Sağ/Alt",
       left: "Sol/Üst",
       center: "Orta",
-      right: "Sağ/Alt",
     },
     position: {
-      title: "Pozisyon",
-      description: "Uygulama pozisyonunu ayarlayın.",
+      description: "Overlay pozisyonunu ayarlayın.",
       quickSelect: "Hızlı Seçim",
+      title: "Pozisyon",
     },
     gap: {
       title: "Aralık",
-      description: "Elementlerin aralarındaki boşluğu ayarlayın.",
+      description: "Öğelerin arasındaki boşluğu ayarlayın.",
     },
     showBackground: {
+      description: "Overlaya arka plan ekleyin.",
       title: "Arka Plan",
-      description: "Uygulamanın arka plan görüntüsünü etkinleştirin.",
     },
     opacity: {
+      description: "Overlayin saydamlık seviyesini ayarlayın.",
       title: "Saydamlık",
-      description: "Uygulama arayüzünün saydamlık seviyesini ayarlayın.",
     },
     radius: {
+      description: "Overlay'in köşe yuvarlatma miktarını ayarlayın.",
       title: "Köşe Yuvarlaklığı",
-      description: "Uygulama köşelerinin yuvarlaklık seviyesini ayarlayın.",
     },
     showDrag: {
+      description: "Overlayi sürüklenebilir yapın.",
       title: "Sürükleme",
-      description: "Uygulamanın sürüklenebilir olup olmadığını belirleyin.",
     },
     showSettings: {
-      title: "Ayarlar",
       description:
-        "Ayarların görüntülenmesini etkinleştirin veya devre dışı bırakın.",
+        "Ayarların overlay üzerinden erişilebilir olmasını sağlayın.",
+      title: "Ayarlar",
     },
     autoStart: {
-      title: "Otomatik Başlat",
       description:
         "Uygulamanın sistem başlangıcında otomatik olarak başlatılmasını ayarlayın.",
+      title: "Otomatik Başlat",
     },
-    ignoreCursor: {
+    ignoreCursorEvents: {
+      description:
+        "Fare tıklamalarının overlay'in arkasındaki pencereye iletilmesini sağlayın.",
       title: "Fare Yok Sayma",
-      description:
-        "Overlayın fareyi yoksaymasını sağlayın (fare eylemlerinin overlayın arkasına geçmesini sağlar).",
     },
-    preventCapture: {
-      title: "Yakalama Engeli",
+    contentProtected: {
       description:
-        "Uygulamanın diğer uygulamalar tarafından yakalanmasını engeller (örneğin ekran kaydı uygulamaları).",
+        "Uygulamanın ekran kaydı veya paylaşımı sırasında gözükmemesini sağlayın.",
+      title: "Yakalama Engeli",
     },
     alwaysOnTop: {
+      description: "Uygulamanın her zaman üstte olmasını sağlayın.",
       title: "Her Zaman Üstte",
-      description: "Overlayın her zaman üstte olup olmayacağını ayarlayın.",
     },
   },
   vault: {
     heads: ["Anahtar", "Oluşturulma Tarihi", "Güncellenme Tarihi"],
     empty: {
-      title: "Kasanız Boş",
       description: "Kasanızda herhangi bir veri yok.",
+      title: "Kasanız Boş",
     },
     clear: {
-      title: "Verileri Sil",
-      description: "Kasadaki tüm verileri silin.",
       success: "Kasadaki tüm veriler başarıyla silindi.",
+      description: "Kasadaki tüm verileri silin.",
+      title: "Verileri Sil",
       dialog: {
-        title: "Kasadaki tüm verileri sil",
         description:
-          "Kasadaki tüm verileri istediğinize emin misiniz? Bu işlem geri alınamaz.",
+          "Kasadaki tüm verileri silmek istediğinize emin misiniz? Bu işlem geri alınamaz.",
+        title: "Kasadaki tüm verileri sil",
         confirm: "Evet, sil",
         cancel: "Vazgeç",
       },
     },
   },
   logs: {
-    title: "Kayıtlar",
     description: "Uygulama kayıtları.",
+    title: "Kayıtlar",
     clear: "Temizle",
     empty: {
-      title: "Kayıt Yok",
       description: "Herhangi bir kayıt yok.",
+      title: "Kayıt Yok",
     },
   },
   discord: {
@@ -168,85 +154,84 @@ export default {
       success: "Bağlantı başarıyla kesildi.",
       button: "Bağlantıyı Kes",
       dialog: {
-        title: "Onay",
         description: "Bağlantınızı kesmek istediğinize emin misiniz?",
         deleteVaultItems: "Token verilerini kasadan sil",
         confirm: "Evet, kes",
         cancel: "Vazgeç",
+        title: "Onay",
       },
     },
-
     show: {
-      always: "Her Zaman",
       whileSpeaking: "Konuşurken",
+      always: "Her Zaman",
       never: "Gösterme",
     },
     showGuild: {
-      title: "Sunucu Bilgisini Göster",
       description:
-        "Sunucu adı, sunucu iconu ve kanal adı overlay'de görünüp görünmeyeceğini ayarlayın.",
+        "Sunucu adı, sunucu ikonu ve kanal adı overlay'de görünüp görünmeyeceğini ayarlayın.",
+      title: "Sunucu Bilgisini Göster",
     },
     showGuildIconAnimated: {
-      title: "Sunucu İkonu Animasyonu",
       description:
         "Sunucu ikonunun animasyonlu gösterilip gösterilmeyeceğini ayarlayın.",
+      title: "Sunucu İkonu Animasyonu",
     },
     showMe: {
+      description: "Kendinizin gösterilip gösterilmeyeceğini ayarlayın.",
       title: "Beni Göster",
-      description: "Kendinizin görünüp görünmeyeceğini ayarlayın.",
     },
     showMutedUsers: {
-      title: "Sessiz Kullanıcıları Göster",
       description:
         "Sessiz kullanıcıların overlay'de görünüp görünmeyeceğini ayarlayın.",
+      title: "Sessiz Kullanıcıları Göster",
     },
     showDeafenedUsers: {
-      title: "Sağır Kullanıcıları Göster",
       description:
         "Sağır kullanıcıların overlay'de görünüp görünmeyeceğini ayarlayın.",
+      title: "Sağır Kullanıcıları Göster",
     },
     showBots: {
-      title: "Botları Göster",
       description:
         "Bot kullanıcıların overlay'de görünüp görünmeyeceğini ayarlayın.",
+      title: "Botları Göster",
     },
     showSpeakersOnly: {
-      title: "Sadece Konuşanları Göster",
       description: "Sadece konuşanların gözükmesini sağlayın.",
+      title: "Sadece Konuşanları Göster",
     },
     userLimit: {
-      title: "Kullanıcı Sınırı",
       description:
         "Gösterilecek maksimum kullanıcı sayısını ayarlayın. (0 = limitsiz)",
+      title: "Kullanıcı Sınırı",
     },
     showDisplayName: {
-      title: "Ad Gösterimi",
       description: "Kullanıcı adının ne zaman gözükeceğini seçin.",
+      title: "Ad Gösterimi",
     },
     showAvatarAnimated: {
-      title: "Avatar Animasyonu",
       description: "Avatarın ne zaman animasyonlu gözükeceğini seçin.",
+      title: "Avatar Animasyonu",
     },
     displayName: {
-      title: "Gösterilecek Ad",
       description: "Kullanıcının hangi adının gözükeceğini seçin.",
       username: "Kullanıcı Adı",
+      title: "Gösterilecek Ad",
       nick: "Sunucu Takma Adı",
       globalName: "Görünen Ad",
     },
   },
   kick: {
     addChannel: {
-      placeholder: "Yayıncı kullanıcı adı",
-      empty: "Kullanıcı adı giriniz.",
-      invalid: "Geçerli bir kullanıcı adı giriniz.",
       alreadyAdded: "Bu kullanıcı adı zaten listede.",
+      invalid: "Geçerli bir kullanıcı adı girin.",
       success: "Yayıncılar başarıyla kaydedildi.",
+      placeholder: "Yayıncı kullanıcı adı",
+      empty: "Kullanıcı adı girin.",
       save: "Kaydet",
     },
     empty: {
-      title: "Yayıncı Yok",
       description: "Henüz bir yayıncı eklemediniz.",
+      title: "Yayıncı Yok",
     },
     show: {
       whileLive: "Yayındayken",
@@ -254,47 +239,47 @@ export default {
       never: "Asla",
     },
     showOnlyLive: {
-      title: "Sadece Yayında Olanları Göster",
       description: "Sadece canlı yayında olanların gözükmesini sağlayın.",
+      title: "Sadece Yayında Olanları Göster",
     },
     showDisplayName: {
-      title: "Ad Gösterimi",
       description: "Yayıncı adının ne zaman gözükeceğini seçin.",
+      title: "Ad Gösterimi",
     },
     displayName: {
-      title: "Gösterilecek Ad",
       description: "Yayıncının hangi adının gözükeceğini seçin.",
-      name: "Yayıncı Adı",
+      title: "Gösterilecek Ad",
       slug: "Kanal Slug'ı",
+      name: "Yayıncı Adı",
     },
     showCategory: {
-      title: "Yayın Kategorisini Göster",
       description: "Yayının kategorisinin ne zaman gözükeceğini seçin.",
+      title: "Yayın Kategorisini Göster",
     },
     streamerLimit: {
-      title: "Yayıncı Limiti",
       description: "En fazla kaç tane yayıncı gözükeceğini seçin.",
+      title: "Yayıncı Limiti",
     },
   },
   system: {
     showCpu: {
-      title: "CPU Kullanımını Göster",
       description: "CPU kullanımının gözükmesini sağlayın.",
+      title: "CPU Kullanımını Göster",
     },
     showMemory: {
-      title: "RAM Kullanımını Göster",
-      description: "RAM kullanımının gözükmesini sağlayın.",
+      description: "Bellek kullanımının gözükmesini sağlayın.",
+      title: "Bellek Kullanımını Göster",
     },
     showNetwork: {
-      title: "Ağ Kullanımını Göster",
       description: "Ağ kullanımının gözükmesini sağlayın.",
+      title: "Ağ Kullanımını Göster",
     },
     showBattery: {
-      title: "Batarya Durumunu Göster",
       description: "Batarya durumunun gözükmesini sağlayın.",
+      title: "Batarya Durumunu Göster",
     },
   },
   stream: {
-    watchOnKick: "Kickde İzle",
+    watchOnKick: "Kick'te İzle",
   },
 };

@@ -31,10 +31,14 @@ export const settingsAdvancedSchema = z.preprocess(
     return value;
   },
   z.object({
-    preventCapture: z.boolean().catch(defaultSettingsAdvanced.preventCapture),
-    ignoreCursor: z.boolean().catch(defaultSettingsAdvanced.ignoreCursor),
     alwaysOnTop: z.boolean().catch(defaultSettingsAdvanced.alwaysOnTop),
     autoStart: z.boolean().catch(defaultSettingsAdvanced.autoStart),
+    ignoreCursorEvents: z
+      .boolean()
+      .catch(defaultSettingsAdvanced.ignoreCursorEvents),
+    contentProtected: z
+      .boolean()
+      .catch(defaultSettingsAdvanced.contentProtected),
   }),
 ) satisfies z.ZodType<SettingsAdvanced>;
 

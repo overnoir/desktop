@@ -2,6 +2,7 @@
 const { currentWebviewWindow, listenDrag, onDragStart } =
   useWebviewWindow().getCurrent();
 const { advanced } = storeToRefs(useSettingsStore());
+const { general, connectors } = useLinkGroups();
 const { logError } = useLogs();
 
 listenDrag();
@@ -33,10 +34,8 @@ onMounted(async () => {
       <LayoutTitlebar @destroy="destroy" @mousedown="onDragStart" />
       <SonnerToaster />
       <div class="flex h-screen pt-8.25 border rounded-2xl">
-        <LayoutNavbar />
-        <main
-          class="p-5.5 w-full overflow-auto border-l border-t rounded-tl-2xl"
-        >
+        <LayoutNavbar :link-groups="[general, connectors]" />
+        <main class="p-4 w-full overflow-auto border-l border-t rounded-tl-2xl">
           <slot />
         </main>
       </div>

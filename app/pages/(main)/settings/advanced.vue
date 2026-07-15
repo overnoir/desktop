@@ -10,7 +10,7 @@ const { $toast } = useNuxtApp();
 const { logError } = useLogs();
 const { t } = useI18n();
 
-async function updateIgnoreCursor(value: boolean) {
+async function updateIgnoreCursorEvents(value: boolean) {
   try {
     if (!overlayWebviewWindow) {
       return;
@@ -33,7 +33,7 @@ async function updateAutoStart(value: boolean) {
   }
 }
 
-async function updatePreventCapture(value: boolean) {
+async function updateContentProtected(value: boolean) {
   try {
     if (!overlayWebviewWindow) {
       return;
@@ -85,8 +85,8 @@ async function reset() {
 
     await updateAutoStart(advanced.value.autoStart);
 
-    await updatePreventCapture(advanced.value.preventCapture);
-    await updateIgnoreCursor(advanced.value.ignoreCursor);
+    await updateIgnoreCursorEvents(advanced.value.ignoreCursorEvents);
+    await updateContentProtected(advanced.value.contentProtected);
     await updateAlwaysOnTop(advanced.value.alwaysOnTop);
 
     await overlayWebviewWindow.setPosition(
@@ -104,22 +104,22 @@ async function reset() {
 <template>
   <section class="space-y-4">
     <SettingField
-      :description="$t('settings.ignoreCursor.description')"
-      :title="$t('settings.ignoreCursor.title')"
+      :description="$t('settings.ignoreCursorEvents.description')"
+      :title="$t('settings.ignoreCursorEvents.title')"
     >
       <Switch
-        v-model="advanced.ignoreCursor"
-        @update:model-value="updateIgnoreCursor($event)"
+        v-model="advanced.ignoreCursorEvents"
+        @update:model-value="updateIgnoreCursorEvents($event)"
       />
     </SettingField>
     <Separator />
     <SettingField
-      :description="$t('settings.preventCapture.description')"
-      :title="$t('settings.preventCapture.title')"
+      :description="$t('settings.contentProtected.description')"
+      :title="$t('settings.contentProtected.title')"
     >
       <Switch
-        v-model="advanced.preventCapture"
-        @update:model-value="updatePreventCapture($event)"
+        v-model="advanced.contentProtected"
+        @update:model-value="updateContentProtected($event)"
       />
     </SettingField>
     <Separator />

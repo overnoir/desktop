@@ -26,32 +26,6 @@ async function clearVault() {
 <template>
   <section class="space-y-4">
     <template v-if="metadata.length">
-      <Card class="p-0">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>{{ $t("vault.heads.0") }}</TableHead>
-              <TableHead>{{ $t("vault.heads.1") }}</TableHead>
-              <TableHead>{{ $t("vault.heads.2") }}</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody class="text-secondary-foreground">
-            <TableRow
-              v-for="({ createdAt, updatedAt, key }, i) in metadata"
-              :key="i"
-            >
-              <TableCell>{{ key }}</TableCell>
-              <TableCell>{{ new Date(createdAt).toLocaleString() }}</TableCell>
-              <TableCell>
-                <template v-if="updatedAt">
-                  {{ new Date(updatedAt).toLocaleString() }}
-                </template>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </Card>
-      <Separator />
       <SettingField
         :description="$t('vault.clear.description')"
         :title="$t('vault.clear.title')"
@@ -82,6 +56,31 @@ async function clearVault() {
           </AlertDialogContent>
         </AlertDialog>
       </SettingField>
+      <Card class="p-0">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{{ $t("vault.heads.0") }}</TableHead>
+              <TableHead>{{ $t("vault.heads.1") }}</TableHead>
+              <TableHead>{{ $t("vault.heads.2") }}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody class="text-secondary-foreground">
+            <TableRow
+              v-for="({ createdAt, updatedAt, key }, i) in metadata"
+              :key="i"
+            >
+              <TableCell>{{ key }}</TableCell>
+              <TableCell>{{ new Date(createdAt).toLocaleString() }}</TableCell>
+              <TableCell>
+                <template v-if="updatedAt">
+                  {{ new Date(updatedAt).toLocaleString() }}
+                </template>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </Card>
     </template>
     <Empty v-else>
       <EmptyHeader>

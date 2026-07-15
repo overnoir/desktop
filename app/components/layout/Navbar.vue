@@ -1,28 +1,24 @@
 <script setup lang="ts">
+defineProps<{
+  linkGroups: Link[][];
+}>();
+
 const navbar = ref();
-const { general, connectors } = useLinkGroups();
 const { arrivedState } = useScroll(navbar);
 </script>
 
 <template>
   <nav
     ref="navbar"
-    class="w-50 p-4 pt-0 shrink-0 flex flex-col space-y-4 overflow-auto"
+    class="w-50 p-4 pt-0 shrink-0 flex flex-col overflow-auto"
     :class="{
       'mask-b-from-90%': !arrivedState.bottom,
       'mask-t-from-90%': !arrivedState.top,
     }"
   >
-    <ul
-      v-for="(group, i) in [general, connectors]"
-      :key="i"
-      class="space-y-0.5"
-    >
-      <h1 class="text-[.7rem] font-medium">
-        {{ group.name }}
-      </h1>
+    <ul v-for="(group, i) in linkGroups" :key="i" class="space-y-0.5">
       <li
-        v-for="({ name, to, icon, links }, j) in group.links"
+        v-for="({ name, to, icon, links }, j) in group"
         :key="j"
         class="space-y-0.5"
       >
@@ -42,14 +38,13 @@ const { arrivedState } = useScroll(navbar);
           </NuxtLink>
         </Button>
         <ul v-if="links" class="ml-5.25 border-l space-y-0.5">
-          <li v-for="(link, k) in links" :key="k" class="ml-2.5">
+          <li v-for="(link, k) in links" :key="k" class="ml-1.5">
             <Button
               :class="{
                 'border-0 ring ring-inset ring-border': $route.path === link.to,
               }"
               :variant="$route.path === link.to ? 'outline' : 'ghost'"
-              class="w-full text-[.8rem] justify-start"
-              size="sm"
+              class="w-full justify-start"
               as-child
             >
               <NuxtLink :to="link.to">

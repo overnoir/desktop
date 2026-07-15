@@ -87,11 +87,6 @@ export type Link = {
   to: string;
 };
 
-export type LinkGroup = {
-  links: Link[];
-  name?: string;
-};
-
 export type OverlayItemIcon = {
   variant?: "default" | "destructive";
   name: string;
@@ -113,8 +108,8 @@ export type SettingsGeneral = {
 };
 
 export type SettingsAdvanced = {
-  preventCapture: boolean;
-  ignoreCursor: boolean;
+  ignoreCursorEvents: boolean;
+  contentProtected: boolean;
   alwaysOnTop: boolean;
   autoStart: boolean;
 };
