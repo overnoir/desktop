@@ -4,8 +4,8 @@
   "version": "0.1.0",
   "identifier": "com.overnoir",
   "build": {
-    "beforeDevCommand": "bun run dev",
     "beforeBuildCommand": "bun run generate",
+    "beforeDevCommand": "bun run dev",
     "devUrl": "http://localhost:3000",
     "frontendDist": "../dist"
   },
@@ -31,14 +31,23 @@
     "macOSPrivateApi": true
   },
   "bundle": {
-    "active": true,
+    "createUpdaterArtifacts": true,
     "targets": "all",
+    "active": true,
     "icon": [
-      "icons/32x32.png",
-      "icons/128x128.png",
       "icons/128x128@2x.png",
+      "icons/128x128.png",
+      "icons/32x32.png",
       "icons/icon.icns",
       "icons/icon.ico"
     ]
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDY0NUNEMjZFM0U3RDNGNjUKUldSbFAzMCtidEpjWkRTTFRFQ0FPeTM3SllQcm13dVJUOW01UVUwUjVXNjV2SWsySitlKzZGaEwK",
+      "endpoints": [
+        "https://github.com/overnoir/desktop/releases/latest/download/latest.json"
+      ]
+    }
   }
 }

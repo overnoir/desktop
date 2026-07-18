@@ -82,6 +82,7 @@ pub fn run() {
             }
         }))
         .plugin(tauri_plugin_autostart::Builder::new().build())
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_prevent_default::debug())
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_opener::init())

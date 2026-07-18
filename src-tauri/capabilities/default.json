@@ -18,6 +18,7 @@
     "core:window:allow-show",
     "process:allow-exit",
     "autostart:default",
+    "updater:default",
     "pinia:default",
     "core:default",
     "log:default",

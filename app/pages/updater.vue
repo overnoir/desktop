@@ -5,31 +5,66 @@ definePageMeta({
 
 const status = shallowRef<"checking" | "downloading" | "loading">("checking");
 const { create, getByLabel } = useWebviewWindow();
-setTimeout(() => {
-  status.value = "downloading";
+const downloadProgress = shallowRef(0);
 
-  setTimeout(async () => {
-    try {
-      status.value = "loading";
+async function openOverlayWebviewWindow() {
+  try {
+    const overlayWebviewWindow = await getByLabel({
+      label: WebviewWindowLabel.Overlay,
+    });
 
-      const overlayWebviewWindow = await getByLabel({
-        label: WebviewWindowLabel.Overlay,
-      });
-
-      if (overlayWebviewWindow) {
-        return;
-      }
-
-      await create({
-        ...overlayWebviewWindowOptions,
-        label: WebviewWindowLabel.Overlay,
-        withEventHandler: true,
-      });
-    } catch (error) {
-      await useLogs().logError({ error, source: LogSource.WebviewWindow });
+    if (overlayWebviewWindow) {
+      return;
     }
-  }, 1000);
-}, 1000);
+
+    await create({
+      ...overlayWebviewWindowOptions,
+      label: WebviewWindowLabel.Overlay,
+      withEventHandler: true,
+    });
+  } catch (error) {
+    await useLogs().logError({ error, source: LogSource.WebviewWindow });
+  }
+}
+
+onMounted(async () => {
+  try {
+    const update = await tauriUpdaterCheck();
+
+    if (update) {
+      status.value = "downloading";
+
+      let contentLength = 0;
+      let downloaded = 0;
+
+      await update.downloadAndInstall((event) => {
+        switch (event.event) {
+          case "Started":
+            contentLength = event.data.contentLength ?? 0;
+            break;
+          case "Progress":
+            downloaded += event.data.chunkLength;
+            if (contentLength > 0) {
+              downloadProgress.value = Math.round(
+                (downloaded / contentLength) * 100,
+              );
+            }
+            break;
+          case "Finished":
+            status.value = "loading";
+            break;
+        }
+      });
+
+      await tauriProcessRelaunch();
+    } else {
+      await openOverlayWebviewWindow();
+    }
+  } catch (error) {
+    await useLogs().logError({ error, source: LogSource.App });
+    await openOverlayWebviewWindow();
+  }
+});
 </script>
 
 <template>
@@ -43,7 +78,7 @@ setTimeout(() => {
       </p>
       <Progress
         v-if="status === 'downloading'"
-        :model-value="70"
+        :model-value="downloadProgress"
         class="my-1.5"
       />
       <Spinner v-else class="size-5 text-primary" />

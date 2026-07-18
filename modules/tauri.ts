@@ -2,6 +2,7 @@ import * as webviewWindow from "@tauri-apps/api/webviewWindow";
 import * as autoStart from "@tauri-apps/plugin-autostart";
 import { addImports, defineNuxtModule } from "nuxt/kit";
 import * as process from "@tauri-apps/plugin-process";
+import * as updater from "@tauri-apps/plugin-updater";
 import * as opener from "@tauri-apps/plugin-opener";
 import * as webview from "@tauri-apps/api/webview";
 import * as window from "@tauri-apps/api/window";
@@ -102,6 +103,11 @@ const plugins = [
     from: "@tauri-apps/api/image",
     prefix: "Image",
     plugin: image,
+  },
+  {
+    from: "@tauri-apps/plugin-updater",
+    prefix: "Updater",
+    plugin: updater,
   },
 ];
 
