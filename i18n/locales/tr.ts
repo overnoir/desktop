@@ -7,7 +7,7 @@ export default {
       },
       "Kasa",
       "Kayıtlar",
-      "Yardım",
+      "Hakkında",
     ],
     [
       ["Bağlantı", "Ayarlar"],

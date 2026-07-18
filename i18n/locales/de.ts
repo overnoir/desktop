@@ -7,7 +7,7 @@ export default {
       },
       "Tresor",
       "Protokolle",
-      "Hilfe",
+      "Über",
     ],
     [
       ["Verbindung", "Einstellungen"],

@@ -31,7 +31,7 @@ export default function () {
     {
       icon: "lucide:circle-question-mark",
       name: t("linkGroups.0.3"),
-      to: localePath("/help"),
+      to: localePath("/about"),
     },
   ]);
 

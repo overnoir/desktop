@@ -7,7 +7,7 @@ export default {
       },
       "Cofre",
       "Registos",
-      "Ajuda",
+      "Sobre",
     ],
     [
       ["Ligação", "Configurações"],

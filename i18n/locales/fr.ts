@@ -7,7 +7,7 @@ export default {
       },
       "Coffre-fort",
       "Journaux",
-      "Aide",
+      "À propos",
     ],
     [
       ["Connexion", "Paramètres"],

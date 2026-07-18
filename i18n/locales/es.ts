@@ -7,7 +7,7 @@ export default {
       },
       "Caja fuerte",
       "Registros",
-      "Ayuda",
+      "Acerca de",
     ],
     [
       ["Conexión", "Ajustes"],

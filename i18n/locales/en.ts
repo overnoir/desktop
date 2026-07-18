@@ -7,7 +7,7 @@ export default {
       },
       "Vault",
       "Logs",
-      "Help",
+      "About",
     ],
     [
       ["Connection", "Settings"],
