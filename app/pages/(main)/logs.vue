@@ -22,8 +22,8 @@ async function clearLogs() {
   <section class="space-y-4">
     <template v-if="logs.length">
       <SettingField
-        :title="`${$t('logs.title')} (${logs.length})`"
         :description="$t('logs.description')"
+        :title="$t('logs.title')"
       >
         <Button variant="secondary" @click="clearLogs">{{
           $t("logs.clear")

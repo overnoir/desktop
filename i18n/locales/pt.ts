@@ -135,8 +135,8 @@ export default {
     },
   },
   logs: {
-    description: "Registos da aplicação.",
-    title: "Registos",
+    description: "Eliminar todos os registos.",
+    title: "Eliminar Registos",
     clear: "Limpar",
     empty: {
       description: "Nenhum registo disponível.",

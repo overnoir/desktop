@@ -137,8 +137,8 @@ export default {
     },
   },
   logs: {
-    description: "Journaux de l'application.",
-    title: "Journaux",
+    description: "Supprimer tous les journaux.",
+    title: "Supprimer les journaux",
     clear: "Effacer",
     empty: {
       description: "Aucun journal disponible.",

@@ -137,8 +137,8 @@ export default {
     },
   },
   logs: {
-    description: "Registros de la aplicación.",
-    title: "Registros",
+    description: "Eliminar todos los registros.",
+    title: "Eliminar Registros",
     clear: "Limpiar",
     empty: {
       description: "No hay registros disponibles.",

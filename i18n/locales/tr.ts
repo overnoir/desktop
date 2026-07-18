@@ -136,8 +136,8 @@ export default {
     },
   },
   logs: {
-    description: "Uygulama kayıtları.",
-    title: "Kayıtlar",
+    description: "Tüm kayıtları sil.",
+    title: "Kayıtları Sil",
     clear: "Temizle",
     empty: {
       description: "Herhangi bir kayıt yok.",
