@@ -86,7 +86,7 @@ export default function () {
     },
     {
       name: "Discord",
-      to: "https://discord.gg/xxx",
+      to: "https://discord.gg/HyDEGKFP82",
       icon: "simple-icons:discord",
     },
     {
