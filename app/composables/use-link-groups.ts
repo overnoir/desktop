@@ -103,12 +103,12 @@ export default function () {
 
   const legal = computed<Link[]>(() => [
     {
-      name: t("linkGroups.3.0"),
-      to: "https://overnoir.com/terms-of-service",
-    },
-    {
       name: t("linkGroups.3.1"),
       to: "https://overnoir.com/privacy-policy",
+    },
+    {
+      name: t("linkGroups.3.0"),
+      to: "https://overnoir.com/terms-of-service",
     },
   ]);
 
