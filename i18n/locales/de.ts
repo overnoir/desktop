@@ -92,13 +92,11 @@ export default {
       title: "Ziehpunkt",
     },
     showSettings: {
-      description:
-        "Machen Sie die Einstellungen über das Overlay zugänglich.",
+      description: "Machen Sie die Einstellungen über das Overlay zugänglich.",
       title: "Einstellungen",
     },
     autoStart: {
-      description:
-        "Starten Sie die Anwendung automatisch beim Systemstart.",
+      description: "Starten Sie die Anwendung automatisch beim Systemstart.",
       title: "Autostart",
     },
     ignoreCursorEvents: {
@@ -172,13 +170,11 @@ export default {
       title: "Server-Info anzeigen",
     },
     showGuildIconAnimated: {
-      description:
-        "Wählen Sie, ob das Server-Icon animiert angezeigt wird.",
+      description: "Wählen Sie, ob das Server-Icon animiert angezeigt wird.",
       title: "Server-Icon-Animation",
     },
     showMe: {
-      description:
-        "Wählen Sie, ob Sie selbst im Overlay angezeigt werden.",
+      description: "Wählen Sie, ob Sie selbst im Overlay angezeigt werden.",
       title: "Mich anzeigen",
     },
     showMutedUsers: {
@@ -192,8 +188,7 @@ export default {
       title: "Taubgeschaltete Benutzer anzeigen",
     },
     showBots: {
-      description:
-        "Wählen Sie, ob Bots im Overlay angezeigt werden.",
+      description: "Wählen Sie, ob Bots im Overlay angezeigt werden.",
       title: "Bots anzeigen",
     },
     showSpeakersOnly: {

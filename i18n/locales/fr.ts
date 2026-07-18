@@ -93,8 +93,7 @@ export default {
       title: "Poignée de déplacement",
     },
     showSettings: {
-      description:
-        "Rendez les paramètres accessibles depuis l'overlay.",
+      description: "Rendez les paramètres accessibles depuis l'overlay.",
       title: "Paramètres",
     },
     autoStart: {
@@ -157,8 +156,7 @@ export default {
       button: "Se déconnecter",
       dialog: {
         description: "Êtes-vous sûr de vouloir vous déconnecter ?",
-        deleteVaultItems:
-          "Supprimer les données de jeton du coffre-fort",
+        deleteVaultItems: "Supprimer les données de jeton du coffre-fort",
         confirm: "Oui, déconnecter",
         cancel: "Annuler",
         title: "Confirmer",
@@ -175,13 +173,11 @@ export default {
       title: "Afficher les infos du serveur",
     },
     showGuildIconAnimated: {
-      description:
-        "Choisissez si l'icône du serveur apparaît en animation.",
+      description: "Choisissez si l'icône du serveur apparaît en animation.",
       title: "Animation de l'icône du serveur",
     },
     showMe: {
-      description:
-        "Choisissez si vous apparaissez sur l'overlay.",
+      description: "Choisissez si vous apparaissez sur l'overlay.",
       title: "M'afficher",
     },
     showMutedUsers: {
@@ -195,8 +191,7 @@ export default {
       title: "Afficher les utilisateurs sourds",
     },
     showBots: {
-      description:
-        "Choisissez si les bots apparaissent sur l'overlay.",
+      description: "Choisissez si les bots apparaissent sur l'overlay.",
       title: "Afficher les bots",
     },
     showSpeakersOnly: {
@@ -217,8 +212,7 @@ export default {
       title: "Animation de l'avatar",
     },
     displayName: {
-      description:
-        "Choisissez quel nom afficher pour les utilisateurs.",
+      description: "Choisissez quel nom afficher pour les utilisateurs.",
       username: "Nom d'utilisateur",
       title: "Nom affiché",
       nick: "Surnom du serveur",
@@ -227,8 +221,7 @@ export default {
   },
   kick: {
     addChannel: {
-      alreadyAdded:
-        "Ce nom d'utilisateur est déjà dans la liste.",
+      alreadyAdded: "Ce nom d'utilisateur est déjà dans la liste.",
       invalid: "Veuillez entrer un nom d'utilisateur valide.",
       success: "Streamers enregistrés avec succès.",
       placeholder: "Nom d'utilisateur du streamer",
@@ -245,8 +238,7 @@ export default {
       never: "Jamais",
     },
     showOnlyLive: {
-      description:
-        "Afficher uniquement les streamers qui sont en direct.",
+      description: "Afficher uniquement les streamers qui sont en direct.",
       title: "Afficher seulement en direct",
     },
     showDisplayName: {
@@ -254,20 +246,17 @@ export default {
       title: "Affichage du nom",
     },
     displayName: {
-      description:
-        "Choisissez quel nom afficher pour les streamers.",
+      description: "Choisissez quel nom afficher pour les streamers.",
       title: "Nom affiché",
       slug: "Slug du canal",
       name: "Nom du streamer",
     },
     showCategory: {
-      description:
-        "Choisissez quand la catégorie du stream apparaît.",
+      description: "Choisissez quand la catégorie du stream apparaît.",
       title: "Afficher la catégorie du stream",
     },
     streamerLimit: {
-      description:
-        "Choisissez le nombre maximum de streamers à afficher.",
+      description: "Choisissez le nombre maximum de streamers à afficher.",
       title: "Limite de streamers",
     },
   },

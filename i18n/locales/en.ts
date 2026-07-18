@@ -96,8 +96,7 @@ export default {
       title: "Settings",
     },
     autoStart: {
-      description:
-        "Launch the application automatically at system startup.",
+      description: "Launch the application automatically at system startup.",
       title: "Auto Start",
     },
     ignoreCursorEvents: {
@@ -171,8 +170,7 @@ export default {
       title: "Show Server Info",
     },
     showGuildIconAnimated: {
-      description:
-        "Choose whether the server icon appears animated.",
+      description: "Choose whether the server icon appears animated.",
       title: "Server Icon Animation",
     },
     showMe: {
@@ -180,18 +178,15 @@ export default {
       title: "Show Me",
     },
     showMutedUsers: {
-      description:
-        "Choose whether muted users appear on the overlay.",
+      description: "Choose whether muted users appear on the overlay.",
       title: "Show Muted Users",
     },
     showDeafenedUsers: {
-      description:
-        "Choose whether deafened users appear on the overlay.",
+      description: "Choose whether deafened users appear on the overlay.",
       title: "Show Deafened Users",
     },
     showBots: {
-      description:
-        "Choose whether bots appear on the overlay.",
+      description: "Choose whether bots appear on the overlay.",
       title: "Show Bots",
     },
     showSpeakersOnly: {

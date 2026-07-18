@@ -33,8 +33,7 @@ export default {
     clear: "Limpar",
   },
   reset: {
-    description:
-      "Repor todas as configurações para os valores predefinidos.",
+    description: "Repor todas as configurações para os valores predefinidos.",
     success: "Todas as configurações foram repostas com sucesso.",
     title: "Repor",
     dialog: {
@@ -74,21 +73,18 @@ export default {
     },
     gap: {
       title: "Espaçamento",
-      description:
-        "Ajuste o espaçamento entre os elementos.",
+      description: "Ajuste o espaçamento entre os elementos.",
     },
     showBackground: {
       description: "Adicione um fundo à sobreposição.",
       title: "Fundo",
     },
     opacity: {
-      description:
-        "Ajuste o nível de transparência da sobreposição.",
+      description: "Ajuste o nível de transparência da sobreposição.",
       title: "Opacidade",
     },
     radius: {
-      description:
-        "Ajuste o arredondamento dos cantos da sobreposição.",
+      description: "Ajuste o arredondamento dos cantos da sobreposição.",
       title: "Raio dos Cantos",
     },
     showDrag: {
@@ -101,8 +97,7 @@ export default {
       title: "Configurações",
     },
     autoStart: {
-      description:
-        "Inicie a aplicação automaticamente ao iniciar o sistema.",
+      description: "Inicie a aplicação automaticamente ao iniciar o sistema.",
       title: "Início Automático",
     },
     ignoreCursorEvents: {
@@ -116,8 +111,7 @@ export default {
       title: "Proteção de Captura",
     },
     alwaysOnTop: {
-      description:
-        "Mantenha a aplicação sempre no primeiro plano.",
+      description: "Mantenha a aplicação sempre no primeiro plano.",
       title: "Sempre no Primeiro Plano",
     },
   },
@@ -128,8 +122,7 @@ export default {
       title: "Cofre Vazio",
     },
     clear: {
-      success:
-        "Todos os dados do cofre foram eliminados com sucesso.",
+      success: "Todos os dados do cofre foram eliminados com sucesso.",
       description: "Elimine todos os dados do cofre.",
       title: "Eliminar Dados",
       dialog: {
@@ -160,10 +153,8 @@ export default {
       success: "Desligado com sucesso.",
       button: "Desligar",
       dialog: {
-        description:
-          "Tem a certeza de que deseja desligar?",
-        deleteVaultItems:
-          "Remover dados do token do cofre",
+        description: "Tem a certeza de que deseja desligar?",
+        deleteVaultItems: "Remover dados do token do cofre",
         confirm: "Sim, desligar",
         cancel: "Cancelar",
         title: "Confirmar",
@@ -180,13 +171,11 @@ export default {
       title: "Mostrar Informações do Servidor",
     },
     showGuildIconAnimated: {
-      description:
-        "Escolha se o ícone do servidor aparece animado.",
+      description: "Escolha se o ícone do servidor aparece animado.",
       title: "Animação do Ícone do Servidor",
     },
     showMe: {
-      description:
-        "Escolha se aparece na sobreposição.",
+      description: "Escolha se aparece na sobreposição.",
       title: "Mostrar-me",
     },
     showMutedUsers: {
@@ -200,13 +189,11 @@ export default {
       title: "Mostrar Utilizadores Ensurdecidos",
     },
     showBots: {
-      description:
-        "Escolha se os bots aparecem na sobreposição.",
+      description: "Escolha se os bots aparecem na sobreposição.",
       title: "Mostrar Bots",
     },
     showSpeakersOnly: {
-      description:
-        "Mostrar apenas os utilizadores que estão a falar.",
+      description: "Mostrar apenas os utilizadores que estão a falar.",
       title: "Mostrar Apenas Oradores",
     },
     userLimit: {
@@ -215,18 +202,15 @@ export default {
       title: "Limite de Utilizadores",
     },
     showDisplayName: {
-      description:
-        "Escolha quando o nome de utilizador aparece.",
+      description: "Escolha quando o nome de utilizador aparece.",
       title: "Exibição do Nome",
     },
     showAvatarAnimated: {
-      description:
-        "Escolha quando o avatar aparece animado.",
+      description: "Escolha quando o avatar aparece animado.",
       title: "Animação do Avatar",
     },
     displayName: {
-      description:
-        "Escolha qual o nome a mostrar para os utilizadores.",
+      description: "Escolha qual o nome a mostrar para os utilizadores.",
       username: "Nome de Utilizador",
       title: "Nome a Mostrar",
       nick: "Alcunha do Servidor",
@@ -235,10 +219,8 @@ export default {
   },
   kick: {
     addChannel: {
-      alreadyAdded:
-        "Este nome de utilizador já está na lista.",
-      invalid:
-        "Por favor, insira um nome de utilizador válido.",
+      alreadyAdded: "Este nome de utilizador já está na lista.",
+      invalid: "Por favor, insira um nome de utilizador válido.",
       success: "Streamers guardados com sucesso.",
       placeholder: "Nome de utilizador do streamer",
       empty: "Por favor, insira um nome de utilizador.",
@@ -254,30 +236,25 @@ export default {
       never: "Nunca",
     },
     showOnlyLive: {
-      description:
-        "Mostrar apenas os streamers que estão em direto.",
+      description: "Mostrar apenas os streamers que estão em direto.",
       title: "Mostrar Apenas em Direto",
     },
     showDisplayName: {
-      description:
-        "Escolha quando o nome do streamer aparece.",
+      description: "Escolha quando o nome do streamer aparece.",
       title: "Exibição do Nome",
     },
     displayName: {
-      description:
-        "Escolha qual o nome a mostrar para os streamers.",
+      description: "Escolha qual o nome a mostrar para os streamers.",
       title: "Nome a Mostrar",
       slug: "Slug do Canal",
       name: "Nome do Streamer",
     },
     showCategory: {
-      description:
-        "Escolha quando a categoria do stream aparece.",
+      description: "Escolha quando a categoria do stream aparece.",
       title: "Mostrar Categoria do Stream",
     },
     streamerLimit: {
-      description:
-        "Escolha o número máximo de streamers a mostrar.",
+      description: "Escolha o número máximo de streamers a mostrar.",
       title: "Limite de Streamers",
     },
   },
