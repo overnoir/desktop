@@ -1,8 +1,5 @@
 <script setup lang="ts">
-defineProps<{
-  linkGroups: Link[][];
-}>();
-
+const { general, connectors } = useLinkGroups();
 const navbar = ref();
 const { arrivedState } = useScroll(navbar);
 </script>
@@ -16,7 +13,11 @@ const { arrivedState } = useScroll(navbar);
       'mask-t-from-90%': !arrivedState.top,
     }"
   >
-    <ul v-for="(group, i) in linkGroups" :key="i" class="space-y-0.5">
+    <ul
+      v-for="(group, i) in [general, connectors]"
+      :key="i"
+      class="space-y-0.5"
+    >
       <li
         v-for="({ name, to, icon, links }, j) in group"
         :key="j"
