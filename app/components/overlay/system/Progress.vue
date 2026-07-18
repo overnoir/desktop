@@ -25,11 +25,11 @@ const strokeWidth = computed(() => size.value / 15);
 const center = computed(() => size.value / 2);
 
 const color = computed(() => {
-  if (percent >= warning.min) {
-    return "var(--color-yellow-500)";
-  }
-  if (percent >= critical.min) {
+  if (percent >= critical.min && percent < critical.max) {
     return "var(--color-red-500)";
+  }
+  if (percent >= warning.min && percent < warning.max) {
+    return "var(--color-yellow-500)";
   }
   return "var(--color-green-500)";
 });
