@@ -146,6 +146,12 @@ export default {
   },
   discord: {
     connect: {
+      description:
+        "Overlay üzerinde ses kanalı aktivitesini görmek için bağlan.",
+      clientId: {
+        description: "Client ID nasıl alabilirim?",
+        placeholder: "Uygulama Client ID",
+      },
       success: "Bağlantı başarıyla yapıldı.",
       button: "Bağlan",
     },
@@ -221,7 +227,7 @@ export default {
     },
   },
   kick: {
-    addChannel: {
+    addStreamer: {
       alreadyAdded: "Bu kullanıcı adı zaten listede.",
       invalid: "Geçerli bir kullanıcı adı girin.",
       success: "Yayıncılar başarıyla kaydedildi.",

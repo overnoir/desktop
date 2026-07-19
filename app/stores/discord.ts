@@ -3,7 +3,8 @@ import type { State } from "@tauri-store/pinia";
 function sync(state: State) {
   return {
     connectedUser: discordConnectedUserSchema.parse(state.connectedUser),
-    isConnected: isConnectedSchema.parse(state.isConnected),
+    isConnected: discordIsConnectedSchema.parse(state.isConnected),
+    clientId: discordClientIdSchema.parse(state.clientId),
     settings: discordSettingsSchema.parse(state.settings),
   };
 }
@@ -14,6 +15,7 @@ export const useDiscordStore = defineStore(
     const settings = ref<DiscordSettings>({ ...defaultDiscordSettings });
     const connectedUser = shallowRef<DiscordConnectedUser | null>(null);
     const isConnected = shallowRef<boolean>(false);
+    const clientId = shallowRef<string>("");
 
     function resetSettings() {
       settings.value = { ...defaultDiscordSettings };
@@ -23,6 +25,7 @@ export const useDiscordStore = defineStore(
       connectedUser,
       resetSettings,
       isConnected,
+      clientId,
       settings,
     };
   },

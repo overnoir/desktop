@@ -130,14 +130,9 @@ pub fn run() {
                     .expect("API_URL env not set")
                     .to_string()
             });
-            let discord_client_id = env::var("DISCORD_CLIENT_ID").unwrap_or_else(|_| {
-                option_env!("DISCORD_CLIENT_ID")
-                    .expect("DISCORD_CLIENT_ID env not set")
-                    .to_string()
-            });
 
-            init_discord(&app.app_handle(), &discord_client_id);
             init_api(&app.app_handle(), &api_url);
+            init_discord(&app.app_handle());
             init_system(&app.app_handle());
             init_vault(&app.app_handle());
 

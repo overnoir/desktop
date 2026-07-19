@@ -5,7 +5,7 @@ const draft = ref<
 const kickStore = useKickStore();
 const { streamers } = storeToRefs(kickStore);
 const { handleSubmit, resetForm } = useForm({
-  validationSchema: kickAddChannelSchema,
+  validationSchema: kickAddStreamerSchema,
 });
 const { getStreamers } = useKick();
 const { $toast } = useNuxtApp();
@@ -15,7 +15,7 @@ const { t } = useI18n();
 
 const onSubmit = handleSubmit(async ({ slug }) => {
   if (draft.value.some((streamer) => streamer.slug === slug)) {
-    $toast.error(t("kick.addChannel.alreadyAdded"));
+    $toast.error(t("kick.addStreamer.alreadyAdded"));
     return;
   }
 
@@ -65,7 +65,7 @@ async function save() {
 
     await kickStore.$tauri.saveAllNow();
 
-    $toast.success(t("kick.addChannel.success"));
+    $toast.success(t("kick.addStreamer.success"));
   } catch (error) {
     $toast.error(getErrorMessage(error));
     await logError({ error, source: LogSource.Kick });
@@ -93,7 +93,7 @@ onNuxtReady(() => {
           <Field :data-invalid="!!errors.length">
             <div class="flex items-center gap-2">
               <Input
-                :placeholder="$t('kick.addChannel.placeholder')"
+                :placeholder="$t('kick.addStreamer.placeholder')"
                 :aria-invalid="!!errors.length"
                 :disabled="draft.length >= MAX_KICK_STREAMER_COUNT"
                 autocapitalize="off"
@@ -162,7 +162,7 @@ onNuxtReady(() => {
         :loading
         @click="save"
       >
-        {{ $t("kick.addChannel.save") }}
+        {{ $t("kick.addStreamer.save") }}
       </Button>
     </template>
     <Empty v-else>

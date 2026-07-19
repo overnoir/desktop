@@ -147,6 +147,12 @@ export default {
   },
   discord: {
     connect: {
+      description:
+        "Connectez-vous pour voir l'activité du canal vocal sur l'overlay.",
+      clientId: {
+        description: "Comment puis-je obtenir un Client ID ?",
+        placeholder: "ID Client de l'application",
+      },
       success: "Connecté avec succès.",
       button: "Se connecter",
     },
@@ -220,7 +226,7 @@ export default {
     },
   },
   kick: {
-    addChannel: {
+    addStreamer: {
       alreadyAdded: "Ce nom d'utilisateur est déjà dans la liste.",
       invalid: "Veuillez entrer un nom d'utilisateur valide.",
       success: "Streamers enregistrés avec succès.",

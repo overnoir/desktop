@@ -144,6 +144,12 @@ export default {
   },
   discord: {
     connect: {
+      description:
+        "Verbinden, um die Sprachkanal-Aktivität im Overlay zu sehen.",
+      clientId: {
+        description: "Wie kann ich eine Client-ID erhalten?",
+        placeholder: "Anwendungs-Client-ID",
+      },
       success: "Erfolgreich verbunden.",
       button: "Verbinden",
     },
@@ -218,7 +224,7 @@ export default {
     },
   },
   kick: {
-    addChannel: {
+    addStreamer: {
       alreadyAdded: "Dieser Benutzername ist bereits in der Liste.",
       invalid: "Bitte geben Sie einen gültigen Benutzernamen ein.",
       success: "Streamer erfolgreich gespeichert.",
