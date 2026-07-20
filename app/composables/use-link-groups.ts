@@ -53,12 +53,12 @@ export default function () {
     },
     {
       icon: "simple-icons:kick",
-      to: localePath("/kick/streamers"),
+      to: localePath("/kick/connection"),
       name: "Kick",
       links: [
         {
           name: t("linkGroups.1.1.0"),
-          to: localePath("/kick/streamers"),
+          to: localePath("/kick/connection"),
         },
         {
           name: t("linkGroups.1.1.1"),

@@ -11,7 +11,7 @@ export default {
     ],
     [
       ["Conexión", "Ajustes"],
-      ["Streamers", "Ajustes"],
+      ["Conexión", "Ajustes"],
       {
         links: ["Conexión", "Ajustes"],
         name: "Sistema",

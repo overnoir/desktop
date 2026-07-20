@@ -11,7 +11,7 @@ export default {
     ],
     [
       ["Bağlantı", "Ayarlar"],
-      ["Yayıncılar", "Ayarlar"],
+      ["Bağlantı", "Ayarlar"],
       {
         links: ["Bağlantı", "Ayarlar"],
         name: "Sistem",
