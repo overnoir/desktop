@@ -2,9 +2,10 @@
 const { connectedUser, isConnected, clientId } = storeToRefs(useDiscordStore());
 const deleteVaultItemsOnDisconnect = shallowRef(true);
 const { connect, disconnect } = useDiscord();
+const { social } = useLinkGroups();
+const loading = shallowRef(false);
 const { $toast } = useNuxtApp();
 const { logError } = useLogs();
-const loading = shallowRef(false);
 const { t } = useI18n();
 
 const avatarUrl = computed(
@@ -115,7 +116,15 @@ async function toggleConnection() {
                   class="text-center"
                 />
               </ClientOnly>
-              <Button variant="link" class="h-max p-0">
+              <Button
+                variant="link"
+                class="h-max p-0"
+                @click="
+                  tauriOpenerOpenUrl(
+                    `${social[1]?.to}/connectors/discord/connection`,
+                  )
+                "
+              >
                 {{ $t("discord.connect.clientId.description") }}
               </Button>
             </div>
