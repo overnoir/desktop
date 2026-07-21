@@ -10,8 +10,8 @@ onMounted(async () => {
 
 <template>
   <Html>
-    <Body class="**:select-none">
-      <main data-tauri-drag-region class="h-screen">
+    <Body>
+      <main class="h-screen">
         <slot />
       </main>
     </Body>

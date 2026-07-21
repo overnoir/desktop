@@ -26,6 +26,9 @@ export default {
   },
   updater: {
     checking: "Recherche de mises à jour...",
+    available: "Mise à jour disponible",
+    version: "Version {version}",
+    install: "Installer la mise à jour",
     downloading: "Téléchargement de la mise à jour...",
     loading: "Veuillez patienter...",
   },

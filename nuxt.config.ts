@@ -12,6 +12,7 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "@vueuse/nuxt",
     "vue-sonner/nuxt",
+    "@comark/nuxt",
   ],
   app: {
     pageTransition: { name: "page", mode: "out-in" },

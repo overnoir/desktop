@@ -21,8 +21,8 @@
         "url": "/updater",
         "visible": false,
         "center": true,
-        "height": 300,
-        "width": 400
+        "height": 550,
+        "width": 500
       }
     ],
     "security": {

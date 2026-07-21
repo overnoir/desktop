@@ -26,6 +26,9 @@ export default {
   },
   updater: {
     checking: "Checking for updates...",
+    available: "Update Available",
+    version: "Version {version}",
+    install: "Install Update",
     downloading: "Downloading update...",
     loading: "Please wait...",
   },

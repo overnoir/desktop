@@ -26,6 +26,9 @@ export default {
   },
   updater: {
     checking: "Güncelleme kontrol ediliyor...",
+    available: "Güncelleme Mevcut",
+    version: "Sürüm {version}",
+    install: "Güncellemeyi Yükle",
     downloading: "Güncelleme yükleniyor...",
     loading: "Lütfen bekleyin...",
   },
