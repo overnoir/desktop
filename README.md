@@ -1,5 +1,5 @@
 <p align="center">
-  <picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/header/gradient.svg?title=Overnoir&amp;subtitle=A+cross-platform+desktop+overlay+application&amp;mode=dark&amp;theme=zinc" /><img alt="Overnoir" src="https://shieldcn.dev/header/gradient.svg?title=Overnoir&amp;subtitle=A+cross-platform+desktop+overlay+application&amp;mode=light&amp;theme=zinc" /></picture>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/header/gradient.svg?title=Overnoir&amp;subtitle=A+cross-platform+desktop+overlay+application&amp;logo=https%3A%2F%2Fovernoir-web.tangozyusufali.workers.dev%2Flogo.png&amp;mode=dark&amp;theme=zinc" /><img alt="Overnoir" src="https://shieldcn.dev/header/gradient.svg?title=Overnoir&amp;subtitle=A+cross-platform+desktop+overlay+application&amp;logo=https%3A%2F%2Fovernoir-web.tangozyusufali.workers.dev%2Flogo.png&amp;mode=light&amp;theme=zinc" /></picture>
 </p>
 
 <p align="center">
