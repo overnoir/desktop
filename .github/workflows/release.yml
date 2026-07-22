@@ -60,7 +60,7 @@ jobs:
           API_URL: ${{ secrets.API_URL }}
           APPLE_SIGNING_IDENTITY: "-"
         with:
-          tagName: app-v__VERSION__
+          tagName: v__VERSION__
           releaseName: "v__VERSION__"
           releaseBody: "See the assets to download this version and install."
           releaseDraft: true
