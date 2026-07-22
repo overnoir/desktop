@@ -8,6 +8,7 @@ const status = shallowRef<"checking" | "available" | "downloading" | "loading">(
 );
 const { create, getByLabel } = useWebviewWindow();
 const downloadProgress = shallowRef(0);
+const { logError } = useLogs();
 const updateData = shallowRef({
   version: "",
   body: "",
@@ -29,7 +30,7 @@ async function openOverlayWebviewWindow() {
       withEventHandler: true,
     });
   } catch (error) {
-    await useLogs().logError({ error, source: LogSource.WebviewWindow });
+    await logError({ error, source: LogSource.WebviewWindow });
   }
 }
 
@@ -68,7 +69,7 @@ async function installUpdate() {
 
     await tauriProcessRelaunch();
   } catch (error) {
-    await useLogs().logError({ error, source: LogSource.App });
+    await logError({ error, source: LogSource.App });
     await openOverlayWebviewWindow();
   }
 }
@@ -87,7 +88,7 @@ onMounted(async () => {
       await openOverlayWebviewWindow();
     }
   } catch (error) {
-    await useLogs().logError({ error, source: LogSource.App });
+    await logError({ error, source: LogSource.App });
     await openOverlayWebviewWindow();
   }
 });
