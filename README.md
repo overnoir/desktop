@@ -8,7 +8,11 @@
   <a href="https://github.com/overnoir/desktop/actions"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/github/overnoir/desktop/ci.svg?variant=secondary" /><img alt="CI" src="https://shieldcn.dev/github/overnoir/desktop/ci.svg?variant=secondary&amp;mode=light" /></picture></a>
 </p>
 
----
+<h1 align="center">Preview</h1>
+
+<p align="center">
+  <img alt="image" src="https://overnoir.com/hero-header.png" />
+</p>
 
 **Overnoir** is a cross-platform desktop overlay application. It displays information about Discord voice channel activity, Kick streamer status, and system metrics as a always on top floating panel.
 
