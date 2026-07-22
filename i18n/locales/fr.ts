@@ -11,7 +11,7 @@ export default {
     ],
     [
       ["Connexion", "Paramètres"],
-      ["Streamers", "Paramètres"],
+      ["Connexion", "Paramètres"],
       {
         links: ["Connexion", "Paramètres"],
         name: "Système",
@@ -26,6 +26,9 @@ export default {
   },
   updater: {
     checking: "Recherche de mises à jour...",
+    available: "Mise à jour disponible",
+    version: "Version {version}",
+    install: "Installer la mise à jour",
     downloading: "Téléchargement de la mise à jour...",
     loading: "Veuillez patienter...",
   },
@@ -147,6 +150,12 @@ export default {
   },
   discord: {
     connect: {
+      description:
+        "Connectez-vous pour voir l'activité du canal vocal sur l'overlay.",
+      clientId: {
+        description: "Comment puis-je obtenir un Client ID ?",
+        placeholder: "ID Client de l'application",
+      },
       success: "Connecté avec succès.",
       button: "Se connecter",
     },
@@ -220,7 +229,7 @@ export default {
     },
   },
   kick: {
-    addChannel: {
+    addStreamer: {
       alreadyAdded: "Ce nom d'utilisateur est déjà dans la liste.",
       invalid: "Veuillez entrer un nom d'utilisateur valide.",
       success: "Streamers enregistrés avec succès.",

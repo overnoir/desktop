@@ -11,7 +11,7 @@ export default {
     ],
     [
       ["Conexión", "Ajustes"],
-      ["Streamers", "Ajustes"],
+      ["Conexión", "Ajustes"],
       {
         links: ["Conexión", "Ajustes"],
         name: "Sistema",
@@ -26,6 +26,9 @@ export default {
   },
   updater: {
     checking: "Buscando actualizaciones...",
+    available: "Actualización disponible",
+    version: "Versión {version}",
+    install: "Instalar actualización",
     downloading: "Descargando actualización...",
     loading: "Espere, por favor...",
   },
@@ -147,6 +150,12 @@ export default {
   },
   discord: {
     connect: {
+      description:
+        "Conéctese para ver la actividad del canal de voz en la superposición.",
+      clientId: {
+        description: "¿Cómo puedo obtener un Client ID?",
+        placeholder: "ID de Cliente de la Aplicación",
+      },
       success: "Conectado correctamente.",
       button: "Conectar",
     },
@@ -220,7 +229,7 @@ export default {
     },
   },
   kick: {
-    addChannel: {
+    addStreamer: {
       alreadyAdded: "Este nombre de usuario ya está en la lista.",
       invalid: "Por favor, introduzca un nombre de usuario válido.",
       success: "Streamers guardados correctamente.",

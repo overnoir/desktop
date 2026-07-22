@@ -11,7 +11,7 @@ export default {
     ],
     [
       ["Bağlantı", "Ayarlar"],
-      ["Yayıncılar", "Ayarlar"],
+      ["Bağlantı", "Ayarlar"],
       {
         links: ["Bağlantı", "Ayarlar"],
         name: "Sistem",
@@ -26,6 +26,9 @@ export default {
   },
   updater: {
     checking: "Güncelleme kontrol ediliyor...",
+    available: "Güncelleme Mevcut",
+    version: "Sürüm {version}",
+    install: "Güncellemeyi Yükle",
     downloading: "Güncelleme yükleniyor...",
     loading: "Lütfen bekleyin...",
   },
@@ -146,6 +149,12 @@ export default {
   },
   discord: {
     connect: {
+      description:
+        "Overlay üzerinde ses kanalı aktivitesini görmek için bağlan.",
+      clientId: {
+        description: "Client ID nasıl alabilirim?",
+        placeholder: "Uygulama Client ID",
+      },
       success: "Bağlantı başarıyla yapıldı.",
       button: "Bağlan",
     },
@@ -221,7 +230,7 @@ export default {
     },
   },
   kick: {
-    addChannel: {
+    addStreamer: {
       alreadyAdded: "Bu kullanıcı adı zaten listede.",
       invalid: "Geçerli bir kullanıcı adı girin.",
       success: "Yayıncılar başarıyla kaydedildi.",

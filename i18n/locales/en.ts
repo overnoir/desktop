@@ -11,7 +11,7 @@ export default {
     ],
     [
       ["Connection", "Settings"],
-      ["Streamers", "Settings"],
+      ["Connection", "Settings"],
       {
         links: ["Connection", "Settings"],
         name: "System",
@@ -26,6 +26,9 @@ export default {
   },
   updater: {
     checking: "Checking for updates...",
+    available: "Update Available",
+    version: "Version {version}",
+    install: "Install Update",
     downloading: "Downloading update...",
     loading: "Please wait...",
   },
@@ -144,6 +147,11 @@ export default {
   },
   discord: {
     connect: {
+      description: "Connect to see voice channel activity on the overlay.",
+      clientId: {
+        description: "How can I get a Client ID?",
+        placeholder: "Application Client ID",
+      },
       success: "Connected successfully.",
       button: "Connect",
     },
@@ -215,7 +223,7 @@ export default {
     },
   },
   kick: {
-    addChannel: {
+    addStreamer: {
       alreadyAdded: "This username is already in the list.",
       invalid: "Please enter a valid username.",
       success: "Streamers saved successfully.",

@@ -13,9 +13,9 @@ use std::sync::{atomic::AtomicBool, Arc};
 use std::time::{SystemTime, UNIX_EPOCH};
 use tauri::{AppHandle, Emitter, Manager};
 
-pub fn init_discord(app_handle: &AppHandle, client_id: &String) {
+pub fn init_discord(app_handle: &AppHandle) {
     app_handle.manage(DiscordState {
-        client: tokio::sync::Mutex::new(DiscordClient::new(client_id)),
+        client: tokio::sync::Mutex::new(DiscordClient::new()),
         expected_closed: Arc::new(AtomicBool::new(false)),
     });
 }
@@ -57,9 +57,14 @@ fn save_tokens(app_handle: &AppHandle, token_response: &OAuthTokenResponse) -> R
 }
 
 #[tauri::command]
-pub async fn connect_discord(app_handle: AppHandle) -> Result<DiscordConnectedUser, String> {
+pub async fn connect_discord(
+    app_handle: AppHandle,
+    client_id: String,
+) -> Result<DiscordConnectedUser, String> {
     let discord = app_handle.state::<DiscordState>();
     let mut client = discord.client.lock().await;
+
+    client.set_client_id(&client_id);
 
     client.connect()?;
     discord

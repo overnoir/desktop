@@ -14,15 +14,19 @@ use interprocess::local_socket::{GenericFilePath, ToFsName};
 use interprocess::local_socket::{GenericNamespaced, ToNsName};
 
 impl DiscordClient {
-    pub fn new(client_id: &str) -> Self {
+    pub fn new() -> Self {
         Self {
-            client_id: client_id.to_string(),
+            client_id: String::new(),
             http: reqwest::Client::builder()
                 .timeout(Duration::from_secs(15))
                 .build()
                 .expect("failed to create HTTP client"),
             stream: None,
         }
+    }
+
+    pub fn set_client_id(&mut self, client_id: &str) {
+        self.client_id = client_id.to_string();
     }
 
     pub fn connect(&mut self) -> Result<(), String> {
@@ -108,19 +112,14 @@ impl DiscordClient {
         frame.extend_from_slice(data);
         self.stream
             .as_mut()
-            .ok_or_else(|| {
-                std::io::Error::new(std::io::ErrorKind::NotConnected, "stream closed")
-            })?
+            .ok_or_else(|| std::io::Error::new(std::io::ErrorKind::NotConnected, "stream closed"))?
             .write_all(&frame)
     }
 
     pub fn read_frame(&mut self) -> std::io::Result<(u32, String)> {
-        let stream = self
-            .stream
-            .as_mut()
-            .ok_or_else(|| {
-                std::io::Error::new(std::io::ErrorKind::NotConnected, "stream closed")
-            })?;
+        let stream = self.stream.as_mut().ok_or_else(|| {
+            std::io::Error::new(std::io::ErrorKind::NotConnected, "stream closed")
+        })?;
         let mut header = [0u8; 8];
         stream.read_exact(&mut header)?;
 
@@ -237,8 +236,12 @@ impl DiscordClient {
     pub fn close(&mut self) -> Result<(), String> {
         match self.write_frame(2, "{}") {
             Ok(()) => Ok(()),
-            Err(e) if e.kind() == std::io::ErrorKind::NotConnected
-                    || e.kind() == std::io::ErrorKind::BrokenPipe => Ok(()),
+            Err(e)
+                if e.kind() == std::io::ErrorKind::NotConnected
+                    || e.kind() == std::io::ErrorKind::BrokenPipe =>
+            {
+                Ok(())
+            }
             Err(e) => Err(e.to_string()),
         }
     }

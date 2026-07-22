@@ -1,11 +1,11 @@
 <script setup lang="ts">
-const discordStore = useDiscordStore();
-const { connectedUser, isConnected } = storeToRefs(discordStore);
+const { connectedUser, isConnected, clientId } = storeToRefs(useDiscordStore());
 const deleteVaultItemsOnDisconnect = shallowRef(true);
 const { connect, disconnect } = useDiscord();
+const { social } = useLinkGroups();
+const loading = shallowRef(false);
 const { $toast } = useNuxtApp();
 const { logError } = useLogs();
-const loading = shallowRef(false);
 const { t } = useI18n();
 
 const avatarUrl = computed(
@@ -44,73 +44,102 @@ async function toggleConnection() {
 
 <template>
   <section>
-    <Card class="text-center border-0">
-      <CardHeader>
-        <CardTitle class="text-xl">Discord RPC</CardTitle>
-        <NuxtImg
-          v-if="avatarUrl"
-          :src="avatarUrl"
-          alt="Avatar"
-          class="size-20 rounded-lg border mx-auto mt-4 mb-2"
-        />
-        <CardDescription v-if="isConnected">
-          {{
-            $t("discord.disconnect.description", {
-              username: connectedUser?.username,
-            })
-          }}
+    <Card class="border-0">
+      <CardHeader class="text-center">
+        <CardTitle>Discord RPC</CardTitle>
+        <CardDescription>
+          <template v-if="isConnected">
+            {{
+              $t("discord.disconnect.description", {
+                username: connectedUser?.username,
+              })
+            }}
+          </template>
+          <template v-else>{{ $t("discord.connect.description") }} </template>
         </CardDescription>
       </CardHeader>
-      <CardContent class="space-y-8 text-sm">
+      <CardContent>
         <template v-if="isConnected">
-          <AlertDialog>
-            <AlertDialogTrigger as-child>
-              <Button variant="secondary" :loading size="lg">
-                {{ $t("discord.disconnect.button") }}
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>
-                  {{ $t("discord.disconnect.dialog.title") }}
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                  {{ $t("discord.disconnect.dialog.description") }}
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <div class="flex items-center gap-2">
-                <Checkbox
-                  id="delete-vault-items"
-                  v-model="deleteVaultItemsOnDisconnect"
-                />
-                <Label for="delete-vault-items">{{
-                  $t("discord.disconnect.dialog.deleteVaultItems")
-                }}</Label>
-              </div>
-              <AlertDialogFooter>
-                <AlertDialogCancel>
-                  {{ $t("discord.disconnect.dialog.cancel") }}
-                </AlertDialogCancel>
-                <AlertDialogAction
-                  variant="destructive"
-                  @click="toggleConnection"
-                >
-                  {{ $t("discord.disconnect.dialog.confirm") }}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <div class="flex flex-col items-center gap-4">
+            <NuxtImg
+              v-if="avatarUrl"
+              class="size-24 rounded-lg border"
+              :src="avatarUrl"
+              alt="Avatar"
+            />
+            <AlertDialog>
+              <AlertDialogTrigger as-child>
+                <Button variant="secondary" size="lg">
+                  {{ $t("discord.disconnect.button") }}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    {{ $t("discord.disconnect.dialog.title") }}
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {{ $t("discord.disconnect.dialog.description") }}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <div class="flex items-center gap-2">
+                  <Checkbox
+                    id="delete-vault-items"
+                    v-model="deleteVaultItemsOnDisconnect"
+                  />
+                  <Label for="delete-vault-items">
+                    {{ $t("discord.disconnect.dialog.deleteVaultItems") }}
+                  </Label>
+                </div>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>
+                    {{ $t("discord.disconnect.dialog.cancel") }}
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    variant="destructive"
+                    @click="toggleConnection"
+                  >
+                    {{ $t("discord.disconnect.dialog.confirm") }}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
         </template>
-        <Button
-          v-else
-          class="bg-[#5865F2] hover:bg-[#5865F2]/90!"
-          variant="ghost"
-          :loading
-          size="lg"
-          @click="toggleConnection"
-        >
-          {{ $t("discord.connect.button") }}
-        </Button>
+        <template v-else>
+          <div class="space-y-4">
+            <div class="space-y-2">
+              <ClientOnly>
+                <Input
+                  v-model="clientId"
+                  :placeholder="$t('discord.connect.clientId.placeholder')"
+                  class="text-center"
+                />
+              </ClientOnly>
+              <Button
+                variant="link"
+                class="h-max p-0"
+                @click="
+                  tauriOpenerOpenUrl(
+                    `${social[1]?.to}/connectors/discord/connection`,
+                  )
+                "
+              >
+                {{ $t("discord.connect.clientId.description") }}
+              </Button>
+            </div>
+            <Button
+              class="bg-[#5865F2] hover:bg-[#5865F2]/90! w-full"
+              variant="ghost"
+              :disabled="!clientId"
+              :loading
+              size="lg"
+              @click="toggleConnection"
+            >
+              {{ $t("discord.connect.button") }}
+            </Button>
+          </div>
+        </template>
       </CardContent>
     </Card>
   </section>

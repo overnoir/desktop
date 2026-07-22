@@ -80,6 +80,10 @@ export const discordSettingsSchema = z.preprocess(
   }),
 ) satisfies z.ZodType<DiscordSettings>;
 
+export const discordIsConnectedSchema = z.boolean().catch(false);
+
+export const discordClientIdSchema = z.string().catch("");
+
 export const discordConnectedUserSchema = z
   .object({
     avatar: z
@@ -96,14 +100,14 @@ export const discordConnectedUserSchema = z
     (value) => value ?? null,
   ) satisfies z.ZodType<DiscordConnectedUser | null>;
 
-export const kickAddChannelSchema = toTypedSchema(
+export const kickAddStreamerSchema = toTypedSchema(
   z.object({
     slug: z
       .string({
-        error: "kick.addChannel.empty",
+        error: "kick.addStreamer.empty",
       })
       .regex(/^(?!\d+$)(?!_)(?!.*_$)(?!.*__)[a-z0-9_]{3,25}$/, {
-        error: "kick.addChannel.invalid",
+        error: "kick.addStreamer.invalid",
       }),
   }),
 );
@@ -173,5 +177,3 @@ export const systemSettingsSchema = z.preprocess(
     showCpu: z.boolean().catch(defaultSystemSettings.showCpu),
   }),
 ) satisfies z.ZodType<SystemSettings>;
-
-export const isConnectedSchema = z.boolean().catch(false);

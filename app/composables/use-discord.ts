@@ -7,9 +7,9 @@ const VOICE_EVENTS = [
 ];
 
 export default function () {
-  const guild = ref<DiscordGuild | undefined>(undefined);
-  const { connectedUser, isConnected, settings } =
+  const { connectedUser, isConnected, settings, clientId } =
     storeToRefs(useDiscordStore());
+  const guild = ref<DiscordGuild | undefined>(undefined);
   const { logError } = useLogs();
 
   const filteredUsers = computed(() => {
@@ -77,8 +77,10 @@ export default function () {
   });
 
   async function connect() {
-    const connectedUser =
-      await tauriCoreInvoke<DiscordConnectedUser>("connect_discord");
+    const connectedUser = await tauriCoreInvoke<DiscordConnectedUser>(
+      "connect_discord",
+      { clientId: clientId.value },
+    );
 
     await Promise.all([
       subscribe([{ event: DiscordRPCEventName.VoiceChannelSelect }]),
