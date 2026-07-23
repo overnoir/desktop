@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const isMacOS = tauriOSType() === "macos";
+
 onMounted(async () => {
   try {
     await useWebviewWindow().getCurrent().currentWebviewWindow.show();
@@ -9,8 +11,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <Html>
-    <Body>
+  <Html :class="{ 'rounded-none': !isMacOS }">
+    <Body :class="{ 'rounded-none': !isMacOS }">
       <main class="h-screen">
         <slot />
       </main>
