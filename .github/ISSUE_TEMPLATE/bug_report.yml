@@ -1,0 +1,52 @@
+name: Bug Report
+description: Report a bug
+labels: [bug]
+body:
+  - type: textarea
+    attributes:
+      label: Description
+      description: What happened?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Steps to Reproduce
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected Behavior
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Actual Behavior
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: Platform
+      options:
+        - macOS
+        - Windows
+        - Linux
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: App Version
+      placeholder: v0.1.0
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Logs
+      description: Paste any relevant logs
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Screenshots
+      description: Drag and drop screenshots here
+    validations:
+      required: false
