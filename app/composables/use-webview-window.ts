@@ -193,8 +193,9 @@ export default function () {
         y,
       });
     } else {
+      const { canBecomeKeyWindow, withEventHandler, ...rest } = options;
       new TauriWebviewWindowWebviewWindow(options.label, {
-        ...options,
+        ...rest,
         x,
         y,
       });
