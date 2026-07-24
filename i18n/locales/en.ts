@@ -137,9 +137,8 @@ export default {
     },
   },
   logs: {
-    description: "Delete all logs.",
-    title: "Delete Logs",
     clear: "Clear",
+    open: "Open",
     empty: {
       description: "No logs available.",
       title: "No Logs",

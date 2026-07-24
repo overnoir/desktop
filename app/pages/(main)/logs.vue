@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { get, logError, clear } = useLogs();
+const { get, logError, clear, open } = useLogs();
 const logs = shallowRef<string[]>([]);
 
 try {
@@ -16,19 +16,27 @@ async function clearLogs() {
     await logError({ error, source: LogSource.Logs });
   }
 }
+
+async function openLogs() {
+  try {
+    await open();
+  } catch (error) {
+    await logError({ error, source: LogSource.Logs });
+  }
+}
 </script>
 
 <template>
   <section class="space-y-4">
     <template v-if="logs.length">
-      <SettingField
-        :description="$t('logs.description')"
-        :title="$t('logs.title')"
-      >
-        <Button variant="secondary" @click="clearLogs">{{
-          $t("logs.clear")
-        }}</Button>
-      </SettingField>
+      <div class="flex justify-between">
+        <Button variant="outline" @click="openLogs">
+          {{ $t("logs.open") }}
+        </Button>
+        <Button variant="destructive" @click="clearLogs">
+          {{ $t("logs.clear") }}
+        </Button>
+      </div>
       <Card class="p-0">
         <Table>
           <TableBody class="text-secondary-foreground">

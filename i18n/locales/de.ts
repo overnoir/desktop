@@ -137,9 +137,8 @@ export default {
     },
   },
   logs: {
-    description: "Alle Protokolle löschen.",
-    title: "Protokolle löschen",
     clear: "Löschen",
+    open: "Öffnen",
     empty: {
       description: "Keine Protokolle vorhanden.",
       title: "Keine Protokolle",

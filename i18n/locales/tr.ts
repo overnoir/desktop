@@ -139,9 +139,8 @@ export default {
     },
   },
   logs: {
-    description: "Tüm kayıtları sil.",
-    title: "Kayıtları Sil",
     clear: "Temizle",
+    open: "Aç",
     empty: {
       description: "Herhangi bir kayıt yok.",
       title: "Kayıt Yok",

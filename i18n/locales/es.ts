@@ -140,9 +140,8 @@ export default {
     },
   },
   logs: {
-    description: "Eliminar todos los registros.",
-    title: "Eliminar Registros",
     clear: "Limpiar",
+    open: "Abrir",
     empty: {
       description: "No hay registros disponibles.",
       title: "Sin Registros",

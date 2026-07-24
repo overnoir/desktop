@@ -140,9 +140,8 @@ export default {
     },
   },
   logs: {
-    description: "Supprimer tous les journaux.",
-    title: "Supprimer les journaux",
     clear: "Effacer",
+    open: "Ouvrir",
     empty: {
       description: "Aucun journal disponible.",
       title: "Aucun journal",

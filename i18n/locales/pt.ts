@@ -138,9 +138,8 @@ export default {
     },
   },
   logs: {
-    description: "Eliminar todos os registos.",
-    title: "Eliminar Registos",
     clear: "Limpar",
+    open: "Abrir",
     empty: {
       description: "Nenhum registo disponível.",
       title: "Sem Registos",
