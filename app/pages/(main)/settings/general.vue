@@ -63,11 +63,13 @@ async function quickPositionSelect(
 }
 
 async function updateTray() {
-  try {
-    await updateMenu();
-  } catch (error) {
-    await logError({ error, source: LogSource.Tray });
-  }
+  setTimeout(async () => {
+    try {
+      await updateMenu();
+    } catch (error) {
+      await logError({ error, source: LogSource.Tray });
+    }
+  }, 100);
 }
 </script>
 

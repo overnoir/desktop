@@ -10,9 +10,9 @@ onMounted(async () => {
   } catch (error) {
     await useLogs().logError({ error, source: LogSource.WebviewWindow });
   }
-
-  watch(() => general.value.locale, setLocale, { immediate: true });
 });
+
+watch(() => general.value.locale, setLocale, { immediate: true });
 </script>
 
 <template>
