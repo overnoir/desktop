@@ -8,7 +8,7 @@ onMounted(async () => {
       .getCurrent()
       .setContentProtected(advanced.value.contentProtected);
   } catch (error) {
-    await useLogs().logError({ error, source: LogSource.WebviewWindow });
+    await useLogs().logError({ source: LogSource.WebviewWindow, error });
   }
 });
 
@@ -18,6 +18,7 @@ watch(() => general.value.locale, setLocale, { immediate: true });
 <template>
   <NuxtLayout>
     <NuxtRouteAnnouncer />
+    <SonnerToaster />
     <NuxtPage />
   </NuxtLayout>
 </template>

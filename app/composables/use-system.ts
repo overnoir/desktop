@@ -37,7 +37,7 @@ export default function () {
           cpu,
         };
       } catch (error) {
-        await logError({ error, source: LogSource.System });
+        await logError({ source: LogSource.System, error });
         system.value = null;
       }
     },

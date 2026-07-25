@@ -9,7 +9,7 @@ const { setLocale } = useI18n();
 const { logError } = useLogs();
 
 await Promise.all([
-  logError({ error, source: LogSource.Unknown }),
+  logError({ source: LogSource.Unknown, error }),
   setLocale(general.value.locale),
 ]);
 
@@ -17,7 +17,7 @@ async function destroy() {
   try {
     await currentWebviewWindow.destroy();
   } catch (error) {
-    await logError({ error, source: LogSource.WebviewWindow });
+    await logError({ source: LogSource.WebviewWindow, error });
   }
 }
 </script>

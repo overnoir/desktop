@@ -18,7 +18,7 @@ export default function () {
           streamers.value = data;
         }
       } catch (error) {
-        await logError({ error, source: LogSource.Kick });
+        await logError({ source: LogSource.Kick, error });
       }
     },
     300000,

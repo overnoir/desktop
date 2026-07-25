@@ -5,6 +5,7 @@ definePageMeta({
 
 const { status, downloadProgress, updateInfo, check, install } = useUpdater();
 const { create, getByLabel } = useWebviewWindow();
+const { $toast } = useNuxtApp();
 const { logError } = useLogs();
 
 async function openOverlayWebviewWindow() {
@@ -23,7 +24,8 @@ async function openOverlayWebviewWindow() {
       withEventHandler: true,
     });
   } catch (error) {
-    await logError({ error, source: LogSource.WebviewWindow });
+    $toast.error(getErrorMessage(error));
+    await logError({ source: LogSource.WebviewWindow, error });
   }
 }
 
@@ -31,7 +33,8 @@ async function handleInstall() {
   try {
     await install();
   } catch (error) {
-    await logError({ error, source: LogSource.Updater });
+    $toast.error(getErrorMessage(error));
+    await logError({ source: LogSource.Updater, error });
     await openOverlayWebviewWindow();
   }
 }
@@ -44,7 +47,8 @@ onMounted(async () => {
       await openOverlayWebviewWindow();
     }
   } catch (error) {
-    await logError({ error, source: LogSource.Updater });
+    $toast.error(getErrorMessage(error));
+    await logError({ source: LogSource.Updater, error });
     await openOverlayWebviewWindow();
   }
 });

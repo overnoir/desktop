@@ -1,11 +1,12 @@
 <script setup lang="ts">
 const { get, logError, clear, open } = useLogs();
 const logs = shallowRef<string[]>([]);
+const { $toast } = useNuxtApp();
 
 try {
   logs.value = (await get()).reverse();
 } catch (error) {
-  await logError({ error, source: LogSource.Logs });
+  await logError({ source: LogSource.Logs, error });
 }
 
 async function clearLogs() {
@@ -13,7 +14,8 @@ async function clearLogs() {
     await clear();
     logs.value = [];
   } catch (error) {
-    await logError({ error, source: LogSource.Logs });
+    $toast.error(getErrorMessage(error));
+    await logError({ source: LogSource.Logs, error });
   }
 }
 
@@ -21,7 +23,8 @@ async function openLogs() {
   try {
     await open();
   } catch (error) {
-    await logError({ error, source: LogSource.Logs });
+    $toast.error(getErrorMessage(error));
+    await logError({ source: LogSource.Logs, error });
   }
 }
 </script>

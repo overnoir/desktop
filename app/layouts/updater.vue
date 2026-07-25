@@ -1,11 +1,13 @@
 <script setup lang="ts">
 const isMacOS = tauriOSType() === "macos";
+const { $toast } = useNuxtApp();
 
 onMounted(async () => {
   try {
     await useWebviewWindow().getCurrent().show();
   } catch (error) {
-    await useLogs().logError({ error, source: LogSource.WebviewWindow });
+    $toast.error(getErrorMessage(error));
+    await useLogs().logError({ source: LogSource.WebviewWindow, error });
   }
 });
 </script>

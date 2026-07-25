@@ -31,7 +31,7 @@ try {
     connectedUser.value = await connect();
   }
 } catch (error) {
-  await logError({ error, source: LogSource.Discord });
+  await logError({ source: LogSource.Discord, error });
   connectedUser.value = null;
   isConnected.value = false;
 }
@@ -56,7 +56,7 @@ async function openMainWebviewWindow() {
       });
     }
   } catch (error) {
-    await logError({ error, source: LogSource.WebviewWindow });
+    await logError({ source: LogSource.WebviewWindow, error });
   }
 }
 
@@ -64,7 +64,7 @@ async function openStreamWebviewWindow(stream: Stream) {
   try {
     await open(stream);
   } catch (error) {
-    await logError({ error, source: LogSource.Stream });
+    await logError({ source: LogSource.Stream, error });
   }
 }
 </script>

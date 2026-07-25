@@ -8,7 +8,8 @@ const { t } = useI18n();
 try {
   metadata.value = await getMetadata();
 } catch (error) {
-  await logError({ error, source: LogSource.Vault });
+  $toast.error(getErrorMessage(error));
+  await logError({ source: LogSource.Vault, error });
 }
 
 async function clearVault() {
@@ -18,7 +19,7 @@ async function clearVault() {
     $toast.success(t("vault.clear.success"));
   } catch (error) {
     $toast.error(getErrorMessage(error));
-    await logError({ error, source: LogSource.Vault });
+    await logError({ source: LogSource.Vault, error });
   }
 }
 </script>

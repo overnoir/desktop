@@ -44,7 +44,7 @@ try {
     }
   }
 } catch (error) {
-  await logError({ error, source: LogSource.App });
+  await logError({ source: LogSource.App, error });
 }
 
 onMounted(async () => {
@@ -76,13 +76,13 @@ onMounted(async () => {
 
     await currentWebviewWindow.show();
   } catch (error) {
-    await logError({ error, source: LogSource.WebviewWindow });
+    await logError({ source: LogSource.WebviewWindow, error });
   }
 
   try {
     await create();
   } catch (error) {
-    await logError({ error, source: LogSource.Tray });
+    await logError({ source: LogSource.Tray, error });
   }
 
   useResizeObserver(document.body, async (entries) => {
@@ -133,7 +133,7 @@ onMounted(async () => {
         ),
       ]);
     } catch (error) {
-      await logError({ error, source: LogSource.WebviewWindow });
+      await logError({ source: LogSource.WebviewWindow, error });
     }
   });
 });
