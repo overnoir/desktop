@@ -117,6 +117,12 @@ export default {
       description: "Uygulamanın her zaman üstte olmasını sağlayın.",
       title: "Her Zaman Üstte",
     },
+    update: {
+      description: "Uygulamayı yeni sürüme güncelleyin.",
+      title: "Güncelleme",
+      button: "Güncelle",
+      alreadyLatest: "Uygulama zaten en güncel sürümde.",
+    },
   },
   vault: {
     heads: ["Anahtar", "Oluşturulma Tarihi", "Güncellenme Tarihi"],

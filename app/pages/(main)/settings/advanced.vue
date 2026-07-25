@@ -7,8 +7,24 @@ const overlayWebviewWindow = await getByLabel({
 });
 const currentWebviewWindow = getCurrent();
 const { $toast } = useNuxtApp();
+const { check } = useUpdater();
 const { logError } = useLogs();
+const loading = ref(false);
 const { t } = useI18n();
+
+async function updateApp() {
+  loading.value = true;
+  try {
+    const available = await check();
+    if (available) {
+      await tauriProcessRelaunch();
+    }
+    $toast.success($t("settings.update.alreadyLatest"));
+  } catch (error) {
+    await logError({ source: LogSource.Updater, error });
+  }
+  loading.value = false;
+}
 
 async function updateIgnoreCursorEvents(value: boolean) {
   try {
@@ -141,6 +157,13 @@ async function reset() {
         v-model="advanced.autoStart"
         @update:model-value="updateAutoStart($event)"
       />
+    </SettingField>
+    <Separator />
+    <SettingField
+      :description="$t('settings.update.description')"
+      :title="$t('settings.update.title')"
+    >
+      <Button variant="secondary" :loading @click="updateApp"> Update </Button>
     </SettingField>
     <Separator />
     <SettingField

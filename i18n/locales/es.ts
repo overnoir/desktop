@@ -117,6 +117,12 @@ export default {
       description: "Mantenga la aplicación siempre en primer plano.",
       title: "Siempre en Primer Plano",
     },
+    update: {
+      description: "Actualice la aplicación a la última versión.",
+      title: "Actualización",
+      button: "Actualizar",
+      alreadyLatest: "La aplicación ya está en la última versión.",
+    },
   },
   vault: {
     heads: ["Clave", "Fecha de Creación", "Fecha de Actualización"],

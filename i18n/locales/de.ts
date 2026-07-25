@@ -115,6 +115,12 @@ export default {
       description: "Halten Sie die Anwendung immer im Vordergrund.",
       title: "Immer im Vordergrund",
     },
+    update: {
+      description: "Aktualisieren Sie die Anwendung auf die neueste Version.",
+      title: "Update",
+      button: "Aktualisieren",
+      alreadyLatest: "Die App ist bereits auf dem neuesten Stand.",
+    },
   },
   vault: {
     heads: ["Schlüssel", "Erstellungsdatum", "Änderungsdatum"],

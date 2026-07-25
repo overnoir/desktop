@@ -115,6 +115,12 @@ export default {
       description: "Keep the application always on top of other windows.",
       title: "Always on Top",
     },
+    update: {
+      description: "Update the application to the latest version.",
+      title: "Update",
+      button: "Update",
+      alreadyLatest: "The app is already the latest version.",
+    },
   },
   vault: {
     heads: ["Key", "Created Date", "Updated Date"],
