@@ -1,10 +1,7 @@
 <script setup lang="ts">
-const { currentWebviewWindow, listenDrag, onDragStart } =
-  useWebviewWindow().getCurrent();
+const currentWebviewWindow = useWebviewWindow().getCurrent();
 const { advanced } = storeToRefs(useSettingsStore());
 const { logError } = useLogs();
-
-listenDrag();
 
 async function destroy() {
   try {
@@ -30,7 +27,7 @@ onMounted(async () => {
   <Html>
     <Body>
       <NuxtLoadingIndicator color="var(--primary)" />
-      <LayoutTitlebar @destroy="destroy" @mousedown="onDragStart" />
+      <LayoutTitlebar @destroy="destroy" />
       <SonnerToaster />
       <div class="flex h-screen pt-8.25 border rounded-2xl">
         <LayoutNavbar />

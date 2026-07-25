@@ -5,7 +5,7 @@ const { getByLabel, getCurrent } = useWebviewWindow();
 const overlayWebviewWindow = await getByLabel({
   label: WebviewWindowLabel.Overlay,
 });
-const { currentWebviewWindow } = getCurrent();
+const currentWebviewWindow = getCurrent();
 const { $toast } = useNuxtApp();
 const { logError } = useLogs();
 const { t } = useI18n();

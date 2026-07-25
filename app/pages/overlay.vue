@@ -9,10 +9,9 @@ const discordStore = useDiscordStore();
 const { settings, connectedUser, isConnected } = storeToRefs(discordStore);
 const { connect, listenEvents, filteredUsers, guild } = useDiscord();
 const { startPooling: startSystemPooling, system } = useSystem();
-const { getByLabel, getCurrent, create } = useWebviewWindow();
 const { filteredStreamers, startPooling } = useKick();
 const { general } = storeToRefs(useSettingsStore());
-const { onDragStart, listenDrag } = getCurrent();
+const { getByLabel, create } = useWebviewWindow();
 const { logError } = useLogs();
 const isOnline = useOnline();
 const { open } = useStream();
@@ -26,7 +25,6 @@ const styles = computed<CSSProperties>(() => ({
 await listenEvents();
 startSystemPooling();
 startPooling();
-listenDrag();
 
 try {
   if (isConnected.value) {
@@ -106,6 +104,6 @@ async function openStreamWebviewWindow(stream: Stream) {
       v-if="general.showSettings"
       @click="openMainWebviewWindow"
     />
-    <OverlayDrag v-if="general.showDrag" @mousedown="onDragStart" />
+    <OverlayDrag v-if="general.showDrag" />
   </section>
 </template>

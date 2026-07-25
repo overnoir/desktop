@@ -3,7 +3,7 @@ import type { CSSProperties } from "vue";
 
 const { general, advanced } = storeToRefs(useSettingsStore());
 const { getCurrent, getByLabel } = useWebviewWindow();
-const { currentWebviewWindow, isDragging } = getCurrent();
+const currentWebviewWindow = getCurrent();
 const { logError } = useLogs();
 const { create } = useTray();
 const anchor = shallowRef<{
@@ -56,9 +56,6 @@ onMounted(async () => {
           advanced.value.ignoreCursorEvents,
         ),
         currentWebviewWindow.onMoved(({ payload }) => {
-          if (!isDragging.value) {
-            return;
-          }
           general.value.x = payload.x;
           general.value.y = payload.y;
           anchor.value = null;
@@ -129,15 +126,12 @@ onMounted(async () => {
         }
       }
 
-      if (!isDragging.value) {
-        await currentWebviewWindow.setPosition(
+      await Promise.all([
+        currentWebviewWindow.setSize(new TauriDpiLogicalSize(width, height)),
+        currentWebviewWindow.setPosition(
           new TauriDpiLogicalPosition(newX, newY),
-        );
-      }
-
-      await currentWebviewWindow.setSize(
-        new TauriDpiLogicalSize(width, height),
-      );
+        ),
+      ]);
     } catch (error) {
       await logError({ error, source: LogSource.WebviewWindow });
     }

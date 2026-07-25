@@ -3,7 +3,7 @@ const isMacOS = tauriOSType() === "macos";
 
 onMounted(async () => {
   try {
-    await useWebviewWindow().getCurrent().currentWebviewWindow.show();
+    await useWebviewWindow().getCurrent().show();
   } catch (error) {
     await useLogs().logError({ error, source: LogSource.WebviewWindow });
   }

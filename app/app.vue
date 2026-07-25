@@ -6,9 +6,7 @@ onMounted(async () => {
   try {
     await useWebviewWindow()
       .getCurrent()
-      .currentWebviewWindow.setContentProtected(
-        advanced.value.contentProtected,
-      );
+      .setContentProtected(advanced.value.contentProtected);
   } catch (error) {
     await useLogs().logError({ error, source: LogSource.WebviewWindow });
   }
