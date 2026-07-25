@@ -30,7 +30,6 @@ export default {
     version: "Version {version}",
     install: "Install Update",
     downloading: "Downloading update...",
-    loading: "Please wait...",
   },
   error: {
     clear: "Clear",

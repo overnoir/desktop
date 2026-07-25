@@ -100,6 +100,7 @@ async function openStreamWebviewWindow(stream: Stream) {
     <OverlaySystemBattery v-if="system?.battery" :battery="system.battery" />
     <OverlaySystemNetwork v-if="system?.network" :network="system.network" />
     <OverlayOffline v-if="!isOnline" />
+
     <OverlaySettings
       v-if="general.showSettings"
       @click="openMainWebviewWindow"

@@ -30,7 +30,6 @@ export default {
     version: "Sürüm {version}",
     install: "Güncellemeyi Yükle",
     downloading: "Güncelleme yükleniyor...",
-    loading: "Lütfen bekleyin...",
   },
   error: {
     clear: "Temizle",
