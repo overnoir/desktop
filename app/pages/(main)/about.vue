@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const { social, legal } = useLinkGroups();
+const { $toast } = useNuxtApp();
 const appInfo = shallowRef("");
 
 try {
@@ -10,7 +11,8 @@ try {
 
   appInfo.value = `${name} v${version}`;
 } catch (error) {
-  await useLogs().logError({ error, source: LogSource.App });
+  $toast.error(getErrorMessage(error));
+  await useLogs().logError({ source: LogSource.App, error });
 }
 </script>
 

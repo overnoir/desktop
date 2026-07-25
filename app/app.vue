@@ -6,20 +6,19 @@ onMounted(async () => {
   try {
     await useWebviewWindow()
       .getCurrent()
-      .currentWebviewWindow.setContentProtected(
-        advanced.value.contentProtected,
-      );
+      .setContentProtected(advanced.value.contentProtected);
   } catch (error) {
-    await useLogs().logError({ error, source: LogSource.WebviewWindow });
+    await useLogs().logError({ source: LogSource.WebviewWindow, error });
   }
-
-  watch(() => general.value.locale, setLocale, { immediate: true });
 });
+
+watch(() => general.value.locale, setLocale, { immediate: true });
 </script>
 
 <template>
   <NuxtLayout>
     <NuxtRouteAnnouncer />
+    <SonnerToaster />
     <NuxtPage />
   </NuxtLayout>
 </template>

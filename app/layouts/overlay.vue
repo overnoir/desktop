@@ -3,7 +3,7 @@ import type { CSSProperties } from "vue";
 
 const { general, advanced } = storeToRefs(useSettingsStore());
 const { getCurrent, getByLabel } = useWebviewWindow();
-const { currentWebviewWindow, isDragging } = getCurrent();
+const currentWebviewWindow = getCurrent();
 const { logError } = useLogs();
 const { create } = useTray();
 const anchor = shallowRef<{
@@ -44,7 +44,7 @@ try {
     }
   }
 } catch (error) {
-  await logError({ error, source: LogSource.App });
+  await logError({ source: LogSource.App, error });
 }
 
 onMounted(async () => {
@@ -56,9 +56,6 @@ onMounted(async () => {
           advanced.value.ignoreCursorEvents,
         ),
         currentWebviewWindow.onMoved(({ payload }) => {
-          if (!isDragging.value) {
-            return;
-          }
           general.value.x = payload.x;
           general.value.y = payload.y;
           anchor.value = null;
@@ -79,13 +76,13 @@ onMounted(async () => {
 
     await currentWebviewWindow.show();
   } catch (error) {
-    await logError({ error, source: LogSource.WebviewWindow });
+    await logError({ source: LogSource.WebviewWindow, error });
   }
 
   try {
     await create();
   } catch (error) {
-    await logError({ error, source: LogSource.Tray });
+    await logError({ source: LogSource.Tray, error });
   }
 
   useResizeObserver(document.body, async (entries) => {
@@ -129,17 +126,14 @@ onMounted(async () => {
         }
       }
 
-      if (!isDragging.value) {
-        await currentWebviewWindow.setPosition(
+      await Promise.all([
+        currentWebviewWindow.setSize(new TauriDpiLogicalSize(width, height)),
+        currentWebviewWindow.setPosition(
           new TauriDpiLogicalPosition(newX, newY),
-        );
-      }
-
-      await currentWebviewWindow.setSize(
-        new TauriDpiLogicalSize(width, height),
-      );
+        ),
+      ]);
     } catch (error) {
-      await logError({ error, source: LogSource.WebviewWindow });
+      await logError({ source: LogSource.WebviewWindow, error });
     }
   });
 });

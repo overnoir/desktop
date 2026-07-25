@@ -3,23 +3,21 @@ import type { NuxtError } from "#app";
 
 const { error } = defineProps<{ error: NuxtError }>();
 
-const { currentWebviewWindow, listenDrag, onDragStart } =
-  useWebviewWindow().getCurrent();
+const currentWebviewWindow = useWebviewWindow().getCurrent();
 const { general } = storeToRefs(useSettingsStore());
 const { setLocale } = useI18n();
 const { logError } = useLogs();
 
 await Promise.all([
-  logError({ error, source: LogSource.Unknown }),
+  logError({ source: LogSource.Unknown, error }),
   setLocale(general.value.locale),
 ]);
-listenDrag();
 
 async function destroy() {
   try {
     await currentWebviewWindow.destroy();
   } catch (error) {
-    await logError({ error, source: LogSource.WebviewWindow });
+    await logError({ source: LogSource.WebviewWindow, error });
   }
 }
 </script>
@@ -28,7 +26,7 @@ async function destroy() {
   <Html>
     <Body>
       <div class="border rounded-2xl">
-        <LayoutTitlebar @destroy="destroy" @mousedown="onDragStart" />
+        <LayoutTitlebar @destroy="destroy" />
         <main class="h-screen overflow-auto grid place-items-center">
           <Empty>
             <EmptyHeader>

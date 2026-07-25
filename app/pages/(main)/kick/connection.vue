@@ -8,9 +8,9 @@ const { handleSubmit, resetForm } = useForm({
   validationSchema: kickAddStreamerSchema,
 });
 const { getStreamers } = useKick();
+const loading = shallowRef(false);
 const { $toast } = useNuxtApp();
 const { logError } = useLogs();
-const loading = shallowRef(false);
 const { t } = useI18n();
 
 const onSubmit = handleSubmit(async ({ slug }) => {
@@ -68,7 +68,7 @@ async function save() {
     $toast.success(t("kick.addStreamer.success"));
   } catch (error) {
     $toast.error(getErrorMessage(error));
-    await logError({ error, source: LogSource.Kick });
+    await logError({ source: LogSource.Kick, error });
   }
   loading.value = false;
 }

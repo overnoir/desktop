@@ -30,7 +30,6 @@ export default {
     version: "Version {version}",
     install: "Update installieren",
     downloading: "Update wird heruntergeladen...",
-    loading: "Bitte warten...",
   },
   error: {
     clear: "Löschen",
@@ -116,6 +115,12 @@ export default {
       description: "Halten Sie die Anwendung immer im Vordergrund.",
       title: "Immer im Vordergrund",
     },
+    update: {
+      description: "Aktualisieren Sie die Anwendung auf die neueste Version.",
+      title: "Update",
+      button: "Aktualisieren",
+      alreadyLatest: "Die App ist bereits auf dem neuesten Stand.",
+    },
   },
   vault: {
     heads: ["Schlüssel", "Erstellungsdatum", "Änderungsdatum"],
@@ -137,9 +142,8 @@ export default {
     },
   },
   logs: {
-    description: "Alle Protokolle löschen.",
-    title: "Protokolle löschen",
     clear: "Löschen",
+    open: "Öffnen",
     empty: {
       description: "Keine Protokolle vorhanden.",
       title: "Keine Protokolle",

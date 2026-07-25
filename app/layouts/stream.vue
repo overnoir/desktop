@@ -1,16 +1,15 @@
 <script setup lang="ts">
-const { currentWebviewWindow, listenDrag, onDragStart } =
-  useWebviewWindow().getCurrent();
+const currentWebviewWindow = useWebviewWindow().getCurrent();
 const { advanced } = storeToRefs(useSettingsStore());
+const { $toast } = useNuxtApp();
 const { logError } = useLogs();
-
-listenDrag();
 
 async function destroy() {
   try {
     await currentWebviewWindow.destroy();
   } catch (error) {
-    await logError({ error, source: LogSource.WebviewWindow });
+    $toast.error(getErrorMessage(error));
+    await logError({ source: LogSource.WebviewWindow, error });
   }
 }
 
@@ -21,7 +20,8 @@ onMounted(async () => {
       currentWebviewWindow.show(),
     ]);
   } catch (error) {
-    await logError({ error, source: LogSource.WebviewWindow });
+    $toast.error(getErrorMessage(error));
+    await logError({ source: LogSource.WebviewWindow, error });
   }
 });
 </script>
@@ -30,7 +30,7 @@ onMounted(async () => {
   <Html>
     <Body>
       <div class="border rounded-2xl">
-        <LayoutTitlebar @destroy="destroy" @mousedown="onDragStart" />
+        <LayoutTitlebar @destroy="destroy" />
         <main class="h-screen pt-8.25">
           <slot />
         </main>

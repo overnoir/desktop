@@ -134,7 +134,7 @@ export default function () {
             }
           }
         } catch (error) {
-          await logError({ error, source: LogSource.Discord });
+          await logError({ source: LogSource.Discord, error });
         }
       },
     );

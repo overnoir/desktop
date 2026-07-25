@@ -30,7 +30,6 @@ export default {
     version: "Versión {version}",
     install: "Instalar actualización",
     downloading: "Descargando actualización...",
-    loading: "Espere, por favor...",
   },
   error: {
     clear: "Limpiar",
@@ -118,6 +117,12 @@ export default {
       description: "Mantenga la aplicación siempre en primer plano.",
       title: "Siempre en Primer Plano",
     },
+    update: {
+      description: "Actualice la aplicación a la última versión.",
+      title: "Actualización",
+      button: "Actualizar",
+      alreadyLatest: "La aplicación ya está en la última versión.",
+    },
   },
   vault: {
     heads: ["Clave", "Fecha de Creación", "Fecha de Actualización"],
@@ -140,9 +145,8 @@ export default {
     },
   },
   logs: {
-    description: "Eliminar todos los registros.",
-    title: "Eliminar Registros",
     clear: "Limpiar",
+    open: "Abrir",
     empty: {
       description: "No hay registros disponibles.",
       title: "Sin Registros",

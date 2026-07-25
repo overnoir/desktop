@@ -72,6 +72,7 @@ export enum StreamPlatform {
 export enum LogSource {
   WebviewWindow = "WEBVIEW_WINDOW",
   Discord = "DISCORD",
+  Updater = "UPDATER",
   Unknown = "UNKNOWN",
   System = "SYSTEM",
   Stream = "STREAM",
@@ -80,6 +81,12 @@ export enum LogSource {
   Logs = "LOGS",
   Tray = "TRAY",
   App = "APP",
+}
+
+export enum UpdaterStatus {
+  Downloading = "downloading",
+  Available = "available",
+  Checking = "checking",
 }
 //#endregion
 

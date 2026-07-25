@@ -1,11 +1,12 @@
 <script setup lang="ts">
-const { get, logError, clear } = useLogs();
+const { get, logError, clear, open } = useLogs();
 const logs = shallowRef<string[]>([]);
+const { $toast } = useNuxtApp();
 
 try {
   logs.value = (await get()).reverse();
 } catch (error) {
-  await logError({ error, source: LogSource.Logs });
+  await logError({ source: LogSource.Logs, error });
 }
 
 async function clearLogs() {
@@ -13,7 +14,17 @@ async function clearLogs() {
     await clear();
     logs.value = [];
   } catch (error) {
-    await logError({ error, source: LogSource.Logs });
+    $toast.error(getErrorMessage(error));
+    await logError({ source: LogSource.Logs, error });
+  }
+}
+
+async function openLogs() {
+  try {
+    await open();
+  } catch (error) {
+    $toast.error(getErrorMessage(error));
+    await logError({ source: LogSource.Logs, error });
   }
 }
 </script>
@@ -21,14 +32,14 @@ async function clearLogs() {
 <template>
   <section class="space-y-4">
     <template v-if="logs.length">
-      <SettingField
-        :description="$t('logs.description')"
-        :title="$t('logs.title')"
-      >
-        <Button variant="secondary" @click="clearLogs">{{
-          $t("logs.clear")
-        }}</Button>
-      </SettingField>
+      <div class="flex justify-between">
+        <Button variant="outline" @click="openLogs">
+          {{ $t("logs.open") }}
+        </Button>
+        <Button variant="destructive" @click="clearLogs">
+          {{ $t("logs.clear") }}
+        </Button>
+      </div>
       <Card class="p-0">
         <Table>
           <TableBody class="text-secondary-foreground">

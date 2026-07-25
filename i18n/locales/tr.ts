@@ -30,7 +30,6 @@ export default {
     version: "Sürüm {version}",
     install: "Güncellemeyi Yükle",
     downloading: "Güncelleme yükleniyor...",
-    loading: "Lütfen bekleyin...",
   },
   error: {
     clear: "Temizle",
@@ -118,6 +117,12 @@ export default {
       description: "Uygulamanın her zaman üstte olmasını sağlayın.",
       title: "Her Zaman Üstte",
     },
+    update: {
+      description: "Uygulamayı yeni sürüme güncelleyin.",
+      title: "Güncelleme",
+      button: "Güncelle",
+      alreadyLatest: "Uygulama zaten en güncel sürümde.",
+    },
   },
   vault: {
     heads: ["Anahtar", "Oluşturulma Tarihi", "Güncellenme Tarihi"],
@@ -139,9 +144,8 @@ export default {
     },
   },
   logs: {
-    description: "Tüm kayıtları sil.",
-    title: "Kayıtları Sil",
     clear: "Temizle",
+    open: "Aç",
     empty: {
       description: "Herhangi bir kayıt yok.",
       title: "Kayıt Yok",

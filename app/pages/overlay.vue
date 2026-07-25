@@ -9,10 +9,9 @@ const discordStore = useDiscordStore();
 const { settings, connectedUser, isConnected } = storeToRefs(discordStore);
 const { connect, listenEvents, filteredUsers, guild } = useDiscord();
 const { startPooling: startSystemPooling, system } = useSystem();
-const { getByLabel, getCurrent, create } = useWebviewWindow();
 const { filteredStreamers, startPooling } = useKick();
 const { general } = storeToRefs(useSettingsStore());
-const { onDragStart, listenDrag } = getCurrent();
+const { getByLabel, create } = useWebviewWindow();
 const { logError } = useLogs();
 const isOnline = useOnline();
 const { open } = useStream();
@@ -26,14 +25,13 @@ const styles = computed<CSSProperties>(() => ({
 await listenEvents();
 startSystemPooling();
 startPooling();
-listenDrag();
 
 try {
   if (isConnected.value) {
     connectedUser.value = await connect();
   }
 } catch (error) {
-  await logError({ error, source: LogSource.Discord });
+  await logError({ source: LogSource.Discord, error });
   connectedUser.value = null;
   isConnected.value = false;
 }
@@ -58,7 +56,7 @@ async function openMainWebviewWindow() {
       });
     }
   } catch (error) {
-    await logError({ error, source: LogSource.WebviewWindow });
+    await logError({ source: LogSource.WebviewWindow, error });
   }
 }
 
@@ -66,7 +64,7 @@ async function openStreamWebviewWindow(stream: Stream) {
   try {
     await open(stream);
   } catch (error) {
-    await logError({ error, source: LogSource.Stream });
+    await logError({ source: LogSource.Stream, error });
   }
 }
 </script>
@@ -102,10 +100,11 @@ async function openStreamWebviewWindow(stream: Stream) {
     <OverlaySystemBattery v-if="system?.battery" :battery="system.battery" />
     <OverlaySystemNetwork v-if="system?.network" :network="system.network" />
     <OverlayOffline v-if="!isOnline" />
+
     <OverlaySettings
       v-if="general.showSettings"
       @click="openMainWebviewWindow"
     />
-    <OverlayDrag v-if="general.showDrag" @mousedown="onDragStart" />
+    <OverlayDrag v-if="general.showDrag" />
   </section>
 </template>

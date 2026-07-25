@@ -155,10 +155,18 @@ impl DiscordClient {
         let (_, payload) = self.read_frame().map_err(|e| e.to_string())?;
         let value: serde_json::Value =
             serde_json::from_str(&payload).map_err(|e| format!("bad json: {e}"))?;
+
+        if value["evt"] == "ERROR" {
+            return Err(value["data"]["message"]
+                .as_str()
+                .unwrap_or("unknown authentication error")
+                .into());
+        }
+
         let user = &value["data"]["user"];
 
         Ok(DiscordConnectedUser {
-            username: user["username"].as_str().unwrap_or("Unknown").into(),
+            username: user["username"].as_str().ok_or("missing username")?.into(),
             avatar: user["avatar"].as_str().map(Into::into),
             id: user["id"].as_str().ok_or("missing user id")?.into(),
         })

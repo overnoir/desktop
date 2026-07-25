@@ -5,10 +5,27 @@ const { getByLabel, getCurrent } = useWebviewWindow();
 const overlayWebviewWindow = await getByLabel({
   label: WebviewWindowLabel.Overlay,
 });
-const { currentWebviewWindow } = getCurrent();
+const currentWebviewWindow = getCurrent();
 const { $toast } = useNuxtApp();
+const { check } = useUpdater();
 const { logError } = useLogs();
+const loading = ref(false);
 const { t } = useI18n();
+
+async function updateApp() {
+  loading.value = true;
+  try {
+    const available = await check();
+    if (available) {
+      await tauriProcessRelaunch();
+    }
+    $toast.success($t("settings.update.alreadyLatest"));
+  } catch (error) {
+    $toast.error(getErrorMessage(error));
+    await logError({ source: LogSource.Updater, error });
+  }
+  loading.value = false;
+}
 
 async function updateIgnoreCursorEvents(value: boolean) {
   try {
@@ -17,7 +34,8 @@ async function updateIgnoreCursorEvents(value: boolean) {
     }
     await overlayWebviewWindow.setIgnoreCursorEvents(value);
   } catch (error) {
-    await logError({ error, source: LogSource.WebviewWindow });
+    $toast.error(getErrorMessage(error));
+    await logError({ source: LogSource.WebviewWindow, error });
   }
 }
 
@@ -29,7 +47,8 @@ async function updateAutoStart(value: boolean) {
       await tauriAutoStartDisable();
     }
   } catch (error) {
-    await logError({ error, source: LogSource.App });
+    $toast.error(getErrorMessage(error));
+    await logError({ source: LogSource.App, error });
   }
 }
 
@@ -50,7 +69,8 @@ async function updateContentProtected(value: boolean) {
     await overlayWebviewWindow.setContentProtected(value);
     await currentWebviewWindow.setContentProtected(value);
   } catch (error) {
-    await logError({ error, source: LogSource.WebviewWindow });
+    $toast.error(getErrorMessage(error));
+    await logError({ source: LogSource.WebviewWindow, error });
   }
 }
 
@@ -71,7 +91,8 @@ async function updateAlwaysOnTop(value: boolean) {
     await overlayWebviewWindow.setAlwaysOnTop(value);
     await currentWebviewWindow.setAlwaysOnTop(value);
   } catch (error) {
-    await logError({ error, source: LogSource.WebviewWindow });
+    $toast.error(getErrorMessage(error));
+    await logError({ source: LogSource.WebviewWindow, error });
   }
 }
 
@@ -96,7 +117,7 @@ async function reset() {
     $toast.success(t("reset.success"));
   } catch (error) {
     $toast.error(getErrorMessage(error));
-    await logError({ error, source: LogSource.WebviewWindow });
+    await logError({ source: LogSource.WebviewWindow, error });
   }
 }
 </script>
@@ -141,6 +162,13 @@ async function reset() {
         v-model="advanced.autoStart"
         @update:model-value="updateAutoStart($event)"
       />
+    </SettingField>
+    <Separator />
+    <SettingField
+      :description="$t('settings.update.description')"
+      :title="$t('settings.update.title')"
+    >
+      <Button variant="secondary" :loading @click="updateApp"> Update </Button>
     </SettingField>
     <Separator />
     <SettingField

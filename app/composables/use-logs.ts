@@ -1,21 +1,20 @@
 export default function () {
-  async function logError({
-    source,
-    error,
-  }: {
-    source: LogSource;
-    error: unknown;
-  }) {
+  function logError({ source, error }: { source: LogSource; error: unknown }) {
     return tauriLogError(`[${source}] ${getErrorMessage(error)}`);
   }
 
-  async function get() {
+  function get() {
     return tauriCoreInvoke<string[]>("get_logs");
   }
 
-  async function clear() {
+  function clear() {
     return tauriCoreInvoke("clear_logs");
   }
 
-  return { logError, get, clear };
+  async function open() {
+    const dir = await tauriPathAppLogDir();
+    await tauriOpenerOpenPath(dir);
+  }
+
+  return { logError, get, clear, open };
 }

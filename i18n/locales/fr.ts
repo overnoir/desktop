@@ -30,7 +30,6 @@ export default {
     version: "Version {version}",
     install: "Installer la mise à jour",
     downloading: "Téléchargement de la mise à jour...",
-    loading: "Veuillez patienter...",
   },
   error: {
     clear: "Effacer",
@@ -118,6 +117,12 @@ export default {
       description: "Gardez l'application toujours au premier plan.",
       title: "Toujours au premier plan",
     },
+    update: {
+      description: "Mettez à jour l'application vers la dernière version.",
+      title: "Mise à jour",
+      button: "Mettre à jour",
+      alreadyLatest: "L'application est déjà à la dernière version.",
+    },
   },
   vault: {
     heads: ["Clé", "Date de création", "Date de modification"],
@@ -140,9 +145,8 @@ export default {
     },
   },
   logs: {
-    description: "Supprimer tous les journaux.",
-    title: "Supprimer les journaux",
     clear: "Effacer",
+    open: "Ouvrir",
     empty: {
       description: "Aucun journal disponible.",
       title: "Aucun journal",

@@ -8,6 +8,7 @@ const monitors = await tauriWindowAvailableMonitors();
 const settingsStore = useSettingsStore();
 const { general } = storeToRefs(settingsStore);
 const { updateMenu } = useTray();
+const { $toast } = useNuxtApp();
 const { logError } = useLogs();
 const { locales } = useI18n();
 
@@ -15,7 +16,8 @@ async function updatePosition({ x, y }: { x: number; y: number }) {
   try {
     await overlayWebviewWindow?.setPosition(new LogicalPosition(x, y));
   } catch (error) {
-    await logError({ error, source: LogSource.WebviewWindow });
+    $toast.error(getErrorMessage(error));
+    await logError({ source: LogSource.WebviewWindow, error });
   }
 }
 
@@ -58,16 +60,20 @@ async function quickPositionSelect(
       general.value.y = pos.y;
     }
   } catch (error) {
-    await logError({ error, source: LogSource.WebviewWindow });
+    $toast.error(getErrorMessage(error));
+    await logError({ source: LogSource.WebviewWindow, error });
   }
 }
 
 async function updateTray() {
-  try {
-    await updateMenu();
-  } catch (error) {
-    await logError({ error, source: LogSource.Tray });
-  }
+  setTimeout(async () => {
+    try {
+      await updateMenu();
+    } catch (error) {
+      $toast.error(getErrorMessage(error));
+      await logError({ source: LogSource.Tray, error });
+    }
+  }, 100);
 }
 </script>
 

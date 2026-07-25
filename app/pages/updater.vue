@@ -3,16 +3,10 @@ definePageMeta({
   layout: "updater",
 });
 
-const status = shallowRef<"checking" | "available" | "downloading" | "loading">(
-  "checking",
-);
+const { status, downloadProgress, updateInfo, check, install } = useUpdater();
 const { create, getByLabel } = useWebviewWindow();
-const downloadProgress = shallowRef(0);
+const { $toast } = useNuxtApp();
 const { logError } = useLogs();
-const updateData = shallowRef({
-  version: "",
-  body: "",
-});
 
 async function openOverlayWebviewWindow() {
   try {
@@ -30,65 +24,31 @@ async function openOverlayWebviewWindow() {
       withEventHandler: true,
     });
   } catch (error) {
-    await logError({ error, source: LogSource.WebviewWindow });
+    $toast.error(getErrorMessage(error));
+    await logError({ source: LogSource.WebviewWindow, error });
   }
 }
 
-async function installUpdate() {
+async function handleInstall() {
   try {
-    status.value = "downloading";
-
-    const update = await tauriUpdaterCheck();
-
-    if (!update) {
-      await openOverlayWebviewWindow();
-      return;
-    }
-
-    let contentLength = 0;
-    let downloaded = 0;
-
-    await update.downloadAndInstall((event) => {
-      switch (event.event) {
-        case "Started":
-          contentLength = event.data.contentLength ?? 0;
-          break;
-        case "Progress":
-          downloaded += event.data.chunkLength;
-          if (contentLength > 0) {
-            downloadProgress.value = Math.round(
-              (downloaded / contentLength) * 100,
-            );
-          }
-          break;
-        case "Finished":
-          status.value = "loading";
-          break;
-      }
-    });
-
-    await tauriProcessRelaunch();
+    await install();
   } catch (error) {
-    await logError({ error, source: LogSource.App });
+    $toast.error(getErrorMessage(error));
+    await logError({ source: LogSource.Updater, error });
     await openOverlayWebviewWindow();
   }
 }
 
 onMounted(async () => {
   try {
-    const update = await tauriUpdaterCheck();
+    const available = await check();
 
-    if (update) {
-      updateData.value = {
-        version: update.version,
-        body: update.body ?? "",
-      };
-      status.value = "available";
-    } else {
+    if (!available) {
       await openOverlayWebviewWindow();
     }
   } catch (error) {
-    await logError({ error, source: LogSource.App });
+    $toast.error(getErrorMessage(error));
+    await logError({ source: LogSource.Updater, error });
     await openOverlayWebviewWindow();
   }
 });
@@ -100,39 +60,35 @@ onMounted(async () => {
     data-tauri-drag-region
   >
     <NuxtImg src="/logo.png" class="size-17 shrink-0" alt="Logo" />
-    <template v-if="status === 'checking'">
+    <template v-if="status === UpdaterStatus.Checking">
       <p class="text-sm text-secondary-foreground">
         {{ $t("updater.checking") }}
       </p>
       <Spinner class="size-5 text-primary" />
     </template>
-    <template v-if="status === 'available'">
-      <div
-        class="flex w-full flex-col items-center gap-1"
-        data-tauri-drag-region
-      >
+    <template v-if="status === UpdaterStatus.Available">
+      <div class="flex w-full flex-col items-center gap-1">
         <p class="text-sm font-medium text-foreground">
           {{ $t("updater.available") }}
         </p>
         <p class="text-xs text-secondary-foreground">
           {{
             $t("updater.version", {
-              version: updateData.version,
+              version: updateInfo.version,
             })
           }}
         </p>
       </div>
       <Card
-        v-if="updateData.body"
         class="px-4 py-3 prose dark:prose-invert max-w-none overflow-auto size-full"
       >
-        <Comark :markdown="updateData.body" />
+        <Comark :markdown="updateInfo.body" />
       </Card>
-      <Button class="pointer-events-auto" @click="installUpdate">
+      <Button class="pointer-events-auto" @click="handleInstall">
         {{ $t("updater.install") }}
       </Button>
     </template>
-    <template v-if="status === 'downloading'">
+    <template v-if="status === UpdaterStatus.Downloading">
       <p class="text-sm text-secondary-foreground">
         {{ $t("updater.downloading") }}
       </p>
@@ -140,12 +96,6 @@ onMounted(async () => {
         :model-value="downloadProgress"
         class="my-1.5 w-full max-w-xs"
       />
-    </template>
-    <template v-if="status === 'loading'">
-      <p class="text-sm text-secondary-foreground">
-        {{ $t("updater.loading") }}
-      </p>
-      <Spinner class="size-5 text-primary" />
     </template>
   </section>
 </template>

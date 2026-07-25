@@ -38,7 +38,7 @@ export default function () {
                 });
               }
             } catch (error) {
-              await logError({ error, source: LogSource.Tray });
+              await logError({ source: LogSource.Tray, error });
             }
           },
           text: t("tray.settings"),
@@ -49,7 +49,7 @@ export default function () {
             try {
               await tauriProcessExit();
             } catch (error) {
-              await logError({ error, source: LogSource.Tray });
+              await logError({ source: LogSource.Tray, error });
             }
           },
           text: t("tray.quit"),

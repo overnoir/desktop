@@ -10,6 +10,7 @@ const isMacOS = tauriOSType() === "macos";
   <div
     class="fixed top-0 left-0 right-0 h-8.25 flex items-center z-99 **:select-none pointer-events-auto"
     :class="{ 'flex-row-reverse': !isMacOS }"
+    data-tauri-drag-region
   >
     <div
       class="flex"

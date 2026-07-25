@@ -30,7 +30,6 @@ export default {
     version: "Version {version}",
     install: "Install Update",
     downloading: "Downloading update...",
-    loading: "Please wait...",
   },
   error: {
     clear: "Clear",
@@ -116,6 +115,12 @@ export default {
       description: "Keep the application always on top of other windows.",
       title: "Always on Top",
     },
+    update: {
+      description: "Update the application to the latest version.",
+      title: "Update",
+      button: "Update",
+      alreadyLatest: "The app is already the latest version.",
+    },
   },
   vault: {
     heads: ["Key", "Created Date", "Updated Date"],
@@ -137,9 +142,8 @@ export default {
     },
   },
   logs: {
-    description: "Delete all logs.",
-    title: "Delete Logs",
     clear: "Clear",
+    open: "Open",
     empty: {
       description: "No logs available.",
       title: "No Logs",
