@@ -25,10 +25,10 @@ export default defineNuxtConfig({
     defaultLocale: "en",
     locales: [
       {
-        language: "tr-TR",
-        name: "Türkçe",
-        file: "tr.ts",
-        code: "tr",
+        language: "de-DE",
+        name: "Deutsch",
+        file: "de.ts",
+        code: "de",
       },
       {
         language: "en-US",
@@ -37,10 +37,10 @@ export default defineNuxtConfig({
         code: "en",
       },
       {
-        language: "de-DE",
-        name: "Deutsch",
-        file: "de.ts",
-        code: "de",
+        language: "es-ES",
+        name: "Español",
+        file: "es.ts",
+        code: "es",
       },
       {
         language: "fr-FR",
@@ -55,10 +55,10 @@ export default defineNuxtConfig({
         code: "pt",
       },
       {
-        language: "es-ES",
-        name: "Español",
-        file: "es.ts",
-        code: "es",
+        language: "tr-TR",
+        name: "Türkçe",
+        file: "tr.ts",
+        code: "tr",
       },
     ],
   },
