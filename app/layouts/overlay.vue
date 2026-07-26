@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { CSSProperties } from "vue";
 
+const lastPosition = shallowRef<{ x: number; y: number } | null>(null);
 const { general, advanced } = storeToRefs(useSettingsStore());
 const { getCurrent, getByLabel } = useWebviewWindow();
 const currentWebviewWindow = getCurrent();
@@ -49,6 +50,8 @@ try {
 
 onMounted(async () => {
   try {
+    lastPosition.value = { x: general.value.x, y: general.value.y };
+
     const [, updaterWebviewWindow] = await Promise.all([
       Promise.all([
         currentWebviewWindow.setAlwaysOnTop(advanced.value.alwaysOnTop),
@@ -58,7 +61,15 @@ onMounted(async () => {
         currentWebviewWindow.onMoved(({ payload }) => {
           general.value.x = payload.x;
           general.value.y = payload.y;
-          anchor.value = null;
+          if (
+            lastPosition.value &&
+            payload.x === lastPosition.value.x &&
+            payload.y === lastPosition.value.y
+          ) {
+            lastPosition.value = null;
+          } else {
+            anchor.value = null;
+          }
         }),
         currentWebviewWindow.setPosition(
           new TauriDpiLogicalPosition(general.value.x, general.value.y),
@@ -95,17 +106,12 @@ onMounted(async () => {
 
       const { width, height } = entry.contentRect;
 
-      const [currentPosition, currentSize] = await Promise.all([
-        currentWebviewWindow.outerPosition(),
-        currentWebviewWindow.outerSize(),
-      ]);
-
       if (anchor.value === null) {
         anchor.value = {
-          centerY: currentPosition.y + currentSize.height / 2,
-          centerX: currentPosition.x + currentSize.width / 2,
-          bottom: currentPosition.y + currentSize.height,
-          right: currentPosition.x + currentSize.width,
+          centerY: general.value.y + height / 2,
+          centerX: general.value.x + width / 2,
+          bottom: general.value.y + height,
+          right: general.value.x + width,
         };
       }
 
@@ -126,12 +132,14 @@ onMounted(async () => {
         }
       }
 
-      await Promise.all([
-        currentWebviewWindow.setSize(new TauriDpiLogicalSize(width, height)),
-        currentWebviewWindow.setPosition(
-          new TauriDpiLogicalPosition(newX, newY),
-        ),
-      ]);
+      await currentWebviewWindow.setSize(
+        new TauriDpiLogicalSize(width, height),
+      );
+
+      lastPosition.value = { x: newX, y: newY };
+      await currentWebviewWindow.setPosition(
+        new TauriDpiLogicalPosition(newX, newY),
+      );
     } catch (error) {
       await logError({ source: LogSource.WebviewWindow, error });
     }
