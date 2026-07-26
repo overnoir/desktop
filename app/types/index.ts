@@ -5,12 +5,12 @@ export enum Orientation {
 }
 
 export enum Locale {
+  Portuguese = "pt",
   Turkish = "tr",
   English = "en",
-  German = "de",
-  French = "fr",
-  Portuguese = "pt",
   Spanish = "es",
+  French = "fr",
+  German = "de",
 }
 
 export enum WebviewWindowLabel {
