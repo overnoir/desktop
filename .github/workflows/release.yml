@@ -2,9 +2,6 @@ name: "publish"
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
 
 jobs:
   publish-tauri:
@@ -52,6 +49,33 @@ jobs:
       - name: install frontend dependencies
         run: bun install
 
+      - name: Fetch Release Body from Draft
+        id: fetch-release-body
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            const tauriConfigPath = path.join(process.env.GITHUB_WORKSPACE, 'src-tauri/tauri.conf.json');
+            const tauriConfig = JSON.parse(fs.readFileSync(tauriConfigPath, 'utf8'));
+
+            const version = tauriConfig.version;
+            const tagName = `v${version}`;
+
+            const releases = await github.rest.repos.listReleases({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+
+            const draftRelease = releases.data.find(r => r.draft && r.tag_name === tagName);
+
+            if (draftRelease && draftRelease.body) {
+              core.setOutput('body', draftRelease.body);
+            } else {
+              core.setOutput('body', '');
+            }
+
       - uses: tauri-apps/tauri-action@v1
         env:
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
@@ -62,6 +86,7 @@ jobs:
         with:
           tagName: v__VERSION__
           releaseName: "v__VERSION__"
+          releaseBody: ${{ steps.fetch-release-body.outputs.body }}
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
