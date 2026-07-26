@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  publish-tauri:
+  build:
     if: |
       github.event_name == 'workflow_dispatch' || 
       (github.event.pull_request.merged == true && github.event.pull_request.head.ref == 'dev')
@@ -86,5 +86,44 @@ jobs:
           releaseName: "v__VERSION__"
           args: ${{ matrix.args }}
           tagName: v__VERSION__
-          releaseDraft: false
+          releaseDraft: true
           prerelease: false
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Extract version from tauri.conf.json
+        id: get_version
+        run: |
+          VERSION=$(node -p "require('./src-tauri/tauri.conf.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Publish Release (Undraft)
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const tag = `v${'${{ steps.get_version.outputs.version }}'}`;
+
+            const releases = await github.rest.repos.listReleases({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+
+            const targetRelease = releases.data.find(
+              r => r.tag_name === tag && r.draft === true
+            );
+
+            if (targetRelease) {
+              await github.rest.repos.updateRelease({
+                release_id: targetRelease.id,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                draft: false,
+              });
+            }
