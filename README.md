@@ -61,8 +61,6 @@ Download the latest version for your platform from **[GitHub Releases](https://g
 
 - [Website](https://overnoir.com)
 - [Documentation](https://docs.overnoir.com)
-- [Discord Server](https://discord.gg/HyDEGKFP82)
-- [X / Twitter](https://x.com/overnoirapp)
 
 ## License
 
