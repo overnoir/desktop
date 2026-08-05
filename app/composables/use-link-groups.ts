@@ -85,19 +85,9 @@ export default function () {
       icon: "lucide:book",
     },
     {
-      name: "Discord",
-      to: "https://discord.gg/HyDEGKFP82",
-      icon: "simple-icons:discord",
-    },
-    {
       name: "GitHub",
       to: "https://github.com/overnoir/desktop",
       icon: "simple-icons:github",
-    },
-    {
-      name: "X",
-      to: "https://x.com/overnoirapp",
-      icon: "simple-icons:x",
     },
   ]);
 
